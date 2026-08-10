@@ -2,92 +2,210 @@
 const startBtn =
 document.getElementById("startBtn");
 
+const stopBtn =
+document.getElementById("stopBtn");
+
 const status =
 document.getElementById("status");
 
 const result =
 document.getElementById("result");
 
-startBtn.addEventListener("click",async()=>{
+let stream = null;
 
-startBtn.disabled=true;
+let recorder = null;
 
-let stream=null;
+let listening = false;
+
+let processing = false;
+
+let chunkNumber = 0;
+
+
+startBtn.addEventListener(
+"click",
+startListening
+);
+
+
+stopBtn.addEventListener(
+"click",
+stopListening
+);
+
+
+async function startListening(){
+
+if(listening){
+return;
+}
 
 try{
 
-status.textContent=
-"🎙️ در حال دسترسی به میکروفون...";
-
-stream=
+stream =
 await navigator.mediaDevices.getUserMedia({
 audio:true
 });
 
-const recorder=
-new MediaRecorder(stream);
+listening = true;
 
-const chunks=[];
+startBtn.disabled = true;
 
-recorder.ondataavailable=(event)=>{
+stopBtn.disabled = false;
 
-if(event.data.size>0){
-chunks.push(event.data);
+status.textContent =
+"🟢 میکروفون فعال است";
+
+startNextChunk();
+
+}catch(error){
+
+console.error(error);
+
+status.textContent =
+"❌ دسترسی به میکروفون ممکن نیست";
+
 }
 
-};
+}
 
-const recording=
-new Promise((resolve,reject)=>{
 
-recorder.onstop=()=>{
+function stopListening(){
 
-const blob=
-new Blob(chunks,{
-type:recorder.mimeType
-});
+listening = false;
 
-resolve(blob);
-
-};
-
-recorder.onerror=(event)=>{
-reject(event.error);
-};
-
-});
-
-recorder.start();
-
-status.textContent=
-"🔴 ضبط شروع شد... ۵ ثانیه صحبت کنید";
-
-await new Promise(resolve=>{
-setTimeout(resolve,5000);
-});
+if(recorder &&
+recorder.state !== "inactive"){
 
 recorder.stop();
 
-const audioBlob=
-await recording;
+}
+
+if(stream){
 
 stream
 .getTracks()
 .forEach(track=>track.stop());
 
-status.textContent=
-"☁️ در حال ارسال صدا به AI...";
+stream = null;
 
-const formData=
+}
+
+startBtn.disabled = false;
+
+stopBtn.disabled = true;
+
+status.textContent =
+"⛔ شنیدن متوقف شد";
+
+}
+
+
+function startNextChunk(){
+
+if(!listening){
+return;
+}
+
+chunkNumber++;
+
+const chunks = [];
+
+recorder =
+new MediaRecorder(stream);
+
+
+recorder.ondataavailable =
+event => {
+
+if(event.data.size > 0){
+
+chunks.push(event.data);
+
+}
+
+};
+
+
+recorder.onstop =
+async () => {
+
+const blob =
+new Blob(
+chunks,
+{
+type:recorder.mimeType
+}
+);
+
+if(listening){
+
+processChunk(blob);
+
+}
+
+};
+
+
+recorder.start();
+
+
+status.textContent =
+`🎙️ در حال شنیدن... بخش ${chunkNumber}`;
+
+
+setTimeout(()=>{
+
+if(
+recorder &&
+recorder.state !== "inactive"
+){
+
+recorder.stop();
+
+}
+
+},4000);
+
+}
+
+
+async function processChunk(blob){
+
+if(processing){
+
+if(listening){
+
+startNextChunk();
+
+}
+
+return;
+
+}
+
+processing = true;
+
+const start =
+performance.now();
+
+try{
+
+status.textContent =
+"☁️ در حال تشخیص صدا...";
+
+
+const formData =
 new FormData();
 
 formData.append(
 "file",
-audioBlob,
+blob,
 "recording.webm"
 );
 
-const response=
+
+const response =
 await fetch(
 "/api/transcribe",
 {
@@ -96,54 +214,114 @@ body:formData
 }
 );
 
-const data=
+
+const data =
 await response.json();
+
 
 if(!response.ok){
 
 throw new Error(
 data.error ||
-"خطا در ارتباط با سرور"
+"خطا از سرور"
 );
 
 }
 
-result.textContent=
-data.text ||
-"متنی تشخیص داده نشد";
 
-status.textContent=
-"✅ تشخیص صدا تمام شد";
+const time =
+(
+(performance.now()-start)
+/
+1000
+).toFixed(2);
+
 
 console.log(
 "Groq response:",
 data
 );
 
+console.log(
+"Processing time:",
+time,
+"seconds"
+);
+
+
+if(data.text &&
+data.text.trim()){
+
+addResult(
+data.text.trim(),
+time
+);
+
+}else{
+
+console.log(
+"صدایی تشخیص داده نشد"
+);
+
+}
+
+
+status.textContent =
+`🟢 آماده شنیدن | پردازش: ${time} ثانیه`;
+
 }catch(error){
 
-console.error(error);
+console.error(
+"Transcription error:",
+error
+);
 
-status.textContent=
-"❌ خطا";
-
-result.textContent=
-error.message ||
-String(error);
-
-if(stream){
-
-stream
-.getTracks()
-.forEach(track=>track.stop());
+status.textContent =
+"❌ خطا در تشخیص صدا";
 
 }
 
-}finally{
+processing = false;
 
-startBtn.disabled=false;
+
+if(listening){
+
+startNextChunk();
 
 }
 
-});
+}
 
+
+function addResult(text,time){
+
+if(
+result.textContent ===
+"هنوز چیزی تشخیص داده نشده"
+){
+
+result.innerHTML = "";
+
+}
+
+
+const item =
+document.createElement("div");
+
+item.className =
+"item";
+
+
+item.innerHTML =
+`
+<strong>${text}</strong>
+<br>
+<small>
+⏱️ ${time} ثانیه
+</small>
+`;
+
+
+result.prepend(item);
+
+}
