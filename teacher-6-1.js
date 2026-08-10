@@ -67,7 +67,7 @@ const students=[
 
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");
-
+let notificationsEnabled=true;
 function createStudents(){
 studentsContainer.innerHTML="";
 students.forEach(student=>{
