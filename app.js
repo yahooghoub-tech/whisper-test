@@ -1,148 +1,161 @@
+// app.js
 
-const startBtn =
-document.getElementById("startBtn");
-
-const status =
-document.getElementById("status");
-
-const result =
-document.getElementById("result");
-
-startBtn.addEventListener("click",async()=>{
-
-startBtn.disabled=true;
+const startBtn=document.getElementById("startBtn");
+const stopBtn=document.getElementById("stopBtn");
+const status=document.getElementById("status");
+const result=document.getElementById("result");
 
 let stream=null;
+let audioContext=null;
+let source=null;
+let processor=null;
+
+let running=false;
+
+startBtn.addEventListener(
+"click",
+startMicrophone
+);
+
+stopBtn.addEventListener(
+"click",
+stopMicrophone
+);
+
+stopBtn.disabled=true;
+
+async function startMicrophone(){
+
+if(running){
+return;
+}
 
 try{
 
 status.textContent=
-"🎙️ در حال دسترسی به میکروفون...";
+"⏳ در حال دسترسی به میکروفون...";
 
 stream=
 await navigator.mediaDevices.getUserMedia({
-audio:true
-});
-
-const recorder=
-new MediaRecorder(stream);
-
-const chunks=[];
-
-recorder.ondataavailable=(event)=>{
-
-if(event.data.size>0){
-chunks.push(event.data);
+audio:{
+channelCount:1,
+echoCancellation:true,
+noiseSuppression:true,
+autoGainControl:true
 }
-
-};
-
-const recording=
-new Promise((resolve,reject)=>{
-
-recorder.onstop=()=>{
-
-const blob=
-new Blob(chunks,{
-type:recorder.mimeType
 });
 
-resolve(blob);
+audioContext=
+new AudioContext();
 
-};
-
-recorder.onerror=(event)=>{
-reject(event.error);
-};
-
-});
-
-recorder.start();
-
-status.textContent=
-"🔴 ضبط شروع شد... ۵ ثانیه صحبت کنید";
-
-await new Promise(resolve=>{
-setTimeout(resolve,5000);
-});
-
-recorder.stop();
-
-const audioBlob=
-await recording;
-
+source=
+audioContext.createMediaStreamSource(
 stream
-.getTracks()
-.forEach(track=>track.stop());
-
-status.textContent=
-"☁️ در حال ارسال صدا به AI...";
-
-const formData=
-new FormData();
-
-formData.append(
-"file",
-audioBlob,
-"recording.webm"
 );
 
-const response=
-await fetch(
-"/api/transcribe",
-{
-method:"POST",
-body:formData
-}
+processor=
+audioContext.createScriptProcessor(
+4096,
+1,
+1
 );
 
-const data=
-await response.json();
+processor.onaudioprocess=
+event=>{
 
-if(!response.ok){
-
-throw new Error(
-data.error ||
-"خطا در ارتباط با سرور"
-);
-
+if(!running){
+return;
 }
 
-result.textContent=
-data.text ||
-"متنی تشخیص داده نشد";
-
-status.textContent=
-"✅ تشخیص صدا تمام شد";
+const input=
+event.inputBuffer.getChannelData(0);
 
 console.log(
-"Groq response:",
-data
+"Audio samples:",
+input.length
 );
+
+};
+
+source.connect(processor);
+
+processor.connect(
+audioContext.destination
+);
+
+running=true;
+
+startBtn.disabled=true;
+stopBtn.disabled=false;
+
+status.textContent=
+"🟢 میکروفون فعال است";
+
+result.textContent=
+"صدای شما دریافت می‌شود...";
 
 }catch(error){
 
-console.error(error);
+console.error(
+"Microphone error:",
+error
+);
 
 status.textContent=
-"❌ خطا";
+"❌ دسترسی به میکروفون انجام نشد";
 
-result.textContent=
-error.message ||
-String(error);
+}
+
+}
+
+function stopMicrophone(){
+
+running=false;
+
+if(processor){
+
+processor.disconnect();
+
+processor=null;
+
+}
+
+if(source){
+
+source.disconnect();
+
+source=null;
+
+}
+
+if(audioContext){
+
+audioContext.close();
+
+audioContext=null;
+
+}
 
 if(stream){
 
 stream
 .getTracks()
-.forEach(track=>track.stop());
+.forEach(
+track=>track.stop()
+);
+
+stream=null;
 
 }
-
-}finally{
 
 startBtn.disabled=false;
 
-}
+stopBtn.disabled=true;
 
-});
+status.textContent=
+"⛔ میکروفون متوقف شد";
+
+result.textContent=
+"برای شروع دوباره دکمه شروع را بزنید";
+
+}
