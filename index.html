@@ -4,13 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>تست Whisper</title>
-
+<title>تست تشخیص صدای Groq</title>
 <style>
 *{
-box-sizing:border-box
+box-sizing:border-box;
 }
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -19,21 +17,18 @@ color:white;
 min-height:100vh;
 display:flex;
 align-items:center;
-justify-content:center
+justify-content:center;
 }
-
 .container{
-width:min(700px,92%);
+width:min(600px,92%);
 background:#172235;
 padding:30px;
 border-radius:20px;
-text-align:center
+text-align:center;
 }
-
 h1{
-margin-top:0
+margin-top:0;
 }
-
 button{
 border:0;
 padding:15px 25px;
@@ -42,83 +37,45 @@ font-size:18px;
 cursor:pointer;
 background:#2563eb;
 color:white;
-margin:5px
 }
-
-button.stop{
-background:#dc2626
-}
-
 button:disabled{
-opacity:.5
+opacity:.5;
 }
-
 #status{
-margin-top:20px;
+margin-top:25px;
 font-size:18px;
-line-height:2
 }
-
-#liveText{
-margin-top:20px;
-padding:15px;
-background:#1e293b;
-border-radius:12px;
-min-height:60px;
-font-size:20px;
-color:#cbd5e1
-}
-
 #result{
 margin-top:20px;
 padding:20px;
-min-height:150px;
+min-height:100px;
 background:#0f172a;
 border-radius:12px;
 font-size:22px;
 line-height:2;
-text-align:right
-}
-
-.item{
-padding:12px;
-border-bottom:1px solid #334155
-}
-
-small{
-opacity:.65
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
 
-<h1>🎙️ تست Whisper</h1>
+<h1>🎙️ تست تشخیص صدای AI</h1>
 
 <p>
-اسم‌ها را پشت سر هم بگو.
+یک جمله فارسی بگو و نتیجه را ببین.
 </p>
 
 <button id="startBtn">
-🎙️ شروع شنیدن
-</button>
-
-<button id="stopBtn" class="stop" disabled>
-⛔ توقف
+🎙️ شروع ضبط
 </button>
 
 <div id="status">
 آماده
 </div>
 
-<div id="liveText">
-در انتظار صدا...
-</div>
-
 <div id="result">
-هنوز اسمی تشخیص داده نشده
+متن اینجا نمایش داده می‌شود
 </div>
 
 </div>
@@ -127,4 +84,3 @@ opacity:.65
 
 </body>
 </html>
-
