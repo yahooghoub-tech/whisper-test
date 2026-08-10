@@ -131,4 +131,23 @@
     font-size:9px;
     }
     }
-    
+   
+.student-button.called{
+background:#ef4444 !important;
+color:#fff !important;
+border-color:#dc2626 !important;
+}
+.student-button.called .student-status,
+.student-button.called .student-time{
+color:#fff !important;
+}
+.student-button.sent{
+background:#22c55e !important;
+color:#fff !important;
+border-color:#16a34a !important;
+}
+.student-button.sent .student-status,
+.student-button.sent .student-time{
+color:#fff !important;
+}
+
