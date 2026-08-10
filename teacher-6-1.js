@@ -87,9 +87,13 @@ return [...document.querySelectorAll(".student-button")].find(button=>button.dat
 function updateButton(call){
 const button=findButton(call.student_name);
 if(!button)return;
-button.classList.remove("called","sent");
-if(call.status==="دریافت فراخوان"){
+button.classList.remove("called","sent","received");
+if(call.status==="فراخوان شد"){
 button.classList.add("called");
+button.querySelector(".student-status").innerText="(فراخوان)";
+}
+if(call.status==="دریافت فراخوان"){
+button.classList.add("received");
 button.querySelector(".student-status").innerText="(دریافت شد)";
 }
 if(call.status==="ارسال شد"){
@@ -98,6 +102,7 @@ button.querySelector(".student-status").innerText="(ارسال شد)";
 }
 button.querySelector(".student-time").innerText=call.sent_time||call.received_time||call.called_time||"";
 }
+
 
 async function loadCalls(){
 const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","ششم-1").order("id",{ascending:true});
