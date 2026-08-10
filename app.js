@@ -2,31 +2,46 @@
 const startBtn=document.getElementById("startBtn");
 const stopBtn=document.getElementById("stopBtn");
 const status=document.getElementById("status");
+const liveText=document.getElementById("liveText");
 const result=document.getElementById("result");
+
+const students=[
+"امیرپارسا فخرآبادی",
+"علیسان صفیاری",
+"محمدرضا احمدی",
+"پارسا رستمی",
+"آرین محمدی",
+"مهدی کریمی"
+];
 
 let stream=null;
 let recorder=null;
-let audioContext=null;
-let analyser=null;
-let microphone=null;
-let animationId=null;
 
-let chunks=[];
 let listening=false;
-let speaking=false;
-let silenceStart=null;
+let processing=false;
 
-const SILENCE_TIME=800;
-const MIN_SPEECH_TIME=300;
+let audioChunks=[];
+
+let currentTimer=null;
+
+let speechBuffer="";
+
+let calledStudents=[];
+
+const CHUNK_TIME=5000;
+
+const OVERLAP_TIME=1500;
+
 const MIN_AUDIO_SIZE=2000;
 
-let speechStart=0;
+const MATCH_THRESHOLD=0.90;
 
 
 startBtn.addEventListener(
 "click",
 startListening
 );
+
 
 stopBtn.addEventListener(
 "click",
@@ -42,28 +57,14 @@ return;
 
 try{
 
-stream=await navigator.mediaDevices.getUserMedia({
+stream=
+await navigator.mediaDevices.getUserMedia({
 audio:{
 echoCancellation:true,
 noiseSuppression:true,
 autoGainControl:true
 }
 });
-
-audioContext=new AudioContext();
-
-await audioContext.resume();
-
-analyser=audioContext.createAnalyser();
-
-analyser.fftSize=2048;
-
-analyser.smoothingTimeConstant=0.85;
-
-microphone=
-audioContext.createMediaStreamSource(stream);
-
-microphone.connect(analyser);
 
 listening=true;
 
@@ -72,18 +73,21 @@ startBtn.disabled=true;
 stopBtn.disabled=false;
 
 status.textContent=
-"🟢 آماده شنیدن...";
+"🟢 میکروفون همیشه فعال است";
+
+speechBuffer="";
+
+liveText.textContent=
+"در انتظار اسم...";
 
 startRecorder();
-
-detectSound();
 
 }catch(error){
 
 console.error(error);
 
 status.textContent=
-"❌ دسترسی به میکروفون ممکن نیست";
+"❌ خطا در فعال کردن میکروفون";
 
 }
 
@@ -92,131 +96,87 @@ status.textContent=
 
 function startRecorder(){
 
-chunks=[];
+if(!listening){
+return;
+}
 
-recorder=new MediaRecorder(
+audioChunks=[];
+
+recorder=
+new MediaRecorder(
 stream,
 {
 mimeType:"audio/webm"
 }
 );
 
+
 recorder.ondataavailable=
 event=>{
 
 if(event.data.size>0){
 
-chunks.push(event.data);
+audioChunks.push(event.data);
 
 }
 
 };
 
-recorder.onstop=async()=>{
+
+recorder.onstop=
+async()=>{
 
 const blob=
 new Blob(
-chunks,
+audioChunks,
 {
 type:"audio/webm"
 }
 );
 
-if(
-blob.size>=MIN_AUDIO_SIZE
-){
+if(blob.size>=MIN_AUDIO_SIZE){
 
-await sendAudio(blob);
+await processAudio(blob);
 
 }
 
 if(listening){
 
+setTimeout(
+()=>{
 startRecorder();
+},
+100
+);
 
 }
 
 };
 
+
 recorder.start();
 
-}
 
-
-function detectSound(){
-
-if(!listening){
-return;
-}
-
-const data=
-new Uint8Array(
-analyser.fftSize
+currentTimer=
+setTimeout(
+()=>{
+stopCurrentChunk();
+},
+CHUNK_TIME
 );
 
-analyser.getByteTimeDomainData(data);
-
-let sum=0;
-
-for(let i=0;i<data.length;i++){
-
-const value=
-(data[i]-128)/128;
-
-sum+=value*value;
-
 }
 
-const rms=
-Math.sqrt(
-sum/data.length
-);
 
-const volume=
-20*Math.log10(rms||0.00001);
+function stopCurrentChunk(){
 
-const SPEECH_THRESHOLD=-42;
+if(currentTimer){
 
-const now=performance.now();
+clearTimeout(currentTimer);
 
-if(volume>SPEECH_THRESHOLD){
-
-if(!speaking){
-
-speaking=true;
-
-speechStart=now;
-
-silenceStart=null;
-
-status.textContent=
-"🔴 در حال شنیدن صحبت...";
+currentTimer=null;
 
 }
-
-}else{
-
-if(
-speaking &&
-now-speechStart>=MIN_SPEECH_TIME
-){
-
-if(silenceStart===null){
-
-silenceStart=now;
-
-}
-
-if(
-now-silenceStart>=SILENCE_TIME
-){
-
-speaking=false;
-
-silenceStart=null;
-
-status.textContent=
-"☁️ جمله تمام شد؛ در حال تشخیص...";
 
 if(
 recorder &&
@@ -229,24 +189,24 @@ recorder.stop();
 
 }
 
+
+async function processAudio(blob){
+
+if(processing){
+
+return;
 }
 
-}
-
-animationId=
-requestAnimationFrame(
-detectSound
-);
-
-}
-
-
-async function sendAudio(blob){
+processing=true;
 
 const start=
 performance.now();
 
 try{
+
+status.textContent=
+"☁️ در حال تشخیص...";
+
 
 const formData=
 new FormData();
@@ -257,6 +217,7 @@ blob,
 "recording.webm"
 );
 
+
 const response=
 await fetch(
 "/api/transcribe",
@@ -266,8 +227,10 @@ body:formData
 }
 );
 
+
 const data=
 await response.json();
+
 
 if(!response.ok){
 
@@ -278,10 +241,12 @@ data.error||
 
 }
 
+
 const time=
 (
 (performance.now()-start)/1000
 ).toFixed(2);
+
 
 console.log(
 "Groq response:",
@@ -294,25 +259,25 @@ time,
 "seconds"
 );
 
+
 if(
 data.text &&
 data.text.trim()
 ){
 
-addResult(
-data.text.trim(),
-time
-);
+const text=
+data.text.trim();
+
+liveText.textContent=
+text;
+
+processRecognizedText(text);
+
+}
+
 
 status.textContent=
 `🟢 آماده شنیدن | پردازش ${time} ثانیه`;
-
-}else{
-
-status.textContent=
-"🟢 آماده شنیدن...";
-
-}
 
 }catch(error){
 
@@ -326,32 +291,233 @@ status.textContent=
 
 }
 
+processing=false;
+
 }
 
 
-function addResult(text,time){
+function processRecognizedText(text){
+
+speechBuffer=
+`${speechBuffer} ${text}`.trim();
+
+speechBuffer=
+normalizeText(speechBuffer);
+
+console.log(
+"Speech buffer:",
+speechBuffer
+);
+
+
+let foundAny=false;
+
+
+students.forEach(
+student=>{
+
+const normalizedStudent=
+normalizeText(student);
+
+const score=
+similarity(
+speechBuffer,
+normalizedStudent
+);
+
+
+if(score>=MATCH_THRESHOLD){
+
+if(
+!calledStudents.includes(student)
+){
+
+calledStudents.push(student);
+
+addStudent(
+student,
+score
+);
+
+foundAny=true;
+
+}
+
+}
+
+}
+);
+
+
+if(foundAny){
+
+speechBuffer="";
+
+liveText.textContent=
+"در انتظار اسم بعدی...";
+
+}
+
+}
+
+
+function addStudent(student,score){
 
 if(
 result.textContent.trim()===
-"هنوز چیزی تشخیص داده نشده"
+"هنوز اسمی تشخیص داده نشده"
 ){
 
 result.innerHTML="";
 }
 
+
 const item=
 document.createElement("div");
 
-item.className="item";
+item.className=
+"item";
+
 
 item.innerHTML=
 `
-<strong>${escapeHtml(text)}</strong>
+<strong>${escapeHtml(student)}</strong>
 <br>
-<small>⏱️ ${time} ثانیه</small>
+<small>
+شباهت: ${(score*100).toFixed(1)}٪
+</small>
 `;
 
+
 result.prepend(item);
+
+}
+
+
+function normalizeText(text){
+
+return text
+.toString()
+.trim()
+.toLowerCase()
+.replace(/ي/g,"ی")
+.replace(/ى/g,"ی")
+.replace(/ك/g,"ک")
+.replace(/ۀ/g,"ه")
+.replace(/ة/g,"ه")
+.replace(/ؤ/g,"و")
+.replace(/إ/g,"ا")
+.replace(/أ/g,"ا")
+.replace(/آ/g,"ا")
+.replace(/‌/g,"")
+.replace(/\s+/g,"")
+.replace(/[.,،؛:!?؟"'\-_/\\()]/g,"");
+
+}
+
+
+function similarity(a,b){
+
+a=normalizeText(a);
+
+b=normalizeText(b);
+
+
+if(a===b){
+
+return 1;
+
+}
+
+
+if(!a || !b){
+
+return 0;
+
+}
+
+
+const distance=
+levenshtein(a,b);
+
+
+const maxLength=
+Math.max(
+a.length,
+b.length
+);
+
+
+return 1-
+distance/maxLength;
+
+}
+
+
+function levenshtein(a,b){
+
+const matrix=[];
+
+
+for(
+let i=0;
+i<=b.length;
+i++
+){
+
+matrix[i]=[i];
+
+}
+
+
+for(
+let j=0;
+j<=a.length;
+j++
+){
+
+matrix[0][j]=j;
+
+}
+
+
+for(
+let i=1;
+i<=b.length;
+i++
+){
+
+for(
+let j=1;
+j<=a.length;
+j++
+){
+
+if(
+b.charAt(i-1)===
+a.charAt(j-1)
+){
+
+matrix[i][j]=
+matrix[i-1][j-1];
+
+}else{
+
+matrix[i][j]=
+Math.min(
+matrix[i-1][j]+1,
+matrix[i][j-1]+1,
+matrix[i-1][j-1]+1
+);
+
+}
+
+}
+
+}
+
+
+return matrix[b.length][a.length];
 
 }
 
@@ -372,19 +538,14 @@ function stopListening(){
 
 listening=false;
 
-speaking=false;
+if(currentTimer){
 
-silenceStart=null;
+clearTimeout(currentTimer);
 
-if(animationId){
-
-cancelAnimationFrame(
-animationId
-);
-
-animationId=null;
+currentTimer=null;
 
 }
+
 
 if(
 recorder &&
@@ -394,6 +555,7 @@ recorder.state!=="inactive"
 recorder.stop();
 
 }
+
 
 if(stream){
 
@@ -407,13 +569,6 @@ stream=null;
 
 }
 
-if(audioContext){
-
-audioContext.close();
-
-audioContext=null;
-
-}
 
 startBtn.disabled=false;
 
@@ -421,5 +576,8 @@ stopBtn.disabled=true;
 
 status.textContent=
 "⛔ شنیدن متوقف شد";
+
+liveText.textContent=
+"میکروفون خاموش است";
 
 }
