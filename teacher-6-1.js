@@ -20,6 +20,25 @@ body:message
 }
 }
 
+let notificationAudio=null;
+
+function playNotificationSound(){
+try{
+if(!notificationAudio){
+notificationAudio=new Audio(
+"data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAAAA"
+);
+}
+notificationAudio.currentTime=0;
+notificationAudio.play().catch(error=>{
+console.log("صدای اعلان پخش نشد:",error);
+});
+}catch(error){
+console.error("خطا در پخش بوق:",error);
+}
+}
+
+
 const students=[
 {name:"مهان احمدی"},
 {name:"پارسا بکایی"},
@@ -128,26 +147,77 @@ student.name+" ارسال شد"
 createStudents();
 loadCalls();
 
-supabaseClient.channel("click-realtime").on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls"},payload=>{
+supabaseClient
+.channel("teacher-6-1-realtime")
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"calls",
+filter:"class_name=eq.ششم-1"
+},
+payload=>{
 const call=payload.new;
-if(call.class_name!=="ششم-1")return;
+
+console.log("📢 فراخوان جدید:",call);
+
+if(call.status!=="فراخوان شد")return;
+
+playNotificationSound();
+
+showBrowserNotification(
+"📢 فراخوان جدید",
+call.student_name+" از کلاس ششم-1 فراخوان شد"
+);
+
 const button=findButton(call.student_name);
+
+if(button){
+setTimeout(()=>{
+updateButton({
+...call,
+status:"دریافت فراخوان"
+});
+button.classList.remove("called","sent");
+button.classList.add("called");
+},300);
+}
+
+loadCalls();
+
+}
+)
+.on(
+"postgres_changes",
+{
+event:"UPDATE",
+schema:"public",
+table:"calls",
+filter:"class_name=eq.ششم-1"
+},
+payload=>{
+const call=payload.new;
+
+console.log("📤 تغییر وضعیت:",call);
+
+const button=findButton(call.student_name);
+
 if(button){
 updateButton(call);
 }
+
 loadCalls();
-if(call.status==="دریافت فراخوان"){
-showBrowserNotification(
-"📢 فراخوان جدید",
-call.student_name+" فراخوان شد"
-);
-}
+
 if(call.status==="ارسال شد"){
 showBrowserNotification(
 "📤 ارسال دانش‌آموز",
-call.student_name+" توسط معلم ارسال شد"
+call.student_name+" ارسال شد"
 );
 }
-}).subscribe(status=>{
+
+}
+)
+.subscribe(status=>{
 console.log("Realtime teacher status:",status);
 });
