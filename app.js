@@ -1,7 +1,7 @@
-// app.js
 
 const status=document.getElementById("status");
 const result=document.getElementById("result");
+
 const startBtn=document.getElementById("startBtn");
 const stopBtn=document.getElementById("stopBtn");
 
@@ -11,6 +11,8 @@ let audioContext=null;
 let microphone=null;
 let processor=null;
 let stream=null;
+
+let isRunning=false;
 
 async function loadVosk(){
 
@@ -27,118 +29,118 @@ model=await Vosk.createModel(
 console.log("Vosk model loaded:",model);
 
 status.textContent="✅ مدل فارسی Vosk آماده است";
-
-result.textContent="مدل آماده است";
+result.textContent="مدل با موفقیت آماده شد";
 
 }catch(error){
 
-console.error("Vosk model error:",error);
+console.error(
+"Vosk model error:",
+error
+);
 
-status.textContent="❌ خطا در بارگذاری مدل";
-
+status.textContent="❌ خطا در بارگذاری Vosk";
 result.textContent="مدل بارگذاری نشد";
 
 }
 
 }
 
-async function startMicrophone(){
 
-console.log("1. دکمه شروع میکروفون کلیک شد");
+async function startMicrophone(){
 
 try{
 
+console.log("1. دکمه شروع میکروفون کلیک شد");
+
 if(!model){
 
-console.log("2. مدل هنوز آماده نیست");
-
-status.textContent="⏳ مدل هنوز آماده نشده است";
-
+status.textContent="⏳ مدل هنوز آماده نیست";
+console.log("مدل آماده نیست");
 return;
 
 }
 
 console.log("2. مدل آماده است");
 
-if(!navigator.mediaDevices){
-
-console.error("mediaDevices وجود ندارد");
-
-status.textContent="❌ مرورگر به میکروفون دسترسی ندارد";
-
-return;
-
-}
-
-console.log("3. درخواست دسترسی به میکروفون");
+status.textContent="🎙️ در حال فعال کردن میکروفون...";
 
 stream=await navigator.mediaDevices.getUserMedia({
 audio:true
 });
 
-console.log("4. میکروفون با موفقیت فعال شد");
-
-status.textContent="🎙️ میکروفون فعال شد";
+console.log("3. میکروفون با موفقیت فعال شد");
 
 audioContext=new AudioContext();
 
 console.log(
-"5. AudioContext:",
+"4. AudioContext:",
 audioContext.sampleRate
 );
+
+if(audioContext.state==="suspended"){
+
+await audioContext.resume();
+
+}
 
 recognizer=new model.KaldiRecognizer(
 audioContext.sampleRate
 );
 
-console.log("6. Recognizer ساخته شد");
+console.log("5. Recognizer ساخته شد");
 
-recognizer.setWords(true);
-
-recognizer.on("result",message=>{
+recognizer.on("result",(message)=>{
 
 console.log(
 "Vosk result:",
 message
 );
 
-if(
-message.result &&
-message.result.text
-){
+if(message.result){
 
-result.textContent=
-message.result.text;
+const text=message.result.text || "";
+
+if(text.trim()){
+
+result.textContent=text;
+
+}
 
 }
 
 });
 
-recognizer.on("partialresult",message=>{
+
+recognizer.on("partialresult",(message)=>{
 
 console.log(
 "Vosk partial:",
 message
 );
 
-if(
-message.result &&
-message.result.partial
-){
+if(message.result){
 
-result.textContent=
-message.result.partial;
+const text=
+message.result.partial || "";
+
+if(text.trim()){
+
+result.textContent=text;
+
+}
 
 }
 
 });
 
+
 microphone=
-audioContext.createMediaStreamSource(
-stream
+audioContext.createMediaStreamSource(stream);
+
+console.log(
+"6. microphone source ساخته شد"
 );
 
-console.log("7. microphone source ساخته شد");
 
 processor=
 audioContext.createScriptProcessor(
@@ -147,16 +149,39 @@ audioContext.createScriptProcessor(
 1
 );
 
+console.log(
+"7. processor ساخته شد"
+);
+
+
 processor.onaudioprocess=function(event){
 
-const input=
-event.inputBuffer.getChannelData(0);
+if(!isRunning){
 
-recognizer.acceptWaveform(input);
+return;
+
+}
+
+try{
+
+const inputBuffer=
+event.inputBuffer;
+
+recognizer.acceptWaveform(
+inputBuffer
+);
+
+}catch(error){
+
+console.error(
+"acceptWaveform error:",
+error
+);
+
+}
 
 };
 
-console.log("8. processor ساخته شد");
 
 microphone.connect(processor);
 
@@ -164,16 +189,14 @@ processor.connect(
 audioContext.destination
 );
 
-console.log("9. اتصال صوت کامل شد");
+console.log(
+"8. اتصال صوت کامل شد"
+);
+
+isRunning=true;
 
 status.textContent=
-"🎙️ در حال شنیدن...";
-
-result.textContent=
-"صحبت کنید";
-
-startBtn.disabled=true;
-stopBtn.disabled=false;
+"🟢 میکروفون فعال است — صحبت کنید";
 
 }catch(error){
 
@@ -183,7 +206,7 @@ error
 );
 
 status.textContent=
-"❌ خطا در میکروفون";
+"❌ خطا در فعال کردن میکروفون";
 
 result.textContent=
 error.message;
@@ -192,13 +215,21 @@ error.message;
 
 }
 
+
 function stopMicrophone(){
 
-console.log("توقف میکروفون");
+console.log(
+"⛔ توقف میکروفون"
+);
+
+isRunning=false;
 
 if(processor){
 
 processor.disconnect();
+
+processor.onaudioprocess=null;
+
 processor=null;
 
 }
@@ -206,6 +237,7 @@ processor=null;
 if(microphone){
 
 microphone.disconnect();
+
 microphone=null;
 
 }
@@ -220,30 +252,21 @@ stream=null;
 
 }
 
-if(recognizer){
-
-recognizer.remove();
-recognizer=null;
-
-}
-
 if(audioContext){
 
 audioContext.close();
+
 audioContext=null;
 
 }
 
+recognizer=null;
+
 status.textContent=
 "⏹️ میکروفون متوقف شد";
 
-result.textContent=
-"میکروفون متوقف شد";
-
-startBtn.disabled=false;
-stopBtn.disabled=true;
-
 }
+
 
 startBtn.addEventListener(
 "click",
@@ -255,6 +278,6 @@ stopBtn.addEventListener(
 stopMicrophone
 );
 
-stopBtn.disabled=true;
 
 loadVosk();
+
