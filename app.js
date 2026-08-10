@@ -1,14 +1,15 @@
-
 // app.js
 
 const status=document.getElementById("status");
 const result=document.getElementById("result");
+const startBtn=document.getElementById("startBtn");
+const stopBtn=document.getElementById("stopBtn");
 
 let model=null;
 let recognizer=null;
 let audioContext=null;
-let processor=null;
 let microphone=null;
+let processor=null;
 let stream=null;
 
 async function loadVosk(){
@@ -26,16 +27,15 @@ model=await Vosk.createModel(
 console.log("Vosk model loaded:",model);
 
 status.textContent="✅ مدل فارسی Vosk آماده است";
-result.textContent="مدل آماده است؛ حالا دکمه شروع را بزن";
+
+result.textContent="مدل آماده است";
 
 }catch(error){
 
-console.error(
-"Vosk model error:",
-error
-);
+console.error("Vosk model error:",error);
 
-status.textContent="❌ خطا در بارگذاری Vosk";
+status.textContent="❌ خطا در بارگذاری مدل";
+
 result.textContent="مدل بارگذاری نشد";
 
 }
@@ -44,55 +44,101 @@ result.textContent="مدل بارگذاری نشد";
 
 async function startMicrophone(){
 
+console.log("1. دکمه شروع میکروفون کلیک شد");
+
+try{
+
 if(!model){
 
-result.textContent="ابتدا صبر کن مدل Vosk آماده شود";
+console.log("2. مدل هنوز آماده نیست");
+
+status.textContent="⏳ مدل هنوز آماده نشده است";
+
 return;
 
 }
 
-try{
+console.log("2. مدل آماده است");
+
+if(!navigator.mediaDevices){
+
+console.error("mediaDevices وجود ندارد");
+
+status.textContent="❌ مرورگر به میکروفون دسترسی ندارد";
+
+return;
+
+}
+
+console.log("3. درخواست دسترسی به میکروفون");
 
 stream=await navigator.mediaDevices.getUserMedia({
 audio:true
 });
 
-audioContext=new AudioContext({
-sampleRate:16000
+console.log("4. میکروفون با موفقیت فعال شد");
+
+status.textContent="🎙️ میکروفون فعال شد";
+
+audioContext=new AudioContext();
+
+console.log(
+"5. AudioContext:",
+audioContext.sampleRate
+);
+
+recognizer=new model.KaldiRecognizer(
+audioContext.sampleRate
+);
+
+console.log("6. Recognizer ساخته شد");
+
+recognizer.setWords(true);
+
+recognizer.on("result",message=>{
+
+console.log(
+"Vosk result:",
+message
+);
+
+if(
+message.result &&
+message.result.text
+){
+
+result.textContent=
+message.result.text;
+
+}
+
+});
+
+recognizer.on("partialresult",message=>{
+
+console.log(
+"Vosk partial:",
+message
+);
+
+if(
+message.result &&
+message.result.partial
+){
+
+result.textContent=
+message.result.partial;
+
+}
+
 });
 
 microphone=
-audioContext.createMediaStreamSource(stream);
-
-recognizer=new model.KaldiRecognizer(
-16000
+audioContext.createMediaStreamSource(
+stream
 );
 
-recognizer.on("result",event=>{
-
-const text=event.result.text;
-
-if(text){
-
-console.log("Vosk:",text);
-
-result.textContent=text;
-
-}
-
-});
-
-recognizer.on("partialresult",event=>{
-
-const text=event.result.partial;
-
-if(text){
-
-result.textContent=text;
-
-}
-
-});
+console.log("7. microphone source ساخته شد");
 
 processor=
 audioContext.createScriptProcessor(
@@ -110,14 +156,24 @@ recognizer.acceptWaveform(input);
 
 };
 
+console.log("8. processor ساخته شد");
+
 microphone.connect(processor);
 
 processor.connect(
 audioContext.destination
 );
 
-status.textContent="🎙️ میکروفون فعال است";
-result.textContent="صحبت کن...";
+console.log("9. اتصال صوت کامل شد");
+
+status.textContent=
+"🎙️ در حال شنیدن...";
+
+result.textContent=
+"صحبت کنید";
+
+startBtn.disabled=true;
+stopBtn.disabled=false;
 
 }catch(error){
 
@@ -126,13 +182,19 @@ console.error(
 error
 );
 
-status.textContent="❌ خطا در میکروفون";
+status.textContent=
+"❌ خطا در میکروفون";
+
+result.textContent=
+error.message;
 
 }
 
 }
 
 function stopMicrophone(){
+
+console.log("توقف میکروفون");
 
 if(processor){
 
@@ -158,6 +220,13 @@ stream=null;
 
 }
 
+if(recognizer){
+
+recognizer.remove();
+recognizer=null;
+
+}
+
 if(audioContext){
 
 audioContext.close();
@@ -165,20 +234,27 @@ audioContext=null;
 
 }
 
-status.textContent="⏹️ میکروفون متوقف شد";
+status.textContent=
+"⏹️ میکروفون متوقف شد";
+
+result.textContent=
+"میکروفون متوقف شد";
+
+startBtn.disabled=false;
+stopBtn.disabled=true;
 
 }
 
-loadVosk();
-
-document.getElementById("startButton")
-.addEventListener(
+startBtn.addEventListener(
 "click",
 startMicrophone
 );
 
-document.getElementById("stopButton")
-.addEventListener(
+stopBtn.addEventListener(
 "click",
 stopMicrophone
 );
+
+stopBtn.disabled=true;
+
+loadVosk();
