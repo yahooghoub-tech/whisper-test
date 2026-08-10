@@ -9,19 +9,19 @@ async function loadVosk(){
 
 try{
 
-status.textContent="⏳ در حال بارگذاری مدل Vosk...";
+status.textContent="⏳ در حال بارگذاری مدل فارسی Vosk...";
 
 console.log("Vosk:",Vosk);
 
 model=await Vosk.createModel(
-"./model/vosk-model-small-fa-0.42"
+"./models/vosk-model-small-fa-0.42.zip"
 );
 
-console.log("Vosk model:",model);
+console.log("Vosk model loaded:",model);
 
-status.textContent="✅ مدل Vosk با موفقیت بارگذاری شد";
+status.textContent="✅ مدل فارسی Vosk آماده است";
 
-result.textContent="مدل آماده است";
+result.textContent="مدل با موفقیت آماده شد";
 
 }catch(error){
 
@@ -30,10 +30,10 @@ console.error(
 error
 );
 
-status.textContent="❌ مدل Vosk بارگذاری نشد";
+status.textContent="❌ خطا در بارگذاری Vosk";
 
 result.textContent=
-"خطا در بارگذاری مدل";
+"مدل بارگذاری نشد";
 
 }
 
