@@ -1,6 +1,25 @@
+
 const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+if("Notification" in window){
+if(Notification.permission==="default"){
+Notification.requestPermission().then(permission=>{
+console.log("Notification permission:",permission);
+});
+}
+}
+
+function showBrowserNotification(title,message){
+if(!("Notification" in window))return;
+if(Notification.permission==="granted"){
+new Notification(title,{
+body:message
+});
+}
+}
+
 const students=[
 {name:"مهان احمدی"},
 {name:"پارسا بکایی"},
@@ -26,8 +45,10 @@ const students=[
 {name:"میثم نگهداری"},
 {name:"مازیار نگهداری"}
 ];
+
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");
+
 function createStudents(){
 studentsContainer.innerHTML="";
 students.forEach(student=>{
@@ -39,9 +60,11 @@ button.addEventListener("click",()=>sendStudent(student));
 studentsContainer.appendChild(button);
 });
 }
+
 function findButton(name){
 return [...document.querySelectorAll(".student-button")].find(button=>button.dataset.name===name);
 }
+
 function updateButton(call){
 const button=findButton(call.student_name);
 if(!button)return;
@@ -56,6 +79,7 @@ button.querySelector(".student-status").innerText="(ارسال شد)";
 }
 button.querySelector(".student-time").innerText=call.sent_time||call.received_time||call.called_time||"";
 }
+
 async function loadCalls(){
 const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","ششم-1").order("id",{ascending:true});
 if(error){
@@ -65,10 +89,16 @@ return;
 data.forEach(updateButton);
 updateCount(data);
 }
+
 function updateCount(data){
+if(!Array.isArray(data)){
+console.error("updateCount: داده آرایه نیست:",data);
+return;
+}
 const active=data.filter(call=>call.status!=="ارسال شد");
 callCount.innerText=active.length+" فراخوان";
 }
+
 async function sendStudent(student){
 const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name","ششم-1").neq("status","ارسال شد").order("id",{ascending:false}).limit(1);
 if(error){
@@ -89,24 +119,35 @@ return;
 }
 updateButton(updated);
 loadCalls();
+showBrowserNotification(
+"📤 ارسال دانش‌آموز",
+student.name+" ارسال شد"
+);
 }
+
 createStudents();
 loadCalls();
+
 supabaseClient.channel("click-realtime").on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls"},payload=>{
-    const call=payload.new;
-    
-    const button=findButton(call.student_name,call.class_name);
-    
-    if(button){
-    updateButton(button,call);
-    updateCount(call.class_name);
-    }
-    
-    if(call.status==="ارسال شد"){
-    showBrowserNotification(
-    "📤 ارسال دانش‌آموز",
-    call.student_name+" توسط معلم ارسال شد"
-    );
-    }
-    
-    }).subscribe();
+const call=payload.new;
+if(call.class_name!=="ششم-1")return;
+const button=findButton(call.student_name);
+if(button){
+updateButton(call);
+}
+loadCalls();
+if(call.status==="دریافت فراخوان"){
+showBrowserNotification(
+"📢 فراخوان جدید",
+call.student_name+" فراخوان شد"
+);
+}
+if(call.status==="ارسال شد"){
+showBrowserNotification(
+"📤 ارسال دانش‌آموز",
+call.student_name+" توسط معلم ارسال شد"
+);
+}
+}).subscribe(status=>{
+console.log("Realtime teacher status:",status);
+});
