@@ -476,7 +476,8 @@ if(call.status==="فراخوان شد"){
     if(notificationsEnabled){
     showBrowserNotification("📢 فراخوان جدید",call.student_name+" فراخوان شد");
     }
-    })
+    }
+})
 .on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls",filter:"class_name=eq.ششم-1"},payload=>{
 const call=payload.new;
 updateButton(call);
