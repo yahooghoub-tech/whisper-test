@@ -311,349 +311,88 @@
         overflow-wrap:break-word;
         }
         }  
-       
+        
 
-
-
-
-
-#teacherSendNotification{
-    position:fixed;
-    top:25px;
-    right:25px;
-    width:340px;
-    min-height:90px;
-    background:rgba(20,25,45,.96);
-    backdrop-filter:blur(18px);
-    border:1px solid rgba(0,200,255,.45);
-    border-radius:18px;
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.35),
-        0 0 25px rgba(0,200,255,.18);
-    color:white;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:16px;
-    z-index:999999;
-    animation:teacherNotificationIn .45s ease;
-    direction:rtl;
-}
-
-.teacher-notification-icon{
-    width:52px;
-    height:52px;
-    min-width:52px;
-    border-radius:15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:27px;
-    background:linear-gradient(
-        135deg,
-        #00c6ff,
-        #0072ff
-    );
-    box-shadow:
-        0 0 20px rgba(0,170,255,.45);
-}
-
-.teacher-notification-content{
-    flex:1;
-    text-align:right;
-}
-
-.teacher-notification-title{
-    font-size:14px;
-    color:#7ddfff;
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-.teacher-notification-name{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:3px;
-}
-
-.teacher-notification-class{
-    font-size:13px;
-    color:#c5c9d6;
-}
-
-.teacher-notification-close{
-    position:absolute;
-    left:8px;
-    top:6px;
-    border:none;
-    background:transparent;
-    color:#aaa;
-    font-size:22px;
-    cursor:pointer;
-}
-
-.teacher-notification-close:hover{
-    color:white;
-}
-
-#teacherSendNotification.hide{
-    animation:teacherNotificationOut .4s ease forwards;
-}
-
-@keyframes teacherNotificationIn{
-
-    from{
+        
+        .teacher-send-popup{
+        position:fixed;
+        top:25px;
+        right:25px;
+        width:360px;
+        max-width:calc(100% - 30px);
+        background:rgba(20,25,35,.97);
+        color:#fff;
+        border:2px solid #22c55e;
+        border-radius:18px;
+        padding:16px;
+        display:flex;
+        align-items:center;
+        gap:14px;
+        box-shadow:0 10px 35px rgba(0,0,0,.45);
+        z-index:999999;
+        transform:translateX(450px);
         opacity:0;
-        transform:translateX(100px) scale(.9);
-    }
-
-    to{
-        opacity:1;
-        transform:translateX(0) scale(1);
-    }
-
-}
-
-@keyframes teacherNotificationOut{
-
-    from{
-        opacity:1;
+        pointer-events:none;
+        transition:
+        transform .4s ease,
+        opacity .4s ease;
+        direction:rtl;
+        }
+        
+        .teacher-send-popup.show{
         transform:translateX(0);
-    }
-
-    to{
-        opacity:0;
-        transform:translateX(100px);
-    }
-
-}
-
-@media(max-width:600px){
-
-    #teacherSendNotification{
+        opacity:1;
+        pointer-events:auto;
+        }
+        
+        .teacher-send-popup-icon{
+        width:50px;
+        height:50px;
+        min-width:50px;
+        border-radius:50%;
+        background:#22c55e;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:25px;
+        }
+        
+        .teacher-send-popup-content{
+        flex:1;
+        }
+        
+        .teacher-send-popup-title{
+        font-size:17px;
+        font-weight:800;
+        margin-bottom:6px;
+        }
+        
+        .teacher-send-popup-text{
+        font-size:14px;
+        line-height:1.8;
+        color:#e5e7eb;
+        }
+        
+        .teacher-send-popup-close{
+        border:0;
+        background:transparent;
+        color:#aaa;
+        font-size:27px;
+        cursor:pointer;
+        padding:2px 6px;
+        }
+        
+        .teacher-send-popup-close:hover{
+        color:#fff;
+        }
+        
+        @media(max-width:600px){
+        
+        .teacher-send-popup{
         top:15px;
-        right:12px;
-        left:12px;
-        width:auto;
-    }
-
-}
-
-
-.teacher-send-popup{
-position:fixed;
-top:25px;
-right:25px;
-width:min(420px,calc(100% - 30px));
-min-height:90px;
-background:rgba(20,25,35,.96);
-border:2px solid #00d9ff;
-border-radius:18px;
-box-shadow:0 10px 35px rgba(0,0,0,.45),0 0 25px rgba(0,217,255,.25);
-display:flex;
-align-items:center;
-gap:15px;
-padding:15px 18px;
-z-index:999999;
-direction:rtl;
-opacity:0;
-transform:translateX(120%);
-pointer-events:none;
-transition:all .45s ease;
-}
-
-.teacher-send-popup.show{
-opacity:1;
-transform:translateX(0);
-pointer-events:auto;
-}
-
-.teacher-send-popup-icon{
-width:58px;
-height:58px;
-min-width:58px;
-border-radius:50%;
-background:rgba(0,217,255,.12);
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.teacher-send-popup-content{
-flex:1;
-}
-
-.teacher-send-popup-title{
-font-size:18px;
-font-weight:800;
-color:#00d9ff;
-margin-bottom:7px;
-}
-
-.teacher-send-popup-text{
-font-size:14px;
-line-height:1.8;
-color:#fff;
-}
-
-.teacher-send-popup-text strong{
-color:#ffd43b;
-}
-
-.teacher-send-popup-close{
-width:30px;
-height:30px;
-border:0;
-border-radius:50%;
-background:rgba(255,255,255,.1);
-color:#fff;
-font-size:23px;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.teacher-send-popup-close:hover{
-background:#ff4757;
-}
-
-
-
-
-.walking-person{
-position:relative;
-display:flex;
-align-items:center;
-justify-content:center;
-overflow:hidden;
-}
-
-.person{
-position:relative;
-width:32px;
-height:42px;
-animation:personWalk .5s infinite alternate ease-in-out;
-}
-
-.head{
-position:absolute;
-width:10px;
-height:10px;
-border-radius:50%;
-background:#fff;
-top:0;
-left:11px;
-}
-
-.body{
-position:absolute;
-width:7px;
-height:18px;
-border-radius:5px;
-background:#fff;
-top:10px;
-left:13px;
-}
-
-.arm{
-position:absolute;
-width:5px;
-height:17px;
-border-radius:5px;
-background:#fff;
-top:11px;
-transform-origin:top center;
-}
-
-.arm-left{
-left:9px;
-transform:rotate(30deg);
-animation:armLeft .5s infinite alternate ease-in-out;
-}
-
-.arm-right{
-right:8px;
-transform:rotate(-30deg);
-animation:armRight .5s infinite alternate ease-in-out;
-}
-
-.leg{
-position:absolute;
-width:5px;
-height:18px;
-border-radius:5px;
-background:#fff;
-top:26px;
-transform-origin:top center;
-}
-
-.leg-left{
-left:12px;
-animation:legLeft .5s infinite alternate ease-in-out;
-}
-
-.leg-right{
-right:11px;
-animation:legRight .5s infinite alternate ease-in-out;
-}
-
-@keyframes personWalk{
-
-0%{
-transform:translateY(1px);
-}
-
-100%{
-transform:translateY(-2px);
-}
-
-}
-
-@keyframes legLeft{
-
-0%{
-transform:rotate(28deg);
-}
-
-100%{
-transform:rotate(-28deg);
-}
-
-}
-
-@keyframes legRight{
-
-0%{
-transform:rotate(-28deg);
-}
-
-100%{
-transform:rotate(28deg);
-}
-
-}
-
-@keyframes armLeft{
-
-0%{
-transform:rotate(-25deg);
-}
-
-100%{
-transform:rotate(35deg);
-}
-
-}
-
-@keyframes armRight{
-
-0%{
-transform:rotate(25deg);
-}
-
-100%{
-transform:rotate(-35deg);
-}
-
-}
+        right:15px;
+        width:calc(100% - 30px);
+        }
+        
+        }
+       
