@@ -384,73 +384,13 @@ updateCount(student.className);
 
 }
 
-
-
 function updateButton(button,call){
-
-    button.classList.remove(
-        "pending",
-        "called",
-        "sent"
-    );
-
-
-    if(call.status==="ارسال شد"){
-
-        button.classList.add("sent");
-
-        button.querySelector(
-            ".student-status"
-        ).textContent="🟢 ارسال شد";
-
-    }
-    else if(call.status==="دریافت فراخوان"){
-
-        button.classList.add("called");
-
-        button.querySelector(
-            ".student-status"
-        ).textContent="🟠 دریافت شد";
-
-    }
-    else{
-
-        button.classList.add("called");
-
-        button.querySelector(
-            ".student-status"
-        ).textContent="🔴 فراخوان";
-
-    }
-
-
-    let timeText="";
-
-
-    if(call.called_time){
-
-        timeText=
-        "🕐 فراخوان: "+
-        call.called_time;
-
-    }
-
-
-    if(call.sent_time){
-
-        timeText+=
-        "<br>📤 ارسال: "+
-        call.sent_time;
-
-    }
-
-
-    button.querySelector(
-        ".status-time"
-    ).innerHTML=timeText;
-
+button.classList.remove("pending","called","sent");
+if(call.status==="ارسال شد")button.classList.add("sent");
+else button.classList.add("called");
+button.querySelector(".student-status").textContent=`(${call.status})`;
+button.querySelector(".status-time").textContent=call.called_time||"";
 }
-
 
 function updateCount(className){
 const box=document.getElementById(classId(className));
@@ -530,358 +470,93 @@ resetButton.addEventListener("click",async()=>{
     });
 
 
-    function showTeacherSendNotification(call){
-    
-        const old=document.getElementById("teacherSendNotification");
-    
-        if(old)old.remove();
-    
-        const notification=document.createElement("div");
-    
-        notification.id="teacherSendNotification";
-    
-        notification.innerHTML=`
-    
-            <div class="teacher-notification-icon">
-                🔔
-            </div>
-    
-            <div class="teacher-notification-content">
-    
-                <div class="teacher-notification-title">
-                    دانش‌آموز ارسال شد
-                </div>
-    
-                <div class="teacher-notification-name">
-                    ${call.student_name}
-                </div>
-    
-                <div class="teacher-notification-class">
-                    کلاس ${call.class_name}
-                </div>
-    
-            </div>
-    
-            <button class="teacher-notification-close">
-                ×
-            </button>
-    
-        `;
-    
-        document.body.appendChild(notification);
-    
-        notification.querySelector(
-            ".teacher-notification-close"
-        ).onclick=()=>{
-            notification.remove();
-        };
-    
-        setTimeout(()=>{
-    
-            if(notification){
-    
-                notification.classList.add("hide");
-    
-                setTimeout(()=>{
-                    notification.remove();
-                },400);
-    
-            }
-    
-        },6000);
-    
-        playTeacherSendSound();
-    
-        if("Notification" in window){
-    
-            if(Notification.permission==="granted"){
-    
-                new Notification(
-                    "🔔 ارسال دانش‌آموز",
-                    {
-                        body:
-                        `${call.student_name} از کلاس ${call.class_name}`,
-                        icon:"./icon-192.png",
-                        tag:"teacher-send-"+call.id
-                    }
-                );
-    
-            }
-    
-        }
-    
-    }
-    
-    
-    function playTeacherSendSound(){
-    
-        try{
-    
-            const AudioContext=
-            window.AudioContext||
-            window.webkitAudioContext;
-    
-            const audioContext=
-            new AudioContext();
-    
-            const oscillator=
-            audioContext.createOscillator();
-    
-            const gain=
-            audioContext.createGain();
-    
-            oscillator.type="sine";
-    
-            oscillator.frequency.setValueAtTime(
-                880,
-                audioContext.currentTime
-            );
-    
-            oscillator.frequency.setValueAtTime(
-                1175,
-                audioContext.currentTime+0.12
-            );
-    
-            gain.gain.setValueAtTime(
-                0.0001,
-                audioContext.currentTime
-            );
-    
-            gain.gain.exponentialRampToValueAtTime(
-                0.25,
-                audioContext.currentTime+0.02
-            );
-    
-            gain.gain.exponentialRampToValueAtTime(
-                0.0001,
-                audioContext.currentTime+0.5
-            );
-    
-            oscillator.connect(gain);
-    
-            gain.connect(audioContext.destination);
-    
-            oscillator.start();
-    
-            oscillator.stop(
-                audioContext.currentTime+0.5
-            );
-    
-        }catch(error){
-    
-            console.log(
-                "صدای اعلان اجرا نشد:",
-                error
-            );
-    
-        }
-    
-    }
-    
-    
-    if("Notification" in window){
-    
-        if(Notification.permission==="default"){
-    
-            Notification.requestPermission();
-    
-        }
-    
-    }
-    
-    
-    createClasses();
-    loadCalls();
-    
-    
-
-
-
 createClasses();
 loadCalls();
 
 
-
-const nazemChannel=
 supabaseClient
-.channel(
-    "nazem-realtime-v2"
-)
-
+.channel("nazem-all-classes")
 .on(
-    "postgres_changes",
-    {
-        event:"*",
-        schema:"public",
-        table:"calls"
-    },
-    payload=>{
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"calls"
+},
+payload=>{
+const call=payload.new;
 
-        console.log(
-            "🔥 REALTIME ناظم دریافت شد:",
-            payload
-        );
+const button=findButton(
+call.student_name,
+call.class_name
+);
 
-
-        const call=
-        payload.new ||
-        payload.old;
-
-
-        if(!call){
-
-            console.log(
-                "⚠️ اطلاعات فراخوان وجود ندارد"
-            );
-
-            return;
-
-        }
+if(button){
+updateButton(button,call);
+updateCount(call.class_name);
+}
 
 
-        const button=
-        findButton(
-            call.student_name,
-            call.class_name
-        );
-
-
-        console.log(
-            "👤 دانش‌آموز:",
-            call.student_name
-        );
-
-        console.log(
-            "🏫 کلاس:",
-            call.class_name
-        );
-
-        console.log(
-            "📌 وضعیت:",
-            call.status
-        );
-
-
-        if(
-            payload.eventType==="INSERT"
-        ){
-
-            if(button){
-
-                updateButton(
-                    button,
-                    call
-                );
-
-                updateCount(
-                    call.class_name
-                );
-
-            }
-
-            return;
-
-        }
-
-
-        if(
-            payload.eventType==="UPDATE"
-        ){
-
-            console.log(
-                "🔄 UPDATE دریافت شد"
-            );
-
-
-            if(button){
-
-                updateButton(
-                    button,
-                    call
-                );
-
-                updateCount(
-                    call.class_name
-                );
-
-
-                console.log(
-                    "✅ دکمه ناظم آپدیت شد"
-                );
-
-            }
-            else{
-
-                console.log(
-                    "❌ دکمه دانش‌آموز پیدا نشد:",
-                    call.student_name,
-                    call.class_name
-                );
-
-            }
-
-
-            if(
-                call.status==="ارسال شد"
-            ){
-
-                console.log(
-                    "🟢 ارسال دانش‌آموز توسط معلم ثبت شد:",
-                    call.student_name
-                );
-
-            }
-
-            return;
-
-        }
-
-
-        if(
-            payload.eventType==="DELETE"
-        ){
-
-            console.log(
-                "🗑️ DELETE دریافت شد"
-            );
-
-
-            if(button){
-
-                button.classList.remove(
-                    "called",
-                    "sent"
-                );
-
-                button.classList.add(
-                    "pending"
-                );
-
-                button.querySelector(
-                    ".student-status"
-                ).textContent="";
-
-                button.querySelector(
-                    ".status-time"
-                ).textContent="";
-
-                updateCount(
-                    call.class_name
-                );
-
-            }
-
-        }
-
-    }
+}
 )
+.on(
+"postgres_changes",
+{
+event:"UPDATE",
+schema:"public",
+table:"calls"
+},
+payload=>{
+const call=payload.new;
 
+const button=findButton(
+call.student_name,
+call.class_name
+);
 
+if(button){
+updateButton(button,call);
+updateCount(call.class_name);
+}
+
+}
+)
+.on(
+"postgres_changes",
+{
+event:"DELETE",
+schema:"public",
+table:"calls"
+},
+payload=>{
+const call=payload.old;
+
+if(!call){
+return;
+}
+
+const button=findButton(
+call.student_name,
+call.class_name
+);
+
+if(button){
+button.classList.remove("called","sent");
+button.classList.add("pending");
+
+button.querySelector(".student-status").textContent="";
+button.querySelector(".status-time").textContent="";
+
+updateCount(call.class_name);
+}
+
+console.log(
+"فراخوان حذف شد:",
+call.student_name,
+call.class_name
+);
+}
+)
 .subscribe(status=>{
-
-    console.log(
-        "📡 وضعیت Realtime ناظم:",
-        status
-    );
-
+console.log("Realtime تمام کلاس‌ها:",status);
 });
