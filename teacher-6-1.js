@@ -104,6 +104,29 @@ button.querySelector(".student-time").innerText=call.sent_time||call.received_ti
 }
 
 
+function resetStudentButton(call){
+
+const button=findButton(call.student_name);
+
+if(!button)return;
+
+button.classList.remove(
+"called",
+"sent",
+"received"
+);
+
+button.classList.add("pending");
+
+button.querySelector(".student-status").innerText="";
+
+button.querySelector(".student-time").innerText="";
+
+}
+
+
+
+
 async function loadCalls(){
 const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","ششم-1").order("id",{ascending:true});
 if(error){
@@ -122,6 +145,41 @@ return;
 const active=data.filter(call=>call.status!=="ارسال شد");
 callCount.innerText=active.length+" فراخوان";
 }
+
+function resetTeacherPanel(){
+
+document.querySelectorAll(".student-button").forEach(button=>{
+
+button.classList.remove(
+"called",
+"sent",
+"received"
+);
+
+button.classList.add("pending");
+
+const status=
+button.querySelector(".student-status");
+
+const time=
+button.querySelector(".student-time");
+
+if(status){
+status.innerText="";
+}
+
+if(time){
+time.innerText="";
+}
+
+});
+
+callCount.innerText="0 فراخوان";
+
+console.log("🔄 صفحه معلم بدون Refresh ریست شد");
+
+}
+
 
 async function sendStudent(student){
 const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name","ششم-1").neq("status","ارسال شد").order("id",{ascending:false}).limit(1);
@@ -194,35 +252,66 @@ loadCalls();
 }
 )
 .on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"calls",
-filter:"class_name=eq.ششم-1"
-},
-payload=>{
-const call=payload.new;
-
-console.log("📤 تغییر وضعیت:",call);
-
-const button=findButton(call.student_name);
-
-if(button){
-updateButton(call);
-}
-
-loadCalls();
-
-if(call.status==="ارسال شد"){
-showBrowserNotification(
-"📤 ارسال دانش‌آموز",
-call.student_name+" ارسال شد"
-);
-}
-
-}
-)
-.subscribe(status=>{
-console.log("Realtime teacher status:",status);
-});
+    "postgres_changes",
+    {
+    event:"UPDATE",
+    schema:"public",
+    table:"calls",
+    filter:"class_name=eq.ششم-1"
+    },
+    payload=>{
+    
+    const call=payload.new;
+    
+    console.log("📤 تغییر وضعیت:",call);
+    
+    const button=findButton(call.student_name);
+    
+    if(button){
+    updateButton(call);
+    }
+    
+    loadCalls();
+    
+    if(call.status==="ارسال شد"){
+    
+    showBrowserNotification(
+    "📤 ارسال دانش‌آموز",
+    call.student_name+" ارسال شد"
+    );
+    
+    }
+    
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"DELETE",
+    schema:"public",
+    table:"calls",
+    filter:"class_name=eq.ششم-1"
+    },
+    payload=>{
+    
+    console.log(
+    "🗑️ فراخوان حذف شد:",
+    payload.old
+    );
+    
+    resetStudentButton(payload.old);
+    
+    callCount.innerText="0 فراخوان";
+    
+    }
+    )
+    
+    .subscribe(status=>{
+    
+    console.log(
+    "Realtime teacher status:",
+    status
+    );
+    
+    });

@@ -429,17 +429,45 @@ box.style.display=visible?"":"none";
 });
 
 resetButton.addEventListener("click",async()=>{
-if(!confirm("آیا تمام فراخوان‌ها حذف شوند؟"))return;
-const {error}=await supabaseClient.from("calls").delete().gte("id",0);
-if(error){console.error(error);alert("خطا در حذف فراخوان‌ها");return;}
-document.querySelectorAll(".student-button").forEach(button=>{
-button.classList.remove("called","sent");
-button.classList.add("pending");
-button.querySelector(".student-status").textContent="";
-button.querySelector(".status-time").textContent="";
-});
-document.querySelectorAll(".called-total").forEach(counter=>counter.textContent="0");
-});
+
+    if(!confirm("آیا تمام فراخوان‌ها حذف شوند؟"))return;
+    
+    const {error}=await supabaseClient
+    .from("calls")
+    .delete()
+    .gte("id",0);
+    
+    if(error){
+    
+    console.error(error);
+    
+    alert("خطا در حذف فراخوان‌ها");
+    
+    return;
+    
+    }
+    
+    document.querySelectorAll(".student-button").forEach(button=>{
+    
+    button.classList.remove("called","sent");
+    
+    button.classList.add("pending");
+    
+    button.querySelector(".student-status").textContent="";
+    
+    button.querySelector(".status-time").textContent="";
+    
+    });
+    
+    document.querySelectorAll(".called-total").forEach(counter=>{
+    
+    counter.textContent="0";
+    
+    });
+    
+    console.log("✅ تمام فراخوان‌ها در ناظم ریست شدند");
+    
+    });
 
 
 createClasses();
