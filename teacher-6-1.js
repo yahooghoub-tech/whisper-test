@@ -129,109 +129,37 @@ if(Notification.permission==="granted"){
 }
 }
 
-let audioContext=null;
+let notificationAudio=null;
 let soundEnabled=false;
 
-function setupSound(){
-
-const button=
+const enableSoundButton=
 document.getElementById("enableSoundButton");
 
-if(!button){
+if(enableSoundButton){
 
-console.error(
-"❌ دکمه enableSoundButton در HTML پیدا نشد"
-);
-
-return;
-}
-
-console.log(
-"✅ دکمه فعال‌سازی صدا پیدا شد"
-);
-
-button.addEventListener("click",async()=>{
-
-console.log(
-"🔘 روی فعال‌سازی صدا کلیک شد"
-);
+enableSoundButton.addEventListener("click",async()=>{
 
 try{
 
-const AudioContext=
-window.AudioContext||
-window.webkitAudioContext;
+notificationAudio=
+new Audio("notification.mp3");
 
-if(!AudioContext){
+notificationAudio.preload="auto";
 
-alert(
-"مرورگر گوشی از Web Audio پشتیبانی نمی‌کند"
-);
+notificationAudio.volume=1;
 
-return;
-}
+await notificationAudio.play();
 
-if(!audioContext){
+notificationAudio.pause();
 
-audioContext=
-new AudioContext();
-
-}
-
-if(audioContext.state!=="running"){
-
-await audioContext.resume();
-
-}
-
-console.log(
-"🎵 وضعیت AudioContext:",
-audioContext.state
-);
-
-const oscillator=
-audioContext.createOscillator();
-
-const gain=
-audioContext.createGain();
-
-oscillator.type="sine";
-
-oscillator.frequency.value=880;
-
-gain.gain.setValueAtTime(
-0.001,
-audioContext.currentTime
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.35,
-audioContext.currentTime+0.02
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-audioContext.currentTime+0.4
-);
-
-oscillator.connect(gain);
-
-gain.connect(
-audioContext.destination
-);
-
-oscillator.start();
-
-oscillator.stop(
-audioContext.currentTime+0.4
-);
+notificationAudio.currentTime=0;
 
 soundEnabled=true;
 
-button.innerText=
+enableSoundButton.innerText=
 "🔊 صدای فراخوان فعال است";
 
-button.disabled=true;
+enableSoundButton.disabled=true;
 
 console.log(
 "✅ صدای فراخوان فعال شد"
@@ -240,13 +168,12 @@ console.log(
 }catch(error){
 
 console.error(
-"❌ خطای فعال‌سازی صدا:",
+"❌ خطا در فعال‌سازی صدای فراخوان:",
 error
 );
 
 alert(
-"خطا در فعال‌سازی صدا: "+
-error.message
+"فعال‌سازی صدا انجام نشد"
 );
 
 }
@@ -257,88 +184,37 @@ error.message
 
 function playNotificationSound(){
 
-if(!soundEnabled){
+if(!soundEnabled||!notificationAudio){
 
 console.log(
-"⚠️ صدای فراخوان فعال نشده"
+"⚠️ صدای فراخوان فعال نشده است"
 );
 
 return;
-}
 
-if(!audioContext){
-
-console.log(
-"⚠️ AudioContext وجود ندارد"
-);
-
-return;
 }
 
 try{
 
-if(audioContext.state!=="running"){
+notificationAudio.currentTime=0;
 
-audioContext.resume();
+notificationAudio.play().catch(error=>{
 
-}
-
-const now=
-audioContext.currentTime;
-
-const oscillator=
-audioContext.createOscillator();
-
-const gain=
-audioContext.createGain();
-
-oscillator.type="sine";
-
-oscillator.frequency.setValueAtTime(
-880,
-now
+console.error(
+"❌ خطا در پخش موسیقی:",
+error
 );
 
-oscillator.frequency.setValueAtTime(
-660,
-now+0.15
-);
-
-gain.gain.setValueAtTime(
-0.001,
-now
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.35,
-now+0.02
-);
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-now+0.4
-);
-
-oscillator.connect(gain);
-
-gain.connect(
-audioContext.destination
-);
-
-oscillator.start(now);
-
-oscillator.stop(
-now+0.4
-);
+});
 
 console.log(
-"🔊 بوق فراخوان پخش شد"
+"🔊 صدای فراخوان پخش شد"
 );
 
 }catch(error){
 
 console.error(
-"❌ خطای پخش بوق:",
+"❌ خطای صدای فراخوان:",
 error
 );
 
