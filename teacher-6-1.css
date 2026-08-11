@@ -408,3 +408,24 @@ color:#fff !important;
         }
         
         }
+        #enablePushButton{
+            background:#2563eb;
+            color:#fff;
+            border:none;
+            border-radius:12px;
+            padding:10px 16px;
+            font-family:Tahoma,Arial,sans-serif;
+            font-weight:bold;
+            font-size:13px;
+            cursor:pointer;
+            box-shadow:0 4px 10px rgba(37,99,235,.25);
+            }
+            
+            #enablePushButton:hover{
+            background:#1d4ed8;
+            }
+            
+            #enablePushButton:disabled{
+            background:#22c55e;
+            cursor:default;
+            }
