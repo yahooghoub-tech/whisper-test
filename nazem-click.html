@@ -7,30 +7,74 @@
 <link rel="stylesheet" href="click.css">
 </head>
 <body>
-<div class="container">
-<div class="top-bar">
-<h1>📢 سیستم فراخوان دانش‌آموزان</h1>
-<div class="search-box">
-<input id="searchInput" type="text" placeholder="جستجوی نام و نام خانوادگی...">
-</div>
-<button id="resetCalls" class="reset-button">🗑 حذف تمام فراخوان‌ها</button>
-</div>
-<div id="classesContainer"></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="click.js"></script>
-
-<div class="teacher-send-popup-icon walking-person">
-    <div class="person">
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="arm arm-left"></div>
-        <div class="arm arm-right"></div>
-        <div class="leg leg-left"></div>
-        <div class="leg leg-right"></div>
+   
+    <div class="container">
+        <div class="top-bar">
+            <h1>📢 سیستم فراخوان دانش‌آموزان</h1>
+    
+            <div class="search-box">
+                <input id="searchInput"
+                       type="text"
+                       placeholder="جستجوی نام و نام خانوادگی...">
+            </div>
+    
+            <button id="resetCalls"
+                    class="reset-button">
+                🗑 حذف تمام فراخوان‌ها
+            </button>
+        </div>
+    
+        <div id="classesContainer"></div>
     </div>
-</div>
-
-
-</body>
-</html>
+    
+    <div id="nazemCallPopup"
+         class="nazem-call-popup">
+    
+        <div class="nazem-popup-icon walking-person">
+    
+            <div class="person">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="arm arm-left"></div>
+                <div class="arm arm-right"></div>
+                <div class="leg leg-left"></div>
+                <div class="leg leg-right"></div>
+            </div>
+    
+        </div>
+    
+        <div class="nazem-popup-content">
+    
+            <div class="nazem-popup-title">
+                📢 ارسال دانش‌آموز
+            </div>
+    
+            <div id="nazemCallPopupStudent"
+                 class="nazem-popup-student">
+            </div>
+    
+            <div id="nazemCallPopupClass"
+                 class="nazem-popup-class">
+            </div>
+    
+        </div>
+    
+    </div>
+    
+    <button id="enableNazemSoundButton"
+            class="nazem-sound-button">
+        🔇 فعال‌سازی صدای اعلان
+    </button>
+    
+    <audio id="nazemNotificationAudio"
+           preload="auto">
+        <source src="notification.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="click.js"></script>
+    
+    </body>
+    </html>
+   
+    
