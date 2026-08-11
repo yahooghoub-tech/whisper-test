@@ -470,6 +470,173 @@ resetButton.addEventListener("click",async()=>{
     });
 
 
+    function showTeacherSendNotification(call){
+    
+        const old=document.getElementById("teacherSendNotification");
+    
+        if(old)old.remove();
+    
+        const notification=document.createElement("div");
+    
+        notification.id="teacherSendNotification";
+    
+        notification.innerHTML=`
+    
+            <div class="teacher-notification-icon">
+                🔔
+            </div>
+    
+            <div class="teacher-notification-content">
+    
+                <div class="teacher-notification-title">
+                    دانش‌آموز ارسال شد
+                </div>
+    
+                <div class="teacher-notification-name">
+                    ${call.student_name}
+                </div>
+    
+                <div class="teacher-notification-class">
+                    کلاس ${call.class_name}
+                </div>
+    
+            </div>
+    
+            <button class="teacher-notification-close">
+                ×
+            </button>
+    
+        `;
+    
+        document.body.appendChild(notification);
+    
+        notification.querySelector(
+            ".teacher-notification-close"
+        ).onclick=()=>{
+            notification.remove();
+        };
+    
+        setTimeout(()=>{
+    
+            if(notification){
+    
+                notification.classList.add("hide");
+    
+                setTimeout(()=>{
+                    notification.remove();
+                },400);
+    
+            }
+    
+        },6000);
+    
+        playTeacherSendSound();
+    
+        if("Notification" in window){
+    
+            if(Notification.permission==="granted"){
+    
+                new Notification(
+                    "🔔 ارسال دانش‌آموز",
+                    {
+                        body:
+                        `${call.student_name} از کلاس ${call.class_name}`,
+                        icon:"./icon-192.png",
+                        tag:"teacher-send-"+call.id
+                    }
+                );
+    
+            }
+    
+        }
+    
+    }
+    
+    
+    function playTeacherSendSound(){
+    
+        try{
+    
+            const AudioContext=
+            window.AudioContext||
+            window.webkitAudioContext;
+    
+            const audioContext=
+            new AudioContext();
+    
+            const oscillator=
+            audioContext.createOscillator();
+    
+            const gain=
+            audioContext.createGain();
+    
+            oscillator.type="sine";
+    
+            oscillator.frequency.setValueAtTime(
+                880,
+                audioContext.currentTime
+            );
+    
+            oscillator.frequency.setValueAtTime(
+                1175,
+                audioContext.currentTime+0.12
+            );
+    
+            gain.gain.setValueAtTime(
+                0.0001,
+                audioContext.currentTime
+            );
+    
+            gain.gain.exponentialRampToValueAtTime(
+                0.25,
+                audioContext.currentTime+0.02
+            );
+    
+            gain.gain.exponentialRampToValueAtTime(
+                0.0001,
+                audioContext.currentTime+0.5
+            );
+    
+            oscillator.connect(gain);
+    
+            gain.connect(audioContext.destination);
+    
+            oscillator.start();
+    
+            oscillator.stop(
+                audioContext.currentTime+0.5
+            );
+    
+        }catch(error){
+    
+            console.log(
+                "صدای اعلان اجرا نشد:",
+                error
+            );
+    
+        }
+    
+    }
+    
+    
+    if("Notification" in window){
+    
+        if(Notification.permission==="default"){
+    
+            Notification.requestPermission();
+    
+        }
+    
+    }
+    
+    
+    createClasses();
+    loadCalls();
+    
+    
+
+
+
 createClasses();
 loadCalls();
 
@@ -499,28 +666,68 @@ updateCount(call.class_name);
 
 }
 )
+
+
 .on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"calls"
-},
-payload=>{
-const call=payload.new;
+    "postgres_changes",
+    {
+        event:"UPDATE",
+        schema:"public",
+        table:"calls"
+    },
+    payload=>{
 
-const button=findButton(
-call.student_name,
-call.class_name
-);
+        const call=payload.new;
 
-if(button){
-updateButton(button,call);
-updateCount(call.class_name);
-}
+        const oldCall=payload.old;
 
-}
+        const button=findButton(
+            call.student_name,
+            call.class_name
+        );
+
+        if(button){
+
+            updateButton(
+                button,
+                call
+            );
+
+            updateCount(
+                call.class_name
+            );
+
+        }
+
+        if(
+            call.status==="ارسال شد" &&
+            oldCall &&
+            oldCall.status!=="ارسال شد"
+        ){
+
+            console.log(
+                "🔔 معلم دانش‌آموز را ارسال کرد:",
+                call.student_name,
+                call.class_name
+            );
+
+            showTeacherSendNotification(
+                call
+            );
+
+        }
+
+    }
 )
+
+
+
+
+
+
+
+
+
 .on(
 "postgres_changes",
 {

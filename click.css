@@ -312,3 +312,129 @@
         }
         }  
        
+
+
+
+
+
+#teacherSendNotification{
+    position:fixed;
+    top:25px;
+    right:25px;
+    width:340px;
+    min-height:90px;
+    background:rgba(20,25,45,.96);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(0,200,255,.45);
+    border-radius:18px;
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.35),
+        0 0 25px rgba(0,200,255,.18);
+    color:white;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px;
+    z-index:999999;
+    animation:teacherNotificationIn .45s ease;
+    direction:rtl;
+}
+
+.teacher-notification-icon{
+    width:52px;
+    height:52px;
+    min-width:52px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:27px;
+    background:linear-gradient(
+        135deg,
+        #00c6ff,
+        #0072ff
+    );
+    box-shadow:
+        0 0 20px rgba(0,170,255,.45);
+}
+
+.teacher-notification-content{
+    flex:1;
+    text-align:right;
+}
+
+.teacher-notification-title{
+    font-size:14px;
+    color:#7ddfff;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.teacher-notification-name{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:3px;
+}
+
+.teacher-notification-class{
+    font-size:13px;
+    color:#c5c9d6;
+}
+
+.teacher-notification-close{
+    position:absolute;
+    left:8px;
+    top:6px;
+    border:none;
+    background:transparent;
+    color:#aaa;
+    font-size:22px;
+    cursor:pointer;
+}
+
+.teacher-notification-close:hover{
+    color:white;
+}
+
+#teacherSendNotification.hide{
+    animation:teacherNotificationOut .4s ease forwards;
+}
+
+@keyframes teacherNotificationIn{
+
+    from{
+        opacity:0;
+        transform:translateX(100px) scale(.9);
+    }
+
+    to{
+        opacity:1;
+        transform:translateX(0) scale(1);
+    }
+
+}
+
+@keyframes teacherNotificationOut{
+
+    from{
+        opacity:1;
+        transform:translateX(0);
+    }
+
+    to{
+        opacity:0;
+        transform:translateX(100px);
+    }
+
+}
+
+@media(max-width:600px){
+
+    #teacherSendNotification{
+        top:15px;
+        right:12px;
+        left:12px;
+        width:auto;
+    }
+
+}
