@@ -668,6 +668,7 @@ updateCount(call.class_name);
 )
 
 
+
 .on(
     "postgres_changes",
     {
@@ -679,7 +680,10 @@ updateCount(call.class_name);
 
         const call=payload.new;
 
-        const oldCall=payload.old;
+        console.log(
+            "📤 تغییر وضعیت از معلم دریافت شد:",
+            call
+        );
 
         const button=findButton(
             call.student_name,
@@ -699,16 +703,14 @@ updateCount(call.class_name);
 
         }
 
+
         if(
-            call.status==="ارسال شد" &&
-            oldCall &&
-            oldCall.status!=="ارسال شد"
+            call.status==="ارسال شد"
         ){
 
             console.log(
-                "🔔 معلم دانش‌آموز را ارسال کرد:",
-                call.student_name,
-                call.class_name
+                "🟢 دانش‌آموز توسط معلم ارسال شد:",
+                call.student_name
             );
 
             showTeacherSendNotification(
