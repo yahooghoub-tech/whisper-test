@@ -385,6 +385,7 @@ updateCount(student.className);
 }
 
 
+
 function updateButton(button,call){
 
     button.classList.remove(
@@ -402,7 +403,17 @@ function updateButton(button,call){
             ".student-status"
         ).textContent="🟢 ارسال شد";
 
-    }else{
+    }
+    else if(call.status==="دریافت فراخوان"){
+
+        button.classList.add("called");
+
+        button.querySelector(
+            ".student-status"
+        ).textContent="🟠 دریافت شد";
+
+    }
+    else{
 
         button.classList.add("called");
 
@@ -690,81 +701,175 @@ createClasses();
 loadCalls();
 
 
+
+const nazemChannel=
 supabaseClient
-.channel("nazem-all-classes")
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"calls"
-},
-payload=>{
-const call=payload.new;
-
-const button=findButton(
-call.student_name,
-call.class_name
-);
-
-if(button){
-updateButton(button,call);
-updateCount(call.class_name);
-}
-
-
-}
+.channel(
+    "nazem-realtime-v2"
 )
-
-
 
 .on(
     "postgres_changes",
     {
-        event:"UPDATE",
+        event:"*",
         schema:"public",
         table:"calls"
     },
     payload=>{
 
-        const call=payload.new;
-
         console.log(
-            "📤 تغییر وضعیت از معلم دریافت شد:",
-            call
+            "🔥 REALTIME ناظم دریافت شد:",
+            payload
         );
 
-        const button=findButton(
+
+        const call=
+        payload.new ||
+        payload.old;
+
+
+        if(!call){
+
+            console.log(
+                "⚠️ اطلاعات فراخوان وجود ندارد"
+            );
+
+            return;
+
+        }
+
+
+        const button=
+        findButton(
             call.student_name,
             call.class_name
         );
 
-        if(button){
 
-            updateButton(
-                button,
-                call
-            );
+        console.log(
+            "👤 دانش‌آموز:",
+            call.student_name
+        );
 
-            updateCount(
-                call.class_name
-            );
+        console.log(
+            "🏫 کلاس:",
+            call.class_name
+        );
+
+        console.log(
+            "📌 وضعیت:",
+            call.status
+        );
+
+
+        if(
+            payload.eventType==="INSERT"
+        ){
+
+            if(button){
+
+                updateButton(
+                    button,
+                    call
+                );
+
+                updateCount(
+                    call.class_name
+                );
+
+            }
+
+            return;
 
         }
 
 
         if(
-            call.status==="ارسال شد"
+            payload.eventType==="UPDATE"
         ){
 
             console.log(
-                "🟢 دانش‌آموز توسط معلم ارسال شد:",
-                call.student_name
+                "🔄 UPDATE دریافت شد"
             );
 
-            showTeacherSendNotification(
-                call
+
+            if(button){
+
+                updateButton(
+                    button,
+                    call
+                );
+
+                updateCount(
+                    call.class_name
+                );
+
+
+                console.log(
+                    "✅ دکمه ناظم آپدیت شد"
+                );
+
+            }
+            else{
+
+                console.log(
+                    "❌ دکمه دانش‌آموز پیدا نشد:",
+                    call.student_name,
+                    call.class_name
+                );
+
+            }
+
+
+            if(
+                call.status==="ارسال شد"
+            ){
+
+                console.log(
+                    "🟢 ارسال دانش‌آموز توسط معلم ثبت شد:",
+                    call.student_name
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        if(
+            payload.eventType==="DELETE"
+        ){
+
+            console.log(
+                "🗑️ DELETE دریافت شد"
             );
+
+
+            if(button){
+
+                button.classList.remove(
+                    "called",
+                    "sent"
+                );
+
+                button.classList.add(
+                    "pending"
+                );
+
+                button.querySelector(
+                    ".student-status"
+                ).textContent="";
+
+                button.querySelector(
+                    ".status-time"
+                ).textContent="";
+
+                updateCount(
+                    call.class_name
+                );
+
+            }
 
         }
 
@@ -772,49 +877,11 @@ updateCount(call.class_name);
 )
 
 
-
-
-
-
-
-
-
-.on(
-"postgres_changes",
-{
-event:"DELETE",
-schema:"public",
-table:"calls"
-},
-payload=>{
-const call=payload.old;
-
-if(!call){
-return;
-}
-
-const button=findButton(
-call.student_name,
-call.class_name
-);
-
-if(button){
-button.classList.remove("called","sent");
-button.classList.add("pending");
-
-button.querySelector(".student-status").textContent="";
-button.querySelector(".status-time").textContent="";
-
-updateCount(call.class_name);
-}
-
-console.log(
-"فراخوان حذف شد:",
-call.student_name,
-call.class_name
-);
-}
-)
 .subscribe(status=>{
-console.log("Realtime تمام کلاس‌ها:",status);
+
+    console.log(
+        "📡 وضعیت Realtime ناظم:",
+        status
+    );
+
 });
