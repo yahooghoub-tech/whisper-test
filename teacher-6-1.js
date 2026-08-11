@@ -167,14 +167,38 @@ document.getElementById(
 "enablePushButton"
 );
 
-if(enablePushButton){
 
-enablePushButton.addEventListener(
-"click",
-enablePushNotifications
-);
+console.log(
+    "🔔 دکمه Push:",
+    enablePushButton
+    );
 
-}
+
+    if(enablePushButton){
+
+        console.log(
+        "✅ اتصال دکمه Push انجام شد"
+        );
+        
+        enablePushButton.addEventListener(
+        "click",
+        async()=>{
+        
+        console.log(
+        "🔘 دکمه فعال‌سازی Push کلیک شد"
+        );
+        
+        await enablePushNotifications();
+        
+        });
+        
+        }else{
+        
+        console.error(
+        "❌ enablePushButton در HTML پیدا نشد"
+        );
+        
+        }
 if("serviceWorker" in navigator){
 
 window.addEventListener("load",async()=>{
