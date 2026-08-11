@@ -429,3 +429,63 @@ color:#fff !important;
             background:#22c55e;
             cursor:default;
             }
+            .call-popup{
+                position:fixed;
+                top:20px;
+                right:50%;
+                transform:translateX(50%) translateY(-150px);
+                width:min(92%,420px);
+                background:linear-gradient(135deg,#2563eb,#7c3aed);
+                color:#fff;
+                border-radius:22px;
+                padding:22px;
+                text-align:center;
+                box-shadow:0 12px 35px rgba(0,0,0,.3);
+                z-index:99999;
+                opacity:0;
+                visibility:hidden;
+                transition:.4s ease;
+                }
+                
+                .call-popup.show{
+                transform:translateX(50%) translateY(0);
+                opacity:1;
+                visibility:visible;
+                }
+                
+                .call-popup-icon{
+                font-size:42px;
+                margin-bottom:8px;
+                }
+                
+                .call-popup-title{
+                font-size:20px;
+                font-weight:bold;
+                margin-bottom:10px;
+                }
+                
+                .call-popup-student{
+                font-size:24px;
+                font-weight:bold;
+                background:rgba(255,255,255,.18);
+                border-radius:14px;
+                padding:10px;
+                margin:10px 0;
+                }
+                
+                .call-popup-text{
+                font-size:13px;
+                opacity:.9;
+                }
+                
+                @media(max-width:600px){
+                .call-popup{
+                top:12px;
+                width:94%;
+                padding:18px;
+                }
+                
+                .call-popup-student{
+                font-size:21px;
+                }
+                }
