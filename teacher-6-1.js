@@ -286,26 +286,35 @@ loadCalls();
     )
     
     .on(
-    "postgres_changes",
-    {
-    event:"DELETE",
-    schema:"public",
-    table:"calls",
-    filter:"class_name=eq.ششم-1"
-    },
-    payload=>{
-    
-    console.log(
-    "🗑️ فراخوان حذف شد:",
-    payload.old
-    );
-    
-    resetStudentButton(payload.old);
-    
-    callCount.innerText="0 فراخوان";
-    
-    }
-    )
+        "postgres_changes",
+        {
+        event:"DELETE",
+        schema:"public",
+        table:"calls"
+        },
+        payload=>{
+        
+        const deletedCall=payload.old;
+        
+        console.log(
+        "🗑️ DELETE دریافت شد:",
+        deletedCall
+        );
+        
+        if(!deletedCall){
+        return;
+        }
+        
+        if(deletedCall.class_name!=="ششم-1"){
+        return;
+        }
+        
+        resetStudentButton(deletedCall);
+        
+        callCount.innerText="0 فراخوان";
+        
+        }
+        )
     
     .subscribe(status=>{
     
