@@ -116,6 +116,24 @@ console.error("❌ خطای پخش موسیقی:",error);
 
 }
 
+
+function showSendNotification(studentName){
+
+    const popup=document.getElementById("callPopup");
+    const student=document.getElementById("callPopupStudent");
+    
+    student.innerText="📤 "+studentName+" ارسال شد";
+    
+    popup.classList.add("show");
+    
+    playNotificationSound();
+    
+    setTimeout(()=>{
+    popup.classList.remove("show");
+    },5000);
+    
+    }
+
 function showCallPopup(studentName){
 
 const popup=document.getElementById("callPopup");
@@ -470,33 +488,38 @@ loadCalls();
 
 }
 )
-
 .on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"calls",
-filter:"class_name=eq.ششم-1"
-},
-payload=>{
-
-const call=payload.new;
-
-console.log("📤 تغییر وضعیت:",call);
-
-const button=findButton(call.student_name);
-
-if(button){
-
-updateButton(call);
-
-}
-
-loadCalls();
-
-}
-)
+    "postgres_changes",
+    {
+    event:"UPDATE",
+    schema:"public",
+    table:"calls"
+    },
+    payload=>{
+    
+    const call=payload.new;
+    const oldCall=payload.old;
+    
+    const button=findButton(
+    call.student_name,
+    call.class_name
+    );
+    
+    if(button){
+    updateButton(button,call);
+    updateCount(call.class_name);
+    }
+    
+    // فقط یک اعلان هنگام ارسال دانش‌آموز
+    if(
+    oldCall.status!=="ارسال شد" &&
+    call.status==="ارسال شد"
+    ){
+    showSendNotification(call.student_name);
+    }
+    
+    }
+    )
 
 .on(
 "postgres_changes",
