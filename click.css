@@ -520,36 +520,144 @@ width:calc(100% - 30px);
 }
 
 }
+  
 
-.walking-icon span{
-display:inline-block;
-animation:walkingAnimation .65s infinite alternate ease-in-out;
-transform-origin:center bottom;
+
+
+
+.walking-person{
+position:relative;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
 }
 
-@keyframes walkingAnimation{
+.person{
+position:relative;
+width:32px;
+height:42px;
+animation:personWalk .5s infinite alternate ease-in-out;
+}
+
+.head{
+position:absolute;
+width:10px;
+height:10px;
+border-radius:50%;
+background:#fff;
+top:0;
+left:11px;
+}
+
+.body{
+position:absolute;
+width:7px;
+height:18px;
+border-radius:5px;
+background:#fff;
+top:10px;
+left:13px;
+}
+
+.arm{
+position:absolute;
+width:5px;
+height:17px;
+border-radius:5px;
+background:#fff;
+top:11px;
+transform-origin:top center;
+}
+
+.arm-left{
+left:9px;
+transform:rotate(30deg);
+animation:armLeft .5s infinite alternate ease-in-out;
+}
+
+.arm-right{
+right:8px;
+transform:rotate(-30deg);
+animation:armRight .5s infinite alternate ease-in-out;
+}
+
+.leg{
+position:absolute;
+width:5px;
+height:18px;
+border-radius:5px;
+background:#fff;
+top:26px;
+transform-origin:top center;
+}
+
+.leg-left{
+left:12px;
+animation:legLeft .5s infinite alternate ease-in-out;
+}
+
+.leg-right{
+right:11px;
+animation:legRight .5s infinite alternate ease-in-out;
+}
+
+@keyframes personWalk{
 
 0%{
-transform:
-translateY(2px)
-rotate(-8deg);
-}
-
-50%{
-transform:
-translateY(-3px)
-rotate(8deg);
+transform:translateY(1px);
 }
 
 100%{
-transform:
-translateY(2px)
-rotate(-8deg);
+transform:translateY(-2px);
 }
 
 }
 
-.teacher-send-popup.show .walking-icon span{
-animation-duration:.45s;
+@keyframes legLeft{
+
+0%{
+transform:rotate(28deg);
 }
 
+100%{
+transform:rotate(-28deg);
+}
+
+}
+
+@keyframes legRight{
+
+0%{
+transform:rotate(-28deg);
+}
+
+100%{
+transform:rotate(28deg);
+}
+
+}
+
+@keyframes armLeft{
+
+0%{
+transform:rotate(-25deg);
+}
+
+100%{
+transform:rotate(35deg);
+}
+
+}
+
+@keyframes armRight{
+
+0%{
+transform:rotate(25deg);
+}
+
+100%{
+transform:rotate(-35deg);
+}
+
+}
