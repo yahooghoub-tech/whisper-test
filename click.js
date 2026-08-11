@@ -384,13 +384,62 @@ updateCount(student.className);
 
 }
 
+
 function updateButton(button,call){
-button.classList.remove("pending","called","sent");
-if(call.status==="ارسال شد")button.classList.add("sent");
-else button.classList.add("called");
-button.querySelector(".student-status").textContent=`(${call.status})`;
-button.querySelector(".status-time").textContent=call.called_time||"";
+
+    button.classList.remove(
+        "pending",
+        "called",
+        "sent"
+    );
+
+
+    if(call.status==="ارسال شد"){
+
+        button.classList.add("sent");
+
+        button.querySelector(
+            ".student-status"
+        ).textContent="🟢 ارسال شد";
+
+    }else{
+
+        button.classList.add("called");
+
+        button.querySelector(
+            ".student-status"
+        ).textContent="🔴 فراخوان";
+
+    }
+
+
+    let timeText="";
+
+
+    if(call.called_time){
+
+        timeText=
+        "🕐 فراخوان: "+
+        call.called_time;
+
+    }
+
+
+    if(call.sent_time){
+
+        timeText+=
+        "<br>📤 ارسال: "+
+        call.sent_time;
+
+    }
+
+
+    button.querySelector(
+        ".status-time"
+    ).innerHTML=timeText;
+
 }
+
 
 function updateCount(className){
 const box=document.getElementById(classId(className));
