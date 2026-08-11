@@ -170,12 +170,16 @@
     overflow:hidden;
     }
     .student-name{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    flex:1;
-    text-align:right;
-    }
+        width:100%;
+        font-weight:900;
+        white-space:normal;
+        overflow:visible;
+        text-overflow:clip;
+        word-break:normal;
+        overflow-wrap:break-word;
+        line-height:1.6;
+        text-align:center;
+        }
     .student-status{
     font-size:9px;
     font-weight:900;
@@ -271,3 +275,40 @@
     font-size:7px;
     }
     }
+   
+    @media(max-width:1024px){
+        .student-button{
+        min-height:58px;
+        padding:6px 4px;
+        font-size:11px;
+        line-height:1.5;
+        white-space:normal;
+        overflow:visible;
+        }
+        .student-name{
+        font-size:11px;
+        line-height:1.7;
+        white-space:normal;
+        overflow:visible;
+        text-overflow:clip;
+        overflow-wrap:break-word;
+        word-break:normal;
+        }
+        }
+        @media(max-width:600px){
+        .student-button{
+        min-height:58px;
+        padding:5px 3px;
+        font-size:10px;
+        line-height:1.5;
+        }
+        .student-name{
+        font-size:10px;
+        line-height:1.8;
+        white-space:normal;
+        overflow:visible;
+        text-overflow:clip;
+        overflow-wrap:break-word;
+        }
+        }  
+       

@@ -467,41 +467,42 @@ button.querySelector(".status-time").textContent="";
 document.querySelectorAll(".called-total").forEach(counter=>counter.textContent="0");
 });
 
-supabaseClient.channel("teacher-realtime")
-.on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.ششم-1"},payload=>{
+supabaseClient.channel("nazem-realtime")
+.on("postgres_changes",{event:"INSERT",schema:"public",table:"calls"},payload=>{
 const call=payload.new;
+const button=findButton(call.student_name,call.class_name);
+if(!button)return;
+updateButton(button,call);
+updateCount(call.class_name);
 if(call.status==="فراخوان شد"){
-    updateButton(call);
-    updateCount([call]);
-    if(notificationsEnabled){
-    showBrowserNotification("📢 فراخوان جدید",call.student_name+" فراخوان شد");
-    }
-    }
-})
-.on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls",filter:"class_name=eq.ششم-1"},payload=>{
-const call=payload.new;
-updateButton(call);
-updateCount([call]);
-if(call.status==="ارسال شد"){
-showBrowserNotification("📤 ارسال دانش‌آموز",call.student_name+" توسط معلم ارسال شد");
+if(typeof notificationsEnabled==="undefined"||notificationsEnabled){
+showBrowserNotification("📢 فراخوان جدید",call.student_name+" فراخوان شد");
+}
 }
 })
-.subscribe(status=>{
-console.log("Realtime teacher status:",status);
-});
-
-
-supabaseClient.channel("click-delete").on("postgres_changes",{event:"DELETE",schema:"public",table:"calls"},payload=>{
+.on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls"},payload=>{
+const call=payload.new;
+const button=findButton(call.student_name,call.class_name);
+if(!button)return;
+updateButton(button,call);
+updateCount(call.class_name);
+if(call.status==="ارسال شد"){
+if(typeof notificationsEnabled==="undefined"||notificationsEnabled){
+showBrowserNotification("📤 ارسال دانش‌آموز",call.student_name+" توسط معلم ارسال شد");
+}
+}
+})
+.on("postgres_changes",{event:"DELETE",schema:"public",table:"calls"},payload=>{
 const call=payload.old;
 const button=findButton(call.student_name,call.class_name);
-if(button){
+if(!button)return;
 button.classList.remove("called","sent");
 button.classList.add("pending");
 button.querySelector(".student-status").textContent="";
 button.querySelector(".status-time").textContent="";
 updateCount(call.class_name);
-}
-}).subscribe();
+})
+.subscribe(status=>{
+console.log("Realtime nazem status:",status);
+});
 
-createClasses();
-loadCalls();
