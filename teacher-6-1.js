@@ -120,21 +120,62 @@ body:message
 let audioContext=null;
 let soundEnabled=false;
 
-const enableSoundButton=
+function setupSound(){
+
+const button=
 document.getElementById("enableSoundButton");
 
-if(enableSoundButton){
+if(!button){
 
-enableSoundButton.addEventListener("click",async()=>{
+console.error(
+"❌ دکمه enableSoundButton در HTML پیدا نشد"
+);
+
+return;
+}
+
+console.log(
+"✅ دکمه فعال‌سازی صدا پیدا شد"
+);
+
+button.addEventListener("click",async()=>{
+
+console.log(
+"🔘 روی فعال‌سازی صدا کلیک شد"
+);
 
 try{
 
-audioContext=
-new(window.AudioContext||window.webkitAudioContext)();
+const AudioContext=
+window.AudioContext||
+window.webkitAudioContext;
 
-if(audioContext.state==="suspended"){
-await audioContext.resume();
+if(!AudioContext){
+
+alert(
+"مرورگر گوشی از Web Audio پشتیبانی نمی‌کند"
+);
+
+return;
 }
+
+if(!audioContext){
+
+audioContext=
+new AudioContext();
+
+}
+
+if(audioContext.state!=="running"){
+
+await audioContext.resume();
+
+}
+
+console.log(
+"🎵 وضعیت AudioContext:",
+audioContext.state
+);
 
 const oscillator=
 audioContext.createOscillator();
@@ -143,45 +184,57 @@ const gain=
 audioContext.createGain();
 
 oscillator.type="sine";
+
 oscillator.frequency.value=880;
 
 gain.gain.setValueAtTime(
-0.0001,
+0.001,
 audioContext.currentTime
 );
 
 gain.gain.exponentialRampToValueAtTime(
-0.25,
-audioContext.currentTime+0.01
+0.35,
+audioContext.currentTime+0.02
 );
 
 gain.gain.exponentialRampToValueAtTime(
-0.0001,
-audioContext.currentTime+0.18
+0.001,
+audioContext.currentTime+0.4
 );
 
 oscillator.connect(gain);
-gain.connect(audioContext.destination);
+
+gain.connect(
+audioContext.destination
+);
 
 oscillator.start();
+
 oscillator.stop(
-audioContext.currentTime+0.18
+audioContext.currentTime+0.4
 );
 
 soundEnabled=true;
 
-enableSoundButton.innerText=
+button.innerText=
 "🔊 صدای فراخوان فعال است";
 
-enableSoundButton.disabled=true;
+button.disabled=true;
 
-console.log("🔊 صدای فراخوان فعال شد");
+console.log(
+"✅ صدای فراخوان فعال شد"
+);
 
 }catch(error){
 
 console.error(
-"خطا در فعال‌سازی صدا:",
+"❌ خطای فعال‌سازی صدا:",
 error
+);
+
+alert(
+"خطا در فعال‌سازی صدا: "+
+error.message
 );
 
 }
@@ -192,18 +245,34 @@ error
 
 function playNotificationSound(){
 
-if(!soundEnabled||!audioContext){
-console.log("صدای فراخوان هنوز فعال نشده است");
+if(!soundEnabled){
+
+console.log(
+"⚠️ صدای فراخوان فعال نشده"
+);
+
+return;
+}
+
+if(!audioContext){
+
+console.log(
+"⚠️ AudioContext وجود ندارد"
+);
+
 return;
 }
 
 try{
 
-if(audioContext.state==="suspended"){
+if(audioContext.state!=="running"){
+
 audioContext.resume();
+
 }
 
-const now=audioContext.currentTime;
+const now=
+audioContext.currentTime;
 
 const oscillator=
 audioContext.createOscillator();
@@ -220,36 +289,44 @@ now
 
 oscillator.frequency.setValueAtTime(
 660,
-now+0.12
+now+0.15
 );
 
 gain.gain.setValueAtTime(
-0.0001,
+0.001,
 now
 );
 
 gain.gain.exponentialRampToValueAtTime(
-0.3,
-now+0.01
+0.35,
+now+0.02
 );
 
 gain.gain.exponentialRampToValueAtTime(
-0.0001,
-now+0.28
+0.001,
+now+0.4
 );
 
 oscillator.connect(gain);
-gain.connect(audioContext.destination);
+
+gain.connect(
+audioContext.destination
+);
 
 oscillator.start(now);
-oscillator.stop(now+0.28);
 
-console.log("🔊 بوق فراخوان پخش شد");
+oscillator.stop(
+now+0.4
+);
+
+console.log(
+"🔊 بوق فراخوان پخش شد"
+);
 
 }catch(error){
 
 console.error(
-"خطا در پخش صدای فراخوان:",
+"❌ خطای پخش بوق:",
 error
 );
 
@@ -257,6 +334,10 @@ error
 
 }
 
+window.addEventListener(
+"load",
+setupSound
+);
 
 const students=[
 {name:"مهان احمدی"},
