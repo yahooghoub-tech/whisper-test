@@ -331,94 +331,66 @@ function timeNow(){
 return new Date().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
 
-let notifiedSentCalls=new Set();
 
-async function requestNotificationPermission(){
+function showTeacherSendPopup(call){
 
-if(!("Notification" in window)){
+const popup=
+document.getElementById("teacherSendPopup");
 
-console.log("❌ مرورگر اعلان را پشتیبانی نمی‌کند");
+const text=
+document.getElementById("teacherSendPopupText");
 
-return;
-
-}
-
-if(Notification.permission==="default"){
-
-try{
-
-const permission=await Notification.requestPermission();
-
-console.log(
-"🔔 وضعیت اجازه اعلان:",
-permission
-);
-
-}catch(error){
+if(!popup||!text){
 
 console.error(
-"❌ خطا در درخواست اجازه اعلان:",
-error
-);
-
-}
-
-}
-
-}
-
-function showSentStudentNotification(call){
-
-if(!call)return;
-
-if(call.status!=="ارسال شد")return;
-
-if(notifiedSentCalls.has(call.id)){
-
-console.log(
-"⚠️ این اعلان قبلاً ارسال شده:",
-call.student_name
+"❌ عناصر اعلان ارسال دانش‌آموز پیدا نشدند"
 );
 
 return;
 
 }
 
-notifiedSentCalls.add(call.id);
+text.innerHTML=
+`دانش‌آموز <strong>${call.student_name}</strong>
+از کلاس <strong>${call.class_name}</strong>
+توسط معلم ارسال شد.`;
 
-if(!("Notification" in window)){
+popup.classList.add("show");
 
-console.log("❌ Notification API موجود نیست");
+clearTimeout(window.teacherSendPopupTimer);
 
-return;
+window.teacherSendPopupTimer=
+setTimeout(()=>{
 
-}
+popup.classList.remove("show");
 
-if(Notification.permission!=="granted"){
-
-console.log(
-"⚠️ اجازه اعلان مرورگر داده نشده است"
-);
-
-return;
+},7000);
 
 }
 
-new Notification(
-"📤 ارسال دانش‌آموز",
-{
-body:`${call.student_name} توسط معلم ارسال شد`,
-tag:"sent-student-"+call.id,
-renotify:false
-}
-);
+const closeTeacherSendPopup=
+document.getElementById("closeTeacherSendPopup");
 
-console.log(
-"🔔 اعلان ارسال دانش‌آموز:",
-call.student_name
-);
+if(closeTeacherSendPopup){
+
+closeTeacherSendPopup.onclick=()=>{
+
+const popup=
+document.getElementById("teacherSendPopup");
+
+if(popup){
+
+popup.classList.remove("show");
 
 }
+
+};
+
+}
+
+
+
+
 
 
 function createClasses(){
@@ -562,7 +534,7 @@ resetButton.addEventListener("click",async()=>{
 
 createClasses();
 loadCalls();
-requestNotificationPermission();
+
 
 supabaseClient
 .channel("nazem-all-classes")
@@ -591,8 +563,6 @@ updateCount(call.class_name);
 )
 
 
-
-
 .on(
 "postgres_changes",
 {
@@ -602,15 +572,12 @@ table:"calls"
 },
 payload=>{
 
-const oldCall=payload.old;
 const call=payload.new;
+const oldCall=payload.old;
 
 console.log(
-"📡 تغییر وضعیت فراخوان:",
-oldCall.status,
-"→",
-call.status,
-call.student_name
+"📡 تغییر فراخوان دریافت شد:",
+call
 );
 
 const button=findButton(
@@ -627,23 +594,23 @@ updateCount(call.class_name);
 }
 
 if(
+call.status==="ارسال شد" &&
 oldCall &&
-oldCall.status!=="ارسال شد" &&
-call.status==="ارسال شد"
+oldCall.status!=="ارسال شد"
 ){
 
-showSentStudentNotification(call);
+console.log(
+"📤 معلم دانش‌آموز را ارسال کرد:",
+call.student_name,
+call.class_name
+);
+
+showTeacherSendPopup(call);
 
 }
 
 }
 )
-
-
-
-
-
-
 
 .on(
 "postgres_changes",
