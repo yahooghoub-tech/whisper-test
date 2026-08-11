@@ -520,3 +520,36 @@ width:calc(100% - 30px);
 }
 
 }
+
+.walking-icon span{
+display:inline-block;
+animation:walkingAnimation .65s infinite alternate ease-in-out;
+transform-origin:center bottom;
+}
+
+@keyframes walkingAnimation{
+
+0%{
+transform:
+translateY(2px)
+rotate(-8deg);
+}
+
+50%{
+transform:
+translateY(-3px)
+rotate(8deg);
+}
+
+100%{
+transform:
+translateY(2px)
+rotate(-8deg);
+}
+
+}
+
+.teacher-send-popup.show .walking-icon span{
+animation-duration:.45s;
+}
+
