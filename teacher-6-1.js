@@ -836,7 +836,7 @@ const call=payload.new;
 console.log("📢 فراخوان جدید:",call);
 
 if(call.status!=="فراخوان شد")return;
-
+showCallPopup(call.student_name);
 playNotificationSound();
 
 setTimeout(()=>{
@@ -991,3 +991,23 @@ error.message
 }
 
 };
+function showCallPopup(studentName){
+
+    const popup=
+    document.getElementById("callPopup");
+    
+    const student=
+    document.getElementById("callPopupStudent");
+    
+    if(!popup||!student)return;
+    
+    student.innerText=
+    studentName+" فراخوان شد";
+    
+    popup.classList.add("show");
+    
+    setTimeout(()=>{
+    popup.classList.remove("show");
+    },7000);
+    
+    }
