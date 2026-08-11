@@ -3,6 +3,39 @@ const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+const isMobileOrTablet =
+/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if(isMobileOrTablet && "Notification" in window){
+
+if(Notification.permission==="default"){
+
+Notification.requestPermission().then(permission=>{
+
+console.log("مجوز اعلان:",permission);
+
+});
+
+}
+
+}
+
+function showTeacherNotification(title,message){
+
+if(!isMobileOrTablet)return;
+
+if(!("Notification" in window))return;
+
+if(Notification.permission!=="granted")return;
+
+new Notification(title,{
+body:message
+});
+
+}
+
+
+
 if("Notification" in window){
 if(Notification.permission==="default"){
 Notification.requestPermission().then(permission=>{
@@ -229,7 +262,7 @@ if(call.status!=="فراخوان شد")return;
 
 playNotificationSound();
 
-showBrowserNotification(
+showTeacherNotification(
 "📢 فراخوان جدید",
 call.student_name+" از کلاس ششم-1 فراخوان شد"
 );
