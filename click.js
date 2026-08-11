@@ -494,12 +494,7 @@ updateButton(button,call);
 updateCount(call.class_name);
 }
 
-if(call.status==="فراخوان شد"){
-showBrowserNotification(
-"📢 فراخوان جدید",
-call.student_name+" از کلاس "+call.class_name+" فراخوان شد"
-);
-}
+
 }
 )
 .on(
