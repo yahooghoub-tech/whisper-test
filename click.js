@@ -471,6 +471,7 @@ document.querySelectorAll(".called-total").forEach(counter=>counter.textContent=
 createClasses();
 loadCalls();
 
+
 supabaseClient
 .channel("nazem-all-classes")
 .on(
@@ -539,7 +540,7 @@ table:"calls"
 payload=>{
 const call=payload.old;
 
-if(!call.student_name||!call.class_name){
+if(!call){
 return;
 }
 
@@ -557,6 +558,12 @@ button.querySelector(".status-time").textContent="";
 
 updateCount(call.class_name);
 }
+
+console.log(
+"فراخوان حذف شد:",
+call.student_name,
+call.class_name
+);
 }
 )
 .subscribe(status=>{
