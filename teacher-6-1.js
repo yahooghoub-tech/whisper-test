@@ -16,13 +16,19 @@ return;
 
 console.log("✅ دکمه فعال‌سازی صدا پیدا شد");
 
+
+
 button.addEventListener("click",async()=>{
 
-console.log("🔘 روی فعال‌سازی صدا کلیک شد");
+console.log("🔘 روی دکمه صدای فراخوان کلیک شد");
 
 try{
 
-notificationAudio=new Audio("notification.mp3");
+if(!soundEnabled){
+
+notificationAudio=
+new Audio("notification.mp3");
+
 notificationAudio.preload="auto";
 notificationAudio.volume=1;
 
@@ -33,20 +39,53 @@ notificationAudio.currentTime=0;
 
 soundEnabled=true;
 
-button.innerText="🔊 صدای فراخوان فعال است";
-button.disabled=true;
+button.innerText=
+"🔊 صدای فراخوان فعال است";
+
+button.style.background="#22c55e";
 
 console.log("✅ صدای فراخوان فعال شد");
 
+}else{
+
+soundEnabled=false;
+
+if(notificationAudio){
+
+notificationAudio.pause();
+notificationAudio.currentTime=0;
+
+}
+
+button.innerText=
+"🔇 صدای فراخوان غیرفعال است";
+
+button.style.background="#ef4444";
+
+console.log("🔇 صدای فراخوان غیرفعال شد");
+
+}
+
 }catch(error){
 
-console.error("❌ خطای فعال‌سازی صدا:",error);
+console.error(
+"❌ خطای تغییر وضعیت صدا:",
+error
+);
 
-alert("فایل صوتی پخش نشد: "+error.message);
+alert(
+"خطا در تغییر وضعیت صدا: "+
+error.message
+);
 
 }
 
 });
+
+
+
+
+
 
 }
 
