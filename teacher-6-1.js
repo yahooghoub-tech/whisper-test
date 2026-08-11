@@ -938,3 +938,56 @@ loadCalls();
     );
     
     });
+
+
+    const permissionTestButton =
+document.createElement("button");
+
+permissionTestButton.innerText =
+"🔍 تست مجوز اعلان";
+
+permissionTestButton.style.cssText =
+"width:100%;padding:14px;margin-top:10px;border:0;border-radius:12px;background:#2563eb;color:white;font-size:16px;font-weight:bold;";
+
+document.body.appendChild(
+permissionTestButton
+);
+
+permissionTestButton.onclick =
+async()=>{
+
+try{
+
+const before =
+Notification.permission;
+
+let result="";
+
+if(before==="default"){
+
+result =
+await Notification.requestPermission();
+
+}else{
+
+result=before;
+
+}
+
+alert(
+"وضعیت مجوز قبل: "+
+before+
+"\n\nوضعیت مجوز بعد: "+
+result
+);
+
+}catch(error){
+
+alert(
+"خطا:\n"+
+error.message
+);
+
+}
+
+};
