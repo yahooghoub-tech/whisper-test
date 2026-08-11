@@ -532,3 +532,200 @@ transform:rotate(-35deg);
 }
 
 }
+
+
+/* دکمه‌های دانش‌آموزان */
+
+.student-button{
+position:relative;
+width:100%;
+min-height:58px;
+border:1px solid rgba(255,255,255,.12);
+border-radius:16px;
+padding:10px 12px;
+margin:5px 0;
+background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+box-shadow:
+0 4px 12px rgba(0,0,0,.18),
+inset 0 1px 0 rgba(255,255,255,.08);
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
+color:#fff;
+cursor:pointer;
+display:grid;
+grid-template-columns:1fr auto auto;
+align-items:center;
+gap:8px;
+text-align:right;
+direction:rtl;
+transition:
+transform .2s ease,
+box-shadow .2s ease,
+background .2s ease,
+border-color .2s ease;
+overflow:hidden;
+}
+
+/* خط نور سمت راست */
+
+.student-button::before{
+content:"";
+position:absolute;
+right:0;
+top:0;
+bottom:0;
+width:4px;
+background:#64748b;
+border-radius:0 16px 16px 0;
+transition:.25s ease;
+}
+
+/* نام دانش‌آموز */
+
+.student-name{
+font-size:15px;
+font-weight:700;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+
+/* وضعیت */
+
+.student-status{
+font-size:12px;
+font-weight:700;
+white-space:nowrap;
+}
+
+/* ساعت */
+
+.status-time{
+font-size:11px;
+opacity:.8;
+direction:ltr;
+white-space:nowrap;
+}
+
+/* حالت عادی */
+
+.student-button.pending{
+background:linear-gradient(
+135deg,
+rgba(255,255,255,.09),
+rgba(255,255,255,.035)
+);
+}
+
+/* هاور */
+
+.student-button:hover{
+transform:translateY(-2px);
+border-color:rgba(0,217,255,.45);
+box-shadow:
+0 8px 20px rgba(0,0,0,.25),
+0 0 14px rgba(0,217,255,.12);
+}
+
+.student-button:active{
+transform:scale(.98);
+}
+
+/* دکمه فراخوان شده */
+
+.student-button.called{
+background:linear-gradient(
+135deg,
+rgba(255,193,7,.18),
+rgba(255,152,0,.06)
+);
+border-color:rgba(255,193,7,.45);
+box-shadow:
+0 5px 18px rgba(255,193,7,.12),
+inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.student-button.called::before{
+background:#ffc107;
+box-shadow:0 0 12px rgba(255,193,7,.8);
+}
+
+.student-button.called .student-status{
+color:#ffd43b;
+}
+
+/* دکمه ارسال شده */
+
+.student-button.sent{
+background:linear-gradient(
+135deg,
+rgba(0,220,130,.20),
+rgba(0,150,100,.06)
+);
+border-color:rgba(0,220,130,.5);
+box-shadow:
+0 5px 18px rgba(0,220,130,.13),
+inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.student-button.sent::before{
+background:#00dc82;
+box-shadow:0 0 12px rgba(0,220,130,.85);
+}
+
+.student-button.sent .student-status{
+color:#36e6a0;
+}
+
+/* افکت ورود */
+
+.student-button{
+animation:studentButtonIn .3s ease both;
+}
+
+@keyframes studentButtonIn{
+from{
+opacity:0;
+transform:translateY(5px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* حالت موبایل */
+
+@media(max-width:700px){
+
+.student-button{
+min-height:55px;
+padding:9px 10px;
+border-radius:14px;
+grid-template-columns:1fr auto;
+gap:5px;
+}
+
+.student-name{
+font-size:14px;
+}
+
+.student-status{
+font-size:11px;
+}
+
+.status-time{
+font-size:10px;
+}
+
+.student-button::before{
+border-radius:0 14px 14px 0;
+}
+
+}
+
+/* مخفی شدن در جستجو */
+
+.student-button.search-hidden{
+display:none;
+}

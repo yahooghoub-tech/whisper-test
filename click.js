@@ -656,3 +656,6 @@ call.class_name
 .subscribe(status=>{
 console.log("Realtime تمام کلاس‌ها:",status);
 });
+
+
+
