@@ -163,3 +163,35 @@ border-color:#16a34a !important;
 color:#fff !important;
 }
 
+#enableSoundButton{
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    border-radius:10px;
+    padding:8px 12px;
+    font-family:Tahoma,Arial,sans-serif;
+    font-size:12px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+    }
+    
+    #enableSoundButton:hover{
+    transform:translateY(-1px);
+    box-shadow:0 3px 8px rgba(0,0,0,.15);
+    }
+    
+    #enableSoundButton:disabled{
+    background:#16a34a;
+    cursor:default;
+    }
+    
+    @media(max-width:600px){
+    
+    #enableSoundButton{
+    width:100%;
+    padding:10px;
+    font-size:12px;
+    }
+    
+    }
