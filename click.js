@@ -2,112 +2,7 @@ const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let nazemSoundEnabled=false;
 
-const nazemNotificationAudio=document.getElementById("nazemNotificationAudio");
-const enableNazemSoundButton=document.getElementById("enableNazemSoundButton");
-
-if(enableNazemSoundButton){
-
-enableNazemSoundButton.addEventListener("click",async()=>{
-
-try{
-
-if(!nazemSoundEnabled){
-
-nazemNotificationAudio.currentTime=0;
-
-await nazemNotificationAudio.play();
-
-nazemNotificationAudio.pause();
-
-nazemNotificationAudio.currentTime=0;
-
-nazemSoundEnabled=true;
-
-enableNazemSoundButton.innerText="🔊 صدای اعلان فعال است";
-enableNazemSoundButton.style.background="#22c55e";
-
-console.log("🔊 صدای اعلان ناظم فعال شد");
-
-}else{
-
-nazemSoundEnabled=false;
-
-nazemNotificationAudio.pause();
-nazemNotificationAudio.currentTime=0;
-
-enableNazemSoundButton.innerText="🔇 صدای اعلان غیرفعال است";
-enableNazemSoundButton.style.background="#ef4444";
-
-console.log("🔇 صدای اعلان ناظم غیرفعال شد");
-
-}
-
-}catch(error){
-
-console.error("خطا در فعال‌سازی صدای ناظم:",error);
-
-alert("برای فعال شدن صدا، اجازه پخش صدا را به مرورگر بدهید.");
-
-}
-
-});
-
-}
-
-function playNazemNotificationSound(){
-
-    if(!nazemSoundEnabled){
-    
-    console.log("⚠️ صدای اعلان ناظم فعال نیست");
-    
-    return;
-    
-    }
-    
-    try{
-    
-    nazemNotificationAudio.currentTime=0;
-    
-    nazemNotificationAudio.play().catch(error=>{
-    
-    console.error("❌ خطا در پخش صدای اعلان ناظم:",error);
-    
-    });
-    
-    }catch(error){
-    
-    console.error("❌ خطای صدای اعلان:",error);
-    
-    }
-    
-    }
-
-
-    function showNazemCallPopup(studentName,className){
-
-        const popup=document.getElementById("nazemCallPopup");
-        const student=document.getElementById("nazemCallPopupStudent");
-        const classElement=document.getElementById("nazemCallPopupClass");
-        
-        if(!popup||!student||!classElement)return;
-        
-        student.textContent=studentName;
-        classElement.textContent="کلاس: "+className;
-        
-        popup.classList.add("show");
-        
-        clearTimeout(window.nazemPopupTimer);
-        
-        window.nazemPopupTimer=setTimeout(()=>{
-        
-        popup.classList.remove("show");
-        
-        },7000);
-        
-        }
-        
  
 
 const students=[
@@ -496,8 +391,6 @@ popup.classList.remove("show");
 
 
 
-
-
 function createClasses(){
 const groups={};
 students.forEach(s=>{
@@ -552,55 +445,12 @@ updateCount(student.className);
 }
 
 function updateButton(button,call){
-
-    button.classList.remove(
-    "pending",
-    "called",
-    "sent",
-    "walking"
-    );
-    
-    if(call.status==="ارسال شد"){
-    
-    button.classList.add("walking");
-    
-    button.querySelector(".student-status").textContent=
-    "🚶 در حال رفتن";
-    
-    button.querySelector(".status-time").textContent=
-    call.sent_time||call.called_time||"";
-    
-    return;
-    
-    }
-    
-    if(call.status==="فراخوان شد"){
-    
-    button.classList.add("called");
-    
-    button.querySelector(".student-status").textContent=
-    "🔴 فراخوان شد";
-    
-    button.querySelector(".status-time").textContent=
-    call.called_time||"";
-    
-    return;
-    
-    }
-    
-    button.classList.add("called");
-    
-    button.querySelector(".student-status").textContent=
-    `(${call.status})`;
-    
-    button.querySelector(".status-time").textContent=
-    call.called_time||"";
-    
-    }
-
-
-
-
+button.classList.remove("pending","called","sent");
+if(call.status==="ارسال شد")button.classList.add("sent");
+else button.classList.add("called");
+button.querySelector(".student-status").textContent=`(${call.status})`;
+button.querySelector(".status-time").textContent=call.called_time||"";
+}
 
 function updateCount(className){
 const box=document.getElementById(classId(className));
@@ -694,10 +544,7 @@ schema:"public",
 table:"calls"
 },
 payload=>{
-
 const call=payload.new;
-
-console.log("📢 INSERT ناظم:",call);
 
 const button=findButton(
 call.student_name,
@@ -705,15 +552,16 @@ call.class_name
 );
 
 if(button){
-
 updateButton(button,call);
-
 updateCount(call.class_name);
-
 }
+
 
 }
 )
+
+
+
 .on(
 "postgres_changes",
 {
@@ -724,8 +572,12 @@ table:"calls"
 payload=>{
 
 const call=payload.new;
+const oldCall=payload.old;
 
-console.log("📢 UPDATE ناظم:",call);
+console.log(
+"📡 تغییر فراخوان دریافت شد:",
+call
+);
 
 const button=findButton(
 call.student_name,
@@ -734,53 +586,36 @@ call.class_name
 
 if(button){
 
-if(call.status==="ارسال شد"){
-
-button.classList.remove(
-"pending",
-"called",
-"sent"
-);
-
-button.classList.add("walking");
-
-button.querySelector(".student-status").textContent=
-"🚶 در حال رفتن";
-
-button.querySelector(".status-time").textContent=
-call.sent_time||timeNow();
-
-updateCount(call.class_name);
-
-console.log(
-"🚶 دانش‌آموز ارسال شد:",
-call.student_name,
-call.class_name
-);
-
-playNazemNotificationSound();
-
-setTimeout(()=>{
-
-showNazemCallPopup(
-call.student_name,
-call.class_name
-);
-
-},250);
-
-}else{
-
 updateButton(button,call);
 
 updateCount(call.class_name);
 
 }
 
+if(
+call.status==="ارسال شد" &&
+oldCall &&
+oldCall.status!=="ارسال شد"
+){
+
+console.log(
+"📤 معلم دانش‌آموز را ارسال کرد:",
+call.student_name,
+call.class_name
+);
+
+showTeacherSendPopup(call);
+
 }
 
 }
 )
+
+
+
+
+
+
 .on(
 "postgres_changes",
 {
@@ -789,16 +624,11 @@ schema:"public",
 table:"calls"
 },
 payload=>{
-
 const call=payload.old;
 
-if(!call)return;
-
-console.log(
-"🗑️ فراخوان حذف شد:",
-call.student_name,
-call.class_name
-);
+if(!call){
+return;
+}
 
 const button=findButton(
 call.student_name,
@@ -806,34 +636,22 @@ call.class_name
 );
 
 if(button){
-
-button.classList.remove(
-"called",
-"sent",
-"walking"
-);
-
+button.classList.remove("called","sent");
 button.classList.add("pending");
 
-button.querySelector(
-".student-status"
-).textContent="";
-
-button.querySelector(
-".status-time"
-).textContent="";
+button.querySelector(".student-status").textContent="";
+button.querySelector(".status-time").textContent="";
 
 updateCount(call.class_name);
-
 }
 
+console.log(
+"فراخوان حذف شد:",
+call.student_name,
+call.class_name
+);
 }
 )
 .subscribe(status=>{
-
-console.log(
-"Realtime ناظم:",
-status
-);
-
+console.log("Realtime تمام کلاس‌ها:",status);
 });
