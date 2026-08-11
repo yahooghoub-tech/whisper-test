@@ -381,10 +381,7 @@ const {data:inserted,error:insertError}=await supabaseClient.from("calls").inser
 if(insertError){console.error(insertError);return;}
 updateButton(button,inserted);
 updateCount(student.className);
-showBrowserNotification(
-    "📢 فراخوان دانش‌آموز",
-    student.name+" از کلاس "+student.className+" فراخوان شد"
-    );
+
 }
 
 function updateButton(button,call){
