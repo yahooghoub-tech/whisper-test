@@ -111,9 +111,21 @@ function showTeacherNotification(title,message){
 function showBrowserNotification(title,message){
 if(!("Notification" in window))return;
 if(Notification.permission==="granted"){
-new Notification(title,{
-body:message
-});
+    navigator.serviceWorker.ready.then(registration => {
+
+        registration.showNotification(
+            "📢 فراخوان جدید",
+            {
+                body: call.student_name + " از کلاس ششم-1 فراخوان شد",
+                icon: "icon-192.png",
+                badge: "icon-192.png",
+                tag: "student-call",
+                renotify: true,
+                vibrate: [200,100,200]
+            }
+        );
+    
+    });
 }
 }
 
