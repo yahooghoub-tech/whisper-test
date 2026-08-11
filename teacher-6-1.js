@@ -135,7 +135,182 @@ error.message
 }
 
 }
+const testPushButton =
+document.getElementById("testPushButton");
 
+const pushTestResult =
+document.getElementById("pushTestResult");
+
+function pushTestMessage(
+message,
+success=false
+){
+
+pushTestResult.innerText=message;
+
+pushTestResult.style.padding="12px";
+pushTestResult.style.marginTop="10px";
+pushTestResult.style.borderRadius="10px";
+pushTestResult.style.fontWeight="bold";
+
+if(success){
+
+pushTestResult.style.background="#dcfce7";
+pushTestResult.style.color="#166534";
+
+}else{
+
+pushTestResult.style.background="#fee2e2";
+pushTestResult.style.color="#991b1b";
+
+}
+
+}
+
+if(testPushButton){
+
+testPushButton.addEventListener(
+"click",
+async()=>{
+
+try{
+
+pushTestMessage(
+"⏳ در حال بررسی Push..."
+);
+
+if(!("serviceWorker" in navigator)){
+
+throw new Error(
+"Service Worker توسط مرورگر پشتیبانی نمی‌شود"
+);
+
+}
+
+pushTestMessage(
+"1️⃣ Service Worker در حال بررسی..."
+);
+
+const registration=
+await navigator.serviceWorker.ready;
+
+pushTestMessage(
+"2️⃣ Service Worker فعال است ✅"
+);
+
+if(!("PushManager" in window)){
+
+throw new Error(
+"Push API در این مرورگر پشتیبانی نمی‌شود"
+);
+
+}
+
+pushTestMessage(
+"3️⃣ Push API فعال است ✅"
+);
+
+let subscription=
+await registration.pushManager
+.getSubscription();
+
+if(subscription){
+
+pushTestMessage(
+"4️⃣ Subscription قبلی پیدا شد ✅"
+);
+
+}else{
+
+pushTestMessage(
+"4️⃣ در حال ساخت Subscription..."
+);
+
+const VAPID_PUBLIC_KEY="BCmbfrcRi5ybjktf3b2y059xF5DW7djDCNusBR91iYOsPAbhU4lTwvWr4wkFRz_0IheO5iHsmiCInAbRvp918Co";
+
+subscription=
+await registration.pushManager.subscribe({
+
+userVisibleOnly:true,
+
+applicationServerKey:
+urlBase64ToUint8Array(
+VAPID_PUBLIC_KEY
+)
+
+});
+
+pushTestMessage(
+"4️⃣ Subscription ساخته شد ✅"
+);
+
+}
+
+console.log(
+"Subscription:",
+subscription
+);
+
+const json=
+subscription.toJSON();
+
+if(!json.endpoint){
+
+throw new Error(
+"Endpoint ساخته نشده است"
+);
+
+}
+
+pushTestMessage(
+"5️⃣ اطلاعات Push دریافت شد ✅"
+);
+
+const {error}=
+await supabaseClient
+.from("push_subscriptions")
+.upsert({
+
+endpoint:json.endpoint,
+
+p256dh:json.keys.p256dh,
+
+auth:json.keys.auth,
+
+class_name:"ششم-1"
+
+},{
+onConflict:"endpoint"
+});
+
+if(error){
+
+throw new Error(
+"Supabase: "+
+error.message
+);
+
+}
+
+pushTestMessage(
+"🎉 Push با موفقیت ثبت شد! ردیف Supabase ساخته شد.",
+true
+);
+
+}catch(error){
+
+console.error(error);
+
+pushTestMessage(
+"❌ خطا: "+
+error.message
+);
+
+}
+
+});
+
+}
 function urlBase64ToUint8Array(base64String){
 
 const padding=
