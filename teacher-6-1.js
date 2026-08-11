@@ -129,15 +129,35 @@ if(Notification.permission==="granted"){
 }
 }
 
+
+
 let notificationAudio=null;
 let soundEnabled=false;
 
-const enableSoundButton=
+function setupSound(){
+
+const button=
 document.getElementById("enableSoundButton");
 
-if(enableSoundButton){
+if(!button){
 
-enableSoundButton.addEventListener("click",async()=>{
+console.error(
+"❌ دکمه enableSoundButton در HTML پیدا نشد"
+);
+
+return;
+
+}
+
+console.log(
+"✅ دکمه فعال‌سازی صدا پیدا شد"
+);
+
+button.addEventListener("click",async()=>{
+
+console.log(
+"🔘 روی فعال‌سازی صدا کلیک شد"
+);
 
 try{
 
@@ -156,10 +176,10 @@ notificationAudio.currentTime=0;
 
 soundEnabled=true;
 
-enableSoundButton.innerText=
+button.innerText=
 "🔊 صدای فراخوان فعال است";
 
-enableSoundButton.disabled=true;
+button.disabled=true;
 
 console.log(
 "✅ صدای فراخوان فعال شد"
@@ -168,12 +188,13 @@ console.log(
 }catch(error){
 
 console.error(
-"❌ خطا در فعال‌سازی صدای فراخوان:",
+"❌ خطای فعال‌سازی صدا:",
 error
 );
 
 alert(
-"فعال‌سازی صدا انجام نشد"
+"فایل صوتی پخش نشد: "+
+error.message
 );
 
 }
@@ -187,7 +208,7 @@ function playNotificationSound(){
 if(!soundEnabled||!notificationAudio){
 
 console.log(
-"⚠️ صدای فراخوان فعال نشده است"
+"⚠️ صدای فراخوان فعال نشده"
 );
 
 return;
@@ -208,19 +229,35 @@ error
 });
 
 console.log(
-"🔊 صدای فراخوان پخش شد"
+"🔊 موسیقی فراخوان پخش شد"
 );
 
 }catch(error){
 
 console.error(
-"❌ خطای صدای فراخوان:",
+"❌ خطای پخش موسیقی:",
 error
 );
 
 }
 
 }
+
+window.addEventListener(
+"load",
+setupSound
+);
+
+
+
+
+
+
+
+
+
+
+
 
 window.addEventListener(
 "load",
