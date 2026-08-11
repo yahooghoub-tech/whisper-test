@@ -36,43 +36,77 @@ error
 const isMobileOrTablet =
 /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-if(isMobileOrTablet && "Notification" in window){
 
-if(Notification.permission==="default"){
-
-Notification.requestPermission().then(permission=>{
-
-console.log("مجوز اعلان:",permission);
-
-});
-
-}
-
-}
 
 function showTeacherNotification(title,message){
 
-if(!isMobileOrTablet)return;
+    if(!("Notification" in window)){
+    console.log("Notification توسط مرورگر پشتیبانی نمی‌شود");
+    return;
+    }
+    
+    if(Notification.permission!=="granted"){
+    console.log(
+    "مجوز Notification صادر نشده:",
+    Notification.permission
+    );
+    return;
+    }
+    
+    try{
+    
+    new Notification(title,{
+    body:message,
+    icon:"icon-192.png",
+    tag:"student-call",
+    renotify:true,
+    silent:false
+    });
+    
+    console.log("🔔 اعلان نمایش داده شد");
+    
+    }catch(error){
+    
+    console.error(
+    "خطا در نمایش اعلان:",
+    error
+    );
+    
+    }
+    
+    }
 
-if(!("Notification" in window))return;
+    async function requestNotificationPermission(){
 
-if(Notification.permission!=="granted")return;
-
-new Notification(title,{
-body:message
-});
-
-}
-
-
-
-if("Notification" in window){
-if(Notification.permission==="default"){
-Notification.requestPermission().then(permission=>{
-console.log("Notification permission:",permission);
-});
-}
-}
+        if(!("Notification" in window)){
+        console.log(
+        "Notification توسط این مرورگر پشتیبانی نمی‌شود"
+        );
+        return;
+        }
+        
+        if(Notification.permission==="default"){
+        
+        const permission=
+        await Notification.requestPermission();
+        
+        console.log(
+        "مجوز اعلان:",
+        permission
+        );
+        
+        }else{
+        
+        console.log(
+        "وضعیت مجوز اعلان:",
+        Notification.permission
+        );
+        
+        }
+        
+        }
+        
+        requestNotificationPermission();
 
 function showBrowserNotification(title,message){
 if(!("Notification" in window))return;
@@ -83,22 +117,144 @@ body:message
 }
 }
 
-let notificationAudio=null;
+let audioContext=null;
+let soundEnabled=false;
+
+const enableSoundButton=
+document.getElementById("enableSoundButton");
+
+if(enableSoundButton){
+
+enableSoundButton.addEventListener("click",async()=>{
+
+try{
+
+audioContext=
+new(window.AudioContext||window.webkitAudioContext)();
+
+if(audioContext.state==="suspended"){
+await audioContext.resume();
+}
+
+const oscillator=
+audioContext.createOscillator();
+
+const gain=
+audioContext.createGain();
+
+oscillator.type="sine";
+oscillator.frequency.value=880;
+
+gain.gain.setValueAtTime(
+0.0001,
+audioContext.currentTime
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.25,
+audioContext.currentTime+0.01
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.0001,
+audioContext.currentTime+0.18
+);
+
+oscillator.connect(gain);
+gain.connect(audioContext.destination);
+
+oscillator.start();
+oscillator.stop(
+audioContext.currentTime+0.18
+);
+
+soundEnabled=true;
+
+enableSoundButton.innerText=
+"🔊 صدای فراخوان فعال است";
+
+enableSoundButton.disabled=true;
+
+console.log("🔊 صدای فراخوان فعال شد");
+
+}catch(error){
+
+console.error(
+"خطا در فعال‌سازی صدا:",
+error
+);
+
+}
+
+});
+
+}
 
 function playNotificationSound(){
+
+if(!soundEnabled||!audioContext){
+console.log("صدای فراخوان هنوز فعال نشده است");
+return;
+}
+
 try{
-if(!notificationAudio){
-notificationAudio=new Audio(
-"data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAAAA"
+
+if(audioContext.state==="suspended"){
+audioContext.resume();
+}
+
+const now=audioContext.currentTime;
+
+const oscillator=
+audioContext.createOscillator();
+
+const gain=
+audioContext.createGain();
+
+oscillator.type="sine";
+
+oscillator.frequency.setValueAtTime(
+880,
+now
 );
-}
-notificationAudio.currentTime=0;
-notificationAudio.play().catch(error=>{
-console.log("صدای اعلان پخش نشد:",error);
-});
+
+oscillator.frequency.setValueAtTime(
+660,
+now+0.12
+);
+
+gain.gain.setValueAtTime(
+0.0001,
+now
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.3,
+now+0.01
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.0001,
+now+0.28
+);
+
+oscillator.connect(gain);
+gain.connect(audioContext.destination);
+
+oscillator.start(now);
+oscillator.stop(now+0.28);
+
+console.log("🔊 بوق فراخوان پخش شد");
+
 }catch(error){
-console.error("خطا در پخش بوق:",error);
+
+console.error(
+"خطا در پخش صدای فراخوان:",
+error
+);
+
 }
+
 }
 
 
@@ -292,10 +448,14 @@ if(call.status!=="فراخوان شد")return;
 
 playNotificationSound();
 
+setTimeout(()=>{
+
 showTeacherNotification(
 "📢 فراخوان جدید",
 call.student_name+" از کلاس ششم-1 فراخوان شد"
 );
+
+},250);
 
 const button=findButton(call.student_name);
 
