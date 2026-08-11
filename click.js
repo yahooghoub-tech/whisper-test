@@ -331,6 +331,96 @@ function timeNow(){
 return new Date().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
 
+let notifiedSentCalls=new Set();
+
+async function requestNotificationPermission(){
+
+if(!("Notification" in window)){
+
+console.log("❌ مرورگر اعلان را پشتیبانی نمی‌کند");
+
+return;
+
+}
+
+if(Notification.permission==="default"){
+
+try{
+
+const permission=await Notification.requestPermission();
+
+console.log(
+"🔔 وضعیت اجازه اعلان:",
+permission
+);
+
+}catch(error){
+
+console.error(
+"❌ خطا در درخواست اجازه اعلان:",
+error
+);
+
+}
+
+}
+
+}
+
+function showSentStudentNotification(call){
+
+if(!call)return;
+
+if(call.status!=="ارسال شد")return;
+
+if(notifiedSentCalls.has(call.id)){
+
+console.log(
+"⚠️ این اعلان قبلاً ارسال شده:",
+call.student_name
+);
+
+return;
+
+}
+
+notifiedSentCalls.add(call.id);
+
+if(!("Notification" in window)){
+
+console.log("❌ Notification API موجود نیست");
+
+return;
+
+}
+
+if(Notification.permission!=="granted"){
+
+console.log(
+"⚠️ اجازه اعلان مرورگر داده نشده است"
+);
+
+return;
+
+}
+
+new Notification(
+"📤 ارسال دانش‌آموز",
+{
+body:`${call.student_name} توسط معلم ارسال شد`,
+tag:"sent-student-"+call.id,
+renotify:false
+}
+);
+
+console.log(
+"🔔 اعلان ارسال دانش‌آموز:",
+call.student_name
+);
+
+}
+
+
 function createClasses(){
 const groups={};
 students.forEach(s=>{
@@ -472,7 +562,7 @@ resetButton.addEventListener("click",async()=>{
 
 createClasses();
 loadCalls();
-
+requestNotificationPermission();
 
 supabaseClient
 .channel("nazem-all-classes")
@@ -499,6 +589,10 @@ updateCount(call.class_name);
 
 }
 )
+
+
+
+
 .on(
 "postgres_changes",
 {
@@ -507,7 +601,17 @@ schema:"public",
 table:"calls"
 },
 payload=>{
+
+const oldCall=payload.old;
 const call=payload.new;
+
+console.log(
+"📡 تغییر وضعیت فراخوان:",
+oldCall.status,
+"→",
+call.status,
+call.student_name
+);
 
 const button=findButton(
 call.student_name,
@@ -515,12 +619,32 @@ call.class_name
 );
 
 if(button){
+
 updateButton(button,call);
+
 updateCount(call.class_name);
+
+}
+
+if(
+oldCall &&
+oldCall.status!=="ارسال شد" &&
+call.status==="ارسال شد"
+){
+
+showSentStudentNotification(call);
+
 }
 
 }
 )
+
+
+
+
+
+
+
 .on(
 "postgres_changes",
 {
