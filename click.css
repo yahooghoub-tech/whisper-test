@@ -440,139 +440,198 @@
 }
 
 
-.walking-person{
-position:relative;
+.teacher-send-popup{
+position:fixed;
+top:25px;
+right:25px;
+width:min(420px,calc(100% - 30px));
+min-height:90px;
+background:rgba(20,25,35,.96);
+border:2px solid #00d9ff;
+border-radius:18px;
+box-shadow:0 10px 35px rgba(0,0,0,.45),0 0 25px rgba(0,217,255,.25);
+display:flex;
+align-items:center;
+gap:15px;
+padding:15px 18px;
+z-index:999999;
+direction:rtl;
+opacity:0;
+transform:translateX(120%);
+pointer-events:none;
+transition:all .45s ease;
+}
+
+.teacher-send-popup.show{
+opacity:1;
+transform:translateX(0);
+pointer-events:auto;
+}
+
+.teacher-send-popup-icon{
+width:58px;
+height:58px;
+min-width:58px;
+border-radius:50%;
+background:rgba(0,217,255,.12);
 display:flex;
 align-items:center;
 justify-content:center;
-overflow:hidden;
+}
+
+.teacher-send-popup-content{
+flex:1;
+}
+
+.teacher-send-popup-title{
+font-size:18px;
+font-weight:800;
+color:#00d9ff;
+margin-bottom:7px;
+}
+
+.teacher-send-popup-text{
+font-size:14px;
+line-height:1.8;
+color:#fff;
+}
+
+.teacher-send-popup-text strong{
+color:#ffd43b;
+}
+
+.teacher-send-popup-close{
+width:30px;
+height:30px;
+border:0;
+border-radius:50%;
+background:rgba(255,255,255,.1);
+color:#fff;
+font-size:23px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.teacher-send-popup-close:hover{
+background:#ff4757;
+}
+
+.walking-person{
+position:relative;
 }
 
 .person{
 position:relative;
-width:32px;
-height:42px;
-animation:personWalk .5s infinite alternate ease-in-out;
+width:30px;
+height:45px;
 }
 
 .head{
 position:absolute;
-width:10px;
-height:10px;
-border-radius:50%;
-background:#fff;
 top:0;
-left:11px;
+left:10px;
+width:11px;
+height:11px;
+background:#00d9ff;
+border-radius:50%;
 }
 
 .body{
 position:absolute;
-width:7px;
-height:18px;
-border-radius:5px;
-background:#fff;
-top:10px;
+top:13px;
 left:13px;
+width:6px;
+height:17px;
+background:#00d9ff;
+border-radius:5px;
 }
 
 .arm{
 position:absolute;
+top:14px;
 width:5px;
-height:17px;
+height:18px;
+background:#00d9ff;
 border-radius:5px;
-background:#fff;
-top:11px;
 transform-origin:top center;
 }
 
 .arm-left{
-left:9px;
-transform:rotate(30deg);
-animation:armLeft .5s infinite alternate ease-in-out;
+left:8px;
+transform:rotate(35deg);
 }
 
 .arm-right{
-right:8px;
-transform:rotate(-30deg);
-animation:armRight .5s infinite alternate ease-in-out;
+right:7px;
+transform:rotate(-45deg);
 }
 
 .leg{
 position:absolute;
+top:28px;
 width:5px;
 height:18px;
+background:#00d9ff;
 border-radius:5px;
-background:#fff;
-top:26px;
 transform-origin:top center;
 }
 
 .leg-left{
-left:12px;
-animation:legLeft .5s infinite alternate ease-in-out;
-}
-
-.leg-right{
-right:11px;
-animation:legRight .5s infinite alternate ease-in-out;
-}
-
-@keyframes personWalk{
-
-0%{
-transform:translateY(1px);
-}
-
-100%{
-transform:translateY(-2px);
-}
-
-}
-
-@keyframes legLeft{
-
-0%{
-transform:rotate(28deg);
-}
-
-100%{
-transform:rotate(-28deg);
-}
-
-}
-
-@keyframes legRight{
-
-0%{
-transform:rotate(-28deg);
-}
-
-100%{
-transform:rotate(28deg);
-}
-
-}
-
-@keyframes armLeft{
-
-0%{
-transform:rotate(-25deg);
-}
-
-100%{
-transform:rotate(35deg);
-}
-
-}
-
-@keyframes armRight{
-
-0%{
+left:11px;
 transform:rotate(25deg);
 }
 
+.leg-right{
+left:16px;
+transform:rotate(-30deg);
+}
+
+@keyframes walkingAnimation{
+0%{
+transform:translateY(0) rotate(0);
+}
+25%{
+transform:translateY(-2px) rotate(-3deg);
+}
+50%{
+transform:translateY(0) rotate(3deg);
+}
+75%{
+transform:translateY(-2px) rotate(-3deg);
+}
 100%{
-transform:rotate(-35deg);
+transform:translateY(0) rotate(0);
+}
+}
+
+.teacher-send-popup.show .person{
+animation:walkingAnimation .6s infinite;
+}
+
+@media(max-width:600px){
+
+.teacher-send-popup{
+top:12px;
+right:10px;
+width:calc(100% - 20px);
+min-height:80px;
+padding:12px;
+}
+
+.teacher-send-popup-title{
+font-size:16px;
+}
+
+.teacher-send-popup-text{
+font-size:13px;
+}
+
+.teacher-send-popup-icon{
+width:50px;
+height:50px;
+min-width:50px;
 }
 
 }
