@@ -162,19 +162,27 @@ return [...document.querySelectorAll(".student-button")]
 
 }
 
+
+
+
 function updateButton(call){
 
 const button=findButton(call.student_name);
 
 if(!button)return;
 
-button.classList.remove("called","sent","received");
+button.classList.remove(
+"called",
+"sent",
+"received"
+);
 
 if(call.status==="فراخوان شد"){
 
 button.classList.add("called");
 
-button.querySelector(".student-status").innerText="(فراخوان)";
+button.querySelector(".student-status").innerText=
+"🔴 فراخوان";
 
 }
 
@@ -182,7 +190,8 @@ if(call.status==="دریافت فراخوان"){
 
 button.classList.add("received");
 
-button.querySelector(".student-status").innerText="(دریافت شد)";
+button.querySelector(".student-status").innerText=
+"🟠 دریافت شد";
 
 }
 
@@ -190,17 +199,44 @@ if(call.status==="ارسال شد"){
 
 button.classList.add("sent");
 
-button.querySelector(".student-status").innerText="(ارسال شد)";
+button.querySelector(".student-status").innerText=
+"🟢 ارسال شد";
 
 }
 
-button.querySelector(".student-time").innerText=
-call.sent_time||
-call.received_time||
-call.called_time||
-"";
+let timeText="";
+
+if(call.called_time){
+
+timeText=
+"🕐 فراخوان: "+
+call.called_time;
 
 }
+
+if(call.sent_time){
+
+timeText+=
+"<br>📤 ارسال: "+
+call.sent_time;
+
+}
+
+button.querySelector(".student-time").innerHTML=
+timeText;
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 function resetStudentButton(call){
 
