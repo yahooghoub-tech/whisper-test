@@ -3,30 +3,7 @@ const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 
-if("Notification" in window){
-    if(Notification.permission==="default"){
-    Notification.requestPermission().then(permission=>{
-    console.log("Notification permission:",permission);
-    });
-    }
-    }
-    
-    function showBrowserNotification(title,message){
-    
-    if(!("Notification" in window)){
-    return;
-    }
-    
-    if(Notification.permission==="granted"){
-    
-    new Notification(title,{
-    body:message,
-    icon:"📢"
-    });
-    
-    }
-    
-    }
+ 
 
 const students=[
 {name:"مهان احمدی",className:"ششم-1"},
@@ -517,12 +494,6 @@ updateButton(button,call);
 updateCount(call.class_name);
 }
 
-if(call.status==="ارسال شد"){
-showBrowserNotification(
-"📤 ارسال دانش‌آموز",
-call.student_name+" از کلاس "+call.class_name+" ارسال شد"
-);
-}
 }
 )
 .on(
