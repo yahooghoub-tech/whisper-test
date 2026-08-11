@@ -3,6 +3,36 @@ const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+if("serviceWorker" in navigator){
+
+window.addEventListener("load",async()=>{
+
+try{
+
+const registration=
+await navigator.serviceWorker.register(
+"service-worker.js"
+);
+
+console.log(
+"✅ Service Worker فعال شد:",
+registration.scope
+);
+
+}catch(error){
+
+console.error(
+"❌ خطا در فعال‌سازی Service Worker:",
+error
+);
+
+}
+
+});
+
+}
+
+
 const isMobileOrTablet =
 /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
