@@ -37,97 +37,111 @@ const isMobileOrTablet =
 /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 
-
-function showTeacherNotification(title,message){
+async function requestNotificationPermission(){
 
     if(!("Notification" in window)){
-    console.log("Notification توسط مرورگر پشتیبانی نمی‌شود");
+    
+    console.log(
+    "❌ Notification توسط مرورگر پشتیبانی نمی‌شود"
+    );
+    
     return;
+    
+    }
+    
+    if(Notification.permission==="default"){
+    
+    const permission=
+    await Notification.requestPermission();
+    
+    console.log(
+    "🔔 مجوز اعلان:",
+    permission
+    );
+    
+    }else{
+    
+    console.log(
+    "🔔 وضعیت مجوز اعلان:",
+    Notification.permission
+    );
+    
+    }
+    
+    }
+    
+    async function showTeacherNotification(
+    title,
+    message
+    ){
+    
+    if(!("Notification" in window)){
+    
+    console.log(
+    "❌ Notification پشتیبانی نمی‌شود"
+    );
+    
+    return;
+    
     }
     
     if(Notification.permission!=="granted"){
+    
     console.log(
-    "مجوز Notification صادر نشده:",
+    "⚠️ مجوز اعلان صادر نشده:",
     Notification.permission
     );
+    
     return;
+    
     }
     
     try{
     
-    new Notification(title,{
-    body:message,
-    icon:"icon-192.png",
-    tag:"student-call",
-    renotify:true,
-    silent:false
-    });
+    const registration=
+    await navigator.serviceWorker.ready;
     
-    console.log("🔔 اعلان نمایش داده شد");
+    await registration.showNotification(
+    title,
+    {
+    
+    body:message,
+    
+    icon:"icon-192.png",
+    
+    badge:"icon-192.png",
+    
+    tag:"student-call",
+    
+    renotify:true,
+    
+    vibrate:[
+    200,
+    100,
+    200,
+    100,
+    300
+    ]
+    
+    }
+    );
+    
+    console.log(
+    "🔔 اعلان نمایش داده شد"
+    );
     
     }catch(error){
     
     console.error(
-    "خطا در نمایش اعلان:",
+    "❌ خطا در نمایش اعلان:",
     error
     );
     
     }
     
     }
-
-    async function requestNotificationPermission(){
-
-        if(!("Notification" in window)){
-        console.log(
-        "Notification توسط این مرورگر پشتیبانی نمی‌شود"
-        );
-        return;
-        }
-        
-        if(Notification.permission==="default"){
-        
-        const permission=
-        await Notification.requestPermission();
-        
-        console.log(
-        "مجوز اعلان:",
-        permission
-        );
-        
-        }else{
-        
-        console.log(
-        "وضعیت مجوز اعلان:",
-        Notification.permission
-        );
-        
-        }
-        
-        }
-        
-        requestNotificationPermission();
-
-function showBrowserNotification(title,message){
-if(!("Notification" in window))return;
-if(Notification.permission==="granted"){
-    navigator.serviceWorker.ready.then(registration => {
-
-        registration.showNotification(
-            "📢 فراخوان جدید",
-            {
-                body: call.student_name + " از کلاس ششم-1 فراخوان شد",
-                icon: "icon-192.png",
-                badge: "icon-192.png",
-                tag: "student-call",
-                renotify: true,
-                vibrate: [200,100,200]
-            }
-        );
     
-    });
-}
-}
+    requestNotificationPermission();
 
 
 
