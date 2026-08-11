@@ -2,7 +2,179 @@
 const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const VAPID_PUBLIC_KEY="BCmbfrcRi5ybjktf3b2y059xF5DW7djDCNusBR91iYOsPAbhU4lTwvWr4wkFRz_0IheO5iHsmiCInAbRvp918Co";
 
+async function enablePushNotifications(){
+
+const button=
+document.getElementById("enablePushButton");
+
+if(!button){
+console.error(
+"❌ دکمه enablePushButton پیدا نشد"
+);
+return;
+}
+
+try{
+
+if(!("serviceWorker" in navigator)){
+
+alert(
+"این مرورگر از Push Notification پشتیبانی نمی‌کند."
+);
+
+return;
+
+}
+
+if(!("PushManager" in window)){
+
+alert(
+"Push Notification در این مرورگر پشتیبانی نمی‌شود."
+);
+
+return;
+
+}
+
+const permission=
+await Notification.requestPermission();
+
+if(permission!=="granted"){
+
+alert(
+"اجازه اعلان داده نشد."
+);
+
+return;
+
+}
+
+const registration=
+await navigator.serviceWorker.ready;
+
+let subscription=
+await registration.pushManager.getSubscription();
+
+if(!subscription){
+
+subscription=
+await registration.pushManager.subscribe({
+
+userVisibleOnly:true,
+
+applicationServerKey:
+urlBase64ToUint8Array(
+VAPID_PUBLIC_KEY
+)
+
+});
+
+}
+
+const subscriptionJSON=
+subscription.toJSON();
+
+const {error}=
+
+await supabaseClient
+.from("push_subscriptions")
+.upsert({
+
+class_name:"ششم-1",
+
+endpoint:subscriptionJSON.endpoint,
+
+p256dh:
+subscriptionJSON.keys.p256dh,
+
+auth:
+subscriptionJSON.keys.auth
+
+},{
+onConflict:"endpoint"
+});
+
+if(error){
+
+console.error(
+"❌ خطا در ذخیره Subscription:",
+error
+);
+
+alert(
+"ثبت اعلان موبایل انجام نشد."
+);
+
+return;
+
+}
+
+button.innerText=
+"✅ اعلان موبایل فعال است";
+
+button.disabled=true;
+
+console.log(
+"✅ Push موبایل با موفقیت ثبت شد"
+);
+
+}catch(error){
+
+console.error(
+"❌ خطا در فعال‌سازی Push:",
+error
+);
+
+alert(
+"خطا در فعال‌سازی اعلان موبایل: "+
+error.message
+);
+
+}
+
+}
+
+function urlBase64ToUint8Array(base64String){
+
+const padding=
+"=".repeat(
+(4-base64String.length%4)%4
+);
+
+const base64=
+(
+base64String+
+padding
+)
+.replace(/-/g,"+")
+.replace(/_/g,"/");
+
+const rawData=
+window.atob(base64);
+
+return Uint8Array.from(
+[...rawData].map(
+char=>char.charCodeAt(0)
+)
+);
+
+}
+
+const enablePushButton=
+document.getElementById(
+"enablePushButton"
+);
+
+if(enablePushButton){
+
+enablePushButton.addEventListener(
+"click",
+enablePushNotifications
+);
+
+}
 if("serviceWorker" in navigator){
 
 window.addEventListener("load",async()=>{
