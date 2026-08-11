@@ -332,34 +332,132 @@ return new Date().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",se
 }
 
 
-function showTeacherSendPopup(call){
 
-const popup=
-document.getElementById("teacherSendPopup");
+let nazemSoundEnabled=false;
 
-const text=
-document.getElementById("teacherSendPopupText");
+const enableNazemSoundButton=
+document.getElementById("enableNazemSoundButton");
 
-if(!popup||!text){
+const nazemNotificationAudio=
+document.getElementById("nazemNotificationAudio");
+
+
+if(enableNazemSoundButton){
+
+enableNazemSoundButton.onclick=async()=>{
+
+try{
+
+nazemNotificationAudio.currentTime=0;
+
+await nazemNotificationAudio.play();
+
+nazemNotificationAudio.pause();
+
+nazemNotificationAudio.currentTime=0;
+
+nazemSoundEnabled=true;
+
+enableNazemSoundButton.textContent=
+"🔊 صدای اعلان فعال است";
+
+enableNazemSoundButton.classList.add("enabled");
+
+console.log("🔊 صدای اعلان ناظم فعال شد");
+
+}catch(error){
 
 console.error(
-"❌ عناصر اعلان ارسال دانش‌آموز پیدا نشدند"
+"❌ فعال‌سازی صدای اعلان ناموفق بود:",
+error
+);
+
+}
+
+};
+
+}
+
+
+function playNazemNotificationSound(){
+
+if(!nazemSoundEnabled){
+
+console.log(
+"🔇 صدای اعلان هنوز توسط ناظم فعال نشده است"
 );
 
 return;
 
 }
 
-text.innerHTML=
-`دانش‌آموز <strong>${call.student_name}</strong>
-از کلاس <strong>${call.class_name}</strong>
-توسط معلم ارسال شد.`;
+nazemNotificationAudio.currentTime=0;
+
+nazemNotificationAudio.play().catch(error=>{
+
+console.error(
+"❌ خطا در پخش صدای اعلان:",
+error
+);
+
+});
+
+}
+
+
+function showTeacherSendPopup(call){
+
+const popup=
+document.getElementById("nazemCallPopup");
+
+const student=
+document.getElementById("nazemCallPopupStudent");
+
+const classElement=
+document.getElementById("nazemCallPopupClass");
+
+if(!popup||!student||!classElement){
+
+console.error(
+"❌ عناصر Popup ناظم پیدا نشدند"
+);
+
+return;
+
+}
+
+
+student.textContent=
+call.student_name;
+
+classElement.textContent=
+`کلاس ${call.class_name}`;
+
+
+/*
+اول بوق
+*/
+
+playNazemNotificationSound();
+
+
+/*
+بعد Popup نمایش داده شود
+*/
+
+setTimeout(()=>{
 
 popup.classList.add("show");
 
-clearTimeout(window.teacherSendPopupTimer);
+},350);
 
-window.teacherSendPopupTimer=
+
+clearTimeout(
+window.nazemCallPopupTimer
+);
+
+
+window.nazemCallPopupTimer=
 setTimeout(()=>{
 
 popup.classList.remove("show");
@@ -368,21 +466,16 @@ popup.classList.remove("show");
 
 }
 
-const closeTeacherSendPopup=
-document.getElementById("closeTeacherSendPopup");
 
-if(closeTeacherSendPopup){
+const nazemCallPopup=
+document.getElementById("nazemCallPopup");
 
-closeTeacherSendPopup.onclick=()=>{
 
-const popup=
-document.getElementById("teacherSendPopup");
+if(nazemCallPopup){
 
-if(popup){
+nazemCallPopup.onclick=()=>{
 
-popup.classList.remove("show");
-
-}
+nazemCallPopup.classList.remove("show");
 
 };
 
