@@ -518,120 +518,142 @@ justify-content:center;
 background:#ff4757;
 }
 
+
+
+
 .walking-person{
 position:relative;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
 }
 
 .person{
 position:relative;
-width:30px;
-height:45px;
+width:32px;
+height:42px;
+animation:personWalk .5s infinite alternate ease-in-out;
 }
 
 .head{
 position:absolute;
-top:0;
-left:10px;
-width:11px;
-height:11px;
-background:#00d9ff;
+width:10px;
+height:10px;
 border-radius:50%;
+background:#fff;
+top:0;
+left:11px;
 }
 
 .body{
 position:absolute;
-top:13px;
-left:13px;
-width:6px;
-height:17px;
-background:#00d9ff;
+width:7px;
+height:18px;
 border-radius:5px;
+background:#fff;
+top:10px;
+left:13px;
 }
 
 .arm{
 position:absolute;
-top:14px;
 width:5px;
-height:18px;
-background:#00d9ff;
+height:17px;
 border-radius:5px;
+background:#fff;
+top:11px;
 transform-origin:top center;
 }
 
 .arm-left{
-left:8px;
-transform:rotate(35deg);
+left:9px;
+transform:rotate(30deg);
+animation:armLeft .5s infinite alternate ease-in-out;
 }
 
 .arm-right{
-right:7px;
-transform:rotate(-45deg);
+right:8px;
+transform:rotate(-30deg);
+animation:armRight .5s infinite alternate ease-in-out;
 }
 
 .leg{
 position:absolute;
-top:28px;
 width:5px;
 height:18px;
-background:#00d9ff;
 border-radius:5px;
+background:#fff;
+top:26px;
 transform-origin:top center;
 }
 
 .leg-left{
-left:11px;
-transform:rotate(25deg);
+left:12px;
+animation:legLeft .5s infinite alternate ease-in-out;
 }
 
 .leg-right{
-left:16px;
-transform:rotate(-30deg);
+right:11px;
+animation:legRight .5s infinite alternate ease-in-out;
 }
 
-@keyframes walkingAnimation{
+@keyframes personWalk{
+
 0%{
-transform:translateY(0) rotate(0);
+transform:translateY(1px);
 }
-25%{
-transform:translateY(-2px) rotate(-3deg);
-}
-50%{
-transform:translateY(0) rotate(3deg);
-}
-75%{
-transform:translateY(-2px) rotate(-3deg);
-}
+
 100%{
-transform:translateY(0) rotate(0);
-}
-}
-
-.teacher-send-popup.show .person{
-animation:walkingAnimation .6s infinite;
+transform:translateY(-2px);
 }
 
-@media(max-width:600px){
-
-.teacher-send-popup{
-top:12px;
-right:10px;
-width:calc(100% - 20px);
-min-height:80px;
-padding:12px;
 }
 
-.teacher-send-popup-title{
-font-size:16px;
+@keyframes legLeft{
+
+0%{
+transform:rotate(28deg);
 }
 
-.teacher-send-popup-text{
-font-size:13px;
+100%{
+transform:rotate(-28deg);
 }
 
-.teacher-send-popup-icon{
-width:50px;
-height:50px;
-min-width:50px;
+}
+
+@keyframes legRight{
+
+0%{
+transform:rotate(-28deg);
+}
+
+100%{
+transform:rotate(28deg);
+}
+
+}
+
+@keyframes armLeft{
+
+0%{
+transform:rotate(-25deg);
+}
+
+100%{
+transform:rotate(35deg);
+}
+
+}
+
+@keyframes armRight{
+
+0%{
+transform:rotate(25deg);
+}
+
+100%{
+transform:rotate(-35deg);
 }
 
 }
