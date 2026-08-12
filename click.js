@@ -507,6 +507,7 @@ async function loadTodayAttendance(){
 }
 
 
+
 function applyAttendanceToNazem(record){
 
     const button =
@@ -515,8 +516,14 @@ function applyAttendanceToNazem(record){
             record.class_name
         );
 
-    if(!button)return;
+    if(!button){
+        return;
+    }
 
+
+    /*
+    دانش‌آموز غایب
+    */
 
     if(record.status==="غایب"){
 
@@ -526,9 +533,7 @@ function applyAttendanceToNazem(record){
             "sent"
         );
 
-        button.classList.add(
-            "absent"
-        );
+        button.classList.add("absent");
 
         button.disabled=true;
 
@@ -540,22 +545,115 @@ function applyAttendanceToNazem(record){
             ".status-time"
         ).textContent="";
 
-    }else{
+        return;
+    }
 
-        button.classList.remove(
-            "absent"
-        );
+
+    /*
+    دانش‌آموز دوباره حاضر شده
+    */
+
+    if(record.status==="حاضر"){
+
+        button.classList.remove("absent");
 
         button.disabled=false;
 
+
         /*
-        اگر دانش‌آموز فراخوان فعال داشته باشد
-        وضعیت فراخوان او حفظ می‌شود.
+        بررسی می‌کنیم آیا برای این
+        دانش‌آموز فراخوان فعال وجود دارد یا نه.
         */
+
+        restoreCallState(
+            record.student_name,
+            record.class_name,
+            button
+        );
 
     }
 
 }
+
+
+
+
+
+async function restoreCallState(
+    studentName,
+    className,
+    button
+){
+
+    const {data,error} =
+        await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq("student_name",studentName)
+        .eq("class_name",className)
+        .neq("status","ارسال شد")
+        .order("id",{ascending:false})
+        .limit(1);
+
+
+    if(error){
+
+        console.error(
+            "❌ خطا در بازیابی وضعیت فراخوان:",
+            error
+        );
+
+        return;
+    }
+
+
+    /*
+    اگر فراخوان فعالی وجود داشته باشد،
+    همان وضعیت قبلی را برگردان.
+    */
+
+    if(data && data.length){
+
+        updateButton(
+            button,
+            data[0]
+        );
+
+        updateCount(
+            className
+        );
+
+        return;
+    }
+
+
+    /*
+    اگر هیچ فراخوان فعالی وجود ندارد،
+    دکمه به حالت اولیه برگردد.
+    */
+
+    button.classList.remove(
+        "called",
+        "sent",
+        "absent"
+    );
+
+    button.classList.add("pending");
+
+    button.disabled=false;
+
+    button.querySelector(
+        ".student-status"
+    ).textContent="";
+
+    button.querySelector(
+        ".status-time"
+    ).textContent="";
+
+}
+
+
+
 
 
 
