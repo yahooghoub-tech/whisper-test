@@ -839,97 +839,46 @@ box.style.display=visible?"":"none";
 });
 });
 
-
-
-
-
 resetButton.addEventListener("click",async()=>{
 
-    if(!confirm("آیا فراخوان‌های فعال حذف شوند؟")) return;
-
-
-    // فقط فراخوان‌هایی که هنوز «ارسال شد» یا «غایب» نیستند حذف شوند
-    const {error} =
-    await supabaseClient
+    if(!confirm("آیا تمام فراخوان‌ها حذف شوند؟"))return;
+    
+    const {error}=await supabaseClient
     .from("calls")
     .delete()
-    .not("status","in",'("ارسال شد","غایب")');
-
-
+    .gte("id",0);
+    
     if(error){
-
-        console.error(
-            "❌ خطا در حذف فراخوان‌ها:",
-            error
-        );
-
-        alert("خطا در حذف فراخوان‌ها");
-
-        return;
+    
+    console.error(error);
+    
+    alert("خطا در حذف فراخوان‌ها");
+    
+    return;
+    
     }
-
-
-    // فقط باتن‌های فراخوان شده را برگردان
-    document.querySelectorAll(
-        ".student-button.called"
-    ).forEach(button=>{
-
-        // اگر باتن غایب است، دست نزن
-        if(
-            button.classList.contains("absent") ||
-            button.dataset.status==="غایب"
-        ){
-            return;
-        }
-
-
-        button.classList.remove(
-            "called",
-            "sent"
-        );
-
-        button.classList.add("pending");
-
-        button.querySelector(
-            ".student-status"
-        ).textContent="";
-
-        button.querySelector(
-            ".status-time"
-        ).textContent="";
-
+    
+    document.querySelectorAll(".student-button").forEach(button=>{
+    
+    button.classList.remove("called","sent");
+    
+    button.classList.add("pending");
+    
+    button.querySelector(".student-status").textContent="";
+    
+    button.querySelector(".status-time").textContent="";
+    
     });
-
-
-    // شمارنده‌ها را فقط بر اساس وضعیت فعلی دوباره محاسبه کن
-    document.querySelectorAll(".class-box")
-    .forEach(box=>{
-
-        const className =
-        box.querySelector(".class-title")?.textContent;
-
-        if(className){
-
-            updateCount(className);
-
-        }
-
+    
+    document.querySelectorAll(".called-total").forEach(counter=>{
+    
+    counter.textContent="0";
+    
     });
-
-
-    console.log(
-        "✅ فقط فراخوان‌های فعال حذف شدند؛ غایب‌ها دست‌نخورده ماندند"
-    );
-
-});
-
-
-
-
-
-
-
-
+    
+    console.log("✅ تمام فراخوان‌ها در ناظم ریست شدند");
+    
+    });
 
 
 createClasses();
