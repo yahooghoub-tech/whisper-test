@@ -427,22 +427,190 @@ container.appendChild(section);
 });
 }
 
+
 async function callStudent(student,button){
-if(button.classList.contains("called")||button.classList.contains("sent"))return;
-const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name",student.className).neq("status","ارسال شد");
-if(error){console.error(error);return;}
-if(data&&data.length){
-updateButton(button,data[0]);
-return;
-}
-const time=timeNow();
-const date=new Intl.DateTimeFormat("fa-IR",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-const {data:inserted,error:insertError}=await supabaseClient.from("calls").insert([{student_name:student.name,class_name:student.className,status:"فراخوان شد",called_date:date,called_time:time}]).select().single();
-if(insertError){console.error(insertError);return;}
-updateButton(button,inserted);
-updateCount(student.className);
+
+    // اگر دانش‌آموز قبلاً ارسال شده، دیگر از اینجا قابل برگشت نباشد
+    if(button.classList.contains("sent")){
+        return;
+    }
+
+
+    // اگر قبلاً فراخوان شده، کلیک دوم یعنی لغو فراخوان
+    if(button.classList.contains("called")){
+
+        console.log(
+            "↩️ لغو فراخوان:",
+            student.name,
+            student.className
+        );
+
+        const {data,error} =
+        await supabaseClient
+        .from("calls")
+        .delete()
+        .eq("student_name",student.name)
+        .eq("class_name",student.className)
+        .neq("status","ارسال شد")
+        .select();
+
+        if(error){
+
+            console.error(
+                "❌ خطا در لغو فراخوان:",
+                error
+            );
+
+            alert("خطا در لغو فراخوان");
+
+            return;
+        }
+
+
+        // برگرداندن باتن به حالت اولیه
+        button.classList.remove(
+            "called",
+            "sent"
+        );
+
+        button.classList.add("pending");
+
+        button.querySelector(
+            ".student-status"
+        ).textContent="";
+
+        button.querySelector(
+            ".status-time"
+        ).textContent="";
+
+
+        updateCount(
+            student.className
+        );
+
+
+        console.log(
+            "✅ فراخوان لغو شد:",
+            student.name
+        );
+
+        return;
+    }
+
+
+    // =========================
+    // کلیک اول → ایجاد فراخوان
+    // =========================
+
+    const {data,error} =
+    await supabaseClient
+    .from("calls")
+    .select("*")
+    .eq(
+        "student_name",
+        student.name
+    )
+    .eq(
+        "class_name",
+        student.className
+    )
+    .neq(
+        "status",
+        "ارسال شد"
+    );
+
+
+    if(error){
+
+        console.error(error);
+
+        return;
+    }
+
+
+    // اگر از قبل وجود داشت
+    if(data && data.length){
+
+        updateButton(
+            button,
+            data[0]
+        );
+
+        return;
+    }
+
+
+    const time =
+    timeNow();
+
+
+    const date =
+    new Intl.DateTimeFormat(
+        "fa-IR",
+        {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit"
+        }
+    ).format(new Date());
+
+
+    const {
+        data:inserted,
+        error:insertError
+    } =
+    await supabaseClient
+    .from("calls")
+    .insert([
+        {
+            student_name:student.name,
+            class_name:student.className,
+            status:"فراخوان شد",
+            called_date:date,
+            called_time:time
+        }
+    ])
+    .select()
+    .single();
+
+
+    if(insertError){
+
+        console.error(
+            "❌ خطا در ایجاد فراخوان:",
+            insertError
+        );
+
+        return;
+    }
+
+
+    updateButton(
+        button,
+        inserted
+    );
+
+
+    updateCount(
+        student.className
+    );
+
+
+    console.log(
+        "📢 فراخوان ایجاد شد:",
+        student.name
+    );
 
 }
+
+
+
+
+
+
+
+
+
 
 function updateButton(button,call){
 button.classList.remove("pending","called","sent");
