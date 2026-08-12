@@ -476,6 +476,91 @@ updateCount(call.class_name);
 });
 }
 
+
+async function loadTodayAttendance(){
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    const {data,error} =
+        await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("attendance_date",today);
+
+    if(error){
+
+        console.error(
+            "❌ خطا در دریافت حضور و غیاب:",
+            error
+        );
+
+        return;
+    }
+
+    data.forEach(record=>{
+
+        applyAttendanceToNazem(record);
+
+    });
+
+}
+
+
+function applyAttendanceToNazem(record){
+
+    const button =
+        findButton(
+            record.student_name,
+            record.class_name
+        );
+
+    if(!button)return;
+
+
+    if(record.status==="غایب"){
+
+        button.classList.remove(
+            "pending",
+            "called",
+            "sent"
+        );
+
+        button.classList.add(
+            "absent"
+        );
+
+        button.disabled=true;
+
+        button.querySelector(
+            ".student-status"
+        ).textContent="(غایب)";
+
+        button.querySelector(
+            ".status-time"
+        ).textContent="";
+
+    }else{
+
+        button.classList.remove(
+            "absent"
+        );
+
+        button.disabled=false;
+
+        /*
+        اگر دانش‌آموز فراخوان فعال داشته باشد
+        وضعیت فراخوان او حفظ می‌شود.
+        */
+
+    }
+
+}
+
+
+
+
+
 searchInput.addEventListener("input",()=>{
 const value=normalizeText(searchInput.value);
 document.querySelectorAll(".student-button").forEach(button=>{
@@ -532,7 +617,7 @@ resetButton.addEventListener("click",async()=>{
 
 createClasses();
 loadCalls();
-
+loadTodayAttendance();
 
 supabaseClient
 .channel("nazem-all-classes")
@@ -659,3 +744,53 @@ console.log("Realtime تمام کلاس‌ها:",status);
 
 
 
+supabaseClient
+.channel("nazem-attendance")
+.on(
+    "postgres_changes",
+    {
+        event:"INSERT",
+        schema:"public",
+        table:"attendance"
+    },
+    payload=>{
+
+        console.log(
+            "📡 غیبت جدید دریافت شد:",
+            payload.new
+        );
+
+        applyAttendanceToNazem(
+            payload.new
+        );
+
+    }
+)
+.on(
+    "postgres_changes",
+    {
+        event:"UPDATE",
+        schema:"public",
+        table:"attendance"
+    },
+    payload=>{
+
+        console.log(
+            "📡 وضعیت حضور و غیاب تغییر کرد:",
+            payload.new
+        );
+
+        applyAttendanceToNazem(
+            payload.new
+        );
+
+    }
+)
+.subscribe(status=>{
+
+    console.log(
+        "📡 Realtime حضور و غیاب ناظم:",
+        status
+    );
+
+});

@@ -534,3 +534,41 @@ transform:rotate(-35deg);
 }
 
 
+.student-button.absent{
+    background:#000 !important;
+    color:#fff !important;
+    cursor:not-allowed !important;
+    opacity:1 !important;
+    filter:none !important;
+    box-shadow:none !important;
+}
+
+.student-button.absent .student-name{
+    color:#fff !important;
+}
+
+.student-button.absent .student-status{
+    color:#fff !important;
+}
+
+.student-button.absent .status-time{
+    color:#fff !important;
+}
+
+.student-button.absent:hover{
+    background:#000 !important;
+    color:#fff !important;
+    filter:none !important;
+    transform:none !important;
+}
+
+.student-button.absent:active{
+    transform:none !important;
+}
+
+.student-button.absent:disabled{
+    background:#000 !important;
+    color:#fff !important;
+    opacity:1 !important;
+    cursor:not-allowed !important;
+}
