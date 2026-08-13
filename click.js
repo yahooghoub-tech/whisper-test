@@ -977,177 +977,21 @@ supabaseClient
 
 
 
-
-
-
-
+const attendanceChannel =
 supabaseClient
 .channel("nazem-attendance-realtime")
 
 .on(
     "postgres_changes",
     {
-        event:"INSERT",
-        schema:"public",
-        table:"attendance"
+        event: "*",
+        schema: "public",
+        table: "attendance"
     },
     payload => {
 
         console.log(
-            "📡 INSERT حضور و غیاب:",
-            payload
-        );
-
-        const record = payload.new;
-
-        if(!record){
-            return;
-        }
-
-        if(
-            record.attendance_date !==
-            todayPersianDate()
-        ){
-            console.log(
-                "⏭️ رکورد مربوط به امروز نیست:",
-                record.attendance_date
-            );
-
-            return;
-        }
-
-        applyAttendanceToNazem(record);
-
-    }
-)
-
-.on(
-    "postgres_changes",
-    {
-        event:"UPDATE",
-        schema:"public",
-        table:"attendance"
-    },
-    payload => {
-
-        console.log(
-            "📡 UPDATE حضور و غیاب:",
-            payload
-        );
-
-        const record = payload.new;
-
-        if(!record){
-            return;
-        }
-
-        if(
-            record.attendance_date !==
-            todayPersianDate()
-        ){
-            return;
-        }
-
-        applyAttendanceToNazem(record);
-
-    }
-)
-
-.on(
-    "postgres_changes",
-    {
-        event:"DELETE",
-        schema:"public",
-        table:"attendance"
-    },
-    payload => {
-
-        console.log(
-            "📡 DELETE حضور و غیاب:",
-            payload
-        );
-
-        const record = payload.old;
-
-        if(!record){
-            return;
-        }
-
-        if(
-            record.attendance_date !==
-            todayPersianDate()
-        ){
-            return;
-        }
-
-        const button =
-            findButton(
-                record.student_name,
-                record.class_name
-            );
-
-        if(!button){
-            return;
-        }
-
-        /*
-        دانش‌آموز دوباره به حالت عادی برگردد
-        */
-
-        button.classList.remove(
-            "absent",
-            "called",
-            "sent"
-        );
-
-        button.classList.add(
-            "pending"
-        );
-
-        button.disabled = false;
-
-        button.querySelector(
-            ".student-status"
-        ).textContent = "";
-
-        button.querySelector(
-            ".status-time"
-        ).textContent = "";
-
-        updateCount(
-            record.class_name
-        );
-
-    }
-)
-
-.subscribe(status => {
-
-    console.log(
-        "📡 وضعیت اتصال Realtime حضور و غیاب:",
-        status
-    );
-
-});
-
-
-
-
-console.log("🟢 شروع تست Realtime حضور و غیاب ناظم");
-
-supabaseClient
-.channel("attendance-realtime-test")
-.on(
-    "postgres_changes",
-    {
-        event:"*",
-        schema:"public",
-        table:"attendance"
-    },
-    payload=>{
-
-        console.log(
-            "🔥🔥🔥 REALTIME ATTENDANCE:",
+            "🔥 حضور و غیاب Realtime دریافت شد:",
             payload
         );
 
@@ -1155,6 +999,9 @@ supabaseClient
             payload.new || payload.old;
 
         if(!record){
+            console.warn(
+                "⚠️ رکورد حضور و غیاب خالی است"
+            );
             return;
         }
 
@@ -1178,27 +1025,43 @@ supabaseClient
             record.status
         );
 
+
+        /*
+        فقط رکوردهای امروز
+        */
+
         if(
             record.attendance_date !==
             todayPersianDate()
         ){
 
             console.log(
-                "⏭ این رکورد مربوط به امروز نیست"
+                "⏭️ رکورد مربوط به امروز نیست"
             );
 
             return;
         }
 
-        applyAttendanceToNazem(record);
+
+        /*
+        اعمال وضعیت حضور و غیاب
+        روی دکمه دانش‌آموز
+        */
+
+        applyAttendanceToNazem(
+            record
+        );
 
     }
 )
-.subscribe(status=>{
+
+.subscribe(status => {
 
     console.log(
-        "🚨 وضعیت تست Realtime attendance:",
+        "📡 وضعیت Realtime حضور و غیاب ناظم:",
         status
     );
 
 });
+
+
