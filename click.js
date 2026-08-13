@@ -551,7 +551,7 @@ async function loadCalls(){
 async function loadTodayAttendance(){
 
     const today =
-        new Date().toISOString().split("T")[0];
+    todayPersianDate();
 
     const {data,error} =
         await supabaseClient
