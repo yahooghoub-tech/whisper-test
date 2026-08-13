@@ -1120,3 +1120,76 @@ supabaseClient
     );
 
 });
+
+
+
+
+console.log("🟢 شروع تست Realtime حضور و غیاب ناظم");
+
+supabaseClient
+.channel("attendance-realtime-test")
+.on(
+    "postgres_changes",
+    {
+        event:"*",
+        schema:"public",
+        table:"attendance"
+    },
+    payload=>{
+
+        console.log(
+            "🔥🔥🔥 REALTIME ATTENDANCE:",
+            payload
+        );
+
+        const record =
+            payload.new || payload.old;
+
+        if(!record){
+            return;
+        }
+
+        console.log(
+            "👤 دانش‌آموز:",
+            record.student_name
+        );
+
+        console.log(
+            "🏫 کلاس:",
+            record.class_name
+        );
+
+        console.log(
+            "📅 تاریخ:",
+            record.attendance_date
+        );
+
+        console.log(
+            "📌 وضعیت:",
+            record.status
+        );
+
+        if(
+            record.attendance_date !==
+            todayPersianDate()
+        ){
+
+            console.log(
+                "⏭ این رکورد مربوط به امروز نیست"
+            );
+
+            return;
+        }
+
+        applyAttendanceToNazem(record);
+
+    }
+)
+.subscribe(status=>{
+
+    console.log(
+        "🚨 وضعیت تست Realtime attendance:",
+        status
+    );
+
+});
