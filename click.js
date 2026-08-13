@@ -788,6 +788,191 @@ createClasses();
 loadCalls();
 loadTodayAttendance();
 
+
+supabaseClient
+.channel("nazem-all-calls")
+
+.on(
+    "postgres_changes",
+    {
+        event:"INSERT",
+        schema:"public",
+        table:"calls"
+    },
+    payload=>{
+
+        const call = payload.new;
+
+        if(!call){
+            return;
+        }
+
+        if(
+            call.called_date !==
+            todayPersianDate()
+        ){
+            return;
+        }
+
+        console.log(
+            "📡 فراخوان جدید Realtime:",
+            call
+        );
+
+        const button =
+            findButton(
+                call.student_name,
+                call.class_name
+            );
+
+        if(!button){
+            console.warn(
+                "⚠️ دکمه دانش‌آموز پیدا نشد:",
+                call.student_name,
+                call.class_name
+            );
+
+            return;
+        }
+
+        updateButton(
+            button,
+            call
+        );
+
+        updateCount(
+            call.class_name
+        );
+
+    }
+)
+
+.on(
+    "postgres_changes",
+    {
+        event:"UPDATE",
+        schema:"public",
+        table:"calls"
+    },
+    payload=>{
+
+        const call = payload.new;
+
+        if(!call){
+            return;
+        }
+
+        if(
+            call.called_date !==
+            todayPersianDate()
+        ){
+            return;
+        }
+
+        console.log(
+            "📡 تغییر فراخوان Realtime:",
+            call
+        );
+
+        const button =
+            findButton(
+                call.student_name,
+                call.class_name
+            );
+
+        if(!button){
+            return;
+        }
+
+        updateButton(
+            button,
+            call
+        );
+
+        updateCount(
+            call.class_name
+        );
+
+    }
+)
+
+.on(
+    "postgres_changes",
+    {
+        event:"DELETE",
+        schema:"public",
+        table:"calls"
+    },
+    payload=>{
+
+        const call = payload.old;
+
+        if(!call){
+            return;
+        }
+
+        console.log(
+            "📡 فراخوان حذف شد:",
+            call
+        );
+
+        const button =
+            findButton(
+                call.student_name,
+                call.class_name
+            );
+
+        if(!button){
+            return;
+        }
+
+        /*
+        دکمه را به حالت اولیه برمی‌گردانیم
+        */
+
+        button.classList.remove(
+            "called",
+            "sent",
+            "absent"
+        );
+
+        button.classList.add(
+            "pending"
+        );
+
+        button.disabled = false;
+
+        button.querySelector(
+            ".student-status"
+        ).textContent = "";
+
+        button.querySelector(
+            ".status-time"
+        ).textContent = "";
+
+        updateCount(
+            call.class_name
+        );
+
+    }
+)
+
+.subscribe(status=>{
+
+    console.log(
+        "📡 Realtime فراخوان‌های ناظم:",
+        status
+    );
+
+});
+
+
+
+
+
+
+
+
 supabaseClient
 .channel("nazem-attendance")
 
