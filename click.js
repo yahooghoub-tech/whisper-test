@@ -972,9 +972,8 @@ supabaseClient
 
 
 
-
 supabaseClient
-.channel("nazem-attendance")
+.channel("nazem-attendance-realtime")
 
 .on(
     "postgres_changes",
@@ -983,42 +982,35 @@ supabaseClient
         schema:"public",
         table:"attendance"
     },
-    payload=>{
+    payload => {
 
-        const record =
-            payload.new;
+        console.log(
+            "📡 INSERT حضور و غیاب:",
+            payload
+        );
+
+        const record = payload.new;
 
         if(!record){
             return;
         }
 
-
-        /*
-        فقط حضور و غیاب امروز
-        */
-
         if(
             record.attendance_date !==
             todayPersianDate()
         ){
+            console.log(
+                "⏭️ رکورد مربوط به امروز نیست:",
+                record.attendance_date
+            );
 
             return;
         }
 
-
-        console.log(
-            "📡 غیبت امروز دریافت شد:",
-            record
-        );
-
-
-        applyAttendanceToNazem(
-            record
-        );
+        applyAttendanceToNazem(record);
 
     }
 )
-
 
 .on(
     "postgres_changes",
@@ -1027,47 +1019,103 @@ supabaseClient
         schema:"public",
         table:"attendance"
     },
-    payload=>{
+    payload => {
 
-        const record =
-            payload.new;
+        console.log(
+            "📡 UPDATE حضور و غیاب:",
+            payload
+        );
+
+        const record = payload.new;
 
         if(!record){
             return;
         }
 
+        if(
+            record.attendance_date !==
+            todayPersianDate()
+        ){
+            return;
+        }
 
-        /*
-        فقط تغییرات مربوط به امروز
-        */
+        applyAttendanceToNazem(record);
+
+    }
+)
+
+.on(
+    "postgres_changes",
+    {
+        event:"DELETE",
+        schema:"public",
+        table:"attendance"
+    },
+    payload => {
+
+        console.log(
+            "📡 DELETE حضور و غیاب:",
+            payload
+        );
+
+        const record = payload.old;
+
+        if(!record){
+            return;
+        }
 
         if(
             record.attendance_date !==
             todayPersianDate()
         ){
-
             return;
         }
 
+        const button =
+            findButton(
+                record.student_name,
+                record.class_name
+            );
 
-        console.log(
-            "📡 وضعیت امروز تغییر کرد:",
-            record
+        if(!button){
+            return;
+        }
+
+        /*
+        دانش‌آموز دوباره به حالت عادی برگردد
+        */
+
+        button.classList.remove(
+            "absent",
+            "called",
+            "sent"
         );
 
+        button.classList.add(
+            "pending"
+        );
 
-        applyAttendanceToNazem(
-            record
+        button.disabled = false;
+
+        button.querySelector(
+            ".student-status"
+        ).textContent = "";
+
+        button.querySelector(
+            ".status-time"
+        ).textContent = "";
+
+        updateCount(
+            record.class_name
         );
 
     }
 )
 
-
-.subscribe(status=>{
+.subscribe(status => {
 
     console.log(
-        "📡 Realtime حضور و غیاب ناظم:",
+        "📡 وضعیت اتصال Realtime حضور و غیاب:",
         status
     );
 
