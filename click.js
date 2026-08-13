@@ -551,7 +551,12 @@ async function loadCalls(){
 async function loadTodayAttendance(){
 
     const today =
-    todayPersianDate();
+        todayPersianDate();
+
+    console.log(
+        "📅 دریافت حضور و غیاب امروز:",
+        today
+    );
 
     const {data,error} =
         await supabaseClient
@@ -569,6 +574,11 @@ async function loadTodayAttendance(){
         return;
     }
 
+    console.log(
+        "📋 حضور و غیاب دریافت شد:",
+        data
+    );
+
     data.forEach(record=>{
 
         applyAttendanceToNazem(record);
@@ -576,7 +586,6 @@ async function loadTodayAttendance(){
     });
 
 }
-
 
 
 function applyAttendanceToNazem(record){
