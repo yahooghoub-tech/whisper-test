@@ -1215,13 +1215,19 @@ async function loadTodayAttendance(){
     
     
     const button=
-    findButton(
-    call.student_name,
-    call.class_name
-    );
-    
-    if(!button)return;
-    
+findButton(
+call.student_name,
+call.class_name
+);
+
+if(
+call.status==="ارسال شد" &&
+payload.eventType!=="DELETE"
+){
+showTeacherSendPopup(call);
+}
+
+if(!button)return;
     
     /*
     اگر دانش‌آموز غایب باشد،
