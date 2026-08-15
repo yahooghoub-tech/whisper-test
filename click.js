@@ -1281,13 +1281,7 @@ if(!button)return;
     updateCount(
     call.class_name
     );
-    if(
-        call.status==="ارسال شد"
-        ){
-        showTeacherSendPopup(call);
-        }
     
-    return;
     
     }
     
@@ -1445,15 +1439,19 @@ if(!button)return;
         )
         
         .subscribe(
-        status=>{
-        
-        console.log(
-        "📡 وضعیت Realtime ناظم:",
-        status
-        );
-        
-        }
-        );
+            status=>{
+            console.log(
+            "📡 وضعیت Realtime ناظم:",
+            status
+            );
+            
+            if(status==="SUBSCRIBED"){
+            console.log("✅ ناظم به Realtime متصل شد");
+            }else{
+            console.log("❌ اتصال Realtime ناظم:",status);
+            }
+            }
+            );
         
         return channel;
         
