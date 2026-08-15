@@ -1,46 +1,636 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>فراخوان دانش‌آموزان</title>
-<link rel="stylesheet" href="click.css">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>پنل ناظم - فراخوان دانش‌آموزان</title>
+
+
+<style>
+
+/* ================================
+   تنظیمات اصلی
+================================ */
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+html,
+body{
+width:100%;
+min-height:100%;
+}
+
+body{
+font-family:Tahoma,Arial,sans-serif;
+background:#f1f5f9;
+}
+
+
+/* ================================
+   محافظ صفحه
+================================ */
+
+#authChecking{
+position:fixed;
+inset:0;
+background:linear-gradient(
+135deg,
+#0f172a,
+#172554,
+#1e3a8a
+);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:99999;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+
+/* ================================
+   پنل اصلی
+================================ */
+
+.container{
+width:100%;
+min-height:100vh;
+padding:20px;
+}
+
+
+/* ================================
+   نوار بالا
+================================ */
+
+.top-bar{
+width:100%;
+background:white;
+border-radius:20px;
+padding:18px;
+margin-bottom:20px;
+display:flex;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+.top-bar h1{
+font-size:22px;
+color:#0f172a;
+flex:1;
+min-width:250px;
+}
+
+
+/* ================================
+   جستجو
+================================ */
+
+.search-box{
+flex:1;
+min-width:220px;
+}
+
+.search-box input{
+width:100%;
+height:48px;
+border:2px solid #e2e8f0;
+border-radius:12px;
+padding:0 15px;
+font-family:Tahoma,Arial,sans-serif;
+font-size:14px;
+outline:none;
+}
+
+.search-box input:focus{
+border-color:#2563eb;
+box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+
+
+/* ================================
+   دکمه حذف
+================================ */
+
+.reset-button{
+height:48px;
+border:0;
+border-radius:12px;
+padding:0 18px;
+background:linear-gradient(
+135deg,
+#dc2626,
+#b91c1c
+);
+color:white;
+font-family:Tahoma,Arial,sans-serif;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+}
+
+.reset-button:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(220,38,38,.25);
+}
+
+
+/* ================================
+   دکمه خروج
+================================ */
+
+.logout-button{
+height:48px;
+border:0;
+border-radius:12px;
+padding:0 18px;
+background:linear-gradient(
+135deg,
+#475569,
+#334155
+);
+color:white;
+font-family:Tahoma,Arial,sans-serif;
+font-weight:bold;
+cursor:pointer;
+transition:.2s;
+}
+
+.logout-button:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(51,65,85,.25);
+}
+
+
+/* ================================
+   کلاس‌ها
+================================ */
+
+#classesContainer{
+width:100%;
+}
+
+
+/* ================================
+   Popup ارسال دانش‌آموز
+================================ */
+
+.teacher-send-popup{
+position:fixed;
+left:20px;
+bottom:20px;
+z-index:9999;
+
+display:none;
+
+background:white;
+border-radius:18px;
+padding:15px 18px;
+
+box-shadow:
+0 15px 45px rgba(0,0,0,.2);
+
+align-items:center;
+gap:15px;
+
+min-width:300px;
+max-width:90%;
+}
+
+.teacher-send-popup-content{
+flex:1;
+}
+
+.teacher-send-popup-title{
+font-weight:bold;
+font-size:15px;
+color:#0f172a;
+margin-bottom:5px;
+}
+
+.teacher-send-popup-text{
+font-size:14px;
+color:#475569;
+}
+
+.teacher-send-popup-close{
+border:0;
+background:#fee2e2;
+color:#dc2626;
+width:35px;
+height:35px;
+border-radius:10px;
+font-size:24px;
+cursor:pointer;
+}
+
+
+/* ================================
+   آدمک
+================================ */
+
+.teacher-send-popup-icon{
+width:55px;
+height:55px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.person{
+position:relative;
+width:35px;
+height:45px;
+}
+
+.head{
+position:absolute;
+width:13px;
+height:13px;
+border-radius:50%;
+background:#2563eb;
+top:0;
+left:11px;
+}
+
+.body{
+position:absolute;
+width:7px;
+height:20px;
+background:#2563eb;
+top:13px;
+left:14px;
+border-radius:5px;
+}
+
+.arm,
+.leg{
+position:absolute;
+width:5px;
+background:#2563eb;
+border-radius:5px;
+transform-origin:top center;
+}
+
+.arm{
+height:17px;
+top:15px;
+}
+
+.arm-left{
+left:10px;
+transform:rotate(35deg);
+}
+
+.arm-right{
+right:8px;
+transform:rotate(-35deg);
+}
+
+.leg{
+height:18px;
+top:30px;
+}
+
+.leg-left{
+left:12px;
+transform:rotate(20deg);
+}
+
+.leg-right{
+right:11px;
+transform:rotate(-20deg);
+}
+
+
+/* ================================
+   موبایل
+================================ */
+
+@media(max-width:700px){
+
+.container{
+padding:12px;
+}
+
+.top-bar{
+padding:15px;
+border-radius:16px;
+}
+
+.top-bar h1{
+font-size:18px;
+min-width:100%;
+}
+
+.search-box{
+min-width:100%;
+}
+
+.reset-button,
+.logout-button{
+flex:1;
+}
+
+.teacher-send-popup{
+left:10px;
+right:10px;
+bottom:10px;
+min-width:auto;
+}
+
+}
+
+</style>
+
 </head>
+
+
 <body>
-<div class="container">
+
+
+<!-- =================================
+     بررسی ورود ناظم
+================================= -->
+
+<div id="authChecking">
+در حال بررسی ورود...
+</div>
+
+
+<script>
+
+/* =================================
+   محافظ ورود ناظم
+================================= */
+
+(function(){
+
+const loggedIn =
+sessionStorage.getItem("nazemLoggedIn");
+
+if(loggedIn !== "true"){
+
+window.location.replace(
+"https://ali-nik.vercel.app/nazem-login.html"
+);
+
+return;
+
+}
+
+})();
+
+</script>
+
+
+<!-- =================================
+     پنل اصلی ناظم
+================================= -->
+
+<div
+id="nazemPanel"
+class="container"
+style="display:none;"
+>
+
+
 <div class="top-bar">
-<h1>📢 سیستم فراخوان دانش‌آموزان</h1>
+
+
+<h1>
+📢 سیستم فراخوان دانش‌آموزان
+</h1>
+
+
 <div class="search-box">
-<input id="searchInput" type="text" placeholder="جستجوی نام و نام خانوادگی...">
+
+<input
+id="searchInput"
+type="text"
+placeholder="جستجوی نام و نام خانوادگی..."
+>
+
 </div>
-<button id="resetCalls" class="reset-button">🗑 حذف تمام فراخوان‌ها</button>
+
+
+<button
+id="resetCalls"
+class="reset-button"
+>
+🗑 حذف تمام فراخوان‌ها
+</button>
+
+
+<button
+id="nazemLogout"
+class="logout-button"
+>
+🚪 خروج
+</button>
+
+
 </div>
+
+
 <div id="classesContainer"></div>
+
+
 </div>
+
+
+<!-- =================================
+     Popup ارسال دانش‌آموز
+================================= -->
+
+<div
+id="teacherSendPopup"
+class="teacher-send-popup"
+>
+
+
+<div
+class="teacher-send-popup-icon walking-person"
+>
+
+<div class="person">
+
+<div class="head"></div>
+
+<div class="body"></div>
+
+<div class="arm arm-left"></div>
+
+<div class="arm arm-right"></div>
+
+<div class="leg leg-left"></div>
+
+<div class="leg leg-right"></div>
+
+</div>
+
+</div>
+
+
+<div class="teacher-send-popup-content">
+
+<div class="teacher-send-popup-title">
+ارسال دانش‌آموز
+</div>
+
+<div
+id="teacherSendPopupText"
+class="teacher-send-popup-text">
+</div>
+
+</div>
+
+
+<button
+id="closeTeacherSendPopup"
+class="teacher-send-popup-close"
+>
+×
+</button>
+
+
+</div>
+
+
+<!-- =================================
+     Supabase
+================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="click.js"></script>
-
-<div id="teacherSendPopup" class="teacher-send-popup">
-   
-<div class="teacher-send-popup-icon walking-person">
-    <div class="person">
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="arm arm-left"></div>
-        <div class="arm arm-right"></div>
-        <div class="leg leg-left"></div>
-        <div class="leg leg-right"></div>
-    </div>
-</div>
 
 
-    <div class="teacher-send-popup-content">
-        <div class="teacher-send-popup-title">ارسال دانش‌آموز</div>
-        <div id="teacherSendPopupText" class="teacher-send-popup-text"></div>
-    </div>
-    <button id="closeTeacherSendPopup" class="teacher-send-popup-close">×</button>
-</div>
+<script>
+
+/* =================================
+   نمایش پنل بعد از تأیید ورود
+================================= */
+
+if(
+sessionStorage.getItem("nazemLoggedIn") === "true"
+){
+
+document.getElementById(
+"authChecking"
+).style.display = "none";
+
+document.getElementById(
+"nazemPanel"
+).style.display = "block";
+
+}
+
+
+/* =================================
+   خروج ناظم
+================================= */
+
+document
+.getElementById("nazemLogout")
+.addEventListener("click",function(){
+
+sessionStorage.removeItem(
+"nazemLoggedIn"
+);
+
+sessionStorage.removeItem(
+"nazemLoginTime"
+);
+
+window.location.replace(
+"https://ali-nik.vercel.app/nazem-login.html"
+);
+
+});
+
+
+/* =================================
+   بستن Popup
+================================= */
+
+const closePopup =
+document.getElementById(
+"closeTeacherSendPopup"
+);
+
+if(closePopup){
+
+closePopup.addEventListener(
+"click",
+function(){
+
+document.getElementById(
+"teacherSendPopup"
+).style.display = "none";
+
+});
+
+}
+
+
+/* =================================
+   تنظیمات Supabase
+================================= */
+
+const SUPABASE_URL =
+"https://ghnpiijihybuhfetnxjp.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+
+const supabaseClient =
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* =================================
+   اینجا منطق فعلی click.js تو
+   باید قرار بگیرد
+================================ */
+
+
+/*
+   تمام کدهای فعلی click.js
+   را از اینجا به بعد قرار می‌دهیم.
+
+   شامل:
+
+   - لیست دانش‌آموزان
+   - ساخت کلاس‌ها
+   - فراخوان
+   - Realtime
+   - حذف فراخوان‌ها
+   - جستجو
+   - ارسال به معلم
+   - نمایش زمان
+   - Popup
+   - سایر امکانات فعلی پنل
+*/
+
+
+</script>
 
 
 </body>
+
 </html>
