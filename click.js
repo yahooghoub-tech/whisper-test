@@ -1337,25 +1337,16 @@ async function loadTodayAttendance(){
         }
     
     
-    /*
-    ساخت پنل
-    */
-    
-    createClasses();
-    
-    
-    /*
-    اول اتصال Realtime برقرار می‌شود،
-    بعد اطلاعات اولیه خوانده می‌شود.
-    */
-    
-    subscribeNazemRealtime();
-    
-    
-    /*
-    بارگذاری اطلاعات فعلی
-    */
-    
-    loadCalls();
-    
-    loadTodayAttendance();
+        createClasses();
+
+        subscribeNazemRealtime();
+        
+        async function initializeNazem(){
+        
+            await loadCalls();
+        
+            await loadTodayAttendance();
+        
+        }
+        
+        initializeNazem();
