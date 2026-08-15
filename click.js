@@ -1498,3 +1498,72 @@ loadCalls();
 loadTodayAttendance();
 }
 setInterval(checkNazemDayChange,30000);
+
+
+
+
+let popupTouchStartX=0;
+let popupTouchStartY=0;
+
+const teacherSendPopup=
+document.getElementById("teacherSendPopup");
+
+if(teacherSendPopup){
+
+teacherSendPopup.addEventListener(
+"touchstart",
+event=>{
+popupTouchStartX=
+event.touches[0].clientX;
+
+popupTouchStartY=
+event.touches[0].clientY;
+},
+{passive:true}
+);
+
+teacherSendPopup.addEventListener(
+"touchend",
+event=>{
+
+const endX=
+event.changedTouches[0].clientX;
+
+const endY=
+event.changedTouches[0].clientY;
+
+const diffX=
+endX-popupTouchStartX;
+
+const diffY=
+endY-popupTouchStartY;
+
+if(Math.abs(diffX)<50)return;
+
+if(Math.abs(diffX)<=Math.abs(diffY))return;
+
+teacherSendPopup.style.transition=
+"transform .35s ease, opacity .35s ease";
+
+teacherSendPopup.style.transform=
+`translate(calc(-50% + ${diffX}px),-30px)`;
+
+teacherSendPopup.style.opacity="0";
+
+setTimeout(()=>{
+
+teacherSendPopup.classList.remove("show");
+
+teacherSendPopup.style.transform=
+"translate(-50%,-25px)";
+
+teacherSendPopup.style.opacity="";
+
+teacherSendPopup.style.transition="";
+
+},350);
+
+}
+);
+
+}
