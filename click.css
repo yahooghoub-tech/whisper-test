@@ -394,7 +394,23 @@
         }
         
         }
-       
+        @media (max-width:600px){
+            .teacher-send-popup{
+            position:fixed;
+            top:8px;
+            left:6px !important;
+            right:6px !important;
+            width:auto !important;
+            max-width:none !important;
+            margin:0 !important;
+            box-sizing:border-box;
+            transform:translateY(-25px) !important;
+            }
+            
+            .teacher-send-popup.show{
+            transform:translateY(0) !important;
+            }
+            }
 .walking-person{
 position:relative;
 display:flex;
