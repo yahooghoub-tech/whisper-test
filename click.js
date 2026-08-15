@@ -1199,7 +1199,10 @@ async function loadTodayAttendance(){
     
     
     function handleCallRealtime(payload){
-    
+        console.log(
+            "🚨🚨🚨 CALL REALTIME:",
+            payload
+            );
     const call=
     payload.new||
     payload.old;
