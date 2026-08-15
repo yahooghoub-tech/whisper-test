@@ -256,3 +256,38 @@ body{
     }
 
 }
+.call-panel-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 25px 15px 35px;
+    box-sizing: border-box;
+}
+
+#callPanelButton {
+    width: min(90%, 420px);
+    min-height: 58px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: white;
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+    transition: all 0.2s ease;
+}
+
+#callPanelButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(22, 163, 74, 0.4);
+}
+
+#callPanelButton:active {
+    transform: scale(0.97);
+}
+
+#callPanelButton span {
+    margin-right: 8px;
+}
