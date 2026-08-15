@@ -97,6 +97,13 @@ const callCount=document.getElementById("callCount");
 function getToday(){
 return new Intl.DateTimeFormat("fa-IR-u-nu-latn",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 }
+
+function getDatabaseToday(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+
+
 function createStudents(){
 studentsContainer.innerHTML="";
 students.forEach(student=>{
@@ -212,7 +219,7 @@ function resetStudentButton(call){
     loadCalls();
     }
     async function loadAbsentStudents(){
-    const today=getToday();
+    const today=getDatabaseToday()
     const {data,error}=await supabaseClient.from("attendance").select("*").eq("class_name","اول-1").eq("attendance_date",today).eq("status","غایب");
     if(error){
     console.error("❌ خطا در دریافت غایبین:",error);
@@ -313,7 +320,7 @@ function resetStudentButton(call){
         supabaseClient.channel("teacher-1-1-attendance-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"attendance",filter:"class_name=eq.اول-1"},payload=>{
         console.log("🟢 وضعیت حضور و غیاب جدید:",payload.new);
         if(!payload.new)return;
-        if(payload.new.attendance_date!==getToday())return;
+        if(payload.new.attendance_date!==getDatabaseToday())return;
         loadAbsentStudents();
         }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"attendance",filter:"class_name=eq.اول-1"},payload=>{
         console.log("🟡 وضعیت حضور و غیاب تغییر کرد:",payload.new);
