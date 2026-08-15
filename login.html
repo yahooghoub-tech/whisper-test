@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>ورود به پنل ناظم</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%}
+body{font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#020617,#0f172a,#1e3a8a);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff}
+.login-wrapper{width:100%;max-width:430px}
+.login-card{width:100%;padding:35px 30px;border:1px solid rgba(255,255,255,.15);border-radius:28px;background:rgba(255,255,255,.09);box-shadow:0 25px 60px rgba(0,0,0,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.logo{width:85px;height:85px;margin:0 auto 20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;background:rgba(59,130,246,.2);border:2px solid rgba(96,165,250,.5);box-shadow:0 0 30px rgba(59,130,246,.25)}
+.title{text-align:center;font-size:27px;font-weight:bold;margin-bottom:8px}
+.subtitle{text-align:center;color:#cbd5e1;font-size:14px;margin-bottom:30px}
+.input-group{margin-bottom:18px}
+.input-group label{display:block;margin-bottom:8px;font-size:14px;color:#e2e8f0}
+.input-wrapper{position:relative}
+.input-wrapper input{width:100%;height:52px;border:1px solid rgba(255,255,255,.15);outline:none;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;padding:0 16px;font-size:16px;font-family:Tahoma,Arial,sans-serif;transition:.2s}
+.input-wrapper input::placeholder{color:#94a3b8}
+.input-wrapper input:focus{border-color:#60a5fa;background:rgba(255,255,255,.14);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.login-button{width:100%;height:53px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:Tahoma,Arial,sans-serif;font-size:17px;font-weight:bold;cursor:pointer;transition:.2s;margin-top:8px;box-shadow:0 10px 25px rgba(37,99,235,.25)}
+.login-button:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(37,99,235,.35)}
+.login-button:active{transform:translateY(0)}
+.login-button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.error-message{display:none;margin-top:18px;padding:13px 14px;border-radius:12px;background:rgba(239,68,68,.15);border:1px solid rgba(248,113,113,.3);color:#fecaca;text-align:center;font-size:14px;line-height:1.8}
+.loading{display:none;text-align:center;margin-top:15px;color:#bfdbfe;font-size:13px}
+.footer{text-align:center;margin-top:25px;color:#94a3b8;font-size:12px}
+@media(max-width:600px){
+body{padding:16px}
+.login-card{padding:30px 22px;border-radius:23px}
+.logo{width:75px;height:75px;font-size:36px;margin-bottom:17px}
+.title{font-size:23px}
+.subtitle{font-size:13px;margin-bottom:25px}
+.input-wrapper input{height:50px;font-size:15px}
+.login-button{height:51px;font-size:16px}
+}
+@media(max-width:380px){
+.login-card{padding:25px 18px}
+.logo{width:68px;height:68px;font-size:32px}
+.title{font-size:21px}
+.subtitle{font-size:12px}
+.input-wrapper input{height:47px}
+.login-button{height:48px}
+}
+@media(min-width:601px) and (max-width:1024px){
+.login-wrapper{max-width:460px}
+.login-card{padding:40px 35px}
+.title{font-size:29px}
+}
+</style>
+</head>
+<body>
+<div class="login-wrapper">
+<div class="login-card">
+<div class="logo">👨‍💼</div>
+<h1 class="title">ورود به پنل ناظم</h1>
+<p class="subtitle">سیستم مدیریت فراخوان دانش‌آموزان</p>
+<div class="input-group">
+<label for="username">نام کاربری</label>
+<div class="input-wrapper">
+<input id="username" type="text" placeholder="نام کاربری را وارد کنید" autocomplete="username" inputmode="text">
+</div>
+</div>
+<div class="input-group">
+<label for="password">رمز عبور</label>
+<div class="input-wrapper">
+<input id="password" type="password" placeholder="رمز عبور را وارد کنید" autocomplete="current-password">
+</div>
+</div>
+<button id="loginButton" class="login-button">ورود به پنل</button>
+<div id="errorMessage" class="error-message"></div>
+<div id="loadingMessage" class="loading">در حال بررسی اطلاعات ورود...</div>
+<div class="footer">پنل مدیریت دبستان علوی</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
+const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const usernameInput=document.getElementById("username");
+const passwordInput=document.getElementById("password");
+const loginButton=document.getElementById("loginButton");
+const errorMessage=document.getElementById("errorMessage");
+const loadingMessage=document.getElementById("loadingMessage");
+function showError(text){
+errorMessage.textContent=text;
+errorMessage.style.display="block";
+}
+function hideError(){
+errorMessage.textContent="";
+errorMessage.style.display="none";
+}
+async function checkExistingSession(){
+const {data,error}=await supabaseClient.auth.getSession();
+if(error){
+console.error("خطا در بررسی نشست:",error);
+return;
+}
+if(data.session){
+window.location.replace("click.html");
+}
+}
+async function login(){
+hideError();
+const username=usernameInput.value.trim();
+const password=passwordInput.value;
+if(!username||!password){
+showError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+return;
+}
+if(username!=="nazem"){
+showError("نام کاربری یا رمز عبور اشتباه است.");
+return;
+}
+loginButton.disabled=true;
+loginButton.textContent="در حال ورود...";
+loadingMessage.style.display="block";
+const {data,error}=await supabaseClient.auth.signInWithPassword({
+email:"nazem@school.local",
+password:password
+});
+if(error){
+console.error("خطای ورود:",error);
+showError("نام کاربری یا رمز عبور اشتباه است.");
+loginButton.disabled=false;
+loginButton.textContent="ورود به پنل";
+loadingMessage.style.display="none";
+return;
+}
+if(data.session){
+window.location.replace("click.html");
+}
+}
+loginButton.addEventListener("click",login);
+passwordInput.addEventListener("keydown",event=>{
+if(event.key==="Enter"){
+login();
+}
+});
+usernameInput.addEventListener("keydown",event=>{
+if(event.key==="Enter"){
+passwordInput.focus();
+}
+});
+checkExistingSession();
+</script>
+</body>
+</html>
