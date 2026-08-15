@@ -1451,3 +1451,26 @@ async function loadTodayAttendance(){
         }
         
         initializeNazem();
+        let currentNazemDay=todayPersianDate();
+function checkNazemDayChange(){
+const newDay=todayPersianDate();
+if(newDay===currentNazemDay)return;
+console.log("📅 روز جدید شروع شد:",currentNazemDay,"→",newDay);
+currentNazemDay=newDay;
+document.querySelectorAll(".student-button").forEach(button=>{
+button.classList.remove("called","sent","absent");
+button.classList.add("pending");
+button.disabled=false;
+const status=button.querySelector(".student-status");
+const time=button.querySelector(".status-time");
+if(status)status.textContent="";
+if(time)time.textContent="";
+});
+document.querySelectorAll(".called-total").forEach(counter=>{
+counter.textContent="0";
+});
+attendanceState.clear();
+loadCalls();
+loadTodayAttendance();
+}
+setInterval(checkNazemDayChange,30000);

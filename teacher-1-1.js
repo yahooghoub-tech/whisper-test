@@ -171,20 +171,18 @@ function resetStudentButton(call){
     callCount.innerText=active.length+" فراخوان";
     }
     function resetTeacherPanel(){
-    document.querySelectorAll(".student-button").forEach(button=>{
-    if(button.classList.contains("absent")){
-    return;
-    }
-    button.classList.remove("called","sent","received");
-    button.classList.add("pending");
-    const status=button.querySelector(".student-status");
-    const time=button.querySelector(".student-time");
-    if(status)status.innerText="";
-    if(time)time.innerText="";
-    });
-    callCount.innerText="0 فراخوان";
-    console.log("🔄 صفحه معلم بدون Refresh ریست شد");
-    }
+        document.querySelectorAll(".student-button").forEach(button=>{
+        button.classList.remove("called","sent","received","absent");
+        button.classList.add("pending");
+        button.disabled=false;
+        const status=button.querySelector(".student-status");
+        const time=button.querySelector(".student-time");
+        if(status)status.innerText="";
+        if(time)time.innerText="";
+        });
+        callCount.innerText="0 فراخوان";
+        console.log("🔄 صفحه معلم بدون Refresh ریست شد");
+        }
     async function sendStudent(student){
     const button=findButton(student.name);
     if(button&&button.classList.contains("absent")){
@@ -247,19 +245,26 @@ function resetStudentButton(call){
     loadCalls();
     loadAbsentStudents();
     window.addEventListener("load",setupSound);
+   
+
+
     let currentTeacherCallDay=getToday();
     function checkTeacherCallDayChange(){
     const newDay=getToday();
     if(newDay===currentTeacherCallDay){
     return;
     }
-    console.log("📅 روز فراخوان تغییر کرد:",currentTeacherCallDay,"→",newDay);
+    console.log("📅 روز جدید پنل معلم:",currentTeacherCallDay,"→",newDay);
     currentTeacherCallDay=newDay;
     resetTeacherPanel();
     loadCalls();
-    loadAbsentStudents();
+    loadTodayAttendance();
     }
     setInterval(checkTeacherCallDayChange,30000);
+
+
+
+
     supabaseClient.channel("teacher-1-1-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.اول-1"},payload=>{
         const call=payload.new;
         console.log("📢 فراخوان جدید:",call);
