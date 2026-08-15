@@ -330,17 +330,16 @@ return "class-"+name.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,"");
 function timeNow(){
 return new Date().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 }
+
 function todayPersianDate(){
-
-    return new Intl.DateTimeFormat(
-        "fa-IR-u-nu-latn",
-        {
-            year:"numeric",
-            month:"2-digit",
-            day:"2-digit"
-        }
-    ).format(new Date());
-
+return new Intl.DateTimeFormat(
+"fa-IR-u-nu-latn",
+{
+year:"numeric",
+month:"2-digit",
+day:"2-digit"
+}
+).format(new Date());
 }
 
 
@@ -359,7 +358,6 @@ console.error(
 );
 
 return;
-
 }
 
 text.innerHTML=
@@ -373,9 +371,7 @@ clearTimeout(window.teacherSendPopupTimer);
 
 window.teacherSendPopupTimer=
 setTimeout(()=>{
-
 popup.classList.remove("show");
-
 },7000);
 
 }
@@ -391,9 +387,7 @@ const popup=
 document.getElementById("teacherSendPopup");
 
 if(popup){
-
 popup.classList.remove("show");
-
 }
 
 };
@@ -401,667 +395,1099 @@ popup.classList.remove("show");
 }
 
 
-
 function createClasses(){
+
 const groups={};
+
 students.forEach(s=>{
-if(!groups[s.className])groups[s.className]=[];
+if(!groups[s.className])
+groups[s.className]=[];
+
 groups[s.className].push(s);
 });
+
 gradeOrder.forEach(grade=>{
-const classes=Object.keys(groups).filter(c=>c.startsWith(grade+"-")).sort((a,b)=>Number(a.split("-")[1])-Number(b.split("-")[1]));
+
+const classes=
+Object.keys(groups)
+.filter(c=>c.startsWith(grade+"-"))
+.sort(
+(a,b)=>
+Number(a.split("-")[1])-
+Number(b.split("-")[1])
+);
+
 if(!classes.length)return;
-const section=document.createElement("section");
+
+const section=
+document.createElement("section");
+
 section.className="grade-section";
-section.innerHTML=`<div class="grade-header"><span>📚 پایه ${grade}</span><span class="grade-arrow">▼</span></div><div class="grade-content"></div>`;
-const content=section.querySelector(".grade-content");
-section.querySelector(".grade-header").onclick=()=>section.classList.toggle("closed");
+
+section.innerHTML=
+`<div class="grade-header">
+<span>📚 پایه ${grade}</span>
+<span class="grade-arrow">▼</span>
+</div>
+<div class="grade-content"></div>`;
+
+const content=
+section.querySelector(".grade-content");
+
+section.querySelector(".grade-header").onclick=
+()=>section.classList.toggle("closed");
+
 classes.forEach(className=>{
-groups[className].sort((a,b)=>a.name.localeCompare(b.name,"fa"));
-const box=document.createElement("div");
+
+groups[className].sort(
+(a,b)=>a.name.localeCompare(b.name,"fa")
+);
+
+const box=
+document.createElement("div");
+
 box.className="class-box";
+
 box.id=classId(className);
-box.innerHTML=`<div class="class-header"><span class="called-total" id="called-${className}">0</span><span class="class-title">${className}</span><span class="student-total">${groups[className].length}</span></div><div class="students-list"></div>`;
-const list=box.querySelector(".students-list");
+
+box.innerHTML=
+`<div class="class-header">
+<span class="called-total" id="called-${className}">0</span>
+<span class="class-title">${className}</span>
+<span class="student-total">${groups[className].length}</span>
+</div>
+<div class="students-list"></div>`;
+
+const list=
+box.querySelector(".students-list");
+
 groups[className].forEach(student=>{
-const button=document.createElement("button");
-button.className="student-button pending";
-button.dataset.name=student.name;
-button.dataset.class=student.className;
-button.innerHTML=`<span class="student-name">${student.name}</span><span class="student-status"></span><span class="status-time"></span>`;
-button.onclick=()=>callStudent(student,button);
+
+const button=
+document.createElement("button");
+
+button.className=
+"student-button pending";
+
+button.dataset.name=
+student.name;
+
+button.dataset.class=
+student.className;
+
+button.innerHTML=
+`<span class="student-name">${student.name}</span>
+<span class="student-status"></span>
+<span class="status-time"></span>`;
+
+button.onclick=
+()=>callStudent(student,button);
+
 list.appendChild(button);
+
 });
+
 content.appendChild(box);
+
 });
+
 container.appendChild(section);
+
 });
+
 }
 
+
 async function callStudent(student,button){
-if(button.classList.contains("called")||button.classList.contains("sent"))return;
-const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name",student.className).neq("status","ارسال شد");
-if(error){console.error(error);return;}
+
+if(
+button.classList.contains("called")||
+button.classList.contains("sent")||
+button.classList.contains("absent")
+)return;
+
+const {data,error}=
+await supabaseClient
+.from("calls")
+.select("*")
+.eq("student_name",student.name)
+.eq("class_name",student.className)
+.neq("status","ارسال شد");
+
+if(error){
+console.error(error);
+return;
+}
+
 if(data&&data.length){
 updateButton(button,data[0]);
 return;
 }
+
 const time=timeNow();
 const date=todayPersianDate();
-const {data:inserted,error:insertError}=await supabaseClient.from("calls").insert([{student_name:student.name,class_name:student.className,status:"فراخوان شد",called_date:date,called_time:time}]).select().single();
-if(insertError){console.error(insertError);return;}
+
+const {
+data:inserted,
+error:insertError
+}=
+await supabaseClient
+.from("calls")
+.insert([
+{
+student_name:student.name,
+class_name:student.className,
+status:"فراخوان شد",
+called_date:date,
+called_time:time
+}
+])
+.select()
+.single();
+
+if(insertError){
+console.error(insertError);
+return;
+}
+
 updateButton(button,inserted);
 updateCount(student.className);
 
 }
 
-function updateButton(button,call){
-button.classList.remove("pending","called","sent");
-if(call.status==="ارسال شد")button.classList.add("sent");
-else button.classList.add("called");
-button.querySelector(".student-status").textContent=`(${call.status})`;
-button.querySelector(".status-time").textContent=call.called_time||"";
+
+function updateButton(button,call,force=false){
+
+if(!button||!call)return;
+
+if(
+!force&&
+hasAbsentAttendance(
+button.dataset.name,
+button.dataset.class
+)
+){
+
+button.classList.remove(
+"pending",
+"called",
+"sent"
+);
+
+button.classList.add("absent");
+
+button.disabled=true;
+
+button.querySelector(
+".student-status"
+).textContent="(غایب)";
+
+button.querySelector(
+".status-time"
+).textContent="";
+
+return;
+
 }
+
+button.classList.remove(
+"pending",
+"called",
+"sent",
+"absent"
+);
+
+if(call.status==="ارسال شد")
+button.classList.add("sent");
+else
+button.classList.add("called");
+
+button.disabled=false;
+
+button.querySelector(
+".student-status"
+).textContent=
+`(${call.status})`;
+
+button.querySelector(
+".status-time"
+).textContent=
+call.called_time||"";
+
+}
+
 
 function updateCount(className){
-const box=document.getElementById(classId(className));
+
+const box=
+document.getElementById(
+classId(className)
+);
+
 if(!box)return;
-const count=box.querySelectorAll(".student-button.called,.student-button.sent").length;
-const counter=document.getElementById("called-"+className);
-if(counter)counter.textContent=count;
+
+const count=
+box.querySelectorAll(
+".student-button.called,.student-button.sent"
+).length;
+
+const counter=
+document.getElementById(
+"called-"+className
+);
+
+if(counter)
+counter.textContent=count;
+
 }
+
 
 function findButton(name,className){
-return document.querySelector(`.student-button[data-name="${CSS.escape(name)}"][data-class="${CSS.escape(className)}"]`);
+
+return document.querySelector(
+`.student-button[data-name="${CSS.escape(name)}"][data-class="${CSS.escape(className)}"]`
+);
+
 }
-
-
 
 
 async function loadCalls(){
 
-    const today =
-        todayPersianDate();
+const today=
+todayPersianDate();
 
-    console.log(
-        "📅 بارگذاری فراخوان‌های امروز:",
-        today
-    );
+console.log(
+"📅 بارگذاری فراخوان‌های امروز:",
+today
+);
 
+const {data,error}=
+await supabaseClient
+.from("calls")
+.select("*")
+.eq("called_date",today)
+.order("id",{ascending:true});
 
-    const {data,error} =
-        await supabaseClient
-        .from("calls")
-        .select("*")
-        .eq("called_date",today)
-        .order("id",{ascending:true});
+if(error){
 
+console.error(
+"❌ خطا در دریافت فراخوان‌های امروز:",
+error
+);
 
-    if(error){
-
-        console.error(
-            "❌ خطا در دریافت فراخوان‌های امروز:",
-            error
-        );
-
-        return;
-    }
-
-
-    data.forEach(call=>{
-
-        const button =
-            findButton(
-                call.student_name,
-                call.class_name
-            );
-
-
-        if(!button){
-
-            console.warn(
-                "⚠️ دکمه دانش‌آموز پیدا نشد:",
-                call.student_name,
-                call.class_name
-            );
-
-            return;
-        }
-
-
-        updateButton(
-            button,
-            call
-        );
-
-
-        updateCount(
-            call.class_name
-        );
-
-    });
-
+return;
 }
 
+(data||[]).forEach(call=>{
 
+const button=
+findButton(
+call.student_name,
+call.class_name
+);
 
+if(!button){
 
+console.warn(
+"⚠️ دکمه دانش‌آموز پیدا نشد:",
+call.student_name,
+call.class_name
+);
 
+return;
+}
 
+updateButton(
+button,
+call
+);
+
+updateCount(
+call.class_name
+);
+
+});
+
+}
 async function loadTodayAttendance(){
 
-    const today =
-        todayPersianDate();
-
+    const today=todayPersianDate();
+    
     console.log(
-        "📅 دریافت حضور و غیاب امروز:",
-        today
+    "📅 دریافت حضور و غیاب امروز:",
+    today
     );
-
-    const {data,error} =
-        await supabaseClient
-        .from("attendance")
-        .select("*")
-        .eq("attendance_date",today);
-
+    
+    const {data,error}=
+    await supabaseClient
+    .from("attendance")
+    .select("*")
+    .eq("attendance_date",today);
+    
     if(error){
-
-        console.error(
-            "❌ خطا در دریافت حضور و غیاب:",
-            error
-        );
-
-        return;
-    }
-
-    console.log(
-        "📋 حضور و غیاب دریافت شد:",
-        data
+    
+    console.error(
+    "❌ خطا در دریافت حضور و غیاب:",
+    error
     );
-
-    data.forEach(record=>{
-
-        applyAttendanceToNazem(record);
-
+    
+    return;
+    }
+    
+    attendanceState.clear();
+    
+    (data||[]).forEach(record=>{
+    
+    applyAttendanceToNazem(
+    record,
+    true
+    );
+    
     });
-
-}
-
-
-function applyAttendanceToNazem(record){
-
-    const button =
-        findButton(
-            record.student_name,
-            record.class_name
-        );
-
-    if(!button){
-        return;
-    }
-
-
-    /*
-    دانش‌آموز غایب
-    */
-
-    if(record.status==="غایب"){
-
-        button.classList.remove(
-            "pending",
-            "called",
-            "sent"
-        );
-
-        button.classList.add("absent");
-
-        button.disabled=true;
-
-        button.querySelector(
-            ".student-status"
-        ).textContent="(غایب)";
-
-        button.querySelector(
-            ".status-time"
-        ).textContent="";
-
-        return;
-    }
-
-
-    /*
-    دانش‌آموز دوباره حاضر شده
-    */
-
-    if(record.status==="حاضر"){
-
-        button.classList.remove("absent");
-
-        button.disabled=false;
-
-
-        /*
-        بررسی می‌کنیم آیا برای این
-        دانش‌آموز فراخوان فعال وجود دارد یا نه.
-        */
-
-        restoreCallState(
-            record.student_name,
-            record.class_name,
-            button
-        );
-
-    }
-
-}
-
-
-
-
-
-async function restoreCallState(
-    studentName,
-    className,
-    button
-){
-
-    const {data,error} =
-        await supabaseClient
-        .from("calls")
-        .select("*")
-        .eq("student_name",studentName)
-        .eq("class_name",className)
-        .neq("status","ارسال شد")
-        .order("id",{ascending:false})
-        .limit(1);
-
-
-    if(error){
-
-        console.error(
-            "❌ خطا در بازیابی وضعیت فراخوان:",
-            error
-        );
-
-        return;
-    }
-
-
-    /*
-    اگر فراخوان فعالی وجود داشته باشد،
-    همان وضعیت قبلی را برگردان.
-    */
-
-    if(data && data.length){
-
-        updateButton(
-            button,
-            data[0]
-        );
-
-        updateCount(
-            className
-        );
-
-        return;
-    }
-
-
-    /*
-    اگر هیچ فراخوان فعالی وجود ندارد،
-    دکمه به حالت اولیه برگردد.
-    */
-
-    button.classList.remove(
-        "called",
-        "sent",
-        "absent"
+    
+    console.log(
+    "📋 وضعیت حضور و غیاب امروز اعمال شد:",
+    (data||[]).length
     );
-
-    button.classList.add("pending");
-
-    button.disabled=false;
-
+    
+    }
+    
+    
+    const attendanceState=
+    new Map();
+    
+    
+    function attendanceKey(
+    studentName,
+    className
+    ){
+    
+    return normalizeText(studentName)+
+    "|" +
+    normalizeText(className);
+    
+    }
+    
+    
+    function hasAbsentAttendance(
+    studentName,
+    className
+    ){
+    
+    return attendanceState.get(
+    attendanceKey(
+    studentName,
+    className
+    )
+    )==="غایب";
+    
+    }
+    
+    
+    function applyAttendanceToNazem(
+    record,
+    updateMap=true
+    ){
+    
+    if(
+    !record||
+    !record.student_name||
+    !record.class_name
+    )return;
+    
+    if(
+    record.attendance_date!==
+    todayPersianDate()
+    )return;
+    
+    
+    if(updateMap){
+    
+    attendanceState.set(
+    attendanceKey(
+    record.student_name,
+    record.class_name
+    ),
+    record.status
+    );
+    
+    }
+    
+    
+    const button=
+    findButton(
+    record.student_name,
+    record.class_name
+    );
+    
+    if(!button)return;
+    
+    
+    if(record.status==="غایب"){
+    
+    button.classList.remove(
+    "pending",
+    "called",
+    "sent"
+    );
+    
+    button.classList.add(
+    "absent"
+    );
+    
+    button.disabled=true;
+    
     button.querySelector(
-        ".student-status"
-    ).textContent="";
-
+    ".student-status"
+    ).textContent=
+    "(غایب)";
+    
     button.querySelector(
-        ".status-time"
+    ".status-time"
     ).textContent="";
-
-}
-
-
-
-
-
-
-
-
-searchInput.addEventListener("input",()=>{
-const value=normalizeText(searchInput.value);
-document.querySelectorAll(".student-button").forEach(button=>{
-const name=normalizeText(button.dataset.name);
-button.classList.toggle("search-hidden",value&&!name.includes(value));
-});
-document.querySelectorAll(".class-box").forEach(box=>{
-const visible=box.querySelectorAll(".student-button:not(.search-hidden)").length;
-box.style.display=visible?"":"none";
-});
-});
-
-resetButton.addEventListener("click",async()=>{
-
-    if(!confirm("آیا تمام فراخوان‌ها حذف شوند؟"))return;
-    
-    const {error}=await supabaseClient
-    .from("calls")
-    .delete()
-    .gte("id",0);
-    
-    if(error){
-    
-    console.error(error);
-    
-    alert("خطا در حذف فراخوان‌ها");
     
     return;
     
     }
     
-    document.querySelectorAll(".student-button").forEach(button=>{
     
-    button.classList.remove("called","sent");
+    if(record.status==="حاضر"){
     
-    button.classList.add("pending");
+    button.classList.remove(
+    "absent"
+    );
     
-    button.querySelector(".student-status").textContent="";
+    button.disabled=false;
     
-    button.querySelector(".status-time").textContent="";
+    restoreCallState(
+    record.student_name,
+    record.class_name,
+    button
+    );
+    
+    }
+    
+    }
+    
+    
+    async function restoreCallState(
+    studentName,
+    className,
+    button
+    ){
+    
+    if(
+    hasAbsentAttendance(
+    studentName,
+    className
+    )
+    )return;
+    
+    
+    const {data,error}=
+    await supabaseClient
+    .from("calls")
+    .select("*")
+    .eq("student_name",studentName)
+    .eq("class_name",className)
+    .eq("called_date",todayPersianDate())
+    .neq("status","ارسال شد")
+    .order("id",{ascending:false})
+    .limit(1);
+    
+    
+    if(error){
+    
+    console.error(
+    "❌ خطا در بازیابی وضعیت فراخوان:",
+    error
+    );
+    
+    return;
+    
+    }
+    
+    
+    if(
+    hasAbsentAttendance(
+    studentName,
+    className
+    )
+    )return;
+    
+    
+    if(data&&data.length){
+    
+    updateButton(
+    button,
+    data[0],
+    true
+    );
+    
+    updateCount(
+    className
+    );
+    
+    return;
+    
+    }
+    
+    
+    button.classList.remove(
+    "called",
+    "sent",
+    "absent"
+    );
+    
+    button.classList.add(
+    "pending"
+    );
+    
+    button.disabled=false;
+    
+    button.querySelector(
+    ".student-status"
+    ).textContent="";
+    
+    button.querySelector(
+    ".status-time"
+    ).textContent="";
+    
+    updateCount(
+    className
+    );
+    
+    }
+    
+    
+    searchInput.addEventListener(
+    "input",
+    ()=>{
+    
+    const value=
+    normalizeText(
+    searchInput.value
+    );
+    
+    document
+    .querySelectorAll(
+    ".student-button"
+    )
+    .forEach(button=>{
+    
+    const name=
+    normalizeText(
+    button.dataset.name
+    );
+    
+    button.classList.toggle(
+    "search-hidden",
+    value&&!name.includes(value)
+    );
     
     });
     
-    document.querySelectorAll(".called-total").forEach(counter=>{
+    
+    document
+    .querySelectorAll(
+    ".class-box"
+    )
+    .forEach(box=>{
+    
+    const visible=
+    box.querySelectorAll(
+    ".student-button:not(.search-hidden)"
+    ).length;
+    
+    box.style.display=
+    visible?"":"none";
+    
+    });
+    
+    });
+    
+    
+    resetButton.addEventListener(
+    "click",
+    async()=>{
+    
+    if(
+    !confirm(
+    "آیا تمام فراخوان‌ها حذف شوند؟"
+    )
+    )return;
+    
+    
+    const {error}=
+    await supabaseClient
+    .from("calls")
+    .delete()
+    .gte("id",0);
+    
+    
+    if(error){
+    
+    console.error(error);
+    
+    alert(
+    "خطا در حذف فراخوان‌ها"
+    );
+    
+    return;
+    
+    }
+    
+    
+    document
+    .querySelectorAll(
+    ".student-button"
+    )
+    .forEach(button=>{
+    
+    /*
+    غایبین نباید با حذف فراخوان‌ها تغییر کنند
+    */
+    
+    if(
+    button.classList.contains(
+    "absent"
+    )
+    )return;
+    
+    
+    button.classList.remove(
+    "called",
+    "sent"
+    );
+    
+    button.classList.add(
+    "pending"
+    );
+    
+    button.querySelector(
+    ".student-status"
+    ).textContent="";
+    
+    button.querySelector(
+    ".status-time"
+    ).textContent="";
+    
+    });
+    
+    
+    document
+    .querySelectorAll(
+    ".called-total"
+    )
+    .forEach(counter=>{
     
     counter.textContent="0";
     
     });
     
-    console.log("✅ تمام فراخوان‌ها در ناظم ریست شدند");
+    
+    console.log(
+    "✅ تمام فراخوان‌ها در ناظم ریست شدند؛ غایبین دست‌نخورده ماندند"
+    );
     
     });
-
-
-createClasses();
-loadCalls();
-loadTodayAttendance();
-
-
-supabaseClient
-.channel("nazem-all-calls")
-
-.on(
-    "postgres_changes",
-    {
-        event:"INSERT",
-        schema:"public",
-        table:"calls"
-    },
-    payload=>{
-
-        const call = payload.new;
-
-        if(!call){
-            return;
-        }
-
-        if(
-            call.called_date !==
-            todayPersianDate()
-        ){
-            return;
-        }
-
-        console.log(
-            "📡 فراخوان جدید Realtime:",
-            call
-        );
-
-        const button =
-            findButton(
-                call.student_name,
-                call.class_name
-            );
-
-        if(!button){
-            console.warn(
-                "⚠️ دکمه دانش‌آموز پیدا نشد:",
-                call.student_name,
-                call.class_name
-            );
-
-            return;
-        }
-
-        updateButton(
-            button,
-            call
-        );
-
-        updateCount(
-            call.class_name
-        );
-
-    }
-)
-
-.on(
-    "postgres_changes",
-    {
-        event:"UPDATE",
-        schema:"public",
-        table:"calls"
-    },
-    payload=>{
-
-        const call = payload.new;
-
-        if(!call){
-            return;
-        }
-
-        if(
-            call.called_date !==
-            todayPersianDate()
-        ){
-            return;
-        }
-
-        console.log(
-            "📡 تغییر فراخوان Realtime:",
-            call
-        );
-
-        const button =
-            findButton(
-                call.student_name,
-                call.class_name
-            );
-
-        if(!button){
-            return;
-        }
-
-        updateButton(
-            button,
-            call
-        );
-
-        updateCount(
-            call.class_name
-        );
-
-    }
-)
-
-.on(
-    "postgres_changes",
-    {
-        event:"DELETE",
-        schema:"public",
-        table:"calls"
-    },
-    payload=>{
-
-        const call = payload.old;
-
-        if(!call){
-            return;
-        }
-
-        console.log(
-            "📡 فراخوان حذف شد:",
-            call
-        );
-
-        const button =
-            findButton(
-                call.student_name,
-                call.class_name
-            );
-
-        if(!button){
-            return;
-        }
-
-        /*
-        دکمه را به حالت اولیه برمی‌گردانیم
-        */
-
-        button.classList.remove(
-            "called",
-            "sent",
-            "absent"
-        );
-
-        button.classList.add(
-            "pending"
-        );
-
-        button.disabled = false;
-
-        button.querySelector(
-            ".student-status"
-        ).textContent = "";
-
-        button.querySelector(
-            ".status-time"
-        ).textContent = "";
-
-        updateCount(
-            call.class_name
-        );
-
-    }
-)
-
-.subscribe(status=>{
-
-    console.log(
-        "📡 Realtime فراخوان‌های ناظم:",
-        status
+    
+    
+    function handleCallRealtime(payload){
+    
+    const call=
+    payload.new||
+    payload.old;
+    
+    if(!call)return;
+    
+    
+    if(
+    call.called_date&&
+    call.called_date!==
+    todayPersianDate()
+    )return;
+    
+    
+    const button=
+    findButton(
+    call.student_name,
+    call.class_name
     );
-
-});
-
-
-
-const attendanceChannel =
-supabaseClient
-.channel("nazem-attendance-realtime")
-
-.on(
+    
+    if(!button)return;
+    
+    
+    /*
+    اگر دانش‌آموز غایب باشد،
+    فراخوان نباید وضعیت غایب را خراب کند
+    */
+    
+    if(
+    hasAbsentAttendance(
+    call.student_name,
+    call.class_name
+    )
+    ){
+    
+    console.log(
+    "⏭️ این دانش‌آموز غایب است؛ تغییر فراخوان روی دکمه اعمال نشد:",
+    call.student_name
+    );
+    
+    return;
+    
+    }
+    
+    
+    /*
+    حذف فراخوان
+    */
+    
+    if(
+    payload.eventType==="DELETE"
+    ){
+    
+    button.classList.remove(
+    "called",
+    "sent"
+    );
+    
+    button.classList.add(
+    "pending"
+    );
+    
+    button.disabled=false;
+    
+    button.querySelector(
+    ".student-status"
+    ).textContent="";
+    
+    button.querySelector(
+    ".status-time"
+    ).textContent="";
+    
+    updateCount(
+    call.class_name
+    );
+    
+    return;
+    
+    }
+    
+    
+    /*
+    INSERT / UPDATE فراخوان
+    */
+    
+    updateButton(
+    button,
+    call,
+    false
+    );
+    
+    updateCount(
+    call.class_name
+    );
+    
+    }
+    
+    
+    function handleAttendanceRealtime(
+    payload
+    ){
+    
+    const record=
+    payload.new||
+    payload.old;
+    
+    if(!record)return;
+    
+    console.log(
+    "🔥 حضور و غیاب Realtime دریافت شد:",
+    payload
+    );
+    
+    
+    if(
+    record.attendance_date!==
+    todayPersianDate()
+    )return;
+    
+    
+    const key=
+    attendanceKey(
+    record.student_name,
+    record.class_name
+    );
+    
+    
+    /*
+    حذف رکورد حضور و غیاب
+    */
+    
+    if(
+    payload.eventType==="DELETE"
+    ){
+    
+    attendanceState.delete(
+    key
+    );
+    
+    const button=
+    findButton(
+    record.student_name,
+    record.class_name
+    );
+    
+    if(button){
+    
+    button.classList.remove(
+    "absent"
+    );
+    
+    button.disabled=false;
+    
+    restoreCallState(
+    record.student_name,
+    record.class_name,
+    button
+    );
+    
+    }
+    
+    return;
+    
+    }
+    
+    
+    /*
+    INSERT / UPDATE حضور و غیاب
+    */
+    
+    attendanceState.set(
+    key,
+    record.status
+    );
+    
+    applyAttendanceToNazem(
+    record,
+    false
+    );
+    
+    }
+    
+    
+    function subscribeNazemRealtime(){
+    
+    
+    /*
+    ================================================
+    Realtime فراخوان‌ها
+    ================================================
+    */
+    
+    supabaseClient
+    .channel(
+    "nazem-all-calls",
+    {
+    config:{
+    broadcast:{
+    self:false
+    }
+    }
+    }
+    )
+    
+    .on(
     "postgres_changes",
     {
-        event: "*",
-        schema: "public",
-        table: "attendance"
+    event:"INSERT",
+    schema:"public",
+    table:"calls"
     },
-    payload => {
-
-        console.log(
-            "🔥 حضور و غیاب Realtime دریافت شد:",
-            payload
-        );
-
-        const record =
-            payload.new || payload.old;
-
-        if(!record){
-            console.warn(
-                "⚠️ رکورد حضور و غیاب خالی است"
-            );
-            return;
-        }
-
-        console.log(
-            "👤 دانش‌آموز:",
-            record.student_name
-        );
-
-        console.log(
-            "🏫 کلاس:",
-            record.class_name
-        );
-
-        console.log(
-            "📅 تاریخ:",
-            record.attendance_date
-        );
-
-        console.log(
-            "📌 وضعیت:",
-            record.status
-        );
-
-
-        /*
-        فقط رکوردهای امروز
-        */
-
-        if(
-            record.attendance_date !==
-            todayPersianDate()
-        ){
-
-            console.log(
-                "⏭️ رکورد مربوط به امروز نیست"
-            );
-
-            return;
-        }
-
-
-        /*
-        اعمال وضعیت حضور و غیاب
-        روی دکمه دانش‌آموز
-        */
-
-        applyAttendanceToNazem(
-            record
-        );
-
-    }
-)
-
-.subscribe(status => {
-
+    payload=>{
+    
     console.log(
-        "📡 وضعیت Realtime حضور و غیاب ناظم:",
-        status
+    "📡 INSERT فراخوان Realtime:",
+    payload.new
     );
-
-});
-
-
+    
+    handleCallRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"UPDATE",
+    schema:"public",
+    table:"calls"
+    },
+    payload=>{
+    
+    console.log(
+    "📡 UPDATE فراخوان Realtime:",
+    payload.new
+    );
+    
+    handleCallRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"DELETE",
+    schema:"public",
+    table:"calls"
+    },
+    payload=>{
+    
+    console.log(
+    "📡 DELETE فراخوان Realtime:",
+    payload.old
+    );
+    
+    handleCallRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .subscribe(
+    status=>{
+    
+    console.log(
+    "📡 Realtime فراخوان‌های ناظم:",
+    status
+    );
+    
+    }
+    );
+    
+    
+    /*
+    ================================================
+    Realtime حضور و غیاب
+    ================================================
+    */
+    
+    supabaseClient
+    .channel(
+    "nazem-attendance-realtime",
+    {
+    config:{
+    broadcast:{
+    self:false
+    }
+    }
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"INSERT",
+    schema:"public",
+    table:"attendance"
+    },
+    payload=>{
+    
+    console.log(
+    "📡 INSERT حضور و غیاب Realtime:",
+    payload.new
+    );
+    
+    handleAttendanceRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"UPDATE",
+    schema:"public",
+    table:"attendance"
+    },
+    payload=>{
+    
+    console.log(
+    "📡 UPDATE حضور و غیاب Realtime:",
+    payload.new
+    );
+    
+    handleAttendanceRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .on(
+    "postgres_changes",
+    {
+    event:"DELETE",
+    schema:"public",
+    table:"attendance"
+    },
+    payload=>{
+    
+    console.log(
+    "📡 DELETE حضور و غیاب Realtime:",
+    payload.old
+    );
+    
+    handleAttendanceRealtime(
+    payload
+    );
+    
+    }
+    )
+    
+    .subscribe(
+    status=>{
+    
+    console.log(
+    "📡 وضعیت Realtime حضور و غیاب ناظم:",
+    status
+    );
+    
+    }
+    );
+    
+    }
+    
+    
+    /*
+    ساخت پنل
+    */
+    
+    createClasses();
+    
+    
+    /*
+    اول اتصال Realtime برقرار می‌شود،
+    بعد اطلاعات اولیه خوانده می‌شود.
+    */
+    
+    subscribeNazemRealtime();
+    
+    
+    /*
+    بارگذاری اطلاعات فعلی
+    */
+    
+    loadCalls();
+    
+    loadTodayAttendance();
