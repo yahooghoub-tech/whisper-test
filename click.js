@@ -1408,7 +1408,14 @@ async function loadTodayAttendance(){
         "📡 تغییر Realtime حضور و غیاب:",
         payload
         );
+        console.log(
+            "🧪 اطلاعات دریافتی:",
+            payload.new.student_name,
+            payload.new.class_name,
+            payload.new.status
+        );
         
+        applyAttendanceToNazem(payload.new);
         handleAttendanceRealtime(payload);
         
         }
