@@ -335,14 +335,14 @@
             transition:opacity .3s ease,transform .3s ease;
             touch-action:pan-y;
             font-family:Tahoma,Arial,sans-serif;
-            touch-action:pan-y;
             }
-        
-        .teacher-send-popup.show{
-        transform:translateX(0);
-        opacity:1;
-        pointer-events:auto;
-        }
+            
+            .teacher-send-popup.show{
+            opacity:1;
+            visibility:visible;
+            left:50%;
+            transform:translate(-50%,0);
+            }
         
         .teacher-send-popup-icon{
         width:50px;
