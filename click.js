@@ -342,6 +342,10 @@ day:"2-digit"
 ).format(new Date());
 }
 
+function todayDatabaseDate(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
 
 function showTeacherSendPopup(call){
 
@@ -752,7 +756,7 @@ call.class_name
 async function loadTodayAttendance(){
 
     const today =
-        todayPersianDate();
+    todayDatabaseDate();
 
     console.log(
         "📅 دریافت حضور و غیاب امروز:",
@@ -1303,9 +1307,9 @@ async function loadTodayAttendance(){
     
     
     if(
-    record.attendance_date!==
-    todayPersianDate()
-    )return;
+        record.attendance_date!==
+        todayDatabaseDate()
+        )return;
     
     
     const key=
