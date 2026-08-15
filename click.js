@@ -1501,9 +1501,9 @@ setInterval(checkNazemDayChange,30000);
 
 
 
-
 let popupTouchStartX=0;
-let popupTouchStartY=0;
+let popupTouchCurrentX=0;
+let popupTouching=false;
 
 const teacherSendPopup=
 document.getElementById("teacherSendPopup");
@@ -1513,40 +1513,78 @@ if(teacherSendPopup){
 teacherSendPopup.addEventListener(
 "touchstart",
 event=>{
+
+if(!teacherSendPopup.classList.contains("show"))
+return;
+
 popupTouchStartX=
 event.touches[0].clientX;
 
-popupTouchStartY=
+popupTouchCurrentX=
+popupTouchStartX;
+
+popupTouching=true;
+
+teacherSendPopup.style.transition="none";
+
+},
+{passive:true}
+);
+
+teacherSendPopup.addEventListener(
+"touchmove",
+event=>{
+
+if(!popupTouching)return;
+
+popupTouchCurrentX=
+event.touches[0].clientX;
+
+const moveX=
+popupTouchCurrentX-popupTouchStartX;
+
+const moveY=
 event.touches[0].clientY;
+
+teacherSendPopup.style.transform=
+`translate(calc(-50% + ${moveX}px),0)`;
+
+const opacity=
+Math.max(
+0.2,
+1-Math.abs(moveX)/250
+);
+
+teacherSendPopup.style.opacity=
+opacity;
+
 },
 {passive:true}
 );
 
 teacherSendPopup.addEventListener(
 "touchend",
-event=>{
+()=>{
 
-const endX=
-event.changedTouches[0].clientX;
+if(!popupTouching)return;
 
-const endY=
-event.changedTouches[0].clientY;
+popupTouching=false;
 
-const diffX=
-endX-popupTouchStartX;
+const moveX=
+popupTouchCurrentX-popupTouchStartX;
 
-const diffY=
-endY-popupTouchStartY;
+const threshold=80;
 
-if(Math.abs(diffX)<50)return;
+if(Math.abs(moveX)>=threshold){
 
-if(Math.abs(diffX)<=Math.abs(diffY))return;
+const direction=
+moveX>0?1:-1;
 
 teacherSendPopup.style.transition=
-"transform .35s ease, opacity .35s ease";
+"transform .3s ease, opacity .3s ease";
 
 teacherSendPopup.style.transform=
-`translate(calc(-50% + ${diffX}px),-30px)`;
+`translate(calc(-50% + ${direction*500}px),0)`;
 
 teacherSendPopup.style.opacity="0";
 
@@ -1555,15 +1593,28 @@ setTimeout(()=>{
 teacherSendPopup.classList.remove("show");
 
 teacherSendPopup.style.transform=
-"translate(-50%,-25px)";
+"translate(-50%,0)";
 
 teacherSendPopup.style.opacity="";
 
 teacherSendPopup.style.transition="";
 
-},350);
+},300);
+
+}else{
+
+teacherSendPopup.style.transition=
+"transform .25s ease, opacity .25s ease";
+
+teacherSendPopup.style.transform=
+"translate(-50%,0)";
+
+teacherSendPopup.style.opacity="1";
 
 }
+
+},
+{passive:true}
 );
 
 }
