@@ -348,7 +348,15 @@ function todayDatabaseDate(){
     }
 
 function showTeacherSendPopup(call){
-
+    const sound=
+    document.getElementById("teacherSendSound");
+    
+    if(sound){
+    sound.currentTime=0;
+    sound.play().catch(error=>{
+    console.log("🔇 پخش خودکار صدا انجام نشد:",error);
+    });
+    }
 const popup=
 document.getElementById("teacherSendPopup");
 
@@ -1267,6 +1275,11 @@ async function loadTodayAttendance(){
     updateCount(
     call.class_name
     );
+    if(
+        call.status==="ارسال شد"
+        ){
+        showTeacherSendPopup(call);
+        }
     
     return;
     

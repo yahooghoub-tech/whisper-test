@@ -399,7 +399,68 @@ font-size:15px;
 }
 
 }
-
+.teacher-send-popup{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:99999;
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:.3s ease;
+}
+.teacher-send-popup.show{
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+}
+.teacher-send-popup-box{
+width:min(90%,420px);
+background:#fff;
+border-radius:24px;
+padding:28px 22px;
+text-align:center;
+box-shadow:0 20px 60px rgba(0,0,0,.35);
+transform:scale(.8);
+transition:.3s ease;
+font-family:Tahoma,Arial,sans-serif;
+}
+.teacher-send-popup.show .teacher-send-popup-box{
+transform:scale(1);
+}
+.teacher-send-popup-icon{
+font-size:52px;
+margin-bottom:12px;
+}
+.teacher-send-popup-title{
+font-size:24px;
+font-weight:bold;
+margin-bottom:18px;
+}
+.teacher-send-popup-text{
+font-size:18px;
+line-height:2;
+margin-bottom:22px;
+}
+.teacher-send-popup-text strong{
+font-weight:bold;
+}
+#closeTeacherSendPopup{
+border:0;
+border-radius:12px;
+padding:12px 35px;
+font-size:17px;
+font-family:inherit;
+cursor:pointer;
+background:#111;
+color:#fff;
+}
+#closeTeacherSendPopup:active{
+transform:scale(.96);
+}
 </style>
 
 </head>
@@ -567,7 +628,7 @@ src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 
 
 <script src="click.js"></script>
-
+<audio id="teacherSendSound" src="notification.mp3" preload="auto"></audio>
 
 <div
 id="teacherSendPopup"
@@ -841,7 +902,14 @@ nazemPassword.focus();
 
 </script>
 
-
+<div id="teacherSendPopup" class="teacher-send-popup">
+     <div class="teacher-send-popup-box">
+     <div class="teacher-send-popup-icon">📢</div>
+     <div class="teacher-send-popup-title">ارسال دانش‌آموز</div>
+     <div id="teacherSendPopupText" class="teacher-send-popup-text"></div>
+     <button id="closeTeacherSendPopup" type="button">باشه</button>
+     </div>
+     </div>
 </body>
 
 </html>
