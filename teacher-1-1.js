@@ -160,6 +160,7 @@ function resetStudentButton(call){
     resetTeacherPanel();
     data.forEach(updateButton);
     updateCount(data);
+    await loadAbsentStudents();
     }
     function updateCount(data){
     if(!Array.isArray(data)){
