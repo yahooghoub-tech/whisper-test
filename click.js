@@ -641,44 +641,50 @@ counter.textContent=count;
 
 }
 
-
-
 function findButton(name,className){
 
-    const wantedName=normalizeText(name);
-    const wantedClass=normalizeText(className);
-    
-    const buttons=
-    document.querySelectorAll(
-    ".student-button"
-    );
-    
+    const wantedName =
+        normalizeText(name);
+
+    const wantedClass =
+        normalizeText(className);
+
+    const buttons =
+        document.querySelectorAll(
+            ".student-button"
+        );
+
     for(const button of buttons){
-    
-    const buttonName=
-    normalizeText(
-    button.dataset.name
-    );
-    
-    const buttonClass=
-    normalizeText(
-    button.dataset.class
-    );
-    
-    if(
-    buttonName===wantedName &&
-    buttonClass===wantedClass
-    ){
-    
-    return button;
-    
+
+        const buttonName =
+            normalizeText(
+                button.dataset.name || ""
+            );
+
+        const buttonClass =
+            normalizeText(
+                button.dataset.class || ""
+            );
+
+        if(
+            buttonName === wantedName &&
+            buttonClass === wantedClass
+        ){
+
+            return button;
+
+        }
+
     }
-    
-    }
-    
+
+    console.warn(
+        "❌ دکمه پیدا نشد:",
+        name,
+        className
+    );
+
     return null;
-    
-    }
+}
 
 
 async function loadCalls(){
@@ -739,48 +745,63 @@ call.class_name
 });
 
 }
+
+
+
+
 async function loadTodayAttendance(){
 
-    const today=todayPersianDate();
-    
+    const today =
+        todayPersianDate();
+
     console.log(
-    "📅 دریافت حضور و غیاب امروز:",
-    today
+        "📅 دریافت حضور و غیاب امروز:",
+        today
     );
-    
-    const {data,error}=
-    await supabaseClient
-    .from("attendance")
-    .select("*")
-    .eq("attendance_date",today);
-    
+
+
+    const {data,error} =
+        await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq(
+            "attendance_date",
+            today
+        );
+
+
     if(error){
-    
-    console.error(
-    "❌ خطا در دریافت حضور و غیاب:",
-    error
-    );
-    
-    return;
+
+        console.error(
+            "❌ خطا در دریافت حضور و غیاب:",
+            error
+        );
+
+        return;
     }
-    
-    attendanceState.clear();
-    
-    (data||[]).forEach(record=>{
-    
-    applyAttendanceToNazem(
-    record,
-    true
-    );
-    
-    });
-    
+
+
     console.log(
-    "📋 وضعیت حضور و غیاب امروز اعمال شد:",
-    (data||[]).length
+        "📋 تعداد رکوردهای حضور و غیاب:",
+        data.length
     );
-    
-    }
+
+
+    data.forEach(record=>{
+
+        applyAttendanceToNazem(
+            record
+        );
+
+    });
+
+}
+
+
+
+
+
+
     
     
     const attendanceState=
@@ -813,98 +834,134 @@ async function loadTodayAttendance(){
     
     }
     
+ 
     
-    function applyAttendanceToNazem(
-    record,
-    updateMap=true
-    ){
+
+    function applyAttendanceToNazem(record){
+
+        if(!record){
+            return;
+        }
     
-    if(
-    !record||
-    !record.student_name||
-    !record.class_name
-    )return;
-    
-    if(
-    record.attendance_date!==
-    todayPersianDate()
-    )return;
+        console.log(
+            "👤 اعمال حضور و غیاب:",
+            record.student_name,
+            record.class_name,
+            record.status
+        );
     
     
-    if(updateMap){
+        const button =
+            findButton(
+                record.student_name,
+                record.class_name
+            );
     
-    attendanceState.set(
-    attendanceKey(
-    record.student_name,
-    record.class_name
-    ),
-    record.status
-    );
+    
+        if(!button){
+    
+            console.warn(
+                "❌ دکمه دانش‌آموز پیدا نشد:",
+                record.student_name,
+                record.class_name
+            );
+    
+            return;
+        }
+    
+    
+        /*
+        ==========================
+        دانش‌آموز غایب شده
+        ==========================
+        */
+    
+        if(record.status === "غایب"){
+    
+            button.classList.remove(
+                "pending",
+                "called",
+                "sent"
+            );
+    
+            button.classList.add(
+                "absent"
+            );
+    
+            button.disabled = true;
+    
+    
+            const statusElement =
+                button.querySelector(
+                    ".student-status"
+                );
+    
+            if(statusElement){
+    
+                statusElement.textContent =
+                    "غایب";
+    
+            }
+    
+    
+            console.log(
+                "🔴 غایب شد:",
+                record.student_name
+            );
+    
+            return;
+        }
+    
+    
+        /*
+        ==========================
+        دانش‌آموز حاضر شده
+        ==========================
+        */
+    
+        if(record.status === "حاضر"){
+    
+            button.classList.remove(
+                "absent"
+            );
+    
+            button.disabled = false;
+    
+    
+            const statusElement =
+                button.querySelector(
+                    ".student-status"
+                );
+    
+            if(statusElement){
+    
+                statusElement.textContent = "";
+    
+            }
+    
+    
+            restoreCallState(
+                record.student_name,
+                record.class_name,
+                button
+            );
+    
+    
+            console.log(
+                "🟢 حاضر شد:",
+                record.student_name
+            );
+    
+        }
     
     }
-    
-    const button=
-    findButton(
-    record.student_name,
-    record.class_name
-    );
-    
-    console.log(
-    "🔎 پیدا کردن دکمه:",
-    record.student_name,
-    record.class_name,
-    button
-    );
-    
-    if(!button)return;
-    
-    
-    if(record.status==="غایب"){
-    
-    button.classList.remove(
-    "pending",
-    "called",
-    "sent"
-    );
-    
-    button.classList.add(
-    "absent"
-    );
-    
-    button.disabled=true;
-    
-    button.querySelector(
-    ".student-status"
-    ).textContent=
-    "(غایب)";
-    
-    button.querySelector(
-    ".status-time"
-    ).textContent="";
-    
-    return;
-    
-    }
-    
-    
-    if(record.status==="حاضر"){
-    
-    button.classList.remove(
-    "absent"
-    );
-    
-    button.disabled=false;
-    
-    restoreCallState(
-    record.student_name,
-    record.class_name,
-    button
-    );
-    
-    }
-    
-    }
-    
+
+
+
+
+
+
+
     
     async function restoreCallState(
     studentName,
