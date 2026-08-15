@@ -162,6 +162,7 @@ const students=[
 {name:"آرشا محمودی",className:"اول-1"},
 {name:"رایان مقدم",className:"اول-1"},
 {name:"سبدصدرا منصورزاده",className:"اول-1"},
+{name:"جاوید نصرالهی",className:"اول-1"},
 ];
 
 const studentsContainer=document.getElementById("studentsContainer");
