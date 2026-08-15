@@ -1501,120 +1501,95 @@ setInterval(checkNazemDayChange,30000);
 
 
 
+const teacherSendPopup=document.getElementById("teacherSendPopup");
 
-let swipeStartX=0;
-let swipeStartY=0;
-let swipeMoving=false;
-
-const teacherSendPopup=
-document.getElementById("teacherSendPopup");
+let popupTouchStartX=0;
+let popupTouchStartY=0;
+let popupTouchCurrentX=0;
+let popupDragging=false;
 
 if(teacherSendPopup){
 
-teacherSendPopup.addEventListener(
-"touchstart",
-function(e){
+teacherSendPopup.addEventListener("touchstart",function(e){
 
-if(!teacherSendPopup.classList.contains("show"))return;
+if(!e.touches||!e.touches.length)return;
 
-swipeStartX=e.touches[0].clientX;
-swipeStartY=e.touches[0].clientY;
-swipeMoving=true;
+popupTouchStartX=e.touches[0].clientX;
+popupTouchStartY=e.touches[0].clientY;
+popupTouchCurrentX=popupTouchStartX;
+popupDragging=true;
 
 teacherSendPopup.style.transition="none";
 
-},
-{passive:true}
-);
+},{passive:true});
 
-teacherSendPopup.addEventListener(
-"touchmove",
-function(e){
 
-if(!swipeMoving)return;
+teacherSendPopup.addEventListener("touchmove",function(e){
 
-const currentX=e.touches[0].clientX;
-const currentY=e.touches[0].clientY;
+if(!popupDragging)return;
+if(!e.touches||!e.touches.length)return;
 
-const moveX=currentX-swipeStartX;
-const moveY=currentY-swipeStartY;
+popupTouchCurrentX=e.touches[0].clientX;
 
-if(Math.abs(moveY)>Math.abs(moveX)){
+const moveX=
+popupTouchCurrentX-popupTouchStartX;
+
+const moveY=
+e.touches[0].clientY-popupTouchStartY;
+
+if(Math.abs(moveX)<Math.abs(moveY)){
 return;
 }
 
-teacherSendPopup.style.left=
-`calc(50% + ${moveX}px)`;
+teacherSendPopup.style.transform=
+`translateX(calc(-50% + ${moveX}px)) translateY(0)`;
 
-teacherSendPopup.style.opacity=
-String(
-Math.max(
-0.15,
-1-Math.abs(moveX)/250
-)
-);
+},{passive:true});
 
-},
-{passive:true}
-);
 
-teacherSendPopup.addEventListener(
-"touchend",
-function(){
+teacherSendPopup.addEventListener("touchend",function(){
 
-if(!swipeMoving)return;
+if(!popupDragging)return;
 
-swipeMoving=false;
+popupDragging=false;
 
-const currentLeft=
-parseFloat(
-teacherSendPopup.getBoundingClientRect().left
-);
-
-const originalLeft=
-(window.innerWidth-
-teacherSendPopup.offsetWidth)/2;
-
-const difference=
-currentLeft-originalLeft;
-
-if(Math.abs(difference)>=80){
-
-const direction=
-difference>0?1:-1;
+const moveX=
+popupTouchCurrentX-popupTouchStartX;
 
 teacherSendPopup.style.transition=
-"left .3s ease,opacity .3s ease";
+"transform .25s ease,opacity .25s ease";
 
-teacherSendPopup.style.left=
-`${direction>0?window.innerWidth+50:-teacherSendPopup.offsetWidth-50}px`;
+if(Math.abs(moveX)>=80){
+
+const direction=
+moveX>0?1:-1;
+
+teacherSendPopup.style.transform=
+`translateX(calc(-50% + ${direction*window.innerWidth}px)) translateY(0)`;
 
 teacherSendPopup.style.opacity="0";
 
-setTimeout(function(){
+setTimeout(()=>{
 
 teacherSendPopup.classList.remove("show");
 
-teacherSendPopup.style.left="50%";
 teacherSendPopup.style.opacity="";
-
+teacherSendPopup.style.transform="";
 teacherSendPopup.style.transition="";
 
-},300);
+},250);
 
 }else{
 
-teacherSendPopup.style.transition=
-"left .25s ease,opacity .25s ease";
-
-teacherSendPopup.style.left="50%";
-
-teacherSendPopup.style.opacity="1";
+teacherSendPopup.style.transform=
+"translateX(-50%) translateY(0)";
 
 }
 
-},
-{passive:true}
-);
+popupTouchStartX=0;
+popupTouchStartY=0;
+popupTouchCurrentX=0;
+
+},{passive:true});
 
 }
