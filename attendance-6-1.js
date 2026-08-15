@@ -392,3 +392,38 @@ showDate();
 createStudents();
 
 loadTodayAttendance();
+
+let currentAttendanceDay = getToday();
+
+function checkAttendanceDayChange(){
+
+    const newDay = getToday();
+
+    if(newDay === currentAttendanceDay){
+        return;
+    }
+
+    console.log(
+        "📅 روز جدید شروع شد:",
+        currentAttendanceDay,
+        "→",
+        newDay
+    );
+
+    currentAttendanceDay = newDay;
+
+    // تاریخ بالای صفحه را به‌روزرسانی کن
+    showDate();
+
+    // همه دانش‌آموزان را به حالت پیش‌فرض «حاضر» برگردان
+    createStudents();
+
+    // حضور و غیاب روز جدید را از Supabase دریافت کن
+    loadTodayAttendance();
+
+}
+
+setInterval(
+    checkAttendanceDayChange,
+    30000
+);
