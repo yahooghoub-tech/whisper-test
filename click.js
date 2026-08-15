@@ -82,7 +82,7 @@ const students=[
 {name:"رایان محرابی",className:"اول-1"},
 {name:"آرشا محمودی",className:"اول-1"},
 {name:"رایان مقدم",className:"اول-1"},
-{name:"سبدصدرا منصورزاده",className:"اول-1"},
+{name:"سید صدرا منصورزاده",className:"اول-1"},
 {name:"جاوید نصرالهی",className:"اول-1"},
 {name:"محمدطاها احمدی",className:"چهارم-1"},
 {name:"آریا آزاد پیما",className:"چهارم-1"},
@@ -1499,3 +1499,122 @@ loadTodayAttendance();
 }
 setInterval(checkNazemDayChange,30000);
 
+
+
+
+let swipeStartX=0;
+let swipeStartY=0;
+let swipeMoving=false;
+
+const teacherSendPopup=
+document.getElementById("teacherSendPopup");
+
+if(teacherSendPopup){
+
+teacherSendPopup.addEventListener(
+"touchstart",
+function(e){
+
+if(!teacherSendPopup.classList.contains("show"))return;
+
+swipeStartX=e.touches[0].clientX;
+swipeStartY=e.touches[0].clientY;
+swipeMoving=true;
+
+teacherSendPopup.style.transition="none";
+
+},
+{passive:true}
+);
+
+teacherSendPopup.addEventListener(
+"touchmove",
+function(e){
+
+if(!swipeMoving)return;
+
+const currentX=e.touches[0].clientX;
+const currentY=e.touches[0].clientY;
+
+const moveX=currentX-swipeStartX;
+const moveY=currentY-swipeStartY;
+
+if(Math.abs(moveY)>Math.abs(moveX)){
+return;
+}
+
+teacherSendPopup.style.left=
+`calc(50% + ${moveX}px)`;
+
+teacherSendPopup.style.opacity=
+String(
+Math.max(
+0.15,
+1-Math.abs(moveX)/250
+)
+);
+
+},
+{passive:true}
+);
+
+teacherSendPopup.addEventListener(
+"touchend",
+function(){
+
+if(!swipeMoving)return;
+
+swipeMoving=false;
+
+const currentLeft=
+parseFloat(
+teacherSendPopup.getBoundingClientRect().left
+);
+
+const originalLeft=
+(window.innerWidth-
+teacherSendPopup.offsetWidth)/2;
+
+const difference=
+currentLeft-originalLeft;
+
+if(Math.abs(difference)>=80){
+
+const direction=
+difference>0?1:-1;
+
+teacherSendPopup.style.transition=
+"left .3s ease,opacity .3s ease";
+
+teacherSendPopup.style.left=
+`${direction>0?window.innerWidth+50:-teacherSendPopup.offsetWidth-50}px`;
+
+teacherSendPopup.style.opacity="0";
+
+setTimeout(function(){
+
+teacherSendPopup.classList.remove("show");
+
+teacherSendPopup.style.left="50%";
+teacherSendPopup.style.opacity="";
+
+teacherSendPopup.style.transition="";
+
+},300);
+
+}else{
+
+teacherSendPopup.style.transition=
+"left .25s ease,opacity .25s ease";
+
+teacherSendPopup.style.left="50%";
+
+teacherSendPopup.style.opacity="1";
+
+}
+
+},
+{passive:true}
+);
+
+}
