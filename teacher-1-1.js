@@ -111,6 +111,33 @@ studentsContainer.appendChild(button);
 function findButton(name){
 return [...document.querySelectorAll(".student-button")].find(button=>button.dataset.name===name);
 }
+
+function handleTeacherAttendance(record){
+    if(!record)return;
+    if(record.class_name!=="اول-1")return;
+    const button=findButton(record.student_name);
+    if(!button)return;
+    if(record.status==="غایب"){
+    button.classList.remove("pending","called","sent","received");
+    button.classList.add("absent");
+    button.disabled=true;
+    const status=button.querySelector(".student-status");
+    if(status)status.innerText="(غایب)";
+    const time=button.querySelector(".student-time");
+    if(time)time.innerText="";
+    return;
+    }
+    if(record.status==="حاضر"){
+    button.classList.remove("absent");
+    button.disabled=false;
+    const status=button.querySelector(".student-status");
+    if(status)status.innerText="";
+    loadCalls();
+    }
+    }
+
+
+
 function updateButton(call){
 const button=findButton(call.student_name);
 if(!button)return;
@@ -331,4 +358,25 @@ function resetStudentButton(call){
         }).subscribe(status=>{
         console.log("Realtime attendance status:",status);
         });
-        
+        supabaseClient
+.channel("teacher-1-1-attendance")
+.on(
+"postgres_changes",
+{
+event:"*",
+schema:"public",
+table:"attendance",
+filter:"class_name=eq.اول-1"
+},
+payload=>{
+const record=payload.new||payload.old;
+if(!record)return;
+handleTeacherAttendance(record);
+}
+)
+.subscribe(status=>{
+console.log(
+"Realtime حضور و غیاب معلم:",
+status
+);
+});
