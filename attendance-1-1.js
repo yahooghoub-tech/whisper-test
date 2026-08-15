@@ -241,30 +241,24 @@ status
 showDate();
 createStudents();
 loadTodayAttendance();
-let currentAttendanceDay=
-getToday();
+
+
+let currentAttendanceDay=getToday();
 function checkAttendanceDayChange(){
-const newDay=
-getToday();
+const newDay=getToday();
 if(newDay===currentAttendanceDay){
 return;
 }
-console.log(
-"📅 روز جدید شروع شد:",
-currentAttendanceDay,
-"→",
-newDay
-);
-currentAttendanceDay=
-newDay;
+console.log("📅 روز جدید حضور و غیاب:",currentAttendanceDay,"→",newDay);
+currentAttendanceDay=newDay;
 showDate();
 createStudents();
 loadTodayAttendance();
 }
-setInterval(
-checkAttendanceDayChange,
-30000
-);
+setInterval(checkAttendanceDayChange,30000);
+
+
+
 async function refreshAttendance(){
     const today=
     getToday();
