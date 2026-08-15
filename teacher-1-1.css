@@ -489,3 +489,62 @@ color:#fff !important;
                 font-size:21px;
                 }
                 }
+                .attendance-button-container {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    padding: 25px 15px 35px;
+                    box-sizing: border-box;
+                }
+                
+                #attendanceButton {
+                    width: min(90%, 420px);
+                    min-height: 58px;
+                    border: none;
+                    border-radius: 18px;
+                    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                    color: white;
+                    font-family: Tahoma, Arial, sans-serif;
+                    font-size: 17px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+                    transition: all 0.2s ease;
+                }
+                
+                #attendanceButton:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.4);
+                }
+                
+                #attendanceButton:active {
+                    transform: scale(0.97);
+                }
+                
+                #attendanceButton span {
+                    margin-right: 8px;
+                }
+                .student-button.absent{
+                    background:#000!important;
+                    color:#fff!important;
+                    border-color:#000!important;
+                    opacity:1!important;
+                    cursor:not-allowed!important;
+                    box-shadow:none!important;
+                    }
+                    .student-button.absent .student-name{
+                    color:#fff!important;
+                    font-weight:bold;
+                    }
+                    .student-button.absent .student-status{
+                    color:#ccc!important;
+                    }
+                    .student-button.absent .student-time{
+                    color:#ccc!important;
+                    }
+                    .student-button.absent:hover{
+                    transform:none!important;
+                    }
+                    .student-button:disabled{
+                    pointer-events:none;
+                    }
