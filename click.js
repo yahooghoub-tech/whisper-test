@@ -1277,196 +1277,64 @@ async function loadTodayAttendance(){
     
     }
     
-    
     function subscribeNazemRealtime(){
-    
-    
-    /*
-    ================================================
-    Realtime فراخوان‌ها
-    ================================================
-    */
-    
-    supabaseClient
-    .channel(
-    "nazem-all-calls",
-    {
-    config:{
-    broadcast:{
-    self:false
-    }
-    }
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"INSERT",
-    schema:"public",
-    table:"calls"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 INSERT فراخوان Realtime:",
-    payload.new
-    );
-    
-    handleCallRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"UPDATE",
-    schema:"public",
-    table:"calls"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 UPDATE فراخوان Realtime:",
-    payload.new
-    );
-    
-    handleCallRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"DELETE",
-    schema:"public",
-    table:"calls"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 DELETE فراخوان Realtime:",
-    payload.old
-    );
-    
-    handleCallRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .subscribe(
-    status=>{
-    
-    console.log(
-    "📡 Realtime فراخوان‌های ناظم:",
-    status
-    );
-    
-    }
-    );
-    
-    
-    /*
-    ================================================
-    Realtime حضور و غیاب
-    ================================================
-    */
-    
-    supabaseClient
-    .channel(
-    "nazem-attendance-realtime",
-    {
-    config:{
-    broadcast:{
-    self:false
-    }
-    }
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"INSERT",
-    schema:"public",
-    table:"attendance"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 INSERT حضور و غیاب Realtime:",
-    payload.new
-    );
-    
-    handleAttendanceRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"UPDATE",
-    schema:"public",
-    table:"attendance"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 UPDATE حضور و غیاب Realtime:",
-    payload.new
-    );
-    
-    handleAttendanceRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .on(
-    "postgres_changes",
-    {
-    event:"DELETE",
-    schema:"public",
-    table:"attendance"
-    },
-    payload=>{
-    
-    console.log(
-    "📡 DELETE حضور و غیاب Realtime:",
-    payload.old
-    );
-    
-    handleAttendanceRealtime(
-    payload
-    );
-    
-    }
-    )
-    
-    .subscribe(
-    status=>{
-    
-    console.log(
-    "📡 وضعیت Realtime حضور و غیاب ناظم:",
-    status
-    );
-    
-    }
-    );
-    
-    }
+
+        const channel =
+        supabaseClient
+        .channel("nazem-realtime")
+        
+        .on(
+        "postgres_changes",
+        {
+        event:"*",
+        schema:"public",
+        table:"calls"
+        },
+        payload=>{
+        
+        console.log(
+        "📡 تغییر Realtime فراخوان:",
+        payload
+        );
+        
+        handleCallRealtime(payload);
+        
+        }
+        )
+        
+        .on(
+        "postgres_changes",
+        {
+        event:"*",
+        schema:"public",
+        table:"attendance"
+        },
+        payload=>{
+        
+        console.log(
+        "📡 تغییر Realtime حضور و غیاب:",
+        payload
+        );
+        
+        handleAttendanceRealtime(payload);
+        
+        }
+        )
+        
+        .subscribe(
+        status=>{
+        
+        console.log(
+        "📡 وضعیت Realtime ناظم:",
+        status
+        );
+        
+        }
+        );
+        
+        return channel;
+        
+        }
     
     
     /*
