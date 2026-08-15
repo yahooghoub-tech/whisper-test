@@ -315,25 +315,29 @@
 
         .teacher-send-popup{
             position:fixed;
-            bottom:12px;
-            left:50%;
-            transform:translate(-50%,30px);
-            width:calc(100% - 30px);
-            max-width:320px;
-            box-sizing:border-box;
-            padding:8px 12px;
-            background:rgba(20,20,25,.96);
-            border:1px solid #00d9ff;
-            border-radius:12px;
-            box-shadow:0 4px 18px rgba(0,0,0,.35),0 0 10px rgba(0,217,255,.25);
-            text-align:center;
-            direction:rtl;
             z-index:99999;
+            left:50%;
+            bottom:calc(14px + env(safe-area-inset-bottom));
+            width:min(88vw,360px);
+            box-sizing:border-box;
+            padding:10px 14px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            direction:rtl;
+            background:rgba(20,25,35,.72);
+            border:1px solid rgba(255,255,255,.22);
+            border-radius:18px;
+            box-shadow:0 10px 35px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18);
+            backdrop-filter:blur(18px);
+            -webkit-backdrop-filter:blur(18px);
             opacity:0;
             visibility:hidden;
             pointer-events:none;
-            transition:opacity .25s ease,transform .25s ease;
+            transform:translate(-50%,calc(100% + 30px));
+            transition:opacity .35s ease,transform .35s cubic-bezier(.22,1,.36,1);
             font-family:Tahoma,Arial,sans-serif;
+            overflow:hidden;
             }
             
             .teacher-send-popup.show{
@@ -343,28 +347,41 @@
             }
             
             .teacher-send-popup-icon{
-            width:30px;
-            height:30px;
-            min-width:30px;
+            width:38px;
+            height:38px;
+            min-width:38px;
             border-radius:50%;
-            background:#22c55e;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:16px;
-            margin:0 auto 3px;
+            background:rgba(34,197,94,.85);
+            box-shadow:0 0 15px rgba(34,197,94,.3);
+            font-size:19px;
+            }
+            
+            .teacher-send-popup-content{
+            min-width:0;
+            flex:1;
+            overflow:hidden;
             }
             
             .teacher-send-popup-title{
-            font-size:13px;
+            font-size:14px;
             font-weight:800;
+            color:#fff;
             margin-bottom:2px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
             }
             
             .teacher-send-popup-text{
             font-size:11px;
-            line-height:1.5;
-            color:#e5e7eb;
+            line-height:1.6;
+            color:rgba(255,255,255,.82);
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
             }
             
             .teacher-send-popup-close{
@@ -374,32 +391,45 @@
             @media(max-width:600px){
             
             .teacher-send-popup{
-            bottom:12px;
-            left:50%;
-            right:auto;
-            width:calc(100% - 30px);
-            max-width:320px;
-            padding:7px 10px;
+            width:calc(100vw - 28px);
+            max-width:340px;
+            padding:9px 12px;
+            border-radius:16px;
+            bottom:calc(12px + env(safe-area-inset-bottom));
             }
             
             .teacher-send-popup-icon{
-            width:28px;
-            height:28px;
-            min-width:28px;
-            font-size:15px;
+            width:34px;
+            height:34px;
+            min-width:34px;
+            font-size:17px;
             }
             
             .teacher-send-popup-title{
-            font-size:12px;
+            font-size:13px;
             }
             
             .teacher-send-popup-text{
             font-size:10px;
-            line-height:1.5;
             }
             
             }
-
+            
+            @media(min-width:601px) and (max-width:1024px){
+            
+            .teacher-send-popup{
+            width:min(72vw,380px);
+            }
+            
+            }
+            
+            @media(min-width:1025px){
+            
+            .teacher-send-popup{
+            width:360px;
+            }
+            
+            }
 
 
 
