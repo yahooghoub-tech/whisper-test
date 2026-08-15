@@ -187,6 +187,22 @@ const students=[
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");
 
+
+function getToday(){
+
+    return new Intl.DateTimeFormat(
+        "fa-IR-u-nu-latn",
+        {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit"
+        }
+    ).format(new Date());
+
+}
+
+
+
 function createStudents(){
 
 studentsContainer.innerHTML="";
@@ -314,26 +330,48 @@ button.querySelector(".student-time").innerText="";
 
 }
 
+
+
+
 async function loadCalls(){
 
-const {data,error}=await supabaseClient
-.from("calls")
-.select("*")
-.eq("class_name","ششم-1")
-.order("id",{ascending:true});
+    const today=getToday();
 
-if(error){
+    const {data,error}=await supabaseClient
+    .from("calls")
+    .select("*")
+    .eq("class_name","ششم-1")
+    .eq("called_date",today)
+    .order("id",{ascending:true});
 
-console.error("خطا در دریافت فراخوان‌ها:",error);
-return;
+    if(error){
+
+        console.error(
+            "خطا در دریافت فراخوان‌های امروز:",
+            error
+        );
+
+        return;
+
+    }
+
+    // ابتدا تمام دکمه‌ها را به حالت اولیه برگردان
+    resetTeacherPanel();
+
+    // سپس فقط فراخوان‌های امروز را روی پنل اعمال کن
+    data.forEach(updateButton);
+
+    updateCount(data);
 
 }
 
-data.forEach(updateButton);
 
-updateCount(data);
 
-}
+
+
+
+
+
 
 function updateCount(data){
 
@@ -443,6 +481,47 @@ loadCalls();
 
 window.addEventListener("load",setupSound);
 
+let currentTeacherCallDay=getToday();
+
+function checkTeacherCallDayChange(){
+
+    const newDay=getToday();
+
+    if(newDay===currentTeacherCallDay){
+        return;
+    }
+
+    console.log(
+        "📅 روز فراخوان تغییر کرد:",
+        currentTeacherCallDay,
+        "→",
+        newDay
+    );
+
+    currentTeacherCallDay=newDay;
+
+    // پنل را به حالت اولیه برگردان
+    resetTeacherPanel();
+
+    // فراخوان‌های روز جدید را دریافت کن
+    loadCalls();
+
+}
+
+setInterval(
+    checkTeacherCallDayChange,
+    30000
+);
+
+
+
+
+
+
+
+
+
+
 supabaseClient
 .channel("teacher-6-1-realtime")
 
@@ -461,6 +540,17 @@ const call=payload.new;
 console.log("📢 فراخوان جدید:",call);
 
 if(call.status!=="فراخوان شد")return;
+
+if(call.called_date!==getToday()){
+
+    console.log(
+        "⏭️ فراخوان مربوط به روز قبل است:",
+        call.called_date
+    );
+
+    return;
+
+}
 
 showCallPopup(call.student_name);
 
@@ -491,35 +581,53 @@ loadCalls();
 .on(
     "postgres_changes",
     {
-    event:"UPDATE",
-    schema:"public",
-    table:"calls"
+        event:"UPDATE",
+        schema:"public",
+        table:"calls",
+        filter:"class_name=eq.ششم-1"
     },
     payload=>{
-    
-    const call=payload.new;
-    const oldCall=payload.old;
-    
-    const button=findButton(
-    call.student_name,
-    call.class_name
-    );
-    
-    if(button){
-    updateButton(button,call);
-    updateCount(call.class_name);
+
+        const call=payload.new;
+        const oldCall=payload.old;
+
+        if(!call)return;
+
+        if(call.class_name!=="ششم-1")return;
+
+        if(call.called_date!==getToday()){
+
+            console.log(
+                "⏭️ UPDATE مربوط به روز قبل است:",
+                call.called_date
+            );
+
+            return;
+
+        }
+
+        console.log(
+            "📡 تغییر فراخوان:",
+            call
+        );
+
+        if(
+            oldCall.status!=="ارسال شد" &&
+            call.status==="ارسال شد"
+        ){
+
+            showSendNotification(
+                call.student_name
+            );
+
+        }
+
+        updateButton(call);
+
+        loadCalls();
+
     }
-    
-    // فقط یک اعلان هنگام ارسال دانش‌آموز
-    if(
-    oldCall.status!=="ارسال شد" &&
-    call.status==="ارسال شد"
-    ){
-    showSendNotification(call.student_name);
-    }
-    
-    }
-    )
+)
 
 .on(
 "postgres_changes",
