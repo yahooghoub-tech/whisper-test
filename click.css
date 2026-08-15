@@ -335,6 +335,7 @@
             transition:opacity .3s ease,transform .3s ease;
             touch-action:pan-y;
             font-family:Tahoma,Arial,sans-serif;
+            touch-action:pan-y;
             }
         
         .teacher-send-popup.show{
