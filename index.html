@@ -248,8 +248,14 @@ loginButton.classList.add("loading");
 sessionStorage.setItem("nazemLoggedIn","true");
 sessionStorage.setItem("nazemLoginTime",Date.now().toString());
 setTimeout(()=>{
-window.location.href=PANEL_URL;
-},300);
+    if(window.median&&median.window){
+median.window.open(
+"https://ali-nik.vercel.app/nazem-click.html",
+"internal"
+);
+}else{
+window.location.href="https://ali-nik.vercel.app/nazem-click.html";
+}},300);
 return;
 }
 loginError.textContent="❌ نام کاربری یا رمز عبور اشتباه است.";
