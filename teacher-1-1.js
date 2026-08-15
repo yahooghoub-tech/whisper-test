@@ -247,26 +247,19 @@ function resetStudentButton(call){
     loadCalls();
     loadAbsentStudents();
     window.addEventListener("load",setupSound);
-   
-
-
     let currentTeacherCallDay=getToday();
     function checkTeacherCallDayChange(){
     const newDay=getToday();
     if(newDay===currentTeacherCallDay){
     return;
     }
-    console.log("📅 روز جدید پنل معلم:",currentTeacherCallDay,"→",newDay);
+    console.log("📅 روز فراخوان تغییر کرد:",currentTeacherCallDay,"→",newDay);
     currentTeacherCallDay=newDay;
     resetTeacherPanel();
     loadCalls();
-    loadTodayAttendance();
+    loadAbsentStudents();
     }
     setInterval(checkTeacherCallDayChange,30000);
-
-
-
-
     supabaseClient.channel("teacher-1-1-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.اول-1"},payload=>{
         const call=payload.new;
         console.log("📢 فراخوان جدید:",call);
