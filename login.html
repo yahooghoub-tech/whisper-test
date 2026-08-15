@@ -3,149 +3,259 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0f172a">
-<title>ورود به پنل ناظم</title>
+<title>ورود ناظم</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;min-height:100%}
-body{font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#020617,#0f172a,#1e3a8a);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#fff}
-.login-wrapper{width:100%;max-width:430px}
-.login-card{width:100%;padding:35px 30px;border:1px solid rgba(255,255,255,.15);border-radius:28px;background:rgba(255,255,255,.09);box-shadow:0 25px 60px rgba(0,0,0,.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.logo{width:85px;height:85px;margin:0 auto 20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;background:rgba(59,130,246,.2);border:2px solid rgba(96,165,250,.5);box-shadow:0 0 30px rgba(59,130,246,.25)}
-.title{text-align:center;font-size:27px;font-weight:bold;margin-bottom:8px}
-.subtitle{text-align:center;color:#cbd5e1;font-size:14px;margin-bottom:30px}
-.input-group{margin-bottom:18px}
-.input-group label{display:block;margin-bottom:8px;font-size:14px;color:#e2e8f0}
-.input-wrapper{position:relative}
-.input-wrapper input{width:100%;height:52px;border:1px solid rgba(255,255,255,.15);outline:none;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;padding:0 16px;font-size:16px;font-family:Tahoma,Arial,sans-serif;transition:.2s}
-.input-wrapper input::placeholder{color:#94a3b8}
-.input-wrapper input:focus{border-color:#60a5fa;background:rgba(255,255,255,.14);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-.login-button{width:100%;height:53px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:Tahoma,Arial,sans-serif;font-size:17px;font-weight:bold;cursor:pointer;transition:.2s;margin-top:8px;box-shadow:0 10px 25px rgba(37,99,235,.25)}
-.login-button:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(37,99,235,.35)}
-.login-button:active{transform:translateY(0)}
-.login-button:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.error-message{display:none;margin-top:18px;padding:13px 14px;border-radius:12px;background:rgba(239,68,68,.15);border:1px solid rgba(248,113,113,.3);color:#fecaca;text-align:center;font-size:14px;line-height:1.8}
-.loading{display:none;text-align:center;margin-top:15px;color:#bfdbfe;font-size:13px}
-.footer{text-align:center;margin-top:25px;color:#94a3b8;font-size:12px}
-@media(max-width:600px){
-body{padding:16px}
-.login-card{padding:30px 22px;border-radius:23px}
-.logo{width:75px;height:75px;font-size:36px;margin-bottom:17px}
-.title{font-size:23px}
-.subtitle{font-size:13px;margin-bottom:25px}
-.input-wrapper input{height:50px;font-size:15px}
-.login-button{height:51px;font-size:16px}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
-@media(max-width:380px){
-.login-card{padding:25px 18px}
-.logo{width:68px;height:68px;font-size:32px}
-.title{font-size:21px}
-.subtitle{font-size:12px}
-.input-wrapper input{height:47px}
-.login-button{height:48px}
+html,body{
+width:100%;
+min-height:100%;
+}
+body{
+font-family:Tahoma,Arial,sans-serif;
+background:linear-gradient(135deg,#0f172a,#172554,#1e3a8a);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+.login-page{
+width:100%;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.login-card{
+width:100%;
+max-width:430px;
+background:rgba(255,255,255,.97);
+border-radius:28px;
+padding:35px 30px;
+box-shadow:0 25px 70px rgba(0,0,0,.35);
+text-align:center;
+}
+.login-icon{
+width:80px;
+height:80px;
+margin:0 auto 18px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:38px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+box-shadow:0 10px 30px rgba(37,99,235,.35);
+}
+.login-card h1{
+font-size:25px;
+color:#0f172a;
+margin-bottom:10px;
+}
+.login-subtitle{
+font-size:14px;
+color:#64748b;
+margin-bottom:28px;
+line-height:1.8;
+}
+.input-group{
+text-align:right;
+margin-bottom:18px;
+}
+.input-group label{
+display:block;
+font-size:14px;
+font-weight:bold;
+color:#334155;
+margin-bottom:8px;
+}
+.input-group input{
+width:100%;
+height:52px;
+border:2px solid #e2e8f0;
+border-radius:14px;
+padding:0 15px;
+font-family:Tahoma,Arial,sans-serif;
+font-size:15px;
+outline:none;
+transition:.25s;
+background:#f8fafc;
+}
+.input-group input:focus{
+border-color:#2563eb;
+background:#fff;
+box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+.password-wrapper{
+position:relative;
+}
+.password-wrapper input{
+padding-left:52px;
+}
+#togglePassword{
+position:absolute;
+left:7px;
+top:7px;
+width:38px;
+height:38px;
+border:0;
+border-radius:10px;
+background:#e2e8f0;
+cursor:pointer;
+font-size:18px;
+}
+.login-button{
+width:100%;
+height:54px;
+border:0;
+border-radius:15px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:#fff;
+font-family:Tahoma,Arial,sans-serif;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:.25s;
+margin-top:5px;
+box-shadow:0 10px 25px rgba(37,99,235,.25);
+}
+.login-button:hover{
+transform:translateY(-2px);
+box-shadow:0 14px 30px rgba(37,99,235,.35);
+}
+.login-button:active{
+transform:translateY(0);
+}
+.login-button.loading{
+opacity:.7;
+pointer-events:none;
+}
+.login-error{
+min-height:25px;
+font-size:13px;
+font-weight:bold;
+color:#dc2626;
+margin-bottom:5px;
+line-height:1.7;
+}
+.login-footer{
+margin-top:25px;
+padding-top:18px;
+border-top:1px solid #e2e8f0;
+font-size:12px;
+color:#94a3b8;
+}
+@media(max-width:600px){
+body{
+padding:15px;
+}
+.login-page{
+min-height:calc(100vh - 30px);
+}
+.login-card{
+max-width:100%;
+padding:30px 22px;
+border-radius:24px;
+}
+.login-icon{
+width:70px;
+height:70px;
+font-size:34px;
+}
+.login-card h1{
+font-size:22px;
+}
+.login-subtitle{
+font-size:13px;
+margin-bottom:24px;
+}
+.input-group input{
+height:50px;
+font-size:14px;
+}
+.login-button{
+height:52px;
+font-size:15px;
+}
 }
 @media(min-width:601px) and (max-width:1024px){
-.login-wrapper{max-width:460px}
-.login-card{padding:40px 35px}
-.title{font-size:29px}
+.login-card{
+max-width:460px;
+padding:40px 35px;
+}
 }
 </style>
 </head>
 <body>
-<div class="login-wrapper">
+<div class="login-page">
 <div class="login-card">
-<div class="logo">👨‍💼</div>
-<h1 class="title">ورود به پنل ناظم</h1>
-<p class="subtitle">سیستم مدیریت فراخوان دانش‌آموزان</p>
+<div class="login-icon">🔐</div>
+<h1>ورود به پنل ناظم</h1>
+<p class="login-subtitle">سیستم مدیریت فراخوان دانش‌آموزان</p>
+<form id="loginForm">
 <div class="input-group">
 <label for="username">نام کاربری</label>
-<div class="input-wrapper">
-<input id="username" type="text" placeholder="نام کاربری را وارد کنید" autocomplete="username" inputmode="text">
-</div>
+<input id="username" type="text" autocomplete="username" placeholder="نام کاربری را وارد کنید">
 </div>
 <div class="input-group">
 <label for="password">رمز عبور</label>
-<div class="input-wrapper">
-<input id="password" type="password" placeholder="رمز عبور را وارد کنید" autocomplete="current-password">
+<div class="password-wrapper">
+<input id="password" type="password" autocomplete="current-password" placeholder="رمز عبور را وارد کنید">
+<button type="button" id="togglePassword">👁️</button>
 </div>
 </div>
-<button id="loginButton" class="login-button">ورود به پنل</button>
-<div id="errorMessage" class="error-message"></div>
-<div id="loadingMessage" class="loading">در حال بررسی اطلاعات ورود...</div>
-<div class="footer">پنل مدیریت دبستان علوی</div>
+<div id="loginError" class="login-error"></div>
+<button type="submit" class="login-button" id="loginButton">ورود به پنل</button>
+</form>
+<div class="login-footer">📢 سیستم فراخوان مدرسه</div>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
-const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const USERNAME="nazem";
+const PASSWORD="1313";
+const PANEL_URL="https://ali-nik.vercel.app/nazem-click.html";
+const loginForm=document.getElementById("loginForm");
 const usernameInput=document.getElementById("username");
 const passwordInput=document.getElementById("password");
+const loginError=document.getElementById("loginError");
+const togglePassword=document.getElementById("togglePassword");
 const loginButton=document.getElementById("loginButton");
-const errorMessage=document.getElementById("errorMessage");
-const loadingMessage=document.getElementById("loadingMessage");
-function showError(text){
-errorMessage.textContent=text;
-errorMessage.style.display="block";
+togglePassword.addEventListener("click",()=>{
+if(passwordInput.type==="password"){
+passwordInput.type="text";
+togglePassword.textContent="🙈";
+}else{
+passwordInput.type="password";
+togglePassword.textContent="👁️";
 }
-function hideError(){
-errorMessage.textContent="";
-errorMessage.style.display="none";
-}
-async function checkExistingSession(){
-const {data,error}=await supabaseClient.auth.getSession();
-if(error){
-console.error("خطا در بررسی نشست:",error);
-return;
-}
-if(data.session){
-window.location.replace("click.html");
-}
-}
-async function login(){
-hideError();
+});
+loginForm.addEventListener("submit",(event)=>{
+event.preventDefault();
 const username=usernameInput.value.trim();
 const password=passwordInput.value;
+loginError.textContent="";
 if(!username||!password){
-showError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+loginError.textContent="لطفاً نام کاربری و رمز عبور را وارد کنید.";
 return;
 }
-if(username!=="nazem"){
-showError("نام کاربری یا رمز عبور اشتباه است.");
-return;
-}
-loginButton.disabled=true;
+if(username===USERNAME&&password===PASSWORD){
 loginButton.textContent="در حال ورود...";
-loadingMessage.style.display="block";
-const {data,error}=await supabaseClient.auth.signInWithPassword({
-email:"nazem@school.local",
-password:password
-});
-if(error){
-console.error("خطای ورود:",error);
-showError("نام کاربری یا رمز عبور اشتباه است.");
-loginButton.disabled=false;
-loginButton.textContent="ورود به پنل";
-loadingMessage.style.display="none";
+loginButton.classList.add("loading");
+sessionStorage.setItem("nazemLoggedIn","true");
+sessionStorage.setItem("nazemLoginTime",Date.now().toString());
+setTimeout(()=>{
+window.location.href=PANEL_URL;
+},300);
 return;
 }
-if(data.session){
-window.location.replace("click.html");
-}
-}
-loginButton.addEventListener("click",login);
-passwordInput.addEventListener("keydown",event=>{
-if(event.key==="Enter"){
-login();
-}
-});
-usernameInput.addEventListener("keydown",event=>{
-if(event.key==="Enter"){
+loginError.textContent="❌ نام کاربری یا رمز عبور اشتباه است.";
+passwordInput.value="";
 passwordInput.focus();
-}
 });
-checkExistingSession();
 </script>
 </body>
 </html>
