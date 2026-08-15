@@ -642,13 +642,43 @@ counter.textContent=count;
 }
 
 
+
 function findButton(name,className){
 
-return document.querySelector(
-`.student-button[data-name="${CSS.escape(name)}"][data-class="${CSS.escape(className)}"]`
-);
-
-}
+    const wantedName=normalizeText(name);
+    const wantedClass=normalizeText(className);
+    
+    const buttons=
+    document.querySelectorAll(
+    ".student-button"
+    );
+    
+    for(const button of buttons){
+    
+    const buttonName=
+    normalizeText(
+    button.dataset.name
+    );
+    
+    const buttonClass=
+    normalizeText(
+    button.dataset.class
+    );
+    
+    if(
+    buttonName===wantedName &&
+    buttonClass===wantedClass
+    ){
+    
+    return button;
+    
+    }
+    
+    }
+    
+    return null;
+    
+    }
 
 
 async function loadCalls(){
@@ -813,11 +843,17 @@ async function loadTodayAttendance(){
     
     }
     
-    
     const button=
     findButton(
     record.student_name,
     record.class_name
+    );
+    
+    console.log(
+    "🔎 پیدا کردن دکمه:",
+    record.student_name,
+    record.class_name,
+    button
     );
     
     if(!button)return;
