@@ -1436,22 +1436,18 @@ async function loadTodayAttendance(){
         
         }
     
-    
         async function initializeNazem(){
-            const {data:{session},error}=await supabaseClient.auth.getSession();
-            if(error){
-            console.error("❌ خطا در بررسی نشست ناظم:",error);
-            window.location.replace("login.html");
-            return;
-            }
-            if(!session){
-            window.location.replace("login.html");
-            return;
-            }
-            console.log("✅ ورود ناظم تأیید شد");
+
+            console.log("✅ پنل ناظم مستقیماً اجرا شد");
+        
             createClasses();
+        
             subscribeNazemRealtime();
+        
             await loadCalls();
+        
             await loadTodayAttendance();
-            }
-            initializeNazem();
+        
+        }
+        
+        initializeNazem();
