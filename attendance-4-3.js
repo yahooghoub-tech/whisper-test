@@ -6,23 +6,24 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 const students=[
-    {name:"سید محمد اجاقی",className:"چهارم-2"},
-{name:"امیرمحمد امانی",className:"چهارم-2"},
-{name:"کارن امانی",className:"چهارم-2"},
-{name:"بنیامین حسین زاده",className:"چهارم-2"},
-{name:"سید سینا حسینی",className:"چهارم-2"},
-{name:"مبین دمرچلی",className:"چهارم-2"},
-{name:"سپهر ذوالفقاری",className:"چهارم-2"},
-{name:"علیسام رمضانی",className:"چهارم-2"},
-{name:"کیان علیا",className:"چهارم-2"},
-{name:"آرتین کوچاری",className:"چهارم-2"},
-{name:"سام لوحی خسروشاهی",className:"چهارم-2"},
-{name:"برکان محمدخانی",className:"چهارم-2"},
-{name:"مهراد منصفی",className:"چهارم-2"},
-{name:"سورنا منصوری",className:"چهارم-2"},
-{name:"ارسام مهری نژاد",className:"چهارم-2"},
+    {name:"آرسام حسینی",className:"چهارم-3"},
+    {name:"لیام رحمانی",className:"چهارم-3"},
+    {name:"ایلیا سبزپوش",className:"چهارم-3"},
+    {name:"ماهان سمنارشاد",className:"چهارم-3"},
+    {name:"آروین عابدی",className:"چهارم-3"},
+    {name:"ایلیا عرشی",className:"چهارم-3"},
+    {name:"آراد عطاییان",className:"چهارم-3"},
+    {name:"آرتین علمی",className:"چهارم-3"},
+    {name:"مهرسام غضنفری",className:"چهارم-3"},
+    {name:"نیکان فرجی",className:"چهارم-3"},
+    {name:"دانیال کشاورز",className:"چهارم-3"},
+    {name:"کارن کوهی",className:"چهارم-3"},
+    {name:"علی گرجایی",className:"چهارم-3"},
+    {name:"رایان مننظری",className:"چهارم-3"},
+    {name:"آرین نیک پی",className:"چهارم-3"},
+    {name:"ویهان وهابی",className:"چهارم-3"},
 ];
-const className="چهارم-2";
+const className="چهارم-3";
 const studentsContainer=
 document.getElementById("studentsContainer");
 const totalCount=
@@ -198,14 +199,14 @@ async function loadTodayAttendance(){
     present;
     }
     supabaseClient
-.channel("attendance-4-2")
+.channel("attendance-4-3")
 .on(
 "postgres_changes",
 {
 event:"*",
 schema:"public",
 table:"attendance",
-filter:"class_name=eq.چهارم-2"
+filter:"class_name=eq.چهارم-3"
 },
 payload=>{
 console.log(
@@ -218,7 +219,7 @@ if(!record){
 loadTodayAttendance();
 return;
 }
-if(record.class_name!=="چهارم-2"){
+if(record.class_name!=="چهارم-3"){
 return;
 }
 if(record.attendance_date!==getToday()){
@@ -237,7 +238,7 @@ updateCounts();
 )
 .subscribe(status=>{
 console.log(
-"Realtime حضور و غیاب چهارم-2:",
+"Realtime حضور و غیاب چهارم-3:",
 status
 );
 });
@@ -269,7 +270,7 @@ async function refreshAttendance(){
     await supabaseClient
     .from("attendance")
     .select("*")
-    .eq("class_name","چهارم-2")
+    .eq("class_name","چهارم-3")
     .eq("attendance_date",today);
     if(error){
     console.error(

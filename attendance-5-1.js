@@ -6,23 +6,33 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 const students=[
-    {name:"سید محمد اجاقی",className:"چهارم-2"},
-{name:"امیرمحمد امانی",className:"چهارم-2"},
-{name:"کارن امانی",className:"چهارم-2"},
-{name:"بنیامین حسین زاده",className:"چهارم-2"},
-{name:"سید سینا حسینی",className:"چهارم-2"},
-{name:"مبین دمرچلی",className:"چهارم-2"},
-{name:"سپهر ذوالفقاری",className:"چهارم-2"},
-{name:"علیسام رمضانی",className:"چهارم-2"},
-{name:"کیان علیا",className:"چهارم-2"},
-{name:"آرتین کوچاری",className:"چهارم-2"},
-{name:"سام لوحی خسروشاهی",className:"چهارم-2"},
-{name:"برکان محمدخانی",className:"چهارم-2"},
-{name:"مهراد منصفی",className:"چهارم-2"},
-{name:"سورنا منصوری",className:"چهارم-2"},
-{name:"ارسام مهری نژاد",className:"چهارم-2"},
+    {name:"محمدمهدی ابیض",className:"پنجم-1"},
+    {name:"ماهان اجتهادی",className:"پنجم-1"},
+    {name:"سامیار اسکندری",className:"پنجم-1"},
+    {name:"آرشا افتخاری",className:"پنجم-1"},
+    {name:"کارن آتش بهار",className:"پنجم-1"},
+    {name:"شهراد چم",className:"پنجم-1"},
+    {name:"مهراد حسینی",className:"پنجم-1"},
+    {name:"رهام روشنی صبح",className:"پنجم-1"},
+    {name:"پارسا سعیدی نیا",className:"پنجم-1"},
+    {name:"مهراد سفیدگران",className:"پنجم-1"},
+    {name:"محمد سیف الهی",className:"پنجم-1"},
+    {name:"سروش شمسیان",className:"پنجم-1"},
+    {name:"آتیلا صفری",className:"پنجم-1"},
+    {name:"رادین عباسی",className:"پنجم-1"},
+    {name:"آرشام فتحی زاده",className:"پنجم-1"},
+    {name:"آرسام کاظمی",className:"پنجم-1"},
+    {name:"امیرعلی کریمی راد",className:"پنجم-1"},
+    {name:"محمد کهتری",className:"پنجم-1"},
+    {name:"ماهان مختاری",className:"پنجم-1"},
+    {name:"آرشین مقدسی",className:"پنجم-1"},
+    {name:"امیرمهدی میرزاآقایی",className:"پنجم-1"},
+    {name:"فربد ناطقی",className:"پنجم-1"},
+    {name:"کارن نعمتی",className:"پنجم-1"},
+    {name:"فرهام هاشمی",className:"پنجم-1"},
+    {name:"یاسین یوسفی",className:"پنجم-1"},
 ];
-const className="چهارم-2";
+const className="پنجم-1";
 const studentsContainer=
 document.getElementById("studentsContainer");
 const totalCount=
@@ -198,14 +208,14 @@ async function loadTodayAttendance(){
     present;
     }
     supabaseClient
-.channel("attendance-4-2")
+.channel("attendance-5-1")
 .on(
 "postgres_changes",
 {
 event:"*",
 schema:"public",
 table:"attendance",
-filter:"class_name=eq.چهارم-2"
+filter:"class_name=eq.پنجم-1"
 },
 payload=>{
 console.log(
@@ -218,7 +228,7 @@ if(!record){
 loadTodayAttendance();
 return;
 }
-if(record.class_name!=="چهارم-2"){
+if(record.class_name!=="پنجم-1"){
 return;
 }
 if(record.attendance_date!==getToday()){
@@ -237,7 +247,7 @@ updateCounts();
 )
 .subscribe(status=>{
 console.log(
-"Realtime حضور و غیاب چهارم-2:",
+"Realtime حضور و غیاب پنجم-1:",
 status
 );
 });
@@ -269,7 +279,7 @@ async function refreshAttendance(){
     await supabaseClient
     .from("attendance")
     .select("*")
-    .eq("class_name","چهارم-2")
+    .eq("class_name","پنجم-1")
     .eq("attendance_date",today);
     if(error){
     console.error(

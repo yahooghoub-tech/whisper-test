@@ -6,23 +6,31 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 const students=[
-    {name:"سید محمد اجاقی",className:"چهارم-2"},
-{name:"امیرمحمد امانی",className:"چهارم-2"},
-{name:"کارن امانی",className:"چهارم-2"},
-{name:"بنیامین حسین زاده",className:"چهارم-2"},
-{name:"سید سینا حسینی",className:"چهارم-2"},
-{name:"مبین دمرچلی",className:"چهارم-2"},
-{name:"سپهر ذوالفقاری",className:"چهارم-2"},
-{name:"علیسام رمضانی",className:"چهارم-2"},
-{name:"کیان علیا",className:"چهارم-2"},
-{name:"آرتین کوچاری",className:"چهارم-2"},
-{name:"سام لوحی خسروشاهی",className:"چهارم-2"},
-{name:"برکان محمدخانی",className:"چهارم-2"},
-{name:"مهراد منصفی",className:"چهارم-2"},
-{name:"سورنا منصوری",className:"چهارم-2"},
-{name:"ارسام مهری نژاد",className:"چهارم-2"},
+    {name:"مهان احمدی",className:"ششم-1"},
+{name:"پارسا بکایی",className:"ششم-1"},
+{name:"مهدی حسین زاده سیف",className:"ششم-1"},
+{name:"آرین خلج زاده",className:"ششم-1"},
+{name:"محسن دمرچلی",className:"ششم-1"},
+{name:"آرتین رضایی",className:"ششم-1"},
+{name:"علیسان صفیاری",className:"ششم-1"},
+{name:"آرتین عابدی",className:"ششم-1"},
+{name:"آراد عبدالله کرمی",className:"ششم-1"},
+{name:"مهیار غلامی",className:"ششم-1"},
+{name:"امیرپارسا فخرآبادی",className:"ششم-1"},
+{name:"سپهر فرج نژاد",className:"ششم-1"},
+{name:"رایان فرهبد",className:"ششم-1"},
+{name:"مهراد فخری",className:"ششم-1"},
+{name:"امیرحسین قابضی",className:"ششم-1"},
+{name:"آراد قیاسی",className:"ششم-1"},
+{name:"آرشا کیاپاشا",className:"ششم-1"},
+{name:"مهربد کاهانی",className:"ششم-1"},
+{name:"مهراد مظفر",className:"ششم-1"},
+{name:"عماد مظلومی نیا",className:"ششم-1"},
+{name:"آرتین محمدبیگی",className:"ششم-1"},
+{name:"میثم نگهداری",className:"ششم-1"},
+{name:"مازیار نگهداری",className:"ششم-1"},
 ];
-const className="چهارم-2";
+const className="ششم-1";
 const studentsContainer=
 document.getElementById("studentsContainer");
 const totalCount=
@@ -198,14 +206,14 @@ async function loadTodayAttendance(){
     present;
     }
     supabaseClient
-.channel("attendance-4-2")
+.channel("attendance-6-1")
 .on(
 "postgres_changes",
 {
 event:"*",
 schema:"public",
 table:"attendance",
-filter:"class_name=eq.چهارم-2"
+filter:"class_name=eq.ششم-1"
 },
 payload=>{
 console.log(
@@ -218,7 +226,7 @@ if(!record){
 loadTodayAttendance();
 return;
 }
-if(record.class_name!=="چهارم-2"){
+if(record.class_name!=="ششم-1"){
 return;
 }
 if(record.attendance_date!==getToday()){
@@ -237,7 +245,7 @@ updateCounts();
 )
 .subscribe(status=>{
 console.log(
-"Realtime حضور و غیاب چهارم-2:",
+"Realtime حضور و غیاب ششم-1:",
 status
 );
 });
@@ -269,7 +277,7 @@ async function refreshAttendance(){
     await supabaseClient
     .from("attendance")
     .select("*")
-    .eq("class_name","چهارم-2")
+    .eq("class_name","ششم-1")
     .eq("attendance_date",today);
     if(error){
     console.error(
