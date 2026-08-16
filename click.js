@@ -384,7 +384,7 @@ clearTimeout(window.teacherSendPopupTimer);
 window.teacherSendPopupTimer=
 setTimeout(()=>{
 popup.classList.remove("show");
-},3000);
+},6000);
 
 }
 
