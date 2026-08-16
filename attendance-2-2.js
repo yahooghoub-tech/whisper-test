@@ -30,7 +30,7 @@ const students=[
 {name:"محمد پارسا نبوی زاده",className:"دوم-2"},
 {name:"رادین هادیان",className:"دوم-2"},
 ];
-const className="دوم -2";
+const className="دوم-2";
 const studentsContainer=
 document.getElementById("studentsContainer");
 const totalCount=
@@ -213,7 +213,7 @@ async function loadTodayAttendance(){
 event:"*",
 schema:"public",
 table:"attendance",
-filter:"class_name=eq.دوم -2"
+filter:"class_name=eq.دوم-2"
 },
 payload=>{
 console.log(
@@ -226,7 +226,7 @@ if(!record){
 loadTodayAttendance();
 return;
 }
-if(record.class_name!=="دوم -2"){
+if(record.class_name!=="دوم-2"){
 return;
 }
 if(record.attendance_date!==getToday()){
@@ -245,7 +245,7 @@ updateCounts();
 )
 .subscribe(status=>{
 console.log(
-"Realtime حضور و غیاب دوم -2:",
+"Realtime حضور و غیاب دوم-2:",
 status
 );
 });
@@ -277,7 +277,7 @@ async function refreshAttendance(){
     await supabaseClient
     .from("attendance")
     .select("*")
-    .eq("class_name","دوم -2")
+    .eq("class_name","دوم-2")
     .eq("attendance_date",today);
     if(error){
     console.error(
