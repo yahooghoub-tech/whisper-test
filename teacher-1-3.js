@@ -159,7 +159,7 @@ function resetStudentButton(call){
     }
     async function loadCalls(){
     const today=getToday();
-    const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","اول-1").eq("called_date",today).order("id",{ascending:true});
+    const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","اول-3").eq("called_date",today).order("id",{ascending:true});
     if(error){
     console.error("خطا در دریافت فراخوان‌های امروز:",error);
     return;
@@ -198,7 +198,7 @@ function resetStudentButton(call){
     console.log("⛔ این دانش‌آموز غایب است و امکان ارسال ندارد:",student.name);
     return;
     }
-    const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name","اول-1").neq("status","ارسال شد").order("id",{ascending:false}).limit(1);
+    const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name","اول-3").neq("status","ارسال شد").order("id",{ascending:false}).limit(1);
     if(error){
     console.error(error);
     return;
@@ -220,7 +220,7 @@ function resetStudentButton(call){
     }
     async function loadAbsentStudents(){
     const today=getDatabaseToday()
-    const {data,error}=await supabaseClient.from("attendance").select("*").eq("class_name","اول-1").eq("attendance_date",today).eq("status","غایب");
+    const {data,error}=await supabaseClient.from("attendance").select("*").eq("class_name","اول-3").eq("attendance_date",today).eq("status","غایب");
     if(error){
     console.error("❌ خطا در دریافت غایبین:",error);
     return;
@@ -267,7 +267,7 @@ function resetStudentButton(call){
     loadAbsentStudents();
     }
     setInterval(checkTeacherCallDayChange,30000);
-    supabaseClient.channel("teacher-1-3-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.اول-1"},payload=>{
+    supabaseClient.channel("teacher-1-3-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.اول-3"},payload=>{
         const call=payload.new;
         console.log("📢 فراخوان جدید:",call);
         if(call.status!=="فراخوان شد")return;
@@ -292,11 +292,11 @@ function resetStudentButton(call){
         },300);
         }
         loadCalls();
-        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls",filter:"class_name=eq.اول-1"},payload=>{
+        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls",filter:"class_name=eq.اول-3"},payload=>{
         const call=payload.new;
         const oldCall=payload.old;
         if(!call)return;
-        if(call.class_name!=="اول-1")return;
+        if(call.class_name!=="اول-3")return;
         if(call.called_date!==getToday()){
         console.log("⏭️ UPDATE مربوط به روز قبل است:",call.called_date);
         return;
@@ -311,23 +311,23 @@ function resetStudentButton(call){
         const deletedCall=payload.old;
         console.log("🗑️ DELETE دریافت شد:",deletedCall);
         if(!deletedCall)return;
-        if(deletedCall.class_name!=="اول-1")return;
+        if(deletedCall.class_name!=="اول-3")return;
         resetStudentButton(deletedCall);
         loadCalls();
         }).subscribe(status=>{
         console.log("Realtime teacher status:",status);
         });
-        supabaseClient.channel("teacher-1-3-attendance-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"attendance",filter:"class_name=eq.اول-1"},payload=>{
+        supabaseClient.channel("teacher-1-3-attendance-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"attendance",filter:"class_name=eq.اول-3"},payload=>{
         console.log("🟢 وضعیت حضور و غیاب جدید:",payload.new);
         if(!payload.new)return;
         if(payload.new.attendance_date!==getDatabaseToday())return;
         loadAbsentStudents();
-        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"attendance",filter:"class_name=eq.اول-1"},payload=>{
+        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"attendance",filter:"class_name=eq.اول-3"},payload=>{
         console.log("🟡 وضعیت حضور و غیاب تغییر کرد:",payload.new);
         if(!payload.new)return;
         if(payload.new.attendance_date!==getToday())return;
         loadAbsentStudents();
-        }).on("postgres_changes",{event:"DELETE",schema:"public",table:"attendance",filter:"class_name=eq.اول-1"},payload=>{
+        }).on("postgres_changes",{event:"DELETE",schema:"public",table:"attendance",filter:"class_name=eq.اول-3"},payload=>{
         console.log("🔵 وضعیت حضور و غیاب حذف شد:",payload.old);
         loadAbsentStudents();
         }).subscribe(status=>{
