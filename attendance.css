@@ -291,3 +291,14 @@ body{
 #callPanelButton span {
     margin-right: 8px;
 }
+
+*,
+*::before,
+*::after{
+    font-family:"Estedad",Tahoma,sans-serif !important;
+}
+
+html,
+body{
+    font-family:"Estedad",Tahoma,sans-serif !important;
+}
