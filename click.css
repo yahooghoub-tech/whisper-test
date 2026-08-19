@@ -2,19 +2,22 @@
     box-sizing:border-box;
     margin:0;
     padding:0;
-    }
-    body{
+}
+
+body{
     font-family:Tahoma,Vazirmatn,sans-serif;
     background:#eef2f7;
     color:#172033;
-    }
-    .container{
+}
+
+.container{
     width:98%;
     max-width:1800px;
     margin:auto;
     padding:12px;
-    }
-    .top-bar{
+}
+
+.top-bar{
     background:#fff;
     border-radius:14px;
     padding:14px;
@@ -23,18 +26,21 @@
     position:sticky;
     top:5px;
     z-index:100;
-    }
-    h1{
+}
+
+h1{
     font-size:22px;
     font-weight:900;
     text-align:center;
     margin-bottom:12px;
-    }
-    .search-box{
+}
+
+.search-box{
     width:100%;
     margin-bottom:10px;
-    }
-    #searchInput{
+}
+
+#searchInput{
     width:100%;
     height:44px;
     border:2px solid #d8dee8;
@@ -43,11 +49,13 @@
     font-size:15px;
     font-weight:bold;
     outline:none;
-    }
-    #searchInput:focus{
+}
+
+#searchInput:focus{
     border-color:#2979ff;
-    }
-    .reset-button{
+}
+
+.reset-button{
     width:100%;
     height:42px;
     border:0;
@@ -57,18 +65,21 @@
     font-size:15px;
     font-weight:900;
     cursor:pointer;
-    }
-    .reset-button:hover{
+}
+
+.reset-button:hover{
     background:#b71c1c;
-    }
-    .grade-section{
+}
+
+.grade-section{
     background:#dfe6ef;
     border-radius:14px;
     margin-bottom:12px;
     overflow:hidden;
     box-shadow:0 2px 8px rgba(0,0,0,.08);
-    }
-    .grade-header{
+}
+
+.grade-header{
     height:48px;
     display:flex;
     align-items:center;
@@ -80,32 +91,38 @@
     font-size:17px;
     font-weight:900;
     user-select:none;
-    }
-    .grade-arrow{
+}
+
+.grade-arrow{
     font-size:18px;
     transition:.2s;
-    }
-    .grade-section.closed .grade-arrow{
+}
+
+.grade-section.closed .grade-arrow{
     transform:rotate(-90deg);
-    }
-    .grade-content{
+}
+
+.grade-content{
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
     gap:10px;
     padding:10px;
-    }
-    .grade-section.closed .grade-content{
+}
+
+.grade-section.closed .grade-content{
     display:none;
-    }
-    .class-box{
+}
+
+.class-box{
     background:#fff;
     border-radius:12px;
     overflow:hidden;
     box-shadow:0 2px 8px rgba(0,0,0,.08);
     border:1px solid #dce2ea;
     min-width:0;
-    }
-    .class-header{
+}
+
+.class-header{
     height:44px;
     display:flex;
     align-items:center;
@@ -114,12 +131,14 @@
     background:#f7f9fc;
     border-bottom:1px solid #e2e6ed;
     font-weight:900;
-    }
-    .class-title{
+}
+
+.class-title{
     font-size:15px;
     font-weight:900;
-    }
-    .student-total{
+}
+
+.student-total{
     width:27px;
     height:27px;
     border-radius:50%;
@@ -130,8 +149,9 @@
     justify-content:center;
     font-size:12px;
     font-weight:900;
-    }
-    .called-total{
+}
+
+.called-total{
     min-width:27px;
     height:27px;
     padding:0 5px;
@@ -143,358 +163,357 @@
     justify-content:center;
     font-size:12px;
     font-weight:900;
-    }
-    .students-list{
+}
+
+.students-list{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:5px;
     padding:7px;
-    }
-    .student-button{
-        width:100%;
-        min-width:0;
-        min-height:38px;
-        border:0;
-        border-radius:7px;
-        padding:4px 6px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:4px;
-        cursor:pointer;
-        font-family:inherit;
-        font-size:11px;
-        font-weight:900;
-        line-height:1.25;
-        transition:.15s;
-        overflow:hidden;
-        white-space:nowrap;
-    }
-    
-    .student-name{
-        width:100%;
-        min-width:0;
-        font-weight:900;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:clip;
-        word-break:normal;
-        overflow-wrap:normal;
-        line-height:1.2;
-        text-align:center;
-        display:block;
-    }
-    .student-status{
+}
+
+.student-button{
+    width:100%;
+    min-width:0;
+    min-height:38px;
+    border:0;
+    border-radius:7px;
+    padding:4px 5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:900;
+    line-height:1;
+    transition:.15s;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.student-name{
+    width:100%;
+    min-width:0;
+    font-weight:900;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:clip;
+    word-break:normal;
+    overflow-wrap:normal;
+    line-height:1;
+    text-align:center;
+    display:block;
+}
+
+.student-status{
     font-size:9px;
     font-weight:900;
     white-space:nowrap;
     direction:rtl;
-    }
-    .status-time{
+    flex-shrink:0;
+}
+
+.status-time{
     font-size:9px;
     font-weight:900;
     white-space:nowrap;
-    }
-    .student-button.pending{
+    flex-shrink:0;
+}
+
+.student-button.pending{
     background:#ffd740;
     color:#111;
-    }
-    .student-button.called{
+}
+
+.student-button.called{
     background:#2196f3;
     color:#fff;
-    }
-    .student-button.sent{
+}
+
+.student-button.sent{
     background:#22a447;
     color:#fff;
-    }
-    .student-button:active{
+}
+
+.student-button:active{
     transform:scale(.97);
-    }
-    .student-button:hover{
+}
+
+.student-button:hover{
     filter:brightness(.96);
-    }
-    .student-button.search-hidden{
+}
+
+.student-button.search-hidden{
     display:none;
-    }
-    .no-result{
+}
+
+.no-result{
     grid-column:1/-1;
     text-align:center;
     padding:12px;
     font-size:13px;
     font-weight:900;
     color:#777;
-    }
-    @media(max-width:900px){
+}
+@media(max-width:900px){
+
     .grade-content{
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:8px;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:8px;
     }
+
     .student-button{
-    font-size:10px;
-    min-height:36px;
+        min-height:44px;
+        padding:4px;
+        font-size:10px;
+        white-space:nowrap;
     }
+
+    .student-name{
+        font-size:10px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:clip;
+        word-break:normal;
+        overflow-wrap:normal;
+    }
+
     .class-title{
-    font-size:14px;
+        font-size:14px;
     }
-    }
-    @media(max-width:600px){
+}
+
+@media(max-width:600px){
+
     .container{
-    width:100%;
-    padding:7px;
+        width:100%;
+        padding:7px;
     }
+
     h1{
-    font-size:18px;
+        font-size:18px;
     }
+
     .grade-content{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:6px;
-    padding:6px;
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:6px;
+        padding:6px;
     }
+
     .students-list{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:4px;
-    padding:5px;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:4px;
+        padding:5px;
     }
+
     .class-header{
-    height:40px;
-    padding:0 6px;
+        height:40px;
+        padding:0 6px;
     }
+
     .class-title{
-    font-size:12px;
+        font-size:12px;
     }
+
     .student-total,
     .called-total{
-    width:24px;
-    height:24px;
-    min-width:24px;
-    font-size:10px;
+        width:24px;
+        height:24px;
+        min-width:24px;
+        font-size:10px;
     }
+
     .student-button{
-    min-height:34px;
-    padding:3px 4px;
-    font-size:9px;
+        width:100%;
+        min-width:0;
+        min-height:44px;
+        height:44px;
+        padding:3px;
+        font-size:9px;
+        line-height:1;
+        white-space:nowrap;
+        overflow:hidden;
     }
+
+    .student-name{
+        width:100%;
+        min-width:0;
+        font-size:9px;
+        line-height:1;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:clip;
+        word-break:normal;
+        overflow-wrap:normal;
+    }
+
     .student-status,
     .status-time{
-    font-size:7px;
+        font-size:7px;
+        white-space:nowrap;
+        flex-shrink:0;
     }
-    }
-   
-   
-        
-    @media(max-width:600px){
-        .student-button{
-            min-height:44px;
-            padding:4px 3px;
-            font-size:10px;
-            line-height:1;
-            white-space:nowrap;
-            overflow:hidden;
-        }
-    
-        .student-name{
-            font-size:10px;
-            line-height:1;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:clip;
-            overflow-wrap:normal;
-            word-break:normal;
-        }
-    
-        .student-status,
-        .status-time{
-            font-size:7px;
-            white-space:nowrap;
-        }
-    }
-        
-        .teacher-send-popup{
-            position:fixed;
-            z-index:99999;
-        
-            left:50%;
-            bottom:calc(10px + env(safe-area-inset-bottom));
-        
-            width:max-content;
-            max-width:calc(100vw - 24px);
-        
-            box-sizing:border-box;
-        
-            padding:7px 10px;
-        
-            display:flex;
-            align-items:center;
-            gap:7px;
-        
-            direction:rtl;
-        
-            background:rgba(25,30,40,.68);
-        
-            border:1px solid rgba(255,255,255,.20);
-        
-            border-radius:12px;
-        
-            box-shadow:
-                0 7px 22px rgba(0,0,0,.28),
-                inset 0 1px 1px rgba(255,255,255,.15);
-        
-            backdrop-filter:blur(18px);
-            -webkit-backdrop-filter:blur(18px);
-        
-            opacity:0;
-            visibility:hidden;
-            pointer-events:none;
-        
-            transform:translate(-50%,100px);
-        
-            transition:
-                opacity .3s ease,
-                transform .35s cubic-bezier(.22,1,.36,1);
-        
-            font-family:Tahoma,Vazirmatn,sans-serif;
-        
-            overflow:hidden;
-        }
-        
+}
+
+.teacher-send-popup{
+    position:fixed;
+    z-index:99999;
+    left:50%;
+    bottom:calc(10px + env(safe-area-inset-bottom));
+    width:max-content;
+    max-width:calc(100vw - 24px);
+    box-sizing:border-box;
+    padding:7px 10px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    direction:rtl;
+    background:rgba(25,30,40,.68);
+    border:1px solid rgba(255,255,255,.20);
+    border-radius:12px;
+    box-shadow:
+        0 7px 22px rgba(0,0,0,.28),
+        inset 0 1px 1px rgba(255,255,255,.15);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translate(-50%,100px);
+    transition:
+        opacity .3s ease,
+        transform .35s cubic-bezier(.22,1,.36,1);
+    font-family:Tahoma,Vazirmatn,sans-serif;
+    overflow:hidden;
+}
 
 .walking-person{
-position:relative;
-display:flex;
-align-items:center;
-justify-content:center;
-overflow:hidden;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
 }
 
 .person{
-position:relative;
-width:32px;
-height:42px;
-animation:personWalk .5s infinite alternate ease-in-out;
+    position:relative;
+    width:32px;
+    height:42px;
+    animation:personWalk .5s infinite alternate ease-in-out;
 }
 
 .head{
-position:absolute;
-width:10px;
-height:10px;
-border-radius:50%;
-background:#fff;
-top:0;
-left:11px;
+    position:absolute;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#fff;
+    top:0;
+    left:11px;
 }
 
 .body{
-position:absolute;
-width:7px;
-height:18px;
-border-radius:5px;
-background:#fff;
-top:10px;
-left:13px;
+    position:absolute;
+    width:7px;
+    height:18px;
+    border-radius:5px;
+    background:#fff;
+    top:10px;
+    left:13px;
 }
 
 .arm{
-position:absolute;
-width:5px;
-height:17px;
-border-radius:5px;
-background:#fff;
-top:11px;
-transform-origin:top center;
+    position:absolute;
+    width:5px;
+    height:17px;
+    border-radius:5px;
+    background:#fff;
+    top:11px;
+    transform-origin:top center;
 }
 
 .arm-left{
-left:9px;
-transform:rotate(30deg);
-animation:armLeft .5s infinite alternate ease-in-out;
+    left:9px;
+    transform:rotate(30deg);
+    animation:armLeft .5s infinite alternate ease-in-out;
 }
 
 .arm-right{
-right:8px;
-transform:rotate(-30deg);
-animation:armRight .5s infinite alternate ease-in-out;
+    right:8px;
+    transform:rotate(-30deg);
+    animation:armRight .5s infinite alternate ease-in-out;
 }
 
 .leg{
-position:absolute;
-width:5px;
-height:18px;
-border-radius:5px;
-background:#fff;
-top:26px;
-transform-origin:top center;
+    position:absolute;
+    width:5px;
+    height:18px;
+    border-radius:5px;
+    background:#fff;
+    top:26px;
+    transform-origin:top center;
 }
 
 .leg-left{
-left:12px;
-animation:legLeft .5s infinite alternate ease-in-out;
+    left:12px;
+    animation:legLeft .5s infinite alternate ease-in-out;
 }
 
 .leg-right{
-right:11px;
-animation:legRight .5s infinite alternate ease-in-out;
+    right:11px;
+    animation:legRight .5s infinite alternate ease-in-out;
 }
-
 @keyframes personWalk{
+    0%{
+        transform:translateY(1px);
+    }
 
-0%{
-transform:translateY(1px);
-}
-
-100%{
-transform:translateY(-2px);
-}
-
+    100%{
+        transform:translateY(-2px);
+    }
 }
 
 @keyframes legLeft{
+    0%{
+        transform:rotate(28deg);
+    }
 
-0%{
-transform:rotate(28deg);
-}
-
-100%{
-transform:rotate(-28deg);
-}
-
+    100%{
+        transform:rotate(-28deg);
+    }
 }
 
 @keyframes legRight{
+    0%{
+        transform:rotate(-28deg);
+    }
 
-0%{
-transform:rotate(-28deg);
-}
-
-100%{
-transform:rotate(28deg);
-}
-
+    100%{
+        transform:rotate(28deg);
+    }
 }
 
 @keyframes armLeft{
+    0%{
+        transform:rotate(-25deg);
+    }
 
-0%{
-transform:rotate(-25deg);
-}
-
-100%{
-transform:rotate(35deg);
-}
-
+    100%{
+        transform:rotate(35deg);
+    }
 }
 
 @keyframes armRight{
+    0%{
+        transform:rotate(25deg);
+    }
 
-0%{
-transform:rotate(25deg);
+    100%{
+        transform:rotate(-35deg);
+    }
 }
-
-100%{
-transform:rotate(-35deg);
-}
-
-}
-
 
 .student-button.absent{
     background:#000 !important;
@@ -533,4 +552,26 @@ transform:rotate(-35deg);
     color:#fff !important;
     opacity:1 !important;
     cursor:not-allowed !important;
+}
+
+/* جلوگیری از شکستن متن دکمه‌ها در موبایل */
+@media(max-width:600px){
+
+    .student-button,
+    .student-button *{
+        white-space:nowrap !important;
+    }
+
+    .student-name{
+        flex:1 1 auto;
+        min-width:0;
+        overflow:hidden;
+        text-overflow:clip;
+        text-align:center;
+    }
+
+    .student-status,
+    .status-time{
+        flex:0 0 auto;
+    }
 }
