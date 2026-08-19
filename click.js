@@ -489,8 +489,7 @@ student.className;
 
 button.innerHTML=
 `<span class="student-name">${student.name}</span>
-<span class="student-status"></span>
-<span class="status-time"></span>`;
+<span class="student-status"></span>`;
 
 button.onclick=
 ()=>callStudent(student,button);
@@ -594,9 +593,7 @@ button.querySelector(
 ".student-status"
 ).textContent="(غایب)";
 
-button.querySelector(
-".status-time"
-).textContent="";
+
 
 return;
 
@@ -621,10 +618,7 @@ button.querySelector(
 ).textContent=
 `(${call.status})`;
 
-button.querySelector(
-".status-time"
-).textContent=
-call.called_time||"";
+
 
 }
 
