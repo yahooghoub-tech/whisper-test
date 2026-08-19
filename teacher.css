@@ -548,3 +548,14 @@ color:#fff !important;
                     .student-button:disabled{
                     pointer-events:none;
                     }
+
+                    *,
+*::before,
+*::after{
+    font-family:"Estedad",Tahoma,sans-serif !important;
+}
+
+html,
+body{
+    font-family:"Estedad",Tahoma,sans-serif !important;
+}
