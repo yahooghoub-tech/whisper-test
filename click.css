@@ -1106,3 +1106,26 @@ h1{
         text-overflow:ellipsis;
     }
 }
+
+@media(max-width:600px){
+
+    .grade-content{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+
+    /*
+    پایه‌هایی که فقط ۲ کلاس دارند
+    هر کلاس نصف عرض را می‌گیرد
+    */
+
+    .grade-content:has(.class-box:nth-child(2):last-child){
+        grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    }
+
+    .grade-content:has(.class-box:nth-child(2):last-child)
+    .class-box{
+        width:100%;
+        max-width:100%;
+    }
+}
