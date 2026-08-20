@@ -1372,23 +1372,6 @@ nazemPassword.focus();
 
 <script>
 (function(){
-    const splash = document.getElementById("farakhanSplash");
-    if(!splash) return;
-
-    const finishSplash = () => {
-        setTimeout(() => {
-            splash.classList.add("hidden");
-            setTimeout(() => splash.remove(), 800);
-        }, 6000);
-    };
-
-    if(document.readyState === "loading"){
-        document.addEventListener("DOMContentLoaded", finishSplash, {once:true});
-    }else{
-        finishSplash();
-    }
-})();
-(function(){
 
 const splash =
     document.getElementById("farakhanSplash");
@@ -1399,8 +1382,8 @@ const fill =
 const percent =
     document.getElementById("farakhanLoadingPercent");
 
-const loginPanel =
-    document.getElementById("loginPanel");
+const loginPage =
+    document.getElementById("nazemLoginPage");
 
 if(!splash) return;
 
@@ -1437,18 +1420,27 @@ function updateLoading(now){
 
     }else{
 
-        // رسیدن به 100 درصد
+        /* رسیدن به 100 درصد */
+
         setTimeout(function(){
+
+            /* مخفی کردن Loading */
 
             splash.classList.add("hidden");
 
-            // نمایش پنل ورود
-            if(loginPanel){
-                loginPanel.style.display = "flex";
+            /* نمایش صفحه ورود */
+
+            if(loginPage){
+                loginPage.classList.remove("hidden");
+                loginPage.style.display = "flex";
             }
 
+            /* حذف Splash */
+
             setTimeout(function(){
+
                 splash.remove();
+
             },800);
 
         },200);
@@ -1462,6 +1454,12 @@ requestAnimationFrame(
 );
 
 })();
+
+
+
+
+
+
 </script>
 
 </body>
