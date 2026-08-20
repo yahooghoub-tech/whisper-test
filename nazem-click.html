@@ -889,6 +889,11 @@ font-size:15px;
     }
 
 }
+#nazemLoginPage{
+    display:flex;
+    visibility:visible;
+    opacity:1;
+}
 </style>
 
 </head>
@@ -1370,73 +1375,72 @@ nazemPassword.focus();
      </div>
      </div>
      <script>
-        (function(){
+        document.addEventListener("DOMContentLoaded", function(){
         
             const splash = document.getElementById("farakhanSplash");
             const fill = document.getElementById("farakhanLoadingFill");
             const percent = document.getElementById("farakhanLoadingPercent");
             const loginPage = document.getElementById("nazemLoginPage");
         
-            if (!splash) return;
+            if (!splash || !loginPage) {
+                console.log("Splash یا صفحه ورود پیدا نشد");
+                return;
+            }
         
             const duration = 6000;
             const start = performance.now();
         
-            function updateLoading(now){
+            /* صفحه ورود در شروع مخفی باشد */
+            loginPage.style.display = "none";
+        
+            function loading(now){
         
                 const progress = Math.min(
                     100,
                     Math.round(((now - start) / duration) * 100)
                 );
         
-                if (fill) {
+                if(fill){
                     fill.style.width = progress + "%";
                 }
         
-                if (percent) {
+                if(percent){
                     percent.textContent = progress + "%";
                 }
         
-                if (progress < 100) {
+                if(progress < 100){
         
-                    requestAnimationFrame(updateLoading);
+                    requestAnimationFrame(loading);
         
-                } else {
+                }else{
         
-                    console.log("LOADING 100%");
-                    console.log("Login Page:", loginPage);
+                    /* دقیقاً بعد از 100 درصد */
         
                     setTimeout(function(){
         
-                        /* حذف Splash */
+                        console.log("Loading completed");
         
+                        /* حذف کامل Loading */
                         splash.style.display = "none";
         
                         /* نمایش صفحه ورود */
+                        loginPage.style.display = "flex";
+                        loginPage.style.visibility = "visible";
+                        loginPage.style.opacity = "1";
         
-                        if (loginPage) {
+                        /* اطمینان از حذف hidden */
+                        loginPage.classList.remove("hidden");
         
-                            loginPage.classList.remove("hidden");
-        
-                            loginPage.style.display = "flex";
-                            loginPage.style.visibility = "visible";
-                            loginPage.style.opacity = "1";
-        
-                        }
-        
-                        console.log("صفحه ورود نمایش داده شد");
-        
-                        setTimeout(function(){
-                            splash.remove();
-                        }, 800);
+                        console.log("Login page displayed");
         
                     }, 200);
+        
                 }
             }
         
-            requestAnimationFrame(updateLoading);
+            requestAnimationFrame(loading);
         
-        })();
+        });
         </script>
 </body>
 
