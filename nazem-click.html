@@ -1399,6 +1399,9 @@ const fill =
 const percent =
     document.getElementById("farakhanLoadingPercent");
 
+const loginPanel =
+    document.getElementById("loginPanel");
+
 if(!splash) return;
 
 const duration = 6000;
@@ -1432,6 +1435,24 @@ function updateLoading(now){
             updateLoading
         );
 
+    }else{
+
+        // رسیدن به 100 درصد
+        setTimeout(function(){
+
+            splash.classList.add("hidden");
+
+            // نمایش پنل ورود
+            if(loginPanel){
+                loginPanel.style.display = "flex";
+            }
+
+            setTimeout(function(){
+                splash.remove();
+            },800);
+
+        },200);
+
     }
 
 }
@@ -1439,18 +1460,6 @@ function updateLoading(now){
 requestAnimationFrame(
     updateLoading
 );
-
-setTimeout(function(){
-
-    splash.classList.add("hidden");
-
-    setTimeout(function(){
-
-        splash.remove();
-
-    },800);
-
-},6000);
 
 })();
 </script>
