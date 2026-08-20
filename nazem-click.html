@@ -1369,99 +1369,75 @@ nazemPassword.focus();
      <button id="closeTeacherSendPopup" type="button">باشه</button>
      </div>
      </div>
-
-<script>
-(function(){
-
-const splash =
-    document.getElementById("farakhanSplash");
-
-const fill =
-    document.getElementById("farakhanLoadingFill");
-
-const percent =
-    document.getElementById("farakhanLoadingPercent");
-
-const loginPage =
-    document.getElementById("nazemLoginPage");
-
-if(!splash) return;
-
-const duration = 6000;
-
-const start =
-    performance.now();
-
-function updateLoading(now){
-
-    const progress =
-        Math.min(
-            100,
-            Math.round(
-                ((now - start) / duration) * 100
-            )
-        );
-
-    if(fill){
-        fill.style.width =
-            progress + "%";
-    }
-
-    if(percent){
-        percent.textContent =
-            progress + "%";
-    }
-
-    if(progress < 100){
-
-        requestAnimationFrame(
-            updateLoading
-        );
-
-    }else{
-
-        /* رسیدن به 100 درصد */
-
-        setTimeout(function(){
-
-            /* مخفی کردن Loading */
-
-            splash.classList.add("hidden");
-
-            /* نمایش صفحه ورود */
-
-            if(loginPage){
-                loginPage.classList.remove("hidden");
-                loginPage.style.display = "flex";
+     <script>
+        (function(){
+        
+            const splash = document.getElementById("farakhanSplash");
+            const fill = document.getElementById("farakhanLoadingFill");
+            const percent = document.getElementById("farakhanLoadingPercent");
+            const loginPage = document.getElementById("nazemLoginPage");
+        
+            if (!splash) return;
+        
+            const duration = 6000;
+            const start = performance.now();
+        
+            function updateLoading(now){
+        
+                const progress = Math.min(
+                    100,
+                    Math.round(((now - start) / duration) * 100)
+                );
+        
+                if (fill) {
+                    fill.style.width = progress + "%";
+                }
+        
+                if (percent) {
+                    percent.textContent = progress + "%";
+                }
+        
+                if (progress < 100) {
+        
+                    requestAnimationFrame(updateLoading);
+        
+                } else {
+        
+                    console.log("LOADING 100%");
+                    console.log("Login Page:", loginPage);
+        
+                    setTimeout(function(){
+        
+                        /* حذف Splash */
+        
+                        splash.style.display = "none";
+        
+                        /* نمایش صفحه ورود */
+        
+                        if (loginPage) {
+        
+                            loginPage.classList.remove("hidden");
+        
+                            loginPage.style.display = "flex";
+                            loginPage.style.visibility = "visible";
+                            loginPage.style.opacity = "1";
+        
+                        }
+        
+                        console.log("صفحه ورود نمایش داده شد");
+        
+                        setTimeout(function(){
+                            splash.remove();
+                        }, 800);
+        
+                    }, 200);
+                }
             }
-
-            /* حذف Splash */
-
-            setTimeout(function(){
-
-                splash.remove();
-
-            },800);
-
-        },200);
-
-    }
-
-}
-
-requestAnimationFrame(
-    updateLoading
-);
-
-})();
-
-
-
-
-
-
-</script>
-
+        
+            requestAnimationFrame(updateLoading);
+        
+        })();
+        </script>
 </body>
 
 </html>
