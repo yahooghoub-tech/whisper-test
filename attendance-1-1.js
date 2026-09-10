@@ -5,19 +5,34 @@ supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-const students=[
-{name:"آرسام ابهری",className:"اول-1"},
-{name:"هومان باوی",className:"اول-1"},
-{name:"سامراد دمیرچلی",className:"اول-1"},
-{name:"آرش عبدی",className:"اول-1"},
-{name:"میلان غلامی آبادانی",className:"اول-1"},
-{name:"آیهان قاسمی",className:"اول-1"},
-{name:"ویهان کاملی",className:"اول-1"},
-{name:"رایان محرابی",className:"اول-1"},
-{name:"آرشا محمودی",className:"اول-1"},
-{name:"رایان مقدم",className:"اول-1"},
-{name:"سید صدرا منصورزاده",className:"اول-1"},
-{name:"جاوید نصرالهی",className:"اول-1"},
+const students = [
+
+    {name:"آرسام ابهری",className:"اول-1"},
+
+    {name:"هومان باوی",className:"اول-1"},
+
+    {name:"سامراد دمیرچلی",className:"اول-1"},
+
+    {name:"آرش عبدی",className:"اول-1"},
+
+    {name:"رادین عبدی",className:"اول-1"},
+
+    {name:"میلان غلامی آبادانی",className:"اول-1"},
+
+    {name:"آیهان قاسمی",className:"اول-1"},
+
+    {name:"ویهان کاملی",className:"اول-1"},
+
+    {name:"رایان محرابی",className:"اول-1"},
+
+    {name:"آرشا محمودی",className:"اول-1"},
+
+    {name:"رایان مقدم",className:"اول-1"},
+
+    {name:"سید صدرا منصورزاده",className:"اول-1"},
+
+    {name:"جاوید نصرالهی",className:"اول-1"}
+
 ];
 const className="اول-1";
 const studentsContainer=

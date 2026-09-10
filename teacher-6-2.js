@@ -78,29 +78,56 @@ setTimeout(()=>{
 popup.classList.remove("show");
 },7000);
 }
+
 const students=[
+
     {name:"فرهاد احمدی نژاد",className:"ششم-2"},
-{name:"روهان حیدری",className:"ششم-2"},
-{name:"دانیال زارع قمشه",className:"ششم-2"},
-{name:"ماهان زند",className:"ششم-2"},
-{name:"آدرین سعیدی",className:"ششم-2"},
-{name:"محمدعلی شهبازی",className:"ششم-2"},
-{name:"متین عباسی",className:"ششم-2"},
-{name:"لرستانی عماد",className:"ششم-2"},
-{name:"آرشام عمرانی",className:"ششم-2"},
-{name:"رادین فروغی",className:"ششم-2"},
-{name:"پدرام قربانی",className:"ششم-2"},
-{name:"آرکا کامیار",className:"ششم-2"},
-{name:"رایان کلانتری",className:"ششم-2"},
-{name:"دانا کاظمی",className:"ششم-2"},
-{name:"عرفان مقدم لو",className:"ششم-2"},
-{name:"ماهان مجیدی",className:"ششم-2"},
-{name:"حسام مظلومی نیا",className:"ششم-2"},
-{name:"آدرین مهدی زاده",className:"ششم-2"},
-{name:"سپنتا محبی",className:"ششم-2"},
-{name:"فراز نعمت طلب",className:"ششم-2"},
-{name:"امیرحسین وقار",className:"ششم-2"},
+
+    {name:"روهان حیدری",className:"ششم-2"},
+
+    {name:"دانیال زارع قمشه",className:"ششم-2"},
+
+    {name:"ماهان زند",className:"ششم-2"},
+
+    {name:"آدرین سعیدی",className:"ششم-2"},
+
+    {name:"محمدعلی شهبازی",className:"ششم-2"},
+
+    {name:"متین عباسی",className:"ششم-2"},
+
+    {name:"آرشام عمرانی",className:"ششم-2"},
+
+    {name:"رادین فروغی",className:"ششم-2"},
+
+    {name:"پدرام قربانی",className:"ششم-2"},
+
+    {name:"آرکا کامیار",className:"ششم-2"},
+
+    {name:"رایان کلانتری",className:"ششم-2"},
+
+    {name:"دانا کاظمی",className:"ششم-2"},
+
+    {name:"عماد لرستانی",className:"ششم-2"},
+
+    {name:"عرفان مقدم لو",className:"ششم-2"},
+
+    {name:"ماهان مجیدی",className:"ششم-2"},
+
+    {name:"حسام مظلومی نیا",className:"ششم-2"},
+
+    {name:"آدرین مهدی زاده",className:"ششم-2"},
+
+    {name:"سپنتا محبی",className:"ششم-2"},
+
+    {name:"فراز نعمت طلب",className:"ششم-2"},
+
+    {name:"محمدحسین ناصری",className:"ششم-2"},
+
+    {name:"امیرحسین وقار",className:"ششم-2"}
+
 ];
+
+
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");
 function getToday(){

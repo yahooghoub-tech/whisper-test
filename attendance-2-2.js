@@ -5,31 +5,58 @@ supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-const students=[
+const students = [
+
     {name:"دیان احمدی",className:"دوم-2"},
-{name:"رایبد آتش بهار",className:"دوم-2"},
-{name:"آرمان تقی ماهانی",className:"دوم-2"},
-{name:"مهرسام جلائیان",className:"دوم-2"},
-{name:"مهدیار حسنی",className:"دوم-2"},
-{name:"مانی حسینی",className:"دوم-2"},
-{name:"آروین خانی",className:"دوم-2"},
-{name:"رایان خمسه",className:"دوم-2"},
-{name:"آرتا خدابنده",className:"دوم-2"},
-{name:"کوروش درگاهی",className:"دوم-2"},
-{name:"رادین سعیدی",className:"دوم-2"},
-{name:"رهام سلطانزاده",className:"دوم-2"},
-{name:"پرهام صادقی",className:"دوم-2"},
-{name:"آرتین طاهری مقدم",className:"دوم-2"},
-{name:"آبتین عابدی",className:"دوم-2"},
-{name:"آیریک عباسی",className:"دوم-2"},
-{name:"محمدامین قدرتی",className:"دوم-2"},
-{name:"باربد قصابی",className:"دوم-2"},
-{name:"مانی کریمی",className:"دوم-2"},
-{name:"وبهان کمالپور",className:"دوم-2"},
-{name:"رهام منصوری",className:"دوم-2"},
-{name:"محمد پارسا نبوی زاده",className:"دوم-2"},
-{name:"رادین هادیان",className:"دوم-2"},
+
+    {name:"رایبد آتش بهار",className:"دوم-2"},
+
+    {name:"آرمان تقی ماهانی",className:"دوم-2"},
+
+    {name:"مهرسام جلائیان",className:"دوم-2"},
+
+    {name:"مهدیار حسنی",className:"دوم-2"},
+
+    {name:"مانی حسینی",className:"دوم-2"},
+
+    {name:"آروین خانی",className:"دوم-2"},
+
+    {name:"رایان خمسه",className:"دوم-2"},
+
+    {name:"آرتا خدابنده",className:"دوم-2"},
+
+    {name:"کوروش درگاهی",className:"دوم-2"},
+
+    {name:"رادین سعیدی",className:"دوم-2"},
+
+    {name:"رهام سلطانزاده",className:"دوم-2"},
+
+    {name:"پرهام صادقی",className:"دوم-2"},
+
+    {name:"آرتین طاهری مقدم",className:"دوم-2"},
+
+    {name:"آبتین عابدی",className:"دوم-2"},
+
+    {name:"آیریک عباسی",className:"دوم-2"},
+
+    {name:"محمدامین قدرتی",className:"دوم-2"},
+
+    {name:"باربد قصابی",className:"دوم-2"},
+
+    {name:"مانی کریمی",className:"دوم-2"},
+
+    {name:"وبهان کمالپور",className:"دوم-2"},
+
+    {name:"آرشا گرایلی",className:"دوم-2"},
+
+    {name:"رهام منصوری",className:"دوم-2"},
+
+    {name:"محمد پارسا نبوی زاده",className:"دوم-2"},
+
+    {name:"رادین هادیان",className:"دوم-2"}
+
 ];
+
 const className="دوم-2";
 const studentsContainer=
 document.getElementById("studentsContainer");

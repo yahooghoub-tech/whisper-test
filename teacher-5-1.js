@@ -79,31 +79,55 @@ popup.classList.remove("show");
 },7000);
 }
 const students=[
+
     {name:"محمدمهدی ابیض",className:"پنجم-1"},
-{name:"ماهان اجتهادی",className:"پنجم-1"},
-{name:"سامیار اسکندری",className:"پنجم-1"},
-{name:"آرشا افتخاری",className:"پنجم-1"},
-{name:"کارن آتش بهار",className:"پنجم-1"},
-{name:"شهراد چم",className:"پنجم-1"},
-{name:"مهراد حسینی",className:"پنجم-1"},
-{name:"رهام روشنی صبح",className:"پنجم-1"},
-{name:"پارسا سعیدی نیا",className:"پنجم-1"},
-{name:"مهراد سفیدگران",className:"پنجم-1"},
-{name:"محمد سیف الهی",className:"پنجم-1"},
-{name:"سروش شمسیان",className:"پنجم-1"},
-{name:"آتیلا صفری",className:"پنجم-1"},
-{name:"رادین عباسی",className:"پنجم-1"},
-{name:"آرشام فتحی زاده",className:"پنجم-1"},
-{name:"آرسام کاظمی",className:"پنجم-1"},
-{name:"امیرعلی کریمی راد",className:"پنجم-1"},
-{name:"محمد کهتری",className:"پنجم-1"},
-{name:"ماهان مختاری",className:"پنجم-1"},
-{name:"آرشین مقدسی",className:"پنجم-1"},
-{name:"امیرمهدی میرزاآقایی",className:"پنجم-1"},
-{name:"فربد ناطقی",className:"پنجم-1"},
-{name:"کارن نعمتی",className:"پنجم-1"},
-{name:"فرهام هاشمی",className:"پنجم-1"},
-{name:"یاسین یوسفی",className:"پنجم-1"},
+
+    {name:"ماهان اجتهادی",className:"پنجم-1"},
+
+    {name:"سامیار اسکندری",className:"پنجم-1"},
+
+    {name:"آرشا افتخاری",className:"پنجم-1"},
+
+    {name:"کارن آتش بهار",className:"پنجم-1"},
+
+    {name:"شهراد چم",className:"پنجم-1"},
+
+    {name:"مهراد حسینی",className:"پنجم-1"},
+
+    {name:"رهام روشنی صبح",className:"پنجم-1"},
+
+    {name:"پارسا سعیدی نیا",className:"پنجم-1"},
+
+    {name:"مهراد سفیدگران",className:"پنجم-1"},
+
+    {name:"محمد سیف الهی",className:"پنجم-1"},
+
+    {name:"سروش شمسیان",className:"پنجم-1"},
+
+    {name:"آتیلا صفری",className:"پنجم-1"},
+
+    {name:"رادین عباسی",className:"پنجم-1"},
+
+    {name:"آرشام فتحی زاده",className:"پنجم-1"},
+
+    {name:"آرسام کاظمی",className:"پنجم-1"},
+
+    {name:"محمد کهتری",className:"پنجم-1"},
+
+    {name:"ماهان مختاری",className:"پنجم-1"},
+
+    {name:"آرشین مقدسی",className:"پنجم-1"},
+
+    {name:"امیرمهدی میرزاآقایی",className:"پنجم-1"},
+
+    {name:"فربد ناطقی",className:"پنجم-1"},
+
+    {name:"کارن نعمتی",className:"پنجم-1"},
+
+    {name:"فرهام هاشمی",className:"پنجم-1"},
+
+    {name:"یاسین یوسفی",className:"پنجم-1"}
+
 ];
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");

@@ -5,23 +5,40 @@ supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-const students=[
+const students = [
+
     {name:"آرسام حسینی",className:"چهارم-3"},
+
     {name:"لیام رحمانی",className:"چهارم-3"},
+
     {name:"ایلیا سبزپوش",className:"چهارم-3"},
+
     {name:"ماهان سمنارشاد",className:"چهارم-3"},
+
     {name:"آروین عابدی",className:"چهارم-3"},
+
     {name:"ایلیا عرشی",className:"چهارم-3"},
+
     {name:"آراد عطاییان",className:"چهارم-3"},
+
     {name:"آرتین علمی",className:"چهارم-3"},
+
     {name:"مهرسام غضنفری",className:"چهارم-3"},
+
     {name:"نیکان فرجی",className:"چهارم-3"},
+
     {name:"دانیال کشاورز",className:"چهارم-3"},
+
     {name:"کارن کوهی",className:"چهارم-3"},
+
     {name:"علی گرجایی",className:"چهارم-3"},
-    {name:"رایان مننظری",className:"چهارم-3"},
+
+    {name:"رایان منتظری",className:"چهارم-3"},
+
     {name:"آرین نیک پی",className:"چهارم-3"},
-    {name:"ویهان وهابی",className:"چهارم-3"},
+
+    {name:"ویهان وهابی",className:"چهارم-3"}
+
 ];
 const className="چهارم-3";
 const studentsContainer=

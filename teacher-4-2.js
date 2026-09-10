@@ -79,20 +79,39 @@ popup.classList.remove("show");
 },7000);
 }
 const students=[
+
     {name:"سید محمد اجاقی",className:"چهارم-2"},
-{name:"امیرمحمد امانی",className:"چهارم-2"},
-{name:"کارن امانی",className:"چهارم-2"},
-{name:"بنیامین حسین زاده",className:"چهارم-2"},
-{name:"سید سینا حسینی",className:"چهارم-2"},
-{name:"مبین دمرچلی",className:"چهارم-2"},
-{name:"سپهر ذوالفقاری",className:"چهارم-2"},
-{name:"علیسام رمضانی",className:"چهارم-2"},
-{name:"کیان علیا",className:"چهارم-2"},
-{name:"آرتین کوچاری",className:"چهارم-2"},
-{name:"سام لوحی خسروشاهی",className:"چهارم-2"},
-{name:"برکان محمدخانی",className:"چهارم-2"},
-{name:"مهراد منصفی",className:"چهارم-2"},
-{name:"سورنا منصوری",className:"چهارم-2"},
+
+    {name:"امیرمحمد امانی",className:"چهارم-2"},
+
+    {name:"کارن امانی",className:"چهارم-2"},
+
+    {name:"بنیامین حسین زاده",className:"چهارم-2"},
+
+    {name:"سید سینا حسینی",className:"چهارم-2"},
+
+    {name:"مبین دمرچلی",className:"چهارم-2"},
+
+    {name:"سپهر ذوالفقاری",className:"چهارم-2"},
+
+    {name:"علیسام رمضانی",className:"چهارم-2"},
+
+    {name:"کیان علیا",className:"چهارم-2"},
+
+    {name:"آرتین کوچاری",className:"چهارم-2"},
+
+    {name:"سام خسروشاهی",className:"چهارم-2"},
+
+    {name:"برکان محمدخانی",className:"چهارم-2"},
+
+    {name:"مهراد منصفی",className:"چهارم-2"},
+
+    {name:"سورنا منصوری",className:"چهارم-2"},
+
+    {name:"ارسام مهری نژاد",className:"چهارم-2"},
+
+    {name:"کیان مقدسی",className:"چهارم-2"}
+
 ];
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");

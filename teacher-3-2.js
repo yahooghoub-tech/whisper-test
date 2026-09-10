@@ -78,28 +78,52 @@ setTimeout(()=>{
 popup.classList.remove("show");
 },7000);
 }
-const students=[
+const students = [
+
     {name:"مهرسام اسدرخت",className:"سوم-2"},
-{name:"آریا اسماعیلی",className:"سوم-2"},
-{name:"امیرعلی اکبرآبادی",className:"سوم-2"},
-{name:"دانیال اکبری مهر",className:"سوم-2"},
-{name:"سید محمدامیر انوری",className:"سوم-2"},
-{name:"جانیار ایرجی",className:"سوم-2"},
-{name:"ایلیا آغباشلو",className:"سوم-2"},
-{name:"پندار خوش طینتان",className:"سوم-2"},
-{name:"آروین سوری",className:"سوم-2"},
-{name:"آبهان شهرتی",className:"سوم-2"},
-{name:"رادین طلایی پناه",className:"سوم-2"},
-{name:"آرمان عبدی",className:"سوم-2"},
-{name:"سامیار عزیزی مقدم",className:"سوم-2"},
-{name:"رادین فرشچین",className:"سوم-2"},
-{name:"ایلیا قاسمی",className:"سوم-2"},
-{name:"محمد مهدی کاظمی",className:"سوم-2"},
-{name:"پویا کرمی",className:"سوم-2"},
-{name:"نیکان گنجه",className:"سوم-2"},
-{name:"حسین محمدی مهر",className:"سوم-2"},
-{name:"ویهان منصوری",className:"سوم-2"},
-{name:"میثم نظری",className:"سوم-2"},
+
+    {name:"آریا اسماعیلی",className:"سوم-2"},
+
+    {name:"امیرعلی اکبرآبادی",className:"سوم-2"},
+
+    {name:"دانیال اکبری مهر",className:"سوم-2"},
+
+    {name:"سید محمدامیر انوری",className:"سوم-2"},
+
+    {name:"جانیار ایرجی",className:"سوم-2"},
+
+    {name:"ایلیا آغباشلو",className:"سوم-2"},
+
+    {name:"پندار خوش طینتان",className:"سوم-2"},
+
+    {name:"آروین سوری",className:"سوم-2"},
+
+    {name:"آیهان شهرتی",className:"سوم-2"},
+
+    {name:"رادین طلایی پناه",className:"سوم-2"},
+
+    {name:"آرمان عبدی",className:"سوم-2"},
+
+    {name:"سامیار عزیزی مقدم",className:"سوم-2"},
+
+    {name:"رادین فرشچین",className:"سوم-2"},
+
+    {name:"آریا فرج نژاد",className:"سوم-2"},
+
+    {name:"ایلیا قاسمی",className:"سوم-2"},
+
+    {name:"محمد مهدی کاظمی",className:"سوم-2"},
+
+    {name:"پویا کرمی",className:"سوم-2"},
+
+    {name:"کیان گنجه",className:"سوم-2"},
+
+    {name:"حسین محمدی مهر",className:"سوم-2"},
+
+    {name:"ویهان منصوری",className:"سوم-2"},
+
+    {name:"میثم نظری",className:"سوم-2"}
+
 ];
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");

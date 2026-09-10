@@ -5,27 +5,50 @@ supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-const students=[
+const students = [
+
     {name:"رادمان احمدی طباطبایی",className:"دوم-1"},
+
     {name:"آراد بزرگی",className:"دوم-1"},
+
     {name:"آراد ثبوتی",className:"دوم-1"},
+
     {name:"رادمان حیدری",className:"دوم-1"},
+
+    {name:"هیراد حسنی",className:"دوم-1"},
+
     {name:"شنتیا درویشی",className:"دوم-1"},
+
     {name:"امیررضا دوادانگه",className:"دوم-1"},
+
     {name:"رایان رادمنش",className:"دوم-1"},
+
     {name:"رامان رحیمی",className:"دوم-1"},
+
     {name:"رهام صناعت گر",className:"دوم-1"},
+
     {name:"سامیار طاهرزاده",className:"دوم-1"},
+
     {name:"شاهان علی آبادی",className:"دوم-1"},
+
     {name:"بردیا فاضل",className:"دوم-1"},
+
     {name:"یونا فیض دار",className:"دوم-1"},
+
     {name:"آرتا قلخانی",className:"دوم-1"},
+
     {name:"نیما کاکاسلطانی",className:"دوم-1"},
+
     {name:"ویهان لک",className:"دوم-1"},
+
     {name:"ارسلان معینی",className:"دوم-1"},
+
     {name:"ماهور منصوری",className:"دوم-1"},
+
     {name:"نیهاد نجاری",className:"دوم-1"},
-    {name:"یونا هاتف",className:"دوم-1"},
+
+    {name:"یونا هاتف",className:"دوم-1"}
+
 ];
 const className="دوم-1";
 const studentsContainer=

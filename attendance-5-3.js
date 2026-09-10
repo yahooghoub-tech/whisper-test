@@ -13,7 +13,7 @@ const students=[
     {name:"علی خادم",className:"پنجم-3"},
     {name:"ماهان دیلمقانی زاده",className:"پنجم-3"},
     {name:"سپهر رجاء",className:"پنجم-3"},
-    {name:"آرسیین رضایی",className:"پنجم-3"},
+    {name:"آرسین رضایی",className:"پنجم-3"},
     {name:"آرسیس رضایی",className:"پنجم-3"},
     {name:"همایون رفیعی",className:"پنجم-3"},
     {name:"میعاد زمانی",className:"پنجم-3"},

@@ -79,24 +79,43 @@ popup.classList.remove("show");
 },7000);
 }
 const students=[
+
     {name:"فرهام احمدی نژاد",className:"سوم-3"},
-{name:"آرشا تابع",className:"سوم-3"},
-{name:"نیکان تورجی",className:"سوم-3"},
-{name:"پارسا تهامی پور",className:"سوم-3"},
-{name:"حافظ جعفربیگی",className:"سوم-3"},
-{name:"رادوین دزیانی",className:"سوم-3"},
-{name:"نویان رنجبر",className:"سوم-3"},
-{name:"مهدیار رهبر",className:"سوم-3"},
-{name:"رادمان سلیمانیه",className:"سوم-3"},
-{name:"کیان سهرابی",className:"سوم-3"},
-{name:"شایان شاوردین",className:"سوم-3"},
-{name:"آرشا طیبی",className:"سوم-3"},
-{name:"امیرپارسا عباسی",className:"سوم-3"},
-{name:"ارس علوی",className:"سوم-3"},
-{name:"فرهام فرقانی",className:"سوم-3"},
-{name:"آریانمهر محمداکبری",className:"سوم-3"},
-{name:"کیاراد مرادی",className:"سوم-3"},
-{name:"بردیا میرشفیعی",className:"سوم-3"},
+
+    {name:"آرشا تابع",className:"سوم-3"},
+
+    {name:"نیکان تورجی",className:"سوم-3"},
+
+    {name:"پارسا تهامی پور",className:"سوم-3"},
+
+    {name:"حافظ جعفربیگی",className:"سوم-3"},
+
+    {name:"رادوین دزیانی",className:"سوم-3"},
+
+    {name:"نویان رنجبر",className:"سوم-3"},
+
+    {name:"مهدیار رهبر",className:"سوم-3"},
+
+    {name:"رادمان سلیمانیه",className:"سوم-3"},
+
+    {name:"کیان سهرابی",className:"سوم-3"},
+
+    {name:"شایان شاوردیان",className:"سوم-3"},
+
+    {name:"آرشا طیبی",className:"سوم-3"},
+
+    {name:"امیرپارسا عباسی",className:"سوم-3"},
+
+    {name:"ارس علوی",className:"سوم-3"},
+
+    {name:"فرهام فرقانی",className:"سوم-3"},
+
+    {name:"آریانمهر محمداکبری",className:"سوم-3"},
+
+    {name:"کیاراد مرادی",className:"سوم-3"},
+
+    {name:"بردیا میرشفیعی",className:"سوم-3"}
+
 ];
 const studentsContainer=document.getElementById("studentsContainer");
 const callCount=document.getElementById("callCount");
