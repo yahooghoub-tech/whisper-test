@@ -1,459 +1,659 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0"
->
-
-<title>ورود معلم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود معلم | سامانه فراخوان دبستان علوی</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-html,
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;font-family:Tahoma,Arial,sans-serif}
 body{
-width:100%;
-min-height:100%;
-}
-
-body{
-
-font-family:
-Tahoma,
-Arial,
-sans-serif;
-
 background:
-linear-gradient(
-135deg,
-#0f172a,
-#064e3b,
-#047857
-);
-
-min-height:100vh;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-padding:20px;
+radial-gradient(circle at 50% 20%,rgba(16,185,129,.12),transparent 35%),
+linear-gradient(135deg,#0f172a,#064e3b 55%,#047857);
+overflow:hidden;
+color:#fff
 }
 
-.login-page{
-
-width:100%;
-
-min-height:100vh;
-
+/* CINEMATIC INTRO */
+#teacherIntro{
+position:fixed;
+inset:0;
+z-index:2147483647;
 display:flex;
-
 align-items:center;
-
 justify-content:center;
+overflow:hidden;
+background:
+radial-gradient(circle at 50% 45%,rgba(16,185,129,.18) 0%,rgba(0,0,0,0) 32%),
+radial-gradient(circle at 50% 50%,#10251f 0%,#07120f 42%,#020706 75%,#000 100%);
+opacity:1;
+visibility:visible;
+transition:opacity .9s cubic-bezier(.4,0,.2,1),visibility .9s
+}
+
+#teacherIntro.hide{
+opacity:0;
+visibility:hidden;
+pointer-events:none
+}
+
+#teacherIntro::before{
+content:"";
+position:absolute;
+width:42vmin;
+height:42vmin;
+border-radius:50%;
+background:radial-gradient(circle,rgba(16,185,129,.24),rgba(16,185,129,0) 68%);
+filter:blur(12px);
+opacity:0;
+transform:scale(.25);
+animation:introGlow 5.2s ease-out forwards
+}
+
+#teacherIntro::after{
+content:"";
+position:absolute;
+width:62vmin;
+height:62vmin;
+border-radius:50%;
+border:1px solid rgba(110,231,183,.12);
+box-shadow:
+0 0 55px rgba(16,185,129,.08),
+inset 0 0 55px rgba(16,185,129,.06);
+opacity:0;
+transform:scale(.45);
+animation:introRing 5.2s cubic-bezier(.2,.75,.25,1) forwards
+}
+
+.intro-ring{
+position:absolute;
+border-radius:50%;
+border:1px solid rgba(52,211,153,.12);
+box-shadow:0 0 25px rgba(16,185,129,.06);
+opacity:0;
+pointer-events:none
+}
+
+.intro-ring.r1{
+width:34vmin;
+height:34vmin;
+animation:ringOne 5.2s ease-out forwards
+}
+
+.intro-ring.r2{
+width:48vmin;
+height:48vmin;
+animation:ringTwo 5.2s ease-out .15s forwards
+}
+
+.intro-ring.r3{
+width:72vmin;
+height:72vmin;
+animation:ringThree 5.2s ease-out .25s forwards
+}
+
+.intro-particles{
+position:absolute;
+inset:0;
+overflow:hidden;
+pointer-events:none
+}
+
+.intro-particles span{
+position:absolute;
+width:3px;
+height:3px;
+border-radius:50%;
+background:#6ee7b7;
+box-shadow:0 0 10px #34d399;
+opacity:0;
+animation:particleFloat 4s ease-out forwards
+}
+
+.intro-particles span:nth-child(1){left:17%;top:70%;animation-delay:.2s}
+.intro-particles span:nth-child(2){left:25%;top:25%;animation-delay:.5s}
+.intro-particles span:nth-child(3){left:34%;top:78%;animation-delay:.8s}
+.intro-particles span:nth-child(4){left:43%;top:18%;animation-delay:.35s}
+.intro-particles span:nth-child(5){left:57%;top:80%;animation-delay:.7s}
+.intro-particles span:nth-child(6){left:66%;top:23%;animation-delay:.4s}
+.intro-particles span:nth-child(7){left:76%;top:68%;animation-delay:.9s}
+.intro-particles span:nth-child(8){left:83%;top:35%;animation-delay:.6s}
+.intro-particles span:nth-child(9){left:12%;top:43%;animation-delay:1s}
+.intro-particles span:nth-child(10){left:89%;top:58%;animation-delay:.3s}
+.intro-particles span:nth-child(11){left:31%;top:47%;animation-delay:.9s}
+.intro-particles span:nth-child(12){left:69%;top:51%;animation-delay:.55s}
+
+.intro-content{
+position:relative;
+z-index:10;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+width:100%;
+height:100%;
+perspective:1000px
+}
+
+#teacherIntroLogo{
+width:min(45vw,280px);
+height:min(45vw,280px);
+object-fit:contain;
+opacity:0;
+transform:perspective(1000px) rotateY(-80deg) rotateX(12deg) rotateZ(-6deg) scale(.12);
+filter:
+drop-shadow(0 0 0 rgba(0,0,0,0))
+drop-shadow(0 0 15px rgba(16,185,129,.12));
+animation:logoCinema 5.2s cubic-bezier(.16,1,.3,1) forwards;
+will-change:transform,opacity,filter
+}
+
+.intro-logo-glow{
+position:absolute;
+width:min(34vw,220px);
+height:min(34vw,220px);
+border-radius:50%;
+background:radial-gradient(circle,rgba(52,211,153,.25),rgba(16,185,129,0) 68%);
+filter:blur(8px);
+opacity:0;
+animation:logoHalo 5.2s ease-out forwards;
+pointer-events:none
+}
+
+.intro-title{
+position:relative;
+margin-top:20px;
+font-size:clamp(30px,5vw,54px);
+font-weight:900;
+letter-spacing:1px;
+color:#fff;
+text-shadow:
+0 0 10px rgba(255,255,255,.18),
+0 0 28px rgba(16,185,129,.28);
+opacity:0;
+transform:translateY(25px) scale(.92);
+animation:introTitle 1.1s cubic-bezier(.16,1,.3,1) 2.15s forwards
+}
+
+.intro-subtitle{
+position:relative;
+margin-top:12px;
+font-size:clamp(12px,2vw,18px);
+font-weight:500;
+color:rgba(209,250,229,.78);
+letter-spacing:.2px;
+opacity:0;
+transform:translateY(18px);
+animation:introSubtitle 1s ease-out 2.55s forwards
+}
+
+.intro-line{
+width:0;
+height:1px;
+margin-top:18px;
+background:linear-gradient(90deg,transparent,#34d399,transparent);
+box-shadow:0 0 12px rgba(52,211,153,.5);
+animation:introLine 1.2s ease-out 2.65s forwards
+}
+
+.intro-loading{
+position:absolute;
+bottom:11%;
+font-size:11px;
+color:rgba(167,243,208,.55);
+opacity:0;
+animation:loadingText .8s ease-out 3s forwards
+}
+
+.intro-loading::after{
+content:"";
+display:inline-block;
+width:18px;
+height:3px;
+margin-right:7px;
+vertical-align:middle;
+background:linear-gradient(90deg,#34d399,#10b981,#6ee7b7);
+border-radius:10px;
+animation:loadingPulse 1.1s ease-in-out infinite
+}
+
+/* LOGIN */
+.login-page{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+position:relative;
+z-index:1
 }
 
 .login-card{
-
 width:100%;
-
 max-width:430px;
-
-background:
-rgba(255,255,255,.97);
-
+padding:35px 30px 28px;
+border:1px solid rgba(255,255,255,.12);
 border-radius:28px;
-
-padding:35px 30px;
-
+background:rgba(15,23,42,.72);
+backdrop-filter:blur(22px);
+-webkit-backdrop-filter:blur(22px);
 box-shadow:
-0 25px 70px
-rgba(0,0,0,.35);
-
-text-align:center;
+0 25px 70px rgba(0,0,0,.38),
+inset 0 1px 0 rgba(255,255,255,.08);
+animation:loginCardIn 1s cubic-bezier(.16,1,.3,1) 4.75s both
 }
 
 .login-icon{
-
-width:80px;
-
-height:80px;
-
-margin:
-0 auto 18px;
-
-border-radius:50%;
-
+width:82px;
+height:82px;
+margin:0 auto 18px;
+border-radius:24px;
 display:flex;
-
 align-items:center;
-
 justify-content:center;
-
-font-size:38px;
-
-background:
-linear-gradient(
-135deg,
-#059669,
-#047857
-);
-
+font-size:42px;
+background:linear-gradient(145deg,rgba(52,211,153,.22),rgba(6,78,59,.5));
+border:1px solid rgba(110,231,183,.2);
 box-shadow:
-0 10px 30px
-rgba(5,150,105,.35);
+0 15px 35px rgba(0,0,0,.25),
+0 0 25px rgba(16,185,129,.12)
 }
 
 .login-card h1{
-
-font-size:25px;
-
-color:#0f172a;
-
-margin-bottom:10px;
+text-align:center;
+font-size:27px;
+margin-bottom:9px;
+font-weight:800
 }
 
-.login-subtitle{
-
-font-size:14px;
-
-color:#64748b;
-
-margin-bottom:28px;
-
-line-height:1.8;
+.login-card .subtitle{
+text-align:center;
+font-size:13px;
+color:rgba(255,255,255,.58);
+margin-bottom:28px
 }
 
-.input-group{
-
-text-align:right;
-
-margin-bottom:18px;
+.form-group{
+margin-bottom:17px
 }
 
-.input-group label{
-
+.form-group label{
 display:block;
-
-font-size:14px;
-
-font-weight:bold;
-
-color:#334155;
-
+font-size:13px;
 margin-bottom:8px;
+color:rgba(255,255,255,.78)
 }
 
-.input-group input{
+.input-wrap{
+position:relative
+}
 
+.input-wrap input{
 width:100%;
-
 height:52px;
-
-border:
-2px solid #e2e8f0;
-
-border-radius:14px;
-
-padding:0 15px;
-
-font-family:
-Tahoma,
-Arial,
-sans-serif;
-
-font-size:15px;
-
+border:none;
 outline:none;
-
-transition:.25s;
-
-background:#f8fafc;
-}
-
-.input-group input:focus{
-
-border-color:#059669;
-
-background:#fff;
-
-box-shadow:
-0 0 0 4px
-rgba(5,150,105,.1);
-}
-
-.password-wrapper{
-
-position:relative;
-}
-
-.password-wrapper input{
-
-padding-left:52px;
-}
-
-#togglePassword{
-
-position:absolute;
-
-left:7px;
-
-top:7px;
-
-width:38px;
-
-height:38px;
-
-border:0;
-
-border-radius:10px;
-
-background:#e2e8f0;
-
-cursor:pointer;
-
-font-size:18px;
-}
-
-.login-button{
-
-width:100%;
-
-height:54px;
-
-border:0;
-
 border-radius:15px;
-
-background:
-linear-gradient(
-135deg,
-#059669,
-#047857
-);
-
+padding:0 17px;
+background:rgba(255,255,255,.07);
+border:1px solid rgba(255,255,255,.09);
 color:#fff;
+font-family:inherit;
+font-size:14px;
+transition:.25s
+}
 
-font-family:
-Tahoma,
-Arial,
-sans-serif;
+.input-wrap input:focus{
+border-color:rgba(52,211,153,.55);
+background:rgba(255,255,255,.09);
+box-shadow:0 0 0 4px rgba(16,185,129,.08)
+}
 
-font-size:16px;
+.input-wrap input::placeholder{
+color:rgba(255,255,255,.32)
+}
 
-font-weight:bold;
-
+.password-toggle{
+position:absolute;
+left:13px;
+top:50%;
+transform:translateY(-50%);
+border:none;
+background:none;
+color:rgba(255,255,255,.5);
 cursor:pointer;
+font-size:18px;
+padding:5px
+}
 
-transition:.25s;
-
-margin-top:5px;
-
+.login-btn{
+width:100%;
+height:53px;
+margin-top:8px;
+border:none;
+border-radius:16px;
+cursor:pointer;
+font-family:inherit;
+font-size:15px;
+font-weight:800;
+color:#022c22;
+background:linear-gradient(135deg,#6ee7b7,#34d399,#10b981);
 box-shadow:
-0 10px 25px
-rgba(5,150,105,.25);
+0 12px 30px rgba(16,185,129,.22),
+inset 0 1px 0 rgba(255,255,255,.4);
+transition:.25s
 }
 
-.login-button:hover{
-
-transform:
-translateY(-2px);
-
+.login-btn:hover{
+transform:translateY(-2px);
 box-shadow:
-0 14px 30px
-rgba(5,150,105,.35);
+0 16px 35px rgba(16,185,129,.3),
+0 0 25px rgba(52,211,153,.12)
 }
 
-.login-button:active{
-
-transform:
-translateY(0);
-}
-
-.login-button.loading{
-
-opacity:.7;
-
-pointer-events:none;
+.login-btn:active{
+transform:translateY(0)
 }
 
 .login-error{
+display:none;
+margin-top:14px;
+padding:11px 13px;
+border-radius:12px;
+font-size:12px;
+text-align:center;
+color:#fecaca;
+background:rgba(127,29,29,.28);
+border:1px solid rgba(248,113,113,.18)
+}
 
-min-height:25px;
-
-font-size:13px;
-
-font-weight:bold;
-
-color:#dc2626;
-
-margin-bottom:5px;
-
-line-height:1.7;
+.login-error.show{
+display:block
 }
 
 .login-footer{
+margin-top:22px;
+text-align:center;
+font-size:11px;
+color:rgba(255,255,255,.35)
+}
 
-margin-top:25px;
+@keyframes introGlow{
+0%{opacity:0;transform:scale(.25)}
+25%{opacity:1;transform:scale(.82)}
+58%{opacity:.78;transform:scale(1.15)}
+100%{opacity:0;transform:scale(1.5)}
+}
 
-padding-top:18px;
+@keyframes introRing{
+0%{opacity:0;transform:scale(.45)}
+25%{opacity:.32;transform:scale(.72)}
+55%{opacity:.18;transform:scale(1)}
+100%{opacity:0;transform:scale(1.18)}
+}
 
-border-top:
-1px solid #e2e8f0;
+@keyframes ringOne{
+0%{opacity:0;transform:scale(.35)}
+25%{opacity:.3;transform:scale(.75)}
+65%{opacity:.12;transform:scale(1.12)}
+100%{opacity:0;transform:scale(1.3)}
+}
 
-font-size:12px;
+@keyframes ringTwo{
+0%{opacity:0;transform:scale(.4)}
+30%{opacity:.22;transform:scale(.75)}
+70%{opacity:.1;transform:scale(1.12)}
+100%{opacity:0;transform:scale(1.25)}
+}
 
-color:#94a3b8;
+@keyframes ringThree{
+0%{opacity:0;transform:scale(.5)}
+35%{opacity:.15;transform:scale(.8)}
+75%{opacity:.06;transform:scale(1.08)}
+100%{opacity:0;transform:scale(1.2)}
+}
+
+@keyframes logoCinema{
+0%{
+opacity:0;
+transform:perspective(1000px) rotateY(-80deg) rotateX(12deg) rotateZ(-6deg) scale(.12);
+filter:drop-shadow(0 0 0 rgba(0,0,0,0))
+}
+10%{
+opacity:1;
+transform:perspective(1000px) rotateY(-48deg) rotateX(8deg) rotateZ(-4deg) scale(.28);
+filter:drop-shadow(0 0 20px rgba(16,185,129,.2))
+}
+28%{
+opacity:1;
+transform:perspective(1000px) rotateY(-8deg) rotateX(2deg) rotateZ(1deg) scale(.72);
+filter:drop-shadow(0 12px 25px rgba(0,0,0,.35)) drop-shadow(0 0 30px rgba(52,211,153,.22))
+}
+47%{
+opacity:1;
+transform:perspective(1000px) rotateY(360deg) rotateX(0) rotateZ(0) scale(1.08);
+filter:drop-shadow(0 15px 30px rgba(0,0,0,.4)) drop-shadow(0 0 38px rgba(52,211,153,.28))
+}
+62%{
+opacity:1;
+transform:perspective(1000px) rotateY(360deg) rotateX(0) rotateZ(0) scale(1);
+filter:drop-shadow(0 15px 30px rgba(0,0,0,.4)) drop-shadow(0 0 28px rgba(52,211,153,.22))
+}
+80%{
+opacity:1;
+transform:perspective(1000px) rotateY(360deg) rotateX(0) rotateZ(0) scale(1);
+filter:drop-shadow(0 10px 25px rgba(0,0,0,.35)) drop-shadow(0 0 20px rgba(52,211,153,.15))
+}
+100%{
+opacity:0;
+transform:perspective(1000px) rotateY(360deg) rotateX(0) rotateZ(0) scale(1.08);
+filter:drop-shadow(0 0 35px rgba(52,211,153,.04))
+}
+}
+
+@keyframes logoHalo{
+0%{opacity:0;transform:scale(.2)}
+25%{opacity:.75;transform:scale(.7)}
+50%{opacity:.55;transform:scale(1)}
+78%{opacity:.2;transform:scale(1.25)}
+100%{opacity:0;transform:scale(1.45)}
+}
+
+@keyframes introTitle{
+0%{opacity:0;transform:translateY(25px) scale(.92);filter:blur(8px)}
+100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+
+@keyframes introSubtitle{
+0%{opacity:0;transform:translateY(18px);filter:blur(5px)}
+100%{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+
+@keyframes introLine{
+0%{width:0;opacity:0}
+100%{width:min(230px,55vw);opacity:1}
+}
+
+@keyframes loadingText{
+0%{opacity:0}
+100%{opacity:1}
+}
+
+@keyframes loadingPulse{
+0%,100%{width:8px;opacity:.45}
+50%{width:24px;opacity:1}
+}
+
+@keyframes particleFloat{
+0%{opacity:0;transform:translateY(30px) scale(.2)}
+20%{opacity:.8}
+70%{opacity:.55}
+100%{opacity:0;transform:translateY(-100px) scale(1)}
+}
+
+@keyframes loginCardIn{
+0%{opacity:0;transform:translateY(35px) scale(.96);filter:blur(8px)}
+100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
 }
 
 @media(max-width:600px){
-
-body{
-
-padding:15px;
+.login-card{
+padding:28px 21px 23px;
+border-radius:23px
 }
 
-.login-page{
+#teacherIntroLogo{
+width:58vw;
+height:58vw
+}
 
-min-height:
-calc(100vh - 30px);
+.intro-title{
+font-size:32px
+}
+
+.intro-subtitle{
+font-size:12px;
+padding:0 20px
+}
+}
+
+@media(prefers-reduced-motion:reduce){
+#teacherIntroLogo,
+#teacherIntro::before,
+#teacherIntro::after,
+.intro-ring,
+.intro-particles span,
+.intro-title,
+.intro-subtitle,
+.intro-line,
+.intro-loading,
+.login-card{
+animation:none!important
+}
+
+#teacherIntroLogo{
+opacity:1;
+transform:none
+}
+
+.intro-title,
+.intro-subtitle,
+.intro-line,
+.intro-loading{
+opacity:1
 }
 
 .login-card{
-
-max-width:100%;
-
-padding:
-30px 22px;
-
-border-radius:24px;
+opacity:1;
+transform:none
 }
-
-.login-icon{
-
-width:70px;
-
-height:70px;
-
-font-size:34px;
 }
-
-.login-card h1{
-
-font-size:22px;
-}
-
-.login-subtitle{
-
-font-size:13px;
-
-margin-bottom:24px;
-}
-
-.input-group input{
-
-height:50px;
-
-font-size:14px;
-}
-
-.login-button{
-
-height:52px;
-
-font-size:15px;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
 
+<!-- CINEMATIC INTRO -->
+<div id="teacherIntro" aria-hidden="true">
+
+<div class="intro-ring r1"></div>
+<div class="intro-ring r2"></div>
+<div class="intro-ring r3"></div>
+
+<div class="intro-particles">
+<span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span>
+</div>
+
+<div class="intro-content">
+
+<div class="intro-logo-glow"></div>
+
+<img
+id="teacherIntroLogo"
+src="icon-192.png"
+alt="لوگوی دبستان علوی"
+>
+
+<div class="intro-title">فراخوان</div>
+
+<div class="intro-subtitle">
+سامانه فراخوان دانش‌آموزان دبستان علوی
+</div>
+
+<div class="intro-line"></div>
+
+<div class="intro-loading">
+در حال آماده‌سازی سامانه
+</div>
+
+</div>
+</div>
+
+<!-- LOGIN -->
 <div class="login-page">
 
 <div class="login-card">
 
-<div class="login-icon">
-👨‍🏫
-</div>
+<div class="login-icon">👨‍🏫</div>
 
-<h1>
-ورود معلم
-</h1>
+<h1>ورود معلم</h1>
 
-<p class="login-subtitle">
+<div class="subtitle">
 سامانه فراخوان دانش‌آموزان دبستان علوی
-</p>
+</div>
 
 <form id="loginForm">
 
-<div class="input-group">
-
-<label for="username">
-نام کاربری
-</label>
-
+<div class="form-group">
+<label for="username">نام کاربری</label>
+<div class="input-wrap">
 <input
-id="username"
 type="text"
+id="username"
 autocomplete="username"
 placeholder="نام کاربری را وارد کنید"
+required
 >
-
+</div>
 </div>
 
-<div class="input-group">
-
-<label for="password">
-رمز عبور
-</label>
-
-<div class="password-wrapper">
+<div class="form-group">
+<label for="password">رمز عبور</label>
+<div class="input-wrap">
 
 <input
-id="password"
 type="password"
+id="password"
 autocomplete="current-password"
 placeholder="رمز عبور کلاس را وارد کنید"
+required
 >
 
 <button
 type="button"
+class="password-toggle"
 id="togglePassword"
+aria-label="نمایش رمز عبور"
 >
-👁️
+👁
 </button>
 
 </div>
-
 </div>
 
-<div
-id="loginError"
-class="login-error">
+<div class="login-error" id="loginError">
+نام کاربری یا رمز عبور اشتباه است.
 </div>
 
-<button
-type="submit"
-class="login-button"
-id="loginButton"
->
-ورود به پنل کلاس
+<button type="submit" class="login-btn">
+ورود به پنل
 </button>
 
 </form>
@@ -463,274 +663,87 @@ id="loginButton"
 </div>
 
 </div>
-
 </div>
 
 <script>
+const TEACHER_USERNAME="alavi";
 
-const TEACHER_USERNAME = "alavi";
-
-const TEACHERS = {
-
-    /* =========================
-       پیش‌دبستانی
-    ========================= */
-
-    "0101":{
-        className:"پیش-1",
-        panel:"attendance-pre-1.html"
-    },
-
-    "0102":{
-        className:"پیش-2",
-        panel:"attendance-pre-2.html"
-    },
-
-
-    /* =========================
-       پایه اول
-    ========================= */
-
-    "1101":{
-        className:"اول-1",
-        panel:"teacher-1-1.html"
-    },
-
-    "1102":{
-        className:"اول-2",
-        panel:"teacher-1-2.html"
-    },
-
-    "1103":{
-        className:"اول-3",
-        panel:"teacher-1-3.html"
-    },
-
-
-    /* =========================
-       پایه دوم
-    ========================= */
-
-    "2101":{
-        className:"دوم-1",
-        panel:"teacher-2-1.html"
-    },
-
-    "2102":{
-        className:"دوم-2",
-        panel:"teacher-2-2.html"
-    },
-
-
-    /* =========================
-       پایه سوم
-    ========================= */
-
-    "3101":{
-        className:"سوم-1",
-        panel:"teacher-3-1.html"
-    },
-
-    "3102":{
-        className:"سوم-2",
-        panel:"teacher-3-2.html"
-    },
-
-    "3103":{
-        className:"سوم-3",
-        panel:"teacher-3-3.html"
-    },
-
-
-    /* =========================
-       پایه چهارم
-    ========================= */
-
-    "4101":{
-        className:"چهارم-1",
-        panel:"teacher-4-1.html"
-    },
-
-    "4102":{
-        className:"چهارم-2",
-        panel:"teacher-4-2.html"
-    },
-
-    "4103":{
-        className:"چهارم-3",
-        panel:"teacher-4-3.html"
-    },
-
-
-    /* =========================
-       پایه پنجم
-    ========================= */
-
-    "5101":{
-        className:"پنجم-1",
-        panel:"teacher-5-1.html"
-    },
-
-    "5102":{
-        className:"پنجم-2",
-        panel:"teacher-5-2.html"
-    },
-
-    "5103":{
-        className:"پنجم-3",
-        panel:"teacher-5-3.html"
-    },
-
-
-    /* =========================
-       پایه ششم
-    ========================= */
-
-    "6101":{
-        className:"ششم-1",
-        panel:"teacher-6-1.html"
-    },
-
-    "6102":{
-        className:"ششم-2",
-        panel:"teacher-6-2.html"
-    }
-
+const TEACHERS={
+"0101":{className:"پیش-1",panel:"attendance-pre-1.html"},
+"0102":{className:"پیش-2",panel:"attendance-pre-2.html"},
+"1101":{className:"اول-1",panel:"teacher-1-1.html"},
+"1102":{className:"اول-2",panel:"teacher-1-2.html"},
+"1103":{className:"اول-3",panel:"teacher-1-3.html"},
+"2101":{className:"دوم-1",panel:"teacher-2-1.html"},
+"2102":{className:"دوم-2",panel:"teacher-2-2.html"},
+"3101":{className:"سوم-1",panel:"teacher-3-1.html"},
+"3102":{className:"سوم-2",panel:"teacher-3-2.html"},
+"3103":{className:"سوم-3",panel:"teacher-3-3.html"},
+"4101":{className:"چهارم-1",panel:"teacher-4-1.html"},
+"4102":{className:"چهارم-2",panel:"teacher-4-2.html"},
+"4103":{className:"چهارم-3",panel:"teacher-4-3.html"},
+"5101":{className:"پنجم-1",panel:"teacher-5-1.html"},
+"5102":{className:"پنجم-2",panel:"teacher-5-2.html"},
+"5103":{className:"پنجم-3",panel:"teacher-5-3.html"},
+"6101":{className:"ششم-1",panel:"teacher-6-1.html"},
+"6102":{className:"ششم-2",panel:"teacher-6-2.html"}
 };
 
-const loginForm =
-document.getElementById("loginForm");
+const loginForm=document.getElementById("loginForm");
+const username=document.getElementById("username");
+const password=document.getElementById("password");
+const loginError=document.getElementById("loginError");
+const togglePassword=document.getElementById("togglePassword");
 
-const usernameInput =
-document.getElementById("username");
+togglePassword.addEventListener("click",()=>{
+if(password.type==="password"){
+password.type="text";
+togglePassword.textContent="🙈";
+}else{
+password.type="password";
+togglePassword.textContent="👁";
+}
+});
 
-const passwordInput =
-document.getElementById("password");
+loginForm.addEventListener("submit",e=>{
+e.preventDefault();
 
-const loginError =
-document.getElementById("loginError");
+const user=username.value.trim();
+const pass=password.value.trim();
 
-const togglePassword =
-document.getElementById("togglePassword");
+if(user===TEACHER_USERNAME&&TEACHERS[pass]){
 
-const loginButton =
-document.getElementById("loginButton");
+const teacher=TEACHERS[pass];
 
-togglePassword.addEventListener(
-"click",
-()=>{
+sessionStorage.setItem("teacherLoggedIn","true");
+sessionStorage.setItem("teacherClass",teacher.className);
+sessionStorage.setItem("teacherPassword",pass);
+sessionStorage.setItem("teacherPanel",teacher.panel);
+sessionStorage.setItem("teacherLoginTime",Date.now().toString());
 
-if(
-passwordInput.type === "password"
-){
+loginError.classList.remove("show");
 
-passwordInput.type = "text";
-
-togglePassword.textContent =
-"🙈";
+setTimeout(()=>{
+window.location.href=teacher.panel;
+},300);
 
 }else{
 
-passwordInput.type = "password";
+loginError.classList.add("show");
 
-togglePassword.textContent =
-"👁️";
+password.value="";
 
+password.focus();
 }
-
-}
-);
-
-loginForm.addEventListener(
-"submit",
-(event)=>{
-
-event.preventDefault();
-
-const username =
-usernameInput.value.trim();
-
-const password =
-passwordInput.value.trim();
-
-loginError.textContent = "";
-
-if(
-username !== TEACHER_USERNAME
-){
-
-loginError.textContent =
-"❌ نام کاربری یا رمز عبور اشتباه است.";
-
-passwordInput.value = "";
-
-return;
-
-}
-
-const teacher =
-TEACHERS[password];
-
-if(!teacher){
-
-loginError.textContent =
-"❌ نام کاربری یا رمز عبور اشتباه است.";
-
-passwordInput.value = "";
-
-passwordInput.focus();
-
-return;
-
-}
-
-loginButton.textContent =
-"در حال ورود...";
-
-loginButton.classList.add(
-"loading"
-);
-
-sessionStorage.setItem(
-"teacherLoggedIn",
-"true"
-);
-
-sessionStorage.setItem(
-"teacherClass",
-teacher.className
-);
-
-sessionStorage.setItem(
-"teacherPassword",
-password
-);
-
-sessionStorage.setItem(
-"teacherPanel",
-teacher.panel
-);
-
-sessionStorage.setItem(
-"teacherLoginTime",
-Date.now().toString()
-);
-
-setTimeout(
-()=>{
-
-window.location.replace(
-teacher.panel
-);
-
-},
-300
-);
-
 });
 
+/* نمایش Intro */
+setTimeout(()=>{
+const intro=document.getElementById("teacherIntro");
+if(intro)intro.classList.add("hide");
+},4800);
 </script>
 
 </body>
-
 </html>
+
