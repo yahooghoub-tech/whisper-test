@@ -5,6 +5,33 @@ const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
  
 const students=[
+    {name:"شهراد اسماعیل‌زاده",className:"پیش-1"},
+    {name:"رادمهر ابراهیمی",className:"پیش-1"},
+    {name:"آرتا ایرانشاهی",className:"پیش-1"},
+    {name:"مهراد بهشتی مهر",className:"پیش-1"},
+    {name:"رایبد بیکی",className:"پیش-1"},
+    {name:"رایان حسنی",className:"پیش-1"},
+    {name:"رهام دانشی",className:"پیش-1"},
+    {name:"آرمان صفری",className:"پیش-1"},
+    {name:"علی فارسی",className:"پیش-1"},
+    {name:"کارن فرجی",className:"پیش-1"},
+    {name:"راهین قریب",className:"پیش-1"},
+    {name:"رادوین کلانتری",className:"پیش-1"},
+    {name:"سام کبوتان",className:"پیش-1"},
+
+    {name:"آرتین اکبری",className:"پیش-2"},
+    {name:"اهورا حاجی عیسی زاده",className:"پیش-2"},
+    {name:"بنیامین حسین زاده",className:"پیش-2"},
+    {name:"آرشاویر رحمتی",className:"پیش-2"},
+    {name:"کارن رستم آبادی",className:"پیش-2"},
+    {name:"امیرعلی شاکری",className:"پیش-2"},
+    {name:"آرمان غفاری شیرازی",className:"پیش-2"},
+    {name:"سام فراهانی",className:"پیش-2"},
+    {name:"زانا قهرمانی",className:"پیش-2"},
+    {name:"رادوین کیوان مهر",className:"پیش-2"},
+    {name:"آیهان محمدی",className:"پیش-2"},
+    {name:"آرمان مختاری",className:"پیش-2"},
+    {name:"محمدرامان هلالی",className:"پیش-2"},
 
     {name:"مهان احمدی",className:"ششم-1"},
     {name:"پارسا بکایی",className:"ششم-1"},
@@ -337,7 +364,7 @@ const students=[
     {name:"رادین یاهو",className:"پنجم-2"}
     
     ];
-const gradeOrder=["اول","دوم","سوم","چهارم","پنجم","ششم"];
+    const gradeOrder=["پیش","اول","دوم","سوم","چهارم","پنجم","ششم"];
 const container=document.getElementById("classesContainer");
 const searchInput=document.getElementById("searchInput");
 const resetButton=document.getElementById("resetCalls");
