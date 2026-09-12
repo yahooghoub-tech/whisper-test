@@ -97,7 +97,6 @@ const students=[
     {name:"آراد قیاسی",className:"ششم-1"},
     {name:"آرشا کیاپاشا",className:"ششم-1"},
     {name:"مهربد کاهانی",className:"ششم-1"},
-    {name:"مهراد مظفر",className:"ششم-1"},
     {name:"عماد مظلومی نیا",className:"ششم-1"},
     {name:"آرتین محمدبیگی",className:"ششم-1"},
     {name:"میثم نگهداری",className:"ششم-1"},
