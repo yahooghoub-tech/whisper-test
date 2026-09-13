@@ -1,40 +1,70 @@
 const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
-
-const supabaseClient=supabase.createClient(
+const supabaseClient=
+supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
 const students=[
+
 {name:"محمدطاها احمدی",className:"چهارم-1"},
+
 {name:"رادمهر بشیری",className:"چهارم-1"},
+
 {name:"مهراد بیاتی",className:"چهارم-1"},
+
 {name:"آران باروتی",className:"چهارم-1"},
+
 {name:"پوریا توکلیان",className:"چهارم-1"},
+
 {name:"رادین حسنی",className:"چهارم-1"},
+
 {name:"اوتانا درویشی",className:"چهارم-1"},
+
 {name:"امیرعباس دهقان",className:"چهارم-1"},
+
 {name:"سام زندمقدم",className:"چهارم-1"},
+
 {name:"مهراد سفارزاد",className:"چهارم-1"},
+
 {name:"نویان علیشاهی",className:"چهارم-1"},
+
 {name:"مهراد عموحسن",className:"چهارم-1"},
+
 {name:"کوروش قاسمی",className:"چهارم-1"},
+
 {name:"محمدحسین قرابیگلو",className:"چهارم-1"},
+
 {name:"محمدحسین کریمی",className:"چهارم-1"},
+
 {name:"رهام لطفی",className:"چهارم-1"},
+
 {name:"امیرعلی ناعمی",className:"چهارم-1"},
+
 {name:"رایان مقدسی",className:"چهارم-1"}
+
 ];
 
 const className="چهارم-1";
 
-const studentsContainer=document.getElementById("studentsContainer");
-const totalCount=document.getElementById("totalCount");
-const presentCount=document.getElementById("presentCount");
-const absentCount=document.getElementById("absentCount");
-const todayDate=document.getElementById("todayDate");
-const message=document.getElementById("message");
+const studentsContainer=
+document.getElementById("studentsContainer");
+
+const totalCount=
+document.getElementById("totalCount");
+
+const presentCount=
+document.getElementById("presentCount");
+
+const absentCount=
+document.getElementById("absentCount");
+
+const todayDate=
+document.getElementById("todayDate");
+
+const message=
+document.getElementById("message");
 
 function getToday(){
 const d=new Date();
@@ -42,7 +72,8 @@ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.
 }
 
 function showDate(){
-todayDate.textContent=new Date().toLocaleDateString(
+todayDate.textContent=
+new Date().toLocaleDateString(
 "fa-IR",
 {
 weekday:"long",
@@ -57,28 +88,25 @@ function showMessage(text){
 message.textContent=text;
 message.classList.add("show");
 clearTimeout(window.messageTimer);
-window.messageTimer=setTimeout(()=>{
+window.messageTimer=
+setTimeout(()=>{
 message.classList.remove("show");
 },2500);
-}
-
-function normalizeText(text){
-return String(text||"")
-.replace(/\u200c/g,"")
-.replace(/ي/g,"ی")
-.replace(/ك/g,"ک")
-.replace(/\s+/g,"")
-.trim();
 }
 
 function createStudents(){
 studentsContainer.innerHTML="";
 
 students.forEach(student=>{
-const button=document.createElement("button");
 
-button.className="student-button present";
-button.dataset.name=student.name;
+const button=
+document.createElement("button");
+
+button.className=
+"student-button present";
+
+button.dataset.name=
+student.name;
 
 button.innerHTML=`
 <span class="student-name">
@@ -97,18 +125,22 @@ button
 };
 
 studentsContainer.appendChild(button);
+
 });
 
-totalCount.textContent=students.length;
+totalCount.textContent=
+students.length;
 
 updateCounts();
 }
 
 async function loadTodayAttendance(){
 
-const today=getToday();
+const today=
+getToday();
 
-const {data,error}=await supabaseClient
+const {data,error}=
+await supabaseClient
 .from("attendance")
 .select("*")
 .eq("class_name",className)
@@ -128,81 +160,65 @@ showMessage(
 return;
 }
 
-students.forEach(student=>{
+data.forEach(record=>{
 
-const button=findButton(student.name);
+const button=
+findButton(record.student_name);
 
 if(!button)return;
 
-const record=data.find(item=>
-normalizeText(item.student_name)===normalizeText(student.name)
-);
+if(record.status==="غایب"){
 
-if(record&&record.status==="غایب"){
 setButtonAbsent(button);
+
 }else{
+
 setButtonPresent(button);
+
 }
 
 });
 
 updateCounts();
+
 }
 
 function findButton(name){
 
-const studentName=normalizeText(name);
-
-const buttons=document.querySelectorAll(
-".student-button"
+return document.querySelector(
+`.student-button[data-name="${CSS.escape(name)}"]`
 );
 
-for(const button of buttons){
-
-if(
-normalizeText(button.dataset.name)===studentName
-){
-return button;
-}
-
-}
-
-return null;
 }
 
 function setButtonAbsent(button){
 
 button.classList.remove("present");
+
 button.classList.add("absent");
 
-const status=button.querySelector(
+button.querySelector(
 ".student-status"
-);
-
-if(status){
-status.textContent="غایب";
-}
+).textContent="غایب";
 
 }
 
 function setButtonPresent(button){
 
 button.classList.remove("absent");
+
 button.classList.add("present");
 
-const status=button.querySelector(
+button.querySelector(
 ".student-status"
-);
-
-if(status){
-status.textContent="حاضر";
-}
+).textContent="حاضر";
 
 }
 
 async function toggleAttendance(student,button){
 
-const today=getToday();
+const today=
+getToday();
 
 const isAbsent=
 button.classList.contains("absent");
@@ -210,7 +226,8 @@ button.classList.contains("absent");
 const newStatus=
 isAbsent ? "حاضر" : "غایب";
 
-const {error}=await supabaseClient
+const {error}=
+await supabaseClient
 .from("attendance")
 .upsert(
 {
@@ -259,6 +276,7 @@ showMessage(
 }
 
 updateCounts();
+
 }
 
 function updateCounts(){
@@ -271,8 +289,12 @@ document.querySelectorAll(
 const present=
 students.length-absent;
 
-absentCount.textContent=absent;
-presentCount.textContent=present;
+absentCount.textContent=
+absent;
+
+presentCount.textContent=
+present;
+
 }
 
 supabaseClient
@@ -288,17 +310,19 @@ filter:"class_name=eq.چهارم-1"
 payload=>{
 
 console.log(
-"📡 تغییر حضور و غیاب چهارم-1:",
+"📡 تغییر حضور و غیاب:",
 payload
 );
 
 const record=
-payload.eventType==="DELETE"
-?payload.old
-:payload.new;
+payload.new;
 
 if(!record){
+
+loadTodayAttendance();
+
 return;
+
 }
 
 if(record.class_name!=="چهارم-1"){
@@ -312,9 +336,7 @@ return;
 const button=
 findButton(record.student_name);
 
-if(!button){
-return;
-}
+if(!button)return;
 
 if(record.status==="غایب"){
 
@@ -345,11 +367,13 @@ createStudents();
 
 loadTodayAttendance();
 
-let currentAttendanceDay=getToday();
+let currentAttendanceDay=
+getToday();
 
 function checkAttendanceDayChange(){
 
-const newDay=getToday();
+const newDay=
+getToday();
 
 if(newDay===currentAttendanceDay){
 return;
@@ -362,7 +386,8 @@ currentAttendanceDay,
 newDay
 );
 
-currentAttendanceDay=newDay;
+currentAttendanceDay=
+newDay;
 
 showDate();
 
@@ -379,12 +404,14 @@ checkAttendanceDayChange,
 
 async function refreshAttendance(){
 
-const today=getToday();
+const today=
+getToday();
 
-const {data,error}=await supabaseClient
+const {data,error}=
+await supabaseClient
 .from("attendance")
 .select("*")
-.eq("class_name",className)
+.eq("class_name","چهارم-1")
 .eq("attendance_date",today);
 
 if(error){
@@ -395,6 +422,7 @@ error
 );
 
 return;
+
 }
 
 students.forEach(student=>{
@@ -402,12 +430,11 @@ students.forEach(student=>{
 const button=
 findButton(student.name);
 
-if(!button){
-return;
-}
+if(!button)return;
 
-const record=data.find(item=>
-normalizeText(item.student_name)===normalizeText(student.name)
+const record=
+data.find(item=>
+item.student_name===student.name
 );
 
 if(record&&record.status==="غایب"){
