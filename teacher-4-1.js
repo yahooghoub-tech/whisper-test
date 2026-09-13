@@ -1,12 +1,88 @@
 const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const supabaseClient=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+let notificationAudio=null;
+let soundEnabled=false;
 
-const className="چهارم-1";
+function setupSound(){
+const button=document.getElementById("enableSoundButton");
+if(!button){
+console.error("❌ دکمه enableSoundButton در HTML پیدا نشد");
+return;
+}
+console.log("✅ دکمه فعال‌سازی صدا پیدا شد");
+button.addEventListener("click",async()=>{
+console.log("🔘 روی دکمه صدای فراخوان کلیک شد");
+try{
+if(!soundEnabled){
+notificationAudio=new Audio("notification.mp3");
+notificationAudio.preload="auto";
+notificationAudio.volume=1;
+await notificationAudio.play();
+notificationAudio.pause();
+notificationAudio.currentTime=0;
+soundEnabled=true;
+button.innerText="🔊 صدای فراخوان فعال است";
+button.style.background="#22c55e";
+console.log("✅ صدای فراخوان فعال شد");
+}else{
+soundEnabled=false;
+if(notificationAudio){
+notificationAudio.pause();
+notificationAudio.currentTime=0;
+}
+button.innerText="🔇 صدای فراخوان غیرفعال است";
+button.style.background="#ef4444";
+console.log("🔇 صدای فراخوان غیرفعال شد");
+}
+}catch(error){
+console.error("❌ خطای تغییر وضعیت صدا:",error);
+alert("خطا در تغییر وضعیت صدا: "+error.message);
+}
+});
+}
+
+function playNotificationSound(){
+if(!soundEnabled||!notificationAudio){
+console.log("⚠️ صدای فراخوان فعال نشده");
+return;
+}
+try{
+notificationAudio.currentTime=0;
+notificationAudio.play().catch(error=>{
+console.error("❌ خطا در پخش موسیقی:",error);
+});
+console.log("🔊 موسیقی فراخوان پخش شد");
+}catch(error){
+console.error("❌ خطای پخش موسیقی:",error);
+}
+}
+
+function showSendNotification(studentName){
+const popup=document.getElementById("callPopup");
+const student=document.getElementById("callPopupStudent");
+student.innerText="📤 "+studentName+" ارسال شد";
+popup.classList.add("show");
+playNotificationSound();
+setTimeout(()=>{
+popup.classList.remove("show");
+},5000);
+}
+
+function showCallPopup(studentName){
+const popup=document.getElementById("callPopup");
+const student=document.getElementById("callPopupStudent");
+if(!popup||!student){
+console.error("❌ عناصر callPopup یا callPopupStudent پیدا نشدند");
+return;
+}
+student.innerText=studentName+" فراخوان شد";
+popup.classList.add("show");
+setTimeout(()=>{
+popup.classList.remove("show");
+},7000);
+}
 
 const students=[
 {name:"محمدطاها احمدی",className:"چهارم-1"},
@@ -29,18 +105,11 @@ const students=[
 {name:"رایان مقدسی",className:"چهارم-1"}
 ];
 
-const notificationSound=new Audio("notification.mp3");
-notificationSound.preload="auto";
+const studentsContainer=document.getElementById("studentsContainer");
+const callCount=document.getElementById("callCount");
 
 function getToday(){
-return new Intl.DateTimeFormat(
-"fa-IR-u-nu-latn",
-{
-year:"numeric",
-month:"2-digit",
-day:"2-digit"
-}
-).format(new Date());
+return new Intl.DateTimeFormat("fa-IR-u-nu-latn",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 }
 
 function getDatabaseToday(){
@@ -48,558 +117,402 @@ const d=new Date();
 return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
-function normalizeText(text){
-return String(text||"")
-.replace(/\u200c/g,"")
-.replace(/ي/g,"ی")
-.replace(/ك/g,"ک")
-.replace(/\s+/g,"")
-.trim();
-}
-
-function findButton(name){
-const target=normalizeText(name);
-const buttons=document.querySelectorAll(".student-button");
-
-for(const button of buttons){
-if(normalizeText(button.dataset.name)===target){
-return button;
-}
-}
-
-return null;
-}
-
-function resetTeacherPanel(){
-document.querySelectorAll(".student-button").forEach(button=>{
-button.classList.remove("called");
-button.classList.remove("sent");
-button.classList.remove("absent");
-button.classList.add("available");
-
-const status=button.querySelector(".student-status");
-
-if(status){
-status.textContent="در انتظار";
-}
+function createStudents(){
+studentsContainer.innerHTML="";
+students.forEach(student=>{
+const button=document.createElement("button");
+button.className="student-button";
+button.dataset.name=student.name;
+button.innerHTML=`<div class="student-name">${student.name}</div><div class="student-status"></div><div class="student-time"></div>`;
+button.addEventListener("click",()=>sendStudent(student));
+studentsContainer.appendChild(button);
 });
 }
 
+function findButton(name){
+return [...document.querySelectorAll(".student-button")].find(button=>button.dataset.name===name);
+}
+
 function updateButton(call){
-
 const button=findButton(call.student_name);
-
-if(!button){
+if(!button)return;
+if(button.classList.contains("absent")){
 return;
 }
+button.classList.remove("called","sent","received");
 
-button.classList.remove("available");
-button.classList.remove("sent");
-button.classList.remove("absent");
+if(call.status==="فراخوان شد"){
+button.classList.add("called");
+button.querySelector(".student-status").innerText="🔴 فراخوان";
+}
+
+if(call.status==="دریافت فراخوان"){
+button.classList.add("received");
+button.querySelector(".student-status").innerText="🟠 دریافت شد";
+}
 
 if(call.status==="ارسال شد"){
-
 button.classList.add("sent");
-
-const status=button.querySelector(".student-status");
-
-if(status){
-status.textContent="ارسال شد";
+button.querySelector(".student-status").innerText="🟢 ارسال شد";
 }
 
-}else{
+let timeText="";
 
-button.classList.add("called");
-
-const status=button.querySelector(".student-status");
-
-if(status){
-status.textContent="فراخوان";
+if(call.called_time){
+timeText="🕐 فراخوان: "+call.called_time;
 }
 
+if(call.sent_time){
+timeText+="<br>📤 ارسال: "+call.sent_time;
 }
 
+button.querySelector(".student-time").innerHTML=timeText;
 }
 
-function updateCount(data){
-
-const activeCalls=data.filter(
-call=>call.status!=="ارسال شد"
-);
-
-const countElement=document.getElementById("callCount");
-
-if(countElement){
-countElement.textContent=activeCalls.length;
+function resetStudentButton(call){
+const button=findButton(call.student_name);
+if(!button)return;
+if(button.classList.contains("absent")){
+return;
 }
-
+button.classList.remove("called","sent","received");
+button.classList.add("pending");
+button.querySelector(".student-status").innerText="";
+button.querySelector(".student-time").innerText="";
 }
 
 async function loadCalls(){
-
 const today=getToday();
 
 const {data,error}=await supabaseClient
 .from("calls")
 .select("*")
-.eq("class_name",className)
+.eq("class_name","چهارم-1")
 .eq("called_date",today)
 .order("id",{ascending:true});
 
 if(error){
-
-console.error(
-"خطا در دریافت فراخوان:",
-error
-);
-
+console.error("خطا در دریافت فراخوان‌های امروز:",error);
 return;
 }
 
 resetTeacherPanel();
 
-data.forEach(call=>{
-updateButton(call);
-});
+data.forEach(updateButton);
 
 updateCount(data);
 
 await loadAbsentStudents();
+}
 
+function updateCount(data){
+if(!Array.isArray(data)){
+console.error("updateCount: داده آرایه نیست:",data);
+return;
+}
+
+const active=data.filter(call=>call.status!=="ارسال شد");
+
+callCount.innerText=active.length+" فراخوان";
+}
+
+function resetTeacherPanel(){
+document.querySelectorAll(".student-button").forEach(button=>{
+if(button.classList.contains("absent")){
+return;
+}
+
+button.classList.remove("called","sent","received");
+button.classList.add("pending");
+
+const status=button.querySelector(".student-status");
+const time=button.querySelector(".student-time");
+
+if(status)status.innerText="";
+if(time)time.innerText="";
+});
+
+callCount.innerText="0 فراخوان";
+
+console.log("🔄 صفحه معلم بدون Refresh ریست شد");
 }
 
 async function sendStudent(student){
+const button=findButton(student.name);
+
+if(button&&button.classList.contains("absent")){
+console.log("⛔ این دانش‌آموز غایب است و امکان ارسال ندارد:",student.name);
+return;
+}
 
 const {data,error}=await supabaseClient
 .from("calls")
 .select("*")
 .eq("student_name",student.name)
-.eq("class_name",className)
+.eq("class_name","چهارم-1")
 .neq("status","ارسال شد")
 .order("id",{ascending:false})
 .limit(1);
 
 if(error){
-
-console.error(
-"خطا در پیدا کردن فراخوان:",
-error
-);
-
+console.error(error);
 return;
 }
 
 if(!data||data.length===0){
-
-console.log(
-"فراخوان فعالی برای این دانش‌آموز وجود ندارد:",
-student.name
-);
-
+alert("برای این دانش‌آموز هنوز فراخوانی ثبت نشده است.");
 return;
 }
 
 const call=data[0];
 
-const {error:updateError}=await supabaseClient
+const now=new Date();
+
+const time=now.toLocaleTimeString("fa-IR",{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+});
+
+const {data:updated,error:updateError}=await supabaseClient
 .from("calls")
 .update({
 status:"ارسال شد",
-sent_time:new Date().toISOString()
+sent_time:time
 })
-.eq("id",call.id);
+.eq("id",call.id)
+.select()
+.single();
 
 if(updateError){
-
-console.error(
-"خطا در ارسال دانش‌آموز:",
-updateError
-);
-
+console.error("خطا در ارسال دانش‌آموز:",updateError);
 return;
 }
 
-updateButton({
-...call,
-status:"ارسال شد"
-});
+updateButton(updated);
 
-await loadCalls();
-
+loadCalls();
 }
 
 async function loadAbsentStudents(){
-
 const today=getDatabaseToday();
 
 const {data,error}=await supabaseClient
 .from("attendance")
 .select("*")
-.eq("class_name",className)
+.eq("class_name","چهارم-1")
 .eq("attendance_date",today)
 .eq("status","غایب");
 
 if(error){
-
-console.error(
-"خطا در دریافت غایبین:",
-error
-);
-
+console.error("❌ خطا در دریافت غایبین:",error);
 return;
 }
 
 document.querySelectorAll(".student-button").forEach(button=>{
 button.classList.remove("absent");
+button.disabled=false;
+
+const nameDiv=button.querySelector(".student-name");
+
+if(nameDiv){
+nameDiv.innerText=button.dataset.name;
+}
 });
 
-data.forEach(record=>{
+data.forEach(absent=>{
+const button=findButton(absent.student_name);
 
-const button=findButton(record.student_name);
+if(!button)return;
 
-if(!button){
+button.classList.remove("called","sent","received","pending");
+button.classList.add("absent");
+button.disabled=true;
+
+const nameDiv=button.querySelector(".student-name");
+const status=button.querySelector(".student-status");
+const time=button.querySelector(".student-time");
+
+if(nameDiv){
+nameDiv.innerText=absent.student_name+" (غایب)";
+}
+
+if(status)status.innerText="";
+if(time)time.innerText="";
+});
+
+console.log("👤 غایبین امروز بارگذاری شدند:",data.length);
+}
+
+createStudents();
+loadCalls();
+loadAbsentStudents();
+
+window.addEventListener("load",setupSound);
+
+let currentTeacherCallDay=getToday();
+
+function checkTeacherCallDayChange(){
+const newDay=getToday();
+
+if(newDay===currentTeacherCallDay){
 return;
 }
 
-button.classList.remove("available");
-button.classList.remove("called");
-button.classList.remove("sent");
-button.classList.add("absent");
+console.log("📅 روز فراخوان تغییر کرد:",currentTeacherCallDay,"→",newDay);
 
-const status=button.querySelector(".student-status");
+currentTeacherCallDay=newDay;
 
-if(status){
-status.textContent="غایب";
+resetTeacherPanel();
+loadCalls();
+loadAbsentStudents();
 }
 
-});
-
-}
+setInterval(checkTeacherCallDayChange,30000);
 
 supabaseClient
 .channel("teacher-4-1-realtime")
-.on(
-"postgres_changes",
-{
+.on("postgres_changes",{
 event:"INSERT",
 schema:"public",
 table:"calls",
 filter:"class_name=eq.چهارم-1"
-},
-payload=>{
-
-console.log(
-"📢 فراخوان جدید چهارم-1:",
-payload
-);
+},payload=>{
 
 const call=payload.new;
 
-if(!call){
-return;
-}
+console.log("📢 فراخوان جدید:",call);
 
-if(call.class_name!==className){
-return;
-}
+if(call.status!=="فراخوان شد")return;
 
 if(call.called_date!==getToday()){
+console.log("⏭️ فراخوان مربوط به روز قبل است:",call.called_date);
 return;
 }
 
-updateButton(call);
+const absentButton=findButton(call.student_name);
 
-updateCount(
-[call]
-);
-
-try{
-notificationSound.currentTime=0;
-notificationSound.play();
-}catch(error){
-console.log("پخش صدا انجام نشد:",error);
+if(absentButton&&absentButton.classList.contains("absent")){
+console.log("⛔ فراخوان برای دانش‌آموز غایب نادیده گرفته شد:",call.student_name);
+return;
 }
 
+showCallPopup(call.student_name);
+playNotificationSound();
+
+const button=findButton(call.student_name);
+
+if(button){
+setTimeout(()=>{
+if(button.classList.contains("absent"))return;
+
+updateButton({...call,status:"دریافت فراخوان"});
+
+button.classList.remove("called","sent");
+button.classList.add("called");
+},300);
 }
-)
-.on(
-"postgres_changes",
-{
+
+loadCalls();
+
+})
+.on("postgres_changes",{
 event:"UPDATE",
 schema:"public",
 table:"calls",
 filter:"class_name=eq.چهارم-1"
-},
-payload=>{
-
-console.log(
-"📡 بروزرسانی فراخوان چهارم-1:",
-payload
-);
+},payload=>{
 
 const call=payload.new;
+const oldCall=payload.old;
 
-if(!call){
-return;
-}
+if(!call)return;
 
-if(call.class_name!==className){
-return;
-}
+if(call.class_name!=="چهارم-1")return;
 
 if(call.called_date!==getToday()){
+console.log("⏭️ UPDATE مربوط به روز قبل است:",call.called_date);
 return;
+}
+
+console.log("📡 تغییر فراخوان:",call);
+
+if(oldCall.status!=="ارسال شد"&&call.status==="ارسال شد"){
+showSendNotification(call.student_name);
 }
 
 updateButton(call);
-
 loadCalls();
 
-}
-)
-.on(
-"postgres_changes",
-{
+})
+.on("postgres_changes",{
 event:"DELETE",
 schema:"public",
 table:"calls"
-},
-payload=>{
-
-console.log(
-"🗑 حذف فراخوان چهارم-1:",
-payload
-);
+},payload=>{
 
 const deletedCall=payload.old;
 
-if(
-!deletedCall||
-deletedCall.class_name!==className
-){
-return;
-}
+console.log("🗑️ DELETE دریافت شد:",deletedCall);
 
+if(!deletedCall)return;
+
+if(deletedCall.class_name!=="چهارم-1")return;
+
+resetStudentButton(deletedCall);
 loadCalls();
 
-}
-)
+})
 .subscribe(status=>{
-
-console.log(
-"Realtime فراخوان چهارم-1:",
-status
-);
-
+console.log("Realtime teacher status:",status);
 });
 
 supabaseClient
 .channel("teacher-4-1-attendance-realtime")
-.on(
-"postgres_changes",
-{
+.on("postgres_changes",{
 event:"INSERT",
 schema:"public",
 table:"attendance",
 filter:"class_name=eq.چهارم-1"
-},
-payload=>{
+},payload=>{
 
-console.log(
-"📡 حضور و غیاب جدید چهارم-1:",
-payload
-);
+console.log("🟢 وضعیت حضور و غیاب جدید:",payload.new);
 
-const record=payload.new;
+if(!payload.new)return;
 
-if(!record){
-return;
-}
-
-if(record.class_name!==className){
-return;
-}
-
-if(record.attendance_date!==getDatabaseToday()){
-return;
-}
+if(payload.new.attendance_date!==getDatabaseToday())return;
 
 loadAbsentStudents();
 
-}
-)
-.on(
-"postgres_changes",
-{
+})
+.on("postgres_changes",{
 event:"UPDATE",
 schema:"public",
 table:"attendance",
 filter:"class_name=eq.چهارم-1"
-},
-payload=>{
+},payload=>{
 
-console.log(
-"📡 بروزرسانی حضور و غیاب چهارم-1:",
-payload
-);
+console.log("🟡 وضعیت حضور و غیاب تغییر کرد:",payload.new);
 
-const record=payload.new;
+if(!payload.new)return;
 
-if(!record){
-return;
-}
-
-if(record.class_name!==className){
-return;
-}
-
-if(record.attendance_date!==getDatabaseToday()){
-return;
-}
+if(payload.new.attendance_date!==getToday())return;
 
 loadAbsentStudents();
 
-}
-)
-.on(
-"postgres_changes",
-{
+})
+.on("postgres_changes",{
 event:"DELETE",
 schema:"public",
 table:"attendance",
 filter:"class_name=eq.چهارم-1"
-},
-payload=>{
+},payload=>{
 
-console.log(
-"🗑 حذف حضور و غیاب چهارم-1:",
-payload
-);
+console.log("🔵 وضعیت حضور و غیاب حذف شد:",payload.old);
 
 loadAbsentStudents();
 
-}
-)
+})
 .subscribe(status=>{
-
-console.log(
-"Realtime حضور و غیاب چهارم-1:",
-status
-);
-
+console.log("Realtime attendance status:",status);
 });
-
-function showSendNotification(name){
-
-const popup=document.getElementById("sendNotification");
-
-const popupName=document.getElementById("sendStudentName");
-
-if(popupName){
-popupName.textContent=name;
-}
-
-if(popup){
-popup.classList.add("show");
-}
-
-}
-
-function hideSendNotification(){
-
-const popup=document.getElementById("sendNotification");
-
-if(popup){
-popup.classList.remove("show");
-}
-
-}
-
-function createStudentButtons(){
-
-const container=
-document.getElementById("studentsContainer");
-
-if(!container){
-return;
-}
-
-if(
-container.children.length>0
-){
-return;
-}
-
-students.forEach(student=>{
-
-const button=document.createElement("button");
-
-button.type="button";
-button.className="student-button available";
-button.dataset.name=student.name;
-
-button.innerHTML=`
-<span class="student-name">${student.name}</span>
-<span class="student-status">در انتظار</span>
-`;
-
-button.addEventListener(
-"click",
-async()=>{
-await sendStudent(student);
-}
-);
-
-container.appendChild(button);
-
-});
-
-}
-
-let currentCallDay=getToday();
-
-function checkCallDayChange(){
-
-const newDay=getToday();
-
-if(newDay===currentCallDay){
-return;
-}
-
-console.log(
-"📅 روز جدید فراخوان:",
-currentCallDay,
-"→",
-newDay
-);
-
-currentCallDay=newDay;
-
-loadCalls();
-
-}
-
-setInterval(
-checkCallDayChange,
-30000
-);
-
-window.addEventListener(
-"focus",
-()=>{
-loadCalls();
-}
-);
-
-document.addEventListener(
-"visibilitychange",
-()=>{
-if(!document.hidden){
-loadCalls();
-}
-}
-);
-
-createStudentButtons();
-
-loadCalls();
