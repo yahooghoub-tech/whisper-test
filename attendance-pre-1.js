@@ -92,36 +92,58 @@ updateCounts();
 }
 
 async function loadTodayAttendance(){
-const today=getToday();
-const {data,error}=await supabaseClient
-.from("attendance")
-.select("*")
-.eq("class_name",className)
-.eq("attendance_date",today);
 
-if(error){
-console.error(
-"خطا در دریافت حضور و غیاب:",
-error
-);
-showMessage(
-"خطا در دریافت اطلاعات حضور و غیاب"
-);
-return;
-}
+    const today=getToday();
 
-data.forEach(record=>{
-const button=findButton(record.student_name);
-if(!button)return;
+    const {data,error}=await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("class_name",className)
+        .eq("attendance_date",today)
+        .order("updated_at",{ascending:false})
+        .order("id",{ascending:false});
 
-if(record.status==="غایب"){
-setButtonAbsent(button);
-}else{
-setButtonPresent(button);
-}
-});
+    if(error){
+        console.error(
+            "خطا در دریافت حضور و غیاب:",
+            error
+        );
 
-updateCounts();
+        showMessage(
+            "خطا در دریافت اطلاعات حضور و غیاب"
+        );
+
+        return;
+    }
+
+    // فقط آخرین رکورد هر دانش‌آموز
+    const latestRecords=new Map();
+
+    (data||[]).forEach(record=>{
+
+        const key=normalizeStudentName(record.student_name);
+
+        if(!latestRecords.has(key)){
+            latestRecords.set(key,record);
+        }
+
+    });
+
+    latestRecords.forEach(record=>{
+
+        const button=findButton(record.student_name);
+
+        if(!button)return;
+
+        if(record.status==="غایب"){
+            setButtonAbsent(button);
+        }else{
+            setButtonPresent(button);
+        }
+
+    });
+
+    updateCounts();
 }
 
 function normalizeStudentName(name){
@@ -300,47 +322,54 @@ loadTodayAttendance();
 setInterval(checkAttendanceDayChange,30000);
 
 async function refreshAttendance(){
-const today=getToday();
 
-const {data,error}=await supabaseClient
-.from("attendance")
-.select("*")
-.eq("class_name","پیش-1")
-.eq("attendance_date",today);
+    const today=getToday();
 
-if(error){
-console.error(
-"❌ خطا در بروزرسانی حضور و غیاب:",
-error
-);
-return;
+    const {data,error}=await supabaseClient
+        .from("attendance")
+        .select("*")
+        .eq("class_name","پیش-1")
+        .eq("attendance_date",today)
+        .order("updated_at",{ascending:false})
+        .order("id",{ascending:false});
+
+    if(error){
+        console.error(
+            "❌ خطا در بروزرسانی حضور و غیاب:",
+            error
+        );
+        return;
+    }
+
+    const latestRecords=new Map();
+
+    (data||[]).forEach(record=>{
+
+        const key=normalizeStudentName(record.student_name);
+
+        if(!latestRecords.has(key)){
+            latestRecords.set(key,record);
+        }
+
+    });
+
+    students.forEach(student=>{
+
+        const button=findButton(student.name);
+
+        if(!button)return;
+
+        const record=latestRecords.get(
+            normalizeStudentName(student.name)
+        );
+
+        if(record&&record.status==="غایب"){
+            setButtonAbsent(button);
+        }else{
+            setButtonPresent(button);
+        }
+
+    });
+
+    updateCounts();
 }
-
-students.forEach(student=>{
-const button=findButton(student.name);
-if(!button)return;
-
-const record=data.find(item =>
-    normalizeStudentName(item.student_name) ===
-    normalizeStudentName(student.name)
-);
-
-if(record&&record.status==="غایب"){
-setButtonAbsent(button);
-}else{
-setButtonPresent(button);
-}
-});
-
-updateCounts();
-}
-
-window.addEventListener("focus",()=>{
-refreshAttendance();
-});
-
-document.addEventListener("visibilitychange",()=>{
-if(!document.hidden){
-refreshAttendance();
-}
-});
