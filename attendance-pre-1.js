@@ -124,10 +124,26 @@ setButtonPresent(button);
 updateCounts();
 }
 
+function normalizeStudentName(name){
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF]/g,"")
+        .replace(/\u200C/g,"")
+        .replace(/\s+/g,"")
+        .replace(/ي/g,"ی")
+        .replace(/ى/g,"ی")
+        .replace(/ك/g,"ک")
+        .trim();
+}
+
 function findButton(name){
-return document.querySelector(
-`.student-button[data-name="${CSS.escape(name)}"]`
-);
+
+    const target=normalizeStudentName(name);
+
+    return [...document.querySelectorAll(".student-button")]
+        .find(button =>
+            normalizeStudentName(button.dataset.name) === target
+        );
 }
 
 function setButtonAbsent(button){
@@ -304,8 +320,9 @@ students.forEach(student=>{
 const button=findButton(student.name);
 if(!button)return;
 
-const record=data.find(item=>
-item.student_name===student.name
+const record=data.find(item =>
+    normalizeStudentName(item.student_name) ===
+    normalizeStudentName(student.name)
 );
 
 if(record&&record.status==="غایب"){
