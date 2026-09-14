@@ -247,55 +247,94 @@ console.log("🔄 صفحه معلم بدون Refresh ریست شد");
 }
 
 async function sendStudent(student){
-const button=findButton(student.name);
 
-if(button&&button.classList.contains("absent")){
-console.log("⛔ این دانش‌آموز غایب است و امکان ارسال ندارد:",student.name);
-return;
+    const button=findButton(student.name);
+
+    if(button&&button.classList.contains("absent")){
+        console.log("⛔ این دانش‌آموز غایب است و امکان ارسال ندارد:",student.name);
+        return;
+    }
+
+    // دریافت فراخوان‌های فعال کلاس پیش-1
+    const {data,error}=await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq("class_name","پیش-1")
+        .neq("status","ارسال شد")
+        .order("id",{ascending:false})
+        .limit(100);
+
+    if(error){
+        console.error("❌ خطا در دریافت فراخوان:",error);
+        alert("خطا در دریافت اطلاعات فراخوان.");
+        return;
+    }
+
+    // پیدا کردن دانش‌آموز با نام نرمال‌شده
+    const call=(data||[]).find(item =>
+        normalizeStudentName(item.student_name) ===
+        normalizeStudentName(student.name)
+    );
+
+    if(!call){
+        console.error(
+            "❌ فراخوان برای این دانش‌آموز پیدا نشد:",
+            student.name
+        );
+
+        console.log(
+            "📋 فراخوان‌های موجود:",
+            (data||[]).map(item => ({
+                id:item.id,
+                student_name:item.student_name,
+                status:item.status
+            }))
+        );
+
+        alert("برای این دانش‌آموز هنوز فراخوانی ثبت نشده است.");
+        return;
+    }
+
+    const now=new Date();
+
+    const time=now.toLocaleTimeString(
+        "fa-IR",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
+        }
+    );
+
+    const {data:updated,error:updateError}=await supabaseClient
+        .from("calls")
+        .update({
+            status:"ارسال شد",
+            sent_time:time
+        })
+        .eq("id",call.id)
+        .select()
+        .single();
+
+    if(updateError){
+        console.error(
+            "❌ خطا در ارسال دانش‌آموز:",
+            updateError
+        );
+
+        alert("خطا در ثبت ارسال فراخوان.");
+        return;
+    }
+
+    console.log(
+        "✅ فراخوان دانش‌آموز ارسال شد:",
+        updated
+    );
+
+    updateButton(updated);
+
+    await loadCalls();
 }
-
-const {data,error}=await supabaseClient
-.from("calls")
-.select("*")
-.eq("student_name",student.name)
-.eq("class_name","پیش-1")
-.neq("status","ارسال شد")
-.order("id",{ascending:false})
-.limit(1);
-
-if(error){
-console.error(error);
-return;
-}
-
-if(!data||data.length===0){
-alert("برای این دانش‌آموز هنوز فراخوانی ثبت نشده است.");
-return;
-}
-
-const call=data[0];
-const now=new Date();
-const time=now.toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-
-const {data:updated,error:updateError}=await supabaseClient
-.from("calls")
-.update({
-status:"ارسال شد",
-sent_time:time
-})
-.eq("id",call.id)
-.select()
-.single();
-
-if(updateError){
-console.error("خطا در ارسال دانش‌آموز:",updateError);
-return;
-}
-
-updateButton(updated);
-loadCalls();
-}
-
 async function loadAbsentStudents(){
 const today=getDatabaseToday();
 
