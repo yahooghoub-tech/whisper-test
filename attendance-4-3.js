@@ -9,6 +9,8 @@ const students = [
 
     {name:"آرسام حسینی",className:"چهارم-3"},
 
+    {name:"شاهان ترکاشوند",className:"چهارم-3"},
+
     {name:"لیام رحمانی",className:"چهارم-3"},
 
     {name:"ایلیا سبزپوش",className:"چهارم-3"},

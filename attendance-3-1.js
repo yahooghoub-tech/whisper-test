@@ -48,6 +48,8 @@ const students = [
     {name:"مهراد ناصری",className:"سوم-1"},
 
     {name:"آریا نصیرمحمدی",className:"سوم-1"},
+    
+    {name:" پرهام دولتخواه",className:"سوم-1"},
 
     {name:"آریا نعمتی",className:"سوم-1"},
 

@@ -98,7 +98,7 @@ const students=[
 {name:"رادوین کیوان‌مهر",className:"پیش-2"},
 {name:"آیهان محمدی",className:"پیش-2"},
 {name:"آرمان مختاری",className:"پیش-2"},
-{name:"محمدرامان هلالی",className:"پیش-2"}
+{name:"محمدرامان هلالی",className:"پیش-2"},
 ];
 
 const studentsContainer=document.getElementById("studentsContainer");
