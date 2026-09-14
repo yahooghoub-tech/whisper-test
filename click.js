@@ -17,7 +17,7 @@ const students=[
 {name:"کارن فرجی",className:"پیش-1"},
 {name:"راهین قریب",className:"پیش-1"},
 {name:"رادوین کلانتری",className:"پیش-1"},
-{name:" شاهان محمدی زاده",className:"پیش-1"},
+{name:"شاهان محمدی زاده",className:"پیش-1"},
 {name:"سام کبوتان",className:"پیش-1"},
 
 {name:"آرتین اکبری",className:"پیش-2"},
