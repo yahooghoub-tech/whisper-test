@@ -127,9 +127,28 @@ studentsContainer.appendChild(button);
 });
 }
 
-function findButton(name){
-return [...document.querySelectorAll(".student-button")].find(button=>button.dataset.name===name);
-}
+function normalizeStudentName(name){
+    return String(name ?? "")
+    .normalize("NFC")
+    .replace(/[\u200B-\u200D\uFEFF]/g,"")
+    .replace(/\u200C/g,"")
+    .replace(/\s+/g,"")
+    .replace(/ي/g,"ی")
+    .replace(/ى/g,"ی")
+    .replace(/ك/g,"ک")
+    .trim();
+    }
+    
+    function findButton(name){
+    
+    const target=normalizeStudentName(name);
+    
+    return [...document.querySelectorAll(".student-button")]
+    .find(button=>
+    normalizeStudentName(button.dataset.name)===target
+    );
+    
+    }
 
 function updateButton(call){
 const button=findButton(call.student_name);

@@ -4,22 +4,36 @@ const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const students=[
-{name:"شهراد اسماعیل‌زاده",className:"پیش-1"},
-{name:"رادمهر ابراهیمی",className:"پیش-1"},
-{name:"آرتا ایرانشاهی",className:"پیش-1"},
-{name:"مهراد بهشتی مهر",className:"پیش-1"},
-{name:"رایبد بیکی",className:"پیش-1"},
-{name:"رایان حسنی",className:"پیش-1"},
-{name:"رهام دانشی",className:"پیش-1"},
-{name:"آرمان صفری",className:"پیش-1"},
-{name:"علی فارسی",className:"پیش-1"},
-{name:"کارن فرجی",className:"پیش-1"},
-{name:"راهین قریب",className:"پیش-1"},
-{name:"رادوین کلانتری",className:"پیش-1"},
-{name:" شاهان محمدی زاده",className:"پیش-1"},
-{name:"سام کبوتان",className:"پیش-1"}
-];
 
+    {name:"شهراد اسماعیل‌زاده",className:"پیش-1"},
+    
+    {name:"رادمهر ابراهیمی",className:"پیش-1"},
+    
+    {name:"آرتا ایرانشاهی",className:"پیش-1"},
+    
+    {name:"مهراد بهشتی مهر",className:"پیش-1"},
+    
+    {name:"رایبد بیکی",className:"پیش-1"},
+    
+    {name:"رایان حسنی",className:"پیش-1"},
+    
+    {name:"رهام دانشی",className:"پیش-1"},
+    
+    {name:"آرمان صفری",className:"پیش-1"},
+    
+    {name:"علی فارسی",className:"پیش-1"},
+    
+    {name:"کارن فرجی",className:"پیش-1"},
+    
+    {name:"راهین قریب",className:"پیش-1"},
+    
+    {name:"رادوین کلانتری",className:"پیش-1"},
+    
+    {name:"شاهان محمدی زاده",className:"پیش-1"},
+    
+    {name:"سام کبوتان",className:"پیش-1"}
+    
+    ];
 const className="پیش-1";
 const studentsContainer=document.getElementById("studentsContainer");
 const totalCount=document.getElementById("totalCount");
