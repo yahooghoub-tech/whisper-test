@@ -94,7 +94,7 @@ const students=[
 
     {name:"نویان رنجبر",className:"سوم-3"},
 
-    {name:"مهدیار رهبر",className:"سوم-3"},
+    {name:"آرشا ترابی پور",className:"سوم-3"},
 
     {name:"رادمان سلیمانیه",className:"سوم-3"},
 

@@ -220,7 +220,7 @@ const students=[
     {name:"حافظ جعفربیگی",className:"سوم-3"},
     {name:"رادوین دزیانی",className:"سوم-3"},
     {name:"نویان رنجبر",className:"سوم-3"},
-    {name:"مهدیار رهبر",className:"سوم-3"},
+    {name:"آرشا ترابی پور",className:"سوم-3"},
     {name:"رادمان سلیمانیه",className:"سوم-3"},
     {name:"کیان سهرابی",className:"سوم-3"},
     {name:"شایان شاوردیان",className:"سوم-3"},
