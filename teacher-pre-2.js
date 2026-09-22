@@ -89,6 +89,7 @@ const students=[
 {name:"آرتین اکبری",className:"پیش-2"},
 {name:"اهورا حاجی‌عیسی‌زاده",className:"پیش-2"},
 {name:"بنیامین حسین‌زاده",className:"پیش-2"},
+{name:"بنیامین رنجبر",className:"پیش-2"},
 {name:"آرشاویر رحمتی",className:"پیش-2"},
 {name:"کارن رستم‌آبادی",className:"پیش-2"},
 {name:"امیرعلی شاکری",className:"پیش-2"},

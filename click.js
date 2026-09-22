@@ -21,6 +21,7 @@ const students=[
 {name:"سام کبوتان",className:"پیش-1"},
 
 {name:"آرتین اکبری",className:"پیش-2"},
+{name:"بنیامین رنجبر",className:"پیش-2"},
 {name:"اهورا حاجی‌عیسی‌زاده",className:"پیش-2"},
 {name:"بنیامین حسین‌زاده",className:"پیش-2"},
 {name:"آرشاویر رحمتی",className:"پیش-2"},
