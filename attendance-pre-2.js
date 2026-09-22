@@ -7,6 +7,7 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
+
 const students=[
 "آرتین اکبری",
 "اهورا حاجی عیسی زاده",
@@ -21,12 +22,12 @@ const students=[
 "آیهان محمدی",
 "آرمان مختاری",
 "محمدرامان هلالی",
-"بنیامین رنجبر",
-
-
+"بنیامین رنجبر"
 ];
 
+
 const className="پیش-2";
+
 
 function getToday(){
 
@@ -55,11 +56,16 @@ return `${year}-${month}-${day}`;
 
 }
 
+
 function showDate(){
 
 const dateElement=document.getElementById(
 "todayDate"
 );
+
+if(!dateElement){
+return;
+}
 
 const now=new Date();
 
@@ -87,6 +93,7 @@ options
 
 }
 
+
 function showMessage(
 text,
 type="success"
@@ -95,6 +102,10 @@ type="success"
 const message=document.getElementById(
 "message"
 );
+
+if(!message){
+return;
+}
 
 message.textContent=text;
 
@@ -114,11 +125,20 @@ message.className="message";
 
 }
 
+
+/* =========================================================
+   ساخت دانش‌آموزان
+========================================================= */
+
 function createStudents(){
 
 const container=document.getElementById(
 "studentsContainer"
 );
+
+if(!container){
+return;
+}
 
 container.innerHTML="";
 
@@ -160,9 +180,19 @@ updateCounts();
 
 }
 
+
+/* =========================================================
+   دریافت وضعیت امروز
+========================================================= */
+
 async function loadTodayAttendance(){
 
 const today=getToday();
+
+console.log(
+"📅 دریافت حضور و غیاب پیش‌۲:",
+today
+);
 
 const{
 data,
@@ -170,7 +200,7 @@ error
 }=await supabaseClient
 .from("attendance")
 .select(
-"student_name,status"
+"student_name,status,attendance_date,class_name"
 )
 .eq(
 "class_name",
@@ -181,9 +211,13 @@ className
 today
 );
 
+
 if(error){
 
-console.error(error);
+console.error(
+"❌ خطا در دریافت حضور و غیاب پیش‌۲:",
+error
+);
 
 showMessage(
 "خطا در دریافت وضعیت حضور و غیاب",
@@ -194,27 +228,38 @@ return;
 
 }
 
+
 students.forEach(
 student=>{
 
 const record=data?.find(
-item=>item.student_name===student
+item=>
+item.student_name===student
 );
 
-const button=findButton(student);
+const button=findButton(
+student
+);
 
-if(!button)return;
+if(!button){
+return;
+}
+
 
 if(
 record &&
 record.status==="غایب"
 ){
 
-setButtonAbsent(button);
+setButtonAbsent(
+button
+);
 
 }else{
 
-setButtonPresent(button);
+setButtonPresent(
+button
+);
 
 }
 
@@ -224,6 +269,11 @@ updateCounts();
 
 }
 
+
+/* =========================================================
+   پیدا کردن دکمه دانش‌آموز
+========================================================= */
+
 function findButton(student){
 
 return document.querySelector(
@@ -231,6 +281,11 @@ return document.querySelector(
 );
 
 }
+
+
+/* =========================================================
+   غایب
+========================================================= */
 
 function setButtonAbsent(button){
 
@@ -248,6 +303,11 @@ button.dataset.name+
 
 }
 
+
+/* =========================================================
+   حاضر
+========================================================= */
+
 function setButtonPresent(button){
 
 button.classList.remove(
@@ -263,6 +323,11 @@ button.dataset.name;
 
 }
 
+
+/* =========================================================
+   تغییر وضعیت حضور و غیاب
+========================================================= */
+
 async function toggleAttendance(
 student,
 button
@@ -275,11 +340,29 @@ button.classList.contains(
 "absent"
 );
 
+
 button.disabled=true;
+
+
+/* =========================================================
+   غایب → حاضر
+========================================================= */
 
 if(isAbsent){
 
+console.log(
+"🟢 تلاش برای حاضر کردن:",
+student
+);
+
+console.log(
+"📅 تاریخ:",
+today
+);
+
+
 const{
+data,
 error
 }=await supabaseClient
 .from("attendance")
@@ -295,11 +378,22 @@ className
 .eq(
 "attendance_date",
 today
+)
+.select();
+
+
+console.log(
+"🗑️ رکورد حذف‌شده:",
+data
 );
+
 
 if(error){
 
-console.error(error);
+console.error(
+"❌ خطا در حذف غیبت:",
+error
+);
 
 showMessage(
 "خطا در ثبت وضعیت",
@@ -312,15 +406,76 @@ return;
 
 }
 
-setButtonPresent(button);
+
+/* =========================================================
+   بررسی اینکه واقعاً رکورد حذف شده
+========================================================= */
+
+if(
+!data ||
+data.length===0
+){
+
+console.warn(
+"⚠️ رکورد غیبت پیدا نشد:",
+student,
+className,
+today
+);
+
+showMessage(
+"رکورد غیبت پیدا نشد",
+"error"
+);
+
+button.disabled=false;
+
+return;
+
+}
+
+
+/* =========================================================
+   تغییر ظاهر دکمه
+========================================================= */
+
+setButtonPresent(
+button
+);
+
 
 showMessage(
 "دانش‌آموز حاضر شد"
 );
 
-}else{
+
+console.log(
+"✅ دانش‌آموز حاضر شد:",
+student
+);
+
+}
+
+
+/* =========================================================
+   حاضر → غایب
+========================================================= */
+
+else{
+
+console.log(
+"🔴 تلاش برای ثبت غیبت:",
+student
+);
+
+console.log(
+"📅 تاریخ:",
+today
+);
+
 
 const{
+data,
 error
 }=await supabaseClient
 .from("attendance")
@@ -335,11 +490,22 @@ attendance_date:today
 onConflict:
 "student_name,class_name,attendance_date"
 }
+)
+.select();
+
+
+console.log(
+"🔴 رکورد غیبت ثبت‌شده:",
+data
 );
+
 
 if(error){
 
-console.error(error);
+console.error(
+"❌ خطا در ثبت غیبت:",
+error
+);
 
 showMessage(
 "خطا در ثبت غیبت",
@@ -352,19 +518,35 @@ return;
 
 }
 
-setButtonAbsent(button);
+
+setButtonAbsent(
+button
+);
+
 
 showMessage(
 "غیبت دانش‌آموز ثبت شد"
 );
 
+
+console.log(
+"✅ غیبت ثبت شد:",
+student
+);
+
 }
+
 
 button.disabled=false;
 
 updateCounts();
 
 }
+
+
+/* =========================================================
+   شمارنده‌ها
+========================================================= */
 
 function updateCounts(){
 
@@ -376,21 +558,55 @@ const absent=document.querySelectorAll(
 
 const present=total-absent;
 
+
+const totalElement=
 document.getElementById(
 "totalCount"
-).textContent=total;
+);
 
+const presentElement=
 document.getElementById(
 "presentCount"
-).textContent=present;
+);
 
+const absentElement=
 document.getElementById(
 "absentCount"
-).textContent=absent;
+);
+
+
+if(totalElement){
+
+totalElement.textContent=
+total;
 
 }
 
+
+if(presentElement){
+
+presentElement.textContent=
+present;
+
+}
+
+
+if(absentElement){
+
+absentElement.textContent=
+absent;
+
+}
+
+}
+
+
+/* =========================================================
+   تغییر خودکار تاریخ
+========================================================= */
+
 let lastDate=getToday();
+
 
 setInterval(
 async()=>{
@@ -413,6 +629,11 @@ await loadTodayAttendance();
 30000
 );
 
+
+/* =========================================================
+   برگشت به صفحه
+========================================================= */
+
 document.addEventListener(
 "visibilitychange",
 async()=>{
@@ -427,6 +648,11 @@ await loadTodayAttendance();
 
 });
 
+
+/* =========================================================
+   فعال شدن دوباره پنجره
+========================================================= */
+
 window.addEventListener(
 "focus",
 async()=>{
@@ -437,11 +663,21 @@ await loadTodayAttendance();
 
 });
 
+
+/* =========================================================
+   شروع صفحه
+========================================================= */
+
 createStudents();
 
 showDate();
 
 loadTodayAttendance();
+
+
+/* =========================================================
+   Realtime فقط پیش‌۲
+========================================================= */
 
 const attendanceChannel=
 supabaseClient
@@ -456,7 +692,12 @@ schema:"public",
 table:"attendance",
 filter:`class_name=eq.${className}`
 },
-async()=>{
+async(payload)=>{
+
+console.log(
+"📡 تغییر Realtime پیش‌۲:",
+payload
+);
 
 await loadTodayAttendance();
 
@@ -466,7 +707,7 @@ await loadTodayAttendance();
 status=>{
 
 console.log(
-"Attendance realtime:",
+"Attendance realtime پیش‌۲:",
 status
 );
 
