@@ -33,7 +33,7 @@ const students = [
 
     {name:"کارن کوهی",className:"چهارم-3"},
 
-    {name:"علی گرجایی",className:"چهارم-3"},
+    
 
     {name:"رایان منتظری",className:"چهارم-3"},
 

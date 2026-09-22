@@ -191,7 +191,7 @@ const students=[
     {name:"نیکان فرجی",className:"چهارم-3"},
     {name:"دانیال کشاورز",className:"چهارم-3"},
     {name:"کارن کوهی",className:"چهارم-3"},
-    {name:"علی گرجایی",className:"چهارم-3"},
+    
     {name:"رایان منتظری",className:"چهارم-3"},
     {name:"آرین نیک پی",className:"چهارم-3"},
     {name:"ویهان وهابی",className:"چهارم-3"},
