@@ -567,58 +567,182 @@ container.appendChild(section);
 
 async function callStudent(student,button){
 
-if(
-button.classList.contains("called")||
-button.classList.contains("sent")||
-button.classList.contains("absent")
-)return;
+    // اگر غایب یا توسط معلم ارسال شده، کاری نکن
+    if(
+        button.classList.contains("absent") ||
+        button.classList.contains("sent")
+    ){
+        return;
+    }
 
-const {data,error}=
-await supabaseClient
-.from("calls")
-.select("*")
-.eq("student_name",student.name)
-.eq("class_name",student.className)
-.neq("status","ارسال شد");
 
-if(error){
-console.error(error);
-return;
-}
+    // =========================================
+    // اگر قبلاً فراخوان شده، کلیک دوم = لغو فراخوان
+    // =========================================
 
-if(data&&data.length){
-updateButton(button,data[0]);
-return;
-}
+    if(button.classList.contains("called")){
 
-const time=timeNow();
-const date=todayPersianDate();
+        const {data,error} =
+        await supabaseClient
+        .from("calls")
+        .delete()
+        .eq("student_name",student.name)
+        .eq("class_name",student.className)
+        .eq("called_date",todayPersianDate())
+        .eq("status","فراخوان شد")
+        .select();
 
-const {
-data:inserted,
-error:insertError
-}=
-await supabaseClient
-.from("calls")
-.insert([
-{
-student_name:student.name,
-class_name:student.className,
-status:"فراخوان شد",
-called_date:date,
-called_time:time
-}
-])
-.select()
-.single();
 
-if(insertError){
-console.error(insertError);
-return;
-}
+        if(error){
 
-updateButton(button,inserted);
-updateCount(student.className);
+            console.error(
+                "❌ خطا در لغو فراخوان:",
+                error
+            );
+
+            alert(
+                "لغو فراخوان انجام نشد. دوباره تلاش کنید."
+            );
+
+            return;
+        }
+
+
+        // اگر رکورد با موفقیت حذف شد
+        if(data && data.length){
+
+            button.classList.remove(
+                "called",
+                "sent",
+                "absent"
+            );
+
+            button.classList.add(
+                "pending"
+            );
+
+            button.disabled=false;
+
+
+            const statusElement =
+            button.querySelector(
+                ".student-status"
+            );
+
+            const timeElement =
+            button.querySelector(
+                ".status-time"
+            );
+
+
+            if(statusElement){
+                statusElement.textContent="";
+            }
+
+
+            if(timeElement){
+                timeElement.textContent="";
+            }
+
+
+            updateCount(
+                student.className
+            );
+
+
+            console.log(
+                "↩️ فراخوان لغو شد:",
+                student.name
+            );
+
+        }
+
+        return;
+    }
+
+
+    // =========================================
+    // فراخوان معمولی دانش‌آموز
+    // =========================================
+
+    const {data,error} =
+    await supabaseClient
+    .from("calls")
+    .select("*")
+    .eq("student_name",student.name)
+    .eq("class_name",student.className)
+    .eq("called_date",todayPersianDate())
+    .neq("status","ارسال شد");
+
+
+    if(error){
+
+        console.error(
+            "❌ خطا در بررسی فراخوان:",
+            error
+        );
+
+        return;
+    }
+
+
+    if(data && data.length){
+
+        updateButton(
+            button,
+            data[0]
+        );
+
+        updateCount(
+            student.className
+        );
+
+        return;
+    }
+
+
+    const time=timeNow();
+    const date=todayPersianDate();
+
+
+    const {
+        data:inserted,
+        error:insertError
+    } =
+    await supabaseClient
+    .from("calls")
+    .insert([
+        {
+            student_name:student.name,
+            class_name:student.className,
+            status:"فراخوان شد",
+            called_date:date,
+            called_time:time
+        }
+    ])
+    .select()
+    .single();
+
+
+    if(insertError){
+
+        console.error(
+            "❌ خطا در ثبت فراخوان:",
+            insertError
+        );
+
+        return;
+    }
+
+
+    updateButton(
+        button,
+        inserted
+    );
+
+    updateCount(
+        student.className
+    );
 
 }
 
