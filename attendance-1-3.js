@@ -9,7 +9,7 @@ const students = [
 
     {name:"مهربد بلند همت",className:"اول-3"},
 
-    {name:"آدار جهانبانی",className:"اول-3"},
+    
 
     {name:"علیسان جهانی",className:"اول-3"},
 

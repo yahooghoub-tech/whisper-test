@@ -30,9 +30,9 @@ const students=[
 {name:"آرمان غفاری‌شیرازی",className:"پیش-2"},
 {name:"سام فراهانی",className:"پیش-2"},
 {name:"زانا قهرمانی",className:"پیش-2"},
-{name:"رادوین کیوان‌مهر",className:"پیش-2"},
+
 {name:"آیهان محمدی",className:"پیش-2"},
-{name:"آرمان مختاری",className:"پیش-2"},
+
 {name:"محمدرامان هلالی",className:"پیش-2"},
 
     {name:"مهان احمدی",className:"ششم-1"},
@@ -233,7 +233,7 @@ const students=[
     {name:"بردیا میرشفیعی",className:"سوم-3"},
     
     {name:"مهربد بلند همت",className:"اول-3"},
-    {name:"آدار جهانبانی",className:"اول-3"},
+    
     {name:"علیسان جهانی",className:"اول-3"},
     {name:"سامیار سلیمی",className:"اول-3"},
     {name:"لیام شریفی",className:"اول-3"},

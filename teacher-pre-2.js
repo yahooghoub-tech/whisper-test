@@ -96,9 +96,9 @@ const students=[
 {name:"آرمان غفاری‌شیرازی",className:"پیش-2"},
 {name:"سام فراهانی",className:"پیش-2"},
 {name:"زانا قهرمانی",className:"پیش-2"},
-{name:"رادوین کیوان‌مهر",className:"پیش-2"},
+
 {name:"آیهان محمدی",className:"پیش-2"},
-{name:"آرمان مختاری",className:"پیش-2"},
+
 {name:"محمدرامان هلالی",className:"پیش-2"},
 ];
 

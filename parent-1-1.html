@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -11,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>پنل والدین | کلاس اول-1</title>
+    <title>پنل والدین | دبستان علوی</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -66,7 +65,6 @@
             max-width: 1100px;
             margin: 0 auto;
         }
-
 
         /* LOGIN */
 
@@ -235,7 +233,6 @@
 
             line-height: 1.7;
         }
-
 
         /* PARENT PANEL */
 
@@ -533,7 +530,6 @@
             background: #94a3b8;
         }
 
-
         /* CALL */
 
         .call-section {
@@ -627,7 +623,6 @@
             font-size: 12px;
         }
 
-
         /* RESPONSIVE */
 
         @media (max-width: 800px) {
@@ -647,7 +642,6 @@
             }
 
         }
-
 
         @media (max-width: 600px) {
 
@@ -762,14 +756,15 @@
                     <div class="input-group">
 
                         <label for="parentCode">
-                            کد ورود
+                            کد ورود ۴ رقمی
                         </label>
 
                         <input
                             type="text"
                             id="parentCode"
-                            placeholder="کد ورود"
+                            placeholder="کد ۴ رقمی"
                             inputmode="numeric"
+                            maxlength="4"
                             autocomplete="off"
                         >
 
@@ -882,11 +877,11 @@
                             </div>
 
                             <div
-    class="card-value"
-    id="callActivationTime"
->
-    ساعت ۱۶:۰۰ تا ۲۲:۰۰
-</div>
+                                class="card-value"
+                                id="callActivationTime"
+                            >
+                                در حال بررسی...
+                            </div>
 
                             <div class="card-muted">
                                 بازه فعال بودن فراخوان دانش‌آموز
@@ -960,9 +955,8 @@
                             فراخوانی دانش‌آموز
                         </h2>
 
-                        <p>
-                            فراخوانی دانش‌آموز از ساعت ۱۶:۰۰ تا ۲۲:۰۰ فعال است.
-                            برای ارسال فراخوان، ابتدا موقعیت مکانی شما بررسی می‌شود.
+                        <p id="callDescription">
+                            در حال بررسی زمان فعال بودن فراخوان...
                         </p>
 
                         <button
@@ -986,7 +980,6 @@
         </div>
 
     </div>
-
     <script>
 
         const SUPABASE_URL =
@@ -1042,6 +1035,9 @@
         const callActivationTime =
             document.getElementById("callActivationTime");
 
+        const callDescription =
+            document.getElementById("callDescription");
+
 
         let currentStudentName = "";
 
@@ -1050,50 +1046,112 @@
         let parentCallChannel = null;
 
 
-        function getPersianDate() {
+        /* =========================
+           زمان مجاز هر کلاس
+        ========================= */
 
-            return new Intl.DateTimeFormat(
-                "fa-IR-u-ca-persian",
-                {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                }
-            ).format(new Date());
+        function getCallSchedule(className) {
+
+            if (
+                className === "پیش-1" ||
+                className === "پیش-2"
+            ) {
+
+                return {
+                    start: 14 * 60,
+                    end: 16 * 60,
+                    text: "۱۴:۰۰ تا ۱۶:۰۰"
+                };
+
+            }
+
+
+            if (
+                className === "اول-1" ||
+                className === "اول-2" ||
+                className === "اول-3"
+            ) {
+
+                return {
+                    start: 14 * 60 + 30,
+                    end: 16 * 60,
+                    text: "۱۴:۳۰ تا ۱۶:۰۰"
+                };
+
+            }
+
+
+            return {
+                start: 14 * 60 + 40,
+                end: 16 * 60,
+                text: "۱۴:۴۰ تا ۱۶:۰۰"
+            };
 
         }
 
 
-        function updateDateTime() {
+        /* =========================
+           ساعت ایران
+        ========================= */
 
-            const now =
-                new Date();
+        function getIranTimeParts() {
 
-            currentDate.textContent =
-                getPersianDate();
-
-            currentTime.textContent =
-                now.toLocaleTimeString(
-                    "fa-IR",
+            const parts =
+                new Intl.DateTimeFormat(
+                    "en-US",
                     {
+                        timeZone: "Asia/Tehran",
                         hour: "2-digit",
                         minute: "2-digit",
                         second: "2-digit",
                         hour12: false
                     }
+                ).formatToParts(
+                    new Date()
                 );
+
+
+            const hour =
+                Number(
+                    parts.find(
+                        item =>
+                            item.type === "hour"
+                    ).value
+                );
+
+
+            const minute =
+                Number(
+                    parts.find(
+                        item =>
+                            item.type === "minute"
+                    ).value
+                );
+
+
+            const second =
+                Number(
+                    parts.find(
+                        item =>
+                            item.type === "second"
+                    ).value
+                );
+
+
+            return {
+                hour,
+                minute,
+                second,
+                totalMinutes:
+                    hour * 60 + minute
+            };
 
         }
 
 
-        updateDateTime();
-
-        setInterval(
-            updateDateTime,
-            1000
-        );
-
+        /* =========================
+           تاریخ ایران
+        ========================= */
 
         function getIranDate() {
 
@@ -1105,39 +1163,276 @@
                     month: "2-digit",
                     day: "2-digit"
                 }
-            ).format(new Date());
+            ).format(
+                new Date()
+            );
 
         }
 
 
         function getIranTime() {
 
-            return new Intl.DateTimeFormat(
-                "fa-IR-u-nu-latn",
-                {
-                    timeZone: "Asia/Tehran",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
-                }
-            ).format(new Date());
+            const iran =
+                getIranTimeParts();
+
+
+            return String(
+                iran.hour
+            ).padStart(
+                2,
+                "0"
+            ) +
+            ":" +
+            String(
+                iran.minute
+            ).padStart(
+                2,
+                "0"
+            ) +
+            ":" +
+            String(
+                iran.second
+            ).padStart(
+                2,
+                "0"
+            );
 
         }
 
 
-        function updateParentCallStatus(call) {
+        /* =========================
+           تاریخ شمسی نمایشی
+        ========================= */
 
-            const statusElement =
-                document.querySelector(".status");
+        function getPersianDate() {
 
-            const statusDot =
-                document.querySelector(".status-dot");
+            return new Intl.DateTimeFormat(
+                "fa-IR-u-ca-persian",
+                {
+                    timeZone: "Asia/Tehran",
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                }
+            ).format(
+                new Date()
+            );
 
+        }
+
+
+        /* =========================
+           ساعت و تاریخ پنل
+        ========================= */
+
+        function updateDateTime() {
+
+            const iran =
+                getIranTimeParts();
+
+
+            currentDate.textContent =
+                getPersianDate();
+
+
+            currentTime.textContent =
+                new Intl.NumberFormat(
+                    "fa-IR"
+                ).format(
+                    iran.hour
+                ) +
+                ":" +
+                new Intl.NumberFormat(
+                    "fa-IR"
+                ).format(
+                    iran.minute
+                ) +
+                ":" +
+                new Intl.NumberFormat(
+                    "fa-IR"
+                ).format(
+                    iran.second
+                );
+
+        }
+
+
+        updateDateTime();
+
+
+        setInterval(
+            updateDateTime,
+            1000
+        );
+
+
+        /* =========================
+           بررسی زمان مجاز
+        ========================= */
+
+        function isCallTimeActive() {
+
+            if (
+                !currentClassName
+            ) {
+
+                return false;
+
+            }
+
+
+            const schedule =
+                getCallSchedule(
+                    currentClassName
+                );
+
+
+            const iran =
+                getIranTimeParts();
+
+
+            return (
+                iran.totalMinutes >=
+                schedule.start
+                &&
+                iran.totalMinutes <
+                schedule.end
+            );
+
+        }
+
+
+        /* =========================
+           وضعیت زمان فراخوان
+        ========================= */
+
+        function updateCallScheduleUI() {
+
+            if (
+                !currentClassName
+            ) {
+
+                return;
+
+            }
+
+
+            const schedule =
+                getCallSchedule(
+                    currentClassName
+                );
+
+
+            callActivationTime.textContent =
+                "ساعت " +
+                schedule.text;
+
+
+            callDescription.textContent =
+                "فراخوانی دانش‌آموز از ساعت " +
+                schedule.text +
+                " فعال است. برای ارسال فراخوان، ابتدا موقعیت مکانی شما بررسی می‌شود.";
+
+
+            const active =
+                isCallTimeActive();
+
+
+            if (active) {
+
+                if (
+                    callButton.dataset.locked !==
+                    "true"
+                ) {
+
+                    callButton.disabled =
+                        false;
+
+                    callButton.dataset.timeBlocked =
+                        "false";
+
+                    callButton.textContent =
+                        "📢 فراخوانی دانش‌آموز";
+
+                    callButton.style.background =
+                        "linear-gradient(135deg, #2563eb, #0284c7)";
+
+                    callButton.style.boxShadow =
+                        "0 15px 30px rgba(37, 99, 235, 0.25)";
+
+                }
+
+            }
+
+            else {
+
+                if (
+                    callButton.dataset.locked !==
+                    "true"
+                ) {
+
+                    callButton.disabled =
+                        true;
+
+                    callButton.dataset.timeBlocked =
+                        "true";
+
+                    callButton.textContent =
+                        "⏰ خارج از زمان فراخوان";
+
+                    callButton.style.background =
+                        "linear-gradient(135deg, #94a3b8, #64748b)";
+
+                    callButton.style.boxShadow =
+                        "none";
+
+                }
+
+            }
+
+        }
+
+
+        setInterval(
+            () => {
+
+                if (
+                    currentStudentName &&
+                    currentClassName
+                ) {
+
+                    updateCallScheduleUI();
+
+                }
+
+            },
+            1000
+        );
+
+
+        /* =========================
+           وضعیت فراخوان
+        ========================= */
+
+        function updateParentCallStatus(
+            call
+        ) {
 
             if (!call) {
                 return;
             }
+
+
+            const statusElement =
+                document.querySelector(
+                    ".status"
+                );
+
+            const statusDot =
+                document.querySelector(
+                    ".status-dot"
+                );
 
 
             if (
@@ -1181,16 +1476,12 @@
 
             }
 
-
-            if (call.called_time) {
-
-                callActivationTime.textContent =
-                    call.called_time;
-
-            }
-
         }
 
+
+        /* =========================
+           دریافت فراخوان امروز
+        ========================= */
 
         async function loadExistingCall() {
 
@@ -1198,8 +1489,14 @@
                 !currentStudentName ||
                 !currentClassName
             ) {
+
                 return;
+
             }
+
+
+            const today =
+                getIranDate();
 
 
             const {
@@ -1220,6 +1517,11 @@
                     .eq(
                         "class_name",
                         currentClassName
+                    )
+
+                    .eq(
+                        "called_date",
+                        today
                     )
 
                     .in(
@@ -1255,13 +1557,24 @@
 
 
             if (!data) {
+
+                callButton.dataset.locked =
+                    "false";
+
+                updateCallScheduleUI();
+
                 return;
+
             }
 
 
             updateParentCallStatus(
                 data
             );
+
+
+            callButton.dataset.locked =
+                "true";
 
 
             if (
@@ -1314,13 +1627,19 @@
         }
 
 
+        /* =========================
+           Realtime
+        ========================= */
+
         function startParentRealtime() {
 
             if (
                 !currentStudentName ||
                 !currentClassName
             ) {
+
                 return;
+
             }
 
 
@@ -1358,7 +1677,9 @@
 
 
                             if (!call) {
+
                                 return;
+
                             }
 
 
@@ -1366,13 +1687,29 @@
                                 call.student_name !==
                                 currentStudentName
                             ) {
+
                                 return;
+
+                            }
+
+
+                            if (
+                                call.called_date !==
+                                getIranDate()
+                            ) {
+
+                                return;
+
                             }
 
 
                             updateParentCallStatus(
                                 call
                             );
+
+
+                            callButton.dataset.locked =
+                                "true";
 
 
                             if (
@@ -1439,6 +1776,10 @@
         }
 
 
+        /* =========================
+           ورود والد
+        ========================= */
+
         loginButton.addEventListener(
             "click",
             async () => {
@@ -1461,6 +1802,21 @@
 
                     message.textContent =
                         "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                    return;
+
+                }
+
+
+                if (
+                    !/^\d{4}$/.test(code)
+                ) {
+
+                    message.textContent =
+                        "کد ورود باید دقیقاً ۴ رقم باشد.";
 
                     message.style.color =
                         "#dc2626";
@@ -1505,8 +1861,10 @@
                 if (error) {
 
                     console.error(
+                        "LOGIN ERROR:",
                         error
                     );
+
 
                     message.textContent =
                         "خطا در ارتباط با سامانه.";
@@ -1545,6 +1903,9 @@
                         data.class_name;
 
 
+                    updateCallScheduleUI();
+
+
                     message.textContent =
                         "ورود موفق بود ✅";
 
@@ -1570,7 +1931,11 @@
                             );
 
 
+                            updateCallScheduleUI();
+
+
                             await loadExistingCall();
+
 
                             startParentRealtime();
 
@@ -1591,66 +1956,117 @@
         );
 
 
+        /* =========================
+           ورود با Enter
+        ========================= */
+
+        studentNameInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    loginButton.click();
+
+                }
+
+            }
+        );
+
+
+        parentCodeInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    loginButton.click();
+
+                }
+
+            }
+        );
+
+
+        /* =========================
+           فقط ۴ رقم برای کد
+        ========================= */
+
+        parentCodeInput.addEventListener(
+            "input",
+            () => {
+
+                parentCodeInput.value =
+                    parentCodeInput.value
+                        .replace(
+                            /\D/g,
+                            ""
+                        )
+                        .slice(
+                            0,
+                            4
+                        );
+
+            }
+        );
+
+
+        /* =========================
+           ثبت فراخوان
+        ========================= */
+
         callButton.addEventListener(
             "click",
             async () => {
 
-                const now =
-                    new Date();
-
-
-                const iranTimeParts =
-                    new Intl.DateTimeFormat(
-                        "en-US",
-                        {
-                            timeZone: "Asia/Tehran",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false
-                        }
-                    ).formatToParts(now);
-
-
-                const hour =
-                    Number(
-                        iranTimeParts.find(
-                            item =>
-                                item.type ===
-                                "hour"
-                        ).value
-                    );
-
-
-                const minute =
-                    Number(
-                        iranTimeParts.find(
-                            item =>
-                                item.type ===
-                                "minute"
-                        ).value
-                    );
-
-
-                const totalMinutes =
-                    hour * 60 +
-                    minute;
-
-
-                    const startTime =
-    16 * 60;
-
-const endTime =
-    22 * 60;
-
-
                 if (
-                    totalMinutes < startTime ||
-                    totalMinutes >= endTime
+                    !currentStudentName ||
+                    !currentClassName
                 ) {
 
                     alert(
-    "فراخوانی دانش‌آموز فقط از ساعت ۱۶:۰۰ تا ۲۲:۰۰ فعال است."
-);
+                        "اطلاعات دانش‌آموز یافت نشد."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !isCallTimeActive()
+                ) {
+
+                    const schedule =
+                        getCallSchedule(
+                            currentClassName
+                        );
+
+
+                    alert(
+                        "فراخوانی این کلاس فقط از ساعت " +
+                        schedule.text +
+                        " فعال است."
+                    );
+
+
+                    updateCallScheduleUI();
+
+                    return;
+
+                }
+
+
+                if (
+                    callButton.dataset.locked ===
+                    "true"
+                ) {
 
                     return;
 
@@ -1805,6 +2221,10 @@ const endTime =
                             "📢 در حال ارسال فراخوان...";
 
 
+                        const today =
+                            getIranDate();
+
+
                         const {
                             data: activeCall,
                             error: activeError
@@ -1825,6 +2245,11 @@ const endTime =
                                     currentClassName
                                 )
 
+                                .eq(
+                                    "called_date",
+                                    today
+                                )
+
                                 .in(
                                     "status",
                                     [
@@ -1833,6 +2258,14 @@ const endTime =
                                     ]
                                 )
 
+                                .order(
+                                    "id",
+                                    {
+                                        ascending: false
+                                    }
+                                )
+
+                                .limit(1)
                                 .maybeSingle();
 
 
@@ -1864,6 +2297,10 @@ const endTime =
                             updateParentCallStatus(
                                 activeCall
                             );
+
+
+                            callButton.dataset.locked =
+                                "true";
 
 
                             callButton.disabled =
@@ -1946,6 +2383,10 @@ const endTime =
                         }
 
 
+                        callButton.dataset.locked =
+                            "true";
+
+
                         callButton.disabled =
                             true;
 
@@ -1960,10 +2401,6 @@ const endTime =
 
                         callButton.style.boxShadow =
                             "0 15px 30px rgba(22, 163, 74, 0.25)";
-
-
-                        callActivationTime.textContent =
-                            calledTime;
 
 
                         updateParentCallStatus(
