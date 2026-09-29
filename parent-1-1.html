@@ -171,7 +171,7 @@
             border-radius: 28px;
             color: #fff;
             background:
-                radial-gradient(circle at 90% 20%, rgba(255,255,255,0.18), transparent 28%),
+                radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.18), transparent 28%),
                 linear-gradient(135deg, #172554, #1d4ed8 55%, #0284c7);
             box-shadow: 0 25px 55px rgba(30, 64, 175, 0.20);
         }
@@ -405,6 +405,7 @@
         }
 
         @media (max-width: 800px) {
+
             .cards {
                 grid-template-columns: 1fr;
             }
@@ -417,9 +418,11 @@
             .class-badge {
                 align-self: flex-start;
             }
+
         }
 
         @media (max-width: 600px) {
+
             .page {
                 padding: 12px;
             }
@@ -472,8 +475,10 @@
             .call-button {
                 font-size: 17px;
             }
+
         }
     </style>
+
 </head>
 
 <body>
@@ -481,8 +486,6 @@
     <div class="page">
 
         <div class="container">
-
-            <!-- Login -->
 
             <section class="login-screen" id="loginScreen">
 
@@ -501,6 +504,7 @@
                     </div>
 
                     <div class="input-group">
+
                         <label for="studentName">
                             نام و نام خانوادگی دانش‌آموز
                         </label>
@@ -511,9 +515,11 @@
                             placeholder="نام و نام خانوادگی دانش‌آموز"
                             autocomplete="off"
                         >
+
                     </div>
 
                     <div class="input-group">
+
                         <label for="parentCode">
                             کد ورود
                         </label>
@@ -525,6 +531,7 @@
                             inputmode="numeric"
                             autocomplete="off"
                         >
+
                     </div>
 
                     <button class="login-button" id="loginButton">
@@ -537,8 +544,6 @@
 
             </section>
 
-
-            <!-- Parent Dashboard -->
 
             <section class="parent-panel" id="parentPanel">
 
@@ -553,8 +558,15 @@
                             </div>
 
                             <div>
-                                <small>خوش آمدید</small>
-                                <h1 id="panelStudentName">---</h1>
+
+                                <small>
+                                    خوش آمدید
+                                </small>
+
+                                <h1 id="panelStudentName">
+                                    ---
+                                </h1>
+
                             </div>
 
                         </div>
@@ -570,8 +582,6 @@
 
                 <main class="dashboard">
 
-                    <!-- Date & Time -->
-
                     <div class="date-card">
 
                         <div class="date-info">
@@ -581,8 +591,15 @@
                             </div>
 
                             <div>
-                                <strong>تاریخ امروز</strong>
-                                <span id="currentDate">---</span>
+
+                                <strong>
+                                    تاریخ امروز
+                                </strong>
+
+                                <span id="currentDate">
+                                    ---
+                                </span>
+
                             </div>
 
                         </div>
@@ -594,23 +611,29 @@
                     </div>
 
 
-                    <!-- Information Cards -->
-
                     <div class="cards">
 
                         <div class="info-card">
 
                             <div class="card-title">
-                                <div class="card-icon">🔔</div>
+
+                                <div class="card-icon">
+                                    🔔
+                                </div>
+
                                 زمان فعال شدن فراخوان
+
                             </div>
 
-                            <div class="card-value" id="callActivationTime">
-                                هنوز فعال نشده
+                            <div
+                                class="card-value"
+                                id="callActivationTime"
+                            >
+                                ساعت ۹:۰۰ تا ۱۲:۰۰
                             </div>
 
                             <div class="card-muted">
-                                زمان فعال شدن فراخوان دانش‌آموز
+                                بازه فعال بودن فراخوان دانش‌آموز
                             </div>
 
                         </div>
@@ -619,15 +642,23 @@
                         <div class="info-card">
 
                             <div class="card-title">
-                                <div class="card-icon">📢</div>
+
+                                <div class="card-icon">
+                                    📢
+                                </div>
+
                                 وضعیت فراخوان
+
                             </div>
 
                             <div class="card-value">
 
                                 <span class="status">
+
                                     <span class="status-dot"></span>
+
                                     آماده
+
                                 </span>
 
                             </div>
@@ -642,24 +673,30 @@
                         <div class="info-card">
 
                             <div class="card-title">
-                                <div class="card-icon">📍</div>
+
+                                <div class="card-icon">
+                                    📍
+                                </div>
+
                                 وضعیت موقعیت
+
                             </div>
 
-                            <div class="card-value">
+                            <div
+                                class="card-value"
+                                id="locationStatus"
+                            >
                                 بررسی نشده
                             </div>
 
                             <div class="card-muted">
-                                پس از فراخوان موقعیت بررسی می‌شود
+                                پس از انتخاب فراخوان موقعیت بررسی می‌شود
                             </div>
 
                         </div>
 
                     </div>
 
-
-                    <!-- Call -->
 
                     <section class="call-section">
 
@@ -668,11 +705,14 @@
                         </h2>
 
                         <p>
-                            برای اعلام حضور و شروع بررسی موقعیت مکانی،
-                            دکمه زیر را انتخاب کنید.
+                            فراخوانی از ساعت ۹:۰۰ تا ۱۲:۰۰ فعال است.
+                            پس از انتخاب دکمه، موقعیت مکانی شما بررسی می‌شود.
                         </p>
 
-                        <button class="call-button" id="callButton">
+                        <button
+                            class="call-button"
+                            id="callButton"
+                        >
                             📢 فراخوانی دانش‌آموز
                         </button>
 
@@ -694,33 +734,55 @@
 
     <script>
 
-        const SUPABASE_URL = "https://ghnpiijihybuhfetnxjp.supabase.co";
+        const SUPABASE_URL =
+            "https://ghnpiijihybuhfetnxjp.supabase.co";
 
-        const SUPABASE_KEY = "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
-
-        const supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
+        const SUPABASE_KEY =
+            "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 
 
-        const loginScreen = document.getElementById("loginScreen");
-        const parentPanel = document.getElementById("parentPanel");
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
 
-        const loginButton = document.getElementById("loginButton");
 
-        const studentNameInput = document.getElementById("studentName");
-        const parentCodeInput = document.getElementById("parentCode");
+        const loginScreen =
+            document.getElementById("loginScreen");
 
-        const message = document.getElementById("message");
+        const parentPanel =
+            document.getElementById("parentPanel");
 
-        const panelStudentName = document.getElementById("panelStudentName");
-        const panelClassName = document.getElementById("panelClassName");
+        const loginButton =
+            document.getElementById("loginButton");
 
-        const currentDate = document.getElementById("currentDate");
-        const currentTime = document.getElementById("currentTime");
+        const studentNameInput =
+            document.getElementById("studentName");
 
-        const callButton = document.getElementById("callButton");
+        const parentCodeInput =
+            document.getElementById("parentCode");
+
+        const message =
+            document.getElementById("message");
+
+        const panelStudentName =
+            document.getElementById("panelStudentName");
+
+        const panelClassName =
+            document.getElementById("panelClassName");
+
+        const currentDate =
+            document.getElementById("currentDate");
+
+        const currentTime =
+            document.getElementById("currentTime");
+
+        const callButton =
+            document.getElementById("callButton");
+
+        const locationStatus =
+            document.getElementById("locationStatus");
 
 
         function getPersianDate() {
@@ -742,190 +804,378 @@
 
             const now = new Date();
 
-            currentDate.textContent = getPersianDate();
+            currentDate.textContent =
+                getPersianDate();
 
             currentTime.textContent =
-                now.toLocaleTimeString("fa-IR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
-                });
+                now.toLocaleTimeString(
+                    "fa-IR",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                    }
+                );
 
         }
 
 
         updateDateTime();
 
-        setInterval(updateDateTime, 1000);
+        setInterval(
+            updateDateTime,
+            1000
+        );
 
 
-        loginButton.addEventListener("click", async () => {
+        loginButton.addEventListener(
+            "click",
+            async () => {
 
-            const name = studentNameInput.value.trim();
-            const code = parentCodeInput.value.trim();
+                const name =
+                    studentNameInput.value.trim();
 
-            message.textContent = "";
+                const code =
+                    parentCodeInput.value.trim();
 
-            if (!name || !code) {
 
-                message.textContent =
-                    "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
+                message.textContent = "";
 
-                message.style.color = "#dc2626";
 
-                return;
+                if (!name || !code) {
+
+                    message.textContent =
+                        "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                    return;
+
+                }
+
+
+                loginButton.disabled = true;
+
+                loginButton.textContent =
+                    "در حال بررسی...";
+
+
+                const { data, error } =
+                    await supabaseClient
+
+                        .from("parent_accounts")
+
+                        .select(
+                            "id, student_name, class_name"
+                        )
+
+                        .eq(
+                            "student_name",
+                            name
+                        )
+
+                        .eq(
+                            "parent_code",
+                            code
+                        )
+
+                        .maybeSingle();
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    message.textContent =
+                        "خطا در ارتباط با سامانه.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                }
+
+                else if (!data) {
+
+                    message.textContent =
+                        "نام دانش‌آموز یا کد ورود صحیح نیست.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                }
+
+                else {
+
+                    message.textContent =
+                        "ورود موفق بود ✅";
+
+                    message.style.color =
+                        "#16a34a";
+
+
+                    panelStudentName.textContent =
+                        data.student_name;
+
+                    panelClassName.textContent =
+                        "کلاس " +
+                        data.class_name;
+
+
+                    setTimeout(
+                        () => {
+
+                            loginScreen.style.display =
+                                "none";
+
+                            parentPanel.style.display =
+                                "block";
+
+                            window.scrollTo(
+                                {
+                                    top: 0,
+                                    behavior: "smooth"
+                                }
+                            );
+
+                        },
+                        400
+                    );
+
+                }
+
+
+                loginButton.disabled = false;
+
+                loginButton.textContent =
+                    "ورود به پنل";
+
             }
+        );
 
 
-            loginButton.disabled = true;
+        callButton.addEventListener(
+            "click",
+            () => {
 
-            loginButton.textContent = "در حال بررسی...";
+                const now =
+                    new Date();
 
-
-            const { data, error } = await supabaseClient
-
-                .from("parent_accounts")
-
-                .select("id, student_name, class_name")
-
-                .eq("student_name", name)
-
-                .eq("parent_code", code)
-
-                .maybeSingle();
+                const minutes =
+                    now.getHours() * 60 +
+                    now.getMinutes();
 
 
-            if (error) {
+                const startTime =
+                    9 * 60;
 
-                console.error(error);
+                const endTime =
+                    12 * 60;
 
-                message.textContent =
-                    "خطا در ارتباط با سامانه.";
 
-                message.style.color = "#dc2626";
+                if (
+                    minutes < startTime ||
+                    minutes >= endTime
+                ) {
+
+                    alert(
+                        "فراخوانی دانش‌آموز فقط از ساعت ۹:۰۰ تا ۱۲:۰۰ فعال است."
+                    );
+
+                    return;
+
+                }
+
+
+                if (!navigator.geolocation) {
+
+                    alert(
+                        "مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند."
+                    );
+
+                    return;
+
+                }
+
+
+                locationStatus.textContent =
+                    "در حال بررسی موقعیت...";
+
+
+                navigator.geolocation.getCurrentPosition(
+
+                    (position) => {
+
+                        const latitude =
+                            position.coords.latitude;
+
+                        const longitude =
+                            position.coords.longitude;
+
+
+                        const schoolLat =
+                            35.76494314018861;
+
+                        const schoolLng =
+                            51.32257158390593;
+
+
+                        const R =
+                            6371000;
+
+
+                        const lat1 =
+                            latitude *
+                            Math.PI /
+                            180;
+
+                        const lat2 =
+                            schoolLat *
+                            Math.PI /
+                            180;
+
+
+                        const dLat =
+                            (
+                                schoolLat -
+                                latitude
+                            ) *
+                            Math.PI /
+                            180;
+
+
+                        const dLng =
+                            (
+                                schoolLng -
+                                longitude
+                            ) *
+                            Math.PI /
+                            180;
+
+
+                        const a =
+                            Math.sin(
+                                dLat / 2
+                            ) ** 2 +
+
+                            Math.cos(lat1) *
+                            Math.cos(lat2) *
+                            Math.sin(
+                                dLng / 2
+                            ) ** 2;
+
+
+                        const c =
+                            2 *
+                            Math.atan2(
+                                Math.sqrt(a),
+                                Math.sqrt(1 - a)
+                            );
+
+
+                        const distance =
+                            Math.round(
+                                R * c
+                            );
+
+
+                        if (
+                            distance <= 150
+                        ) {
+
+                            locationStatus.textContent =
+                                `داخل محدوده مدرسه — ${distance} متر`;
+
+                            locationStatus.style.color =
+                                "#16a34a";
+
+
+                            alert(
+                                `شما داخل محدوده مدرسه هستید.\nفاصله: ${distance} متر`
+                            );
+
+                        }
+
+                        else {
+
+                            locationStatus.textContent =
+                                `خارج از محدوده مدرسه — ${distance} متر`;
+
+                            locationStatus.style.color =
+                                "#dc2626";
+
+
+                            alert(
+                                `شما خارج از محدوده مدرسه هستید.\nفاصله: ${distance} متر`
+                            );
+
+                        }
+
+                    },
+
+
+                    (error) => {
+
+                        locationStatus.textContent =
+                            "خطا در دریافت موقعیت";
+
+
+                        locationStatus.style.color =
+                            "#dc2626";
+
+
+                        if (
+                            error.code === 1
+                        ) {
+
+                            alert(
+                                "دسترسی به موقعیت مکانی داده نشد."
+                            );
+
+                        }
+
+                        else if (
+                            error.code === 2
+                        ) {
+
+                            alert(
+                                "موقعیت مکانی شما قابل تشخیص نیست."
+                            );
+
+                        }
+
+                        else if (
+                            error.code === 3
+                        ) {
+
+                            alert(
+                                "زمان دریافت موقعیت مکانی تمام شد."
+                            );
+
+                        }
+
+                        else {
+
+                            alert(
+                                "خطا در دریافت موقعیت مکانی."
+                            );
+
+                        }
+
+                    },
+
+
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+
+                );
 
             }
-
-            else if (!data) {
-
-                message.textContent =
-                    "نام دانش‌آموز یا کد ورود صحیح نیست.";
-
-                message.style.color = "#dc2626";
-
-            }
-
-            else {
-
-                message.textContent =
-                    "ورود موفق بود ✅";
-
-                message.style.color = "#16a34a";
-
-
-                panelStudentName.textContent =
-                    data.student_name;
-
-                panelClassName.textContent =
-                    "کلاس " + data.class_name;
-
-
-                setTimeout(() => {
-
-                    loginScreen.style.display = "none";
-
-                    parentPanel.style.display = "block";
-
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-
-                }, 400);
-
-            }
-
-
-            loginButton.disabled = false;
-
-            loginButton.textContent = "ورود به پنل";
-
-        });
-
-
-        callButton.addEventListener("click", () => {
-            function isCallTimeActive() {
-    const now = new Date();
-
-    const minutes = now.getHours() * 60 + now.getMinutes();
-
-    const start = 9 * 60;   // 09:00
-    const end = 12 * 60;    // 12:00
-
-    return minutes >= start && minutes < end;
-}
-
-if (!navigator.geolocation) {
-    alert("مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.");
-    return;
-}
-
-navigator.geolocation.getCurrentPosition(
-    (position) => {
-
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-
-        const schoolLat = 35.76494314018861;
-        const schoolLng = 51.32257158390593;
-
-        const R = 6371000;
-
-        const lat1 = latitude * Math.PI / 180;
-        const lat2 = schoolLat * Math.PI / 180;
-
-        const dLat = (schoolLat - latitude) * Math.PI / 180;
-        const dLng = (schoolLng - longitude) * Math.PI / 180;
-
-        const a =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(lat1) *
-            Math.cos(lat2) *
-            Math.sin(dLng / 2) ** 2;
-
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        const distance = Math.round(R * c);
-
-        if (distance <= 150) {
-            alert(`شما داخل محدوده مدرسه هستید.\nفاصله: ${distance} متر`);
-        } else {
-            alert(`شما خارج از محدوده مدرسه هستید.\nفاصله: ${distance} متر`);
-        }
-    },
-
-    (error) => {
-
-        if (error.code === 1) {
-            alert("دسترسی به موقعیت مکانی داده نشد.");
-        } else if (error.code === 2) {
-            alert("موقعیت مکانی شما قابل تشخیص نیست.");
-        } else if (error.code === 3) {
-            alert("زمان دریافت موقعیت مکانی تمام شد.");
-        } else {
-            alert("خطا در دریافت موقعیت مکانی.");
-        }
-
-    },
-
-    {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    }
-);
-});
+        );
 
     </script>
 
