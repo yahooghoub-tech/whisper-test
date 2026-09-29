@@ -980,10 +980,16 @@ async function loadTodayAttendance(){
 
     data.forEach(record=>{
 
-        applyAttendanceToNazem(
-            record
+        attendanceState.set(
+            attendanceKey(
+                record.student_name,
+                record.class_name
+            ),
+            record.status
         );
-
+    
+        applyAttendanceToNazem(record);
+    
     });
 
 }
@@ -1378,110 +1384,114 @@ async function loadTodayAttendance(){
     
     
     function handleCallRealtime(payload){
-        console.log(
-            "🚨🚨🚨 CALL REALTIME:",
-            payload
+
+        console.log("🚨🚨🚨 CALL REALTIME:",payload);
+    
+        const call=payload.new||payload.old;
+    
+        if(!call){
+            console.log("⛔ اطلاعات فراخوان وجود ندارد");
+            return;
+        }
+    
+        console.log("📌 فراخوان دریافتی:",{
+            event:payload.eventType,
+            id:call.id,
+            student_name:call.student_name,
+            class_name:call.class_name,
+            status:call.status,
+            called_date:call.called_date
+        });
+    
+        const today=todayPersianDate();
+    
+        if(
+            call.called_date &&
+            call.called_date!==today
+        ){
+            console.log(
+                "⏭️ فراخوان مربوط به تاریخ دیگری است:",
+                call.called_date,
+                "امروز:",
+                today
             );
-    const call=
-    payload.new||
-    payload.old;
+            return;
+        }
     
-    if(!call)return;
+        const button=findButton(
+            call.student_name,
+            call.class_name
+        );
     
+        if(!button){
+            console.log(
+                "❌ دکمه دانش‌آموز در ناظم پیدا نشد:",
+                call.student_name,
+                call.class_name
+            );
+            return;
+        }
     
-    if(
-    call.called_date&&
-    call.called_date!==
-    todayPersianDate()
-    )return;
+        if(
+            hasAbsentAttendance(
+                call.student_name,
+                call.class_name
+            )
+        ){
+            console.log(
+                "⛔ دانش‌آموز غایب است:",
+                call.student_name
+            );
+            return;
+        }
     
+        if(payload.eventType==="DELETE"){
     
-    const button=
-findButton(
-call.student_name,
-call.class_name
-);
-
-if(
-call.status==="ارسال شد" &&
-payload.eventType!=="DELETE"
-){
-showTeacherSendPopup(call);
-}
-
-if(!button)return;
+            button.classList.remove(
+                "called",
+                "sent"
+            );
     
-    /*
-    اگر دانش‌آموز غایب باشد،
-    فراخوان نباید وضعیت غایب را خراب کند
-    */
+            button.classList.add("pending");
     
-    if(
-    hasAbsentAttendance(
-    call.student_name,
-    call.class_name
-    )
-    ){
+            const status=button.querySelector(".student-status");
+            const time=button.querySelector(".student-time");
     
-    console.log(
-    "⏭️ این دانش‌آموز غایب است؛ تغییر فراخوان روی دکمه اعمال نشد:",
-    call.student_name
-    );
+            if(status)status.innerText="";
+            if(time)time.innerText="";
     
-    return;
+            updateCount(call.class_name);
     
-    }
+            console.log(
+                "🗑️ فراخوان در ناظم حذف شد:",
+                call.student_name
+            );
     
+            return;
+        }
     
-    /*
-    حذف فراخوان
-    */
+        if(
+            call.status==="ارسال شد"
+        ){
+            showTeacherSendPopup(call);
+        }
     
-    if(
-    payload.eventType==="DELETE"
-    ){
+        updateButton(
+            button,
+            call,
+            false
+        );
     
-    button.classList.remove(
-    "called",
-    "sent"
-    );
+        updateCount(
+            call.class_name
+        );
     
-    button.classList.add(
-    "pending"
-    );
-    
-    button.disabled=false;
-    
-    button.querySelector(
-    ".student-status"
-    ).textContent="";
-    
-    button.querySelector(
-    ".status-time"
-    ).textContent="";
-    
-    updateCount(
-    call.class_name
-    );
-    
-    
-    }
-    
-    
-    /*
-    INSERT / UPDATE فراخوان
-    */
-    
-    updateButton(
-    button,
-    call,
-    false
-    );
-    
-    updateCount(
-    call.class_name
-    );
-    
+        console.log(
+            "✅ فراخوان در ناظم نمایش داده شد:",
+            call.student_name,
+            call.class_name,
+            call.status
+        );
     }
     
     
@@ -1562,82 +1572,132 @@ if(!button)return;
     record.status
     );
     
-    applyAttendanceToNazem(
-    record,
-    false
-    );
+    applyAttendanceToNazem(record);
     
     }
     
     function subscribeNazemRealtime(){
 
-        const channel =
-        supabaseClient
-        .channel("nazem-realtime")
-        
-        .on(
-        "postgres_changes",
-        {
-        event:"*",
-        schema:"public",
-        table:"calls"
-        },
-        payload=>{
-        
-        console.log(
-        "📡 تغییر Realtime فراخوان:",
-        payload
-        );
-        
-        handleCallRealtime(payload);
-        
-        }
-        )
-        
-        .on(
-        "postgres_changes",
-        {
-        event:"*",
-        schema:"public",
-        table:"attendance"
-        },
-        payload=>{
-        
-        console.log(
-        "📡 تغییر Realtime حضور و غیاب:",
-        payload
-        );
-        console.log(
-            "🧪 اطلاعات دریافتی:",
-            payload.new.student_name,
-            payload.new.class_name,
-            payload.new.status
-        );
-        
-        applyAttendanceToNazem(payload.new);
-        handleAttendanceRealtime(payload);
-        
-        }
-        )
-        
-        .subscribe(
-            status=>{
-            console.log(
-            "📡 وضعیت Realtime ناظم:",
-            status
-            );
-            
-            if(status==="SUBSCRIBED"){
-            console.log("✅ ناظم به Realtime متصل شد");
-            }else{
-            console.log("❌ اتصال Realtime ناظم:",status);
-            }
-            }
-            );
-        
-        return channel;
-        
-        }
+        const callsChannel =
+            supabaseClient
+            .channel("nazem-calls-realtime")
+    
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"calls"
+                },
+                payload=>{
+    
+                    console.log(
+                        "🚨🚨🚨 REALTIME CALL ناظم:",
+                        payload
+                    );
+    
+                    handleCallRealtime(payload);
+                }
+            )
+    
+            .subscribe(status=>{
+    
+                console.log(
+                    "📡 وضعیت Realtime فراخوان ناظم:",
+                    status
+                );
+    
+                if(status==="SUBSCRIBED"){
+    
+                    console.log(
+                        "✅ ناظم به Realtime جدول calls متصل شد"
+                    );
+    
+                }else{
+    
+                    console.log(
+                        "❌ اتصال Realtime calls ناظم:",
+                        status
+                    );
+    
+                }
+    
+            });
+    
+    
+        const attendanceChannel =
+            supabaseClient
+            .channel("nazem-attendance-realtime")
+    
+            .on(
+                "postgres_changes",
+                {
+                    event:"*",
+                    schema:"public",
+                    table:"attendance"
+                },
+                payload=>{
+    
+                    console.log(
+                        "📡 تغییر Realtime حضور و غیاب:",
+                        payload
+                    );
+    
+                    const record =
+                        payload.new ||
+                        payload.old;
+    
+                    if(!record){
+    
+                        console.log(
+                            "⛔ اطلاعات حضور و غیاب وجود ندارد"
+                        );
+    
+                        return;
+                    }
+    
+                    console.log(
+                        "🧪 اطلاعات حضور و غیاب:",
+                        record.student_name,
+                        record.class_name,
+                        record.status
+                    );
+    
+                    handleAttendanceRealtime(payload);
+    
+                }
+            )
+    
+            .subscribe(status=>{
+    
+                console.log(
+                    "📡 وضعیت Realtime حضور و غیاب ناظم:",
+                    status
+                );
+    
+                if(status==="SUBSCRIBED"){
+    
+                    console.log(
+                        "✅ ناظم به Realtime جدول attendance متصل شد"
+                    );
+    
+                }else{
+    
+                    console.log(
+                        "❌ اتصال Realtime attendance ناظم:",
+                        status
+                    );
+    
+                }
+    
+            });
+    
+    
+        return {
+            callsChannel,
+            attendanceChannel
+        };
+    }
     
         async function initializeNazem(){
 
