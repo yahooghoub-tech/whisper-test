@@ -2,38 +2,41 @@ const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+let nazemCallsChannel=null;
+let nazemAttendanceChannel=null;
+let realtimeReconnectTimer=null;
+let realtimeCheckTimer=null;
+let realtimeConnecting=false;
 
- 
+
 const students=[
     {name:"شهراد اسماعیل‌زاده",className:"پیش-1"},
-{name:"رادمهر ابراهیمی",className:"پیش-1"},
-{name:"آرتا ایرانشاهی",className:"پیش-1"},
-{name:"مهراد بهشتی مهر",className:"پیش-1"},
-{name:"رایبد بیکی",className:"پیش-1"},
-{name:"رایان حسنی",className:"پیش-1"},
-{name:"رهام دانشی",className:"پیش-1"},
-{name:"آرمان صفری",className:"پیش-1"},
-{name:"علی فارسی",className:"پیش-1"},
-{name:"کارن فرجی",className:"پیش-1"},
-{name:"راهین قریب",className:"پیش-1"},
-{name:"رادوین کلانتری",className:"پیش-1"},
-{name:"شاهان محمدی زاده",className:"پیش-1"},
-{name:"سام کبوتان",className:"پیش-1"},
+    {name:"رادمهر ابراهیمی",className:"پیش-1"},
+    {name:"آرتا ایرانشاهی",className:"پیش-1"},
+    {name:"مهراد بهشتی مهر",className:"پیش-1"},
+    {name:"رایبد بیکی",className:"پیش-1"},
+    {name:"رایان حسنی",className:"پیش-1"},
+    {name:"رهام دانشی",className:"پیش-1"},
+    {name:"آرمان صفری",className:"پیش-1"},
+    {name:"علی فارسی",className:"پیش-1"},
+    {name:"کارن فرجی",className:"پیش-1"},
+    {name:"راهین قریب",className:"پیش-1"},
+    {name:"رادوین کلانتری",className:"پیش-1"},
+    {name:"شاهان محمدی زاده",className:"پیش-1"},
+    {name:"سام کبوتان",className:"پیش-1"},
 
-{name:"آرتین اکبری",className:"پیش-2"},
-{name:"بنیامین رنجبر",className:"پیش-2"},
-{name:"اهورا حاجی‌عیسی‌زاده",className:"پیش-2"},
-{name:"بنیامین حسین‌زاده",className:"پیش-2"},
-{name:"آرشاویر رحمتی",className:"پیش-2"},
-{name:"کارن رستم‌آبادی",className:"پیش-2"},
-{name:"امیرعلی شاکری",className:"پیش-2"},
-{name:"آرمان غفاری‌شیرازی",className:"پیش-2"},
-{name:"سام فراهانی",className:"پیش-2"},
-{name:"زانا قهرمانی",className:"پیش-2"},
-
-{name:"آیهان محمدی",className:"پیش-2"},
-
-{name:"محمدرامان هلالی",className:"پیش-2"},
+    {name:"آرتین اکبری",className:"پیش-2"},
+    {name:"بنیامین رنجبر",className:"پیش-2"},
+    {name:"اهورا حاجی‌عیسی‌زاده",className:"پیش-2"},
+    {name:"بنیامین حسین‌زاده",className:"پیش-2"},
+    {name:"آرشاویر رحمتی",className:"پیش-2"},
+    {name:"کارن رستم‌آبادی",className:"پیش-2"},
+    {name:"امیرعلی شاکری",className:"پیش-2"},
+    {name:"آرمان غفاری‌شیرازی",className:"پیش-2"},
+    {name:"سام فراهانی",className:"پیش-2"},
+    {name:"زانا قهرمانی",className:"پیش-2"},
+    {name:"آیهان محمدی",className:"پیش-2"},
+    {name:"محمدرامان هلالی",className:"پیش-2"},
 
     {name:"مهان احمدی",className:"ششم-1"},
     {name:"پارسا بکایی",className:"ششم-1"},
@@ -57,7 +60,7 @@ const students=[
     {name:"آرتین محمدبیگی",className:"ششم-1"},
     {name:"میثم نگهداری",className:"ششم-1"},
     {name:"مازیار نگهداری",className:"ششم-1"},
-    
+
     {name:"ساتیار امیری",className:"سوم-1"},
     {name:"پارسا تقی زاده",className:"سوم-1"},
     {name:"رایان جمشیدی",className:"سوم-1"},
@@ -82,7 +85,7 @@ const students=[
     {name:"آریا نعمتی",className:"سوم-1"},
     {name:"پرهام دولتخواه",className:"سوم-1"},
     {name:"ابوالفضل یوسفی",className:"سوم-1"},
-    
+
     {name:"مهرسام اسدرخت",className:"سوم-2"},
     {name:"آریا اسماعیلی",className:"سوم-2"},
     {name:"امیرعلی اکبرآبادی",className:"سوم-2"},
@@ -105,7 +108,7 @@ const students=[
     {name:"حسین محمدی مهر",className:"سوم-2"},
     {name:"ویهان منصوری",className:"سوم-2"},
     {name:"میثم نظری",className:"سوم-2"},
-    
+
     {name:"آرسام ابهری",className:"اول-1"},
     {name:"هومان باوی",className:"اول-1"},
     {name:"سامراد دمیرچلی",className:"اول-1"},
@@ -119,7 +122,7 @@ const students=[
     {name:"رایان مقدم",className:"اول-1"},
     {name:"سید صدرا منصورزاده",className:"اول-1"},
     {name:"جاوید نصرالهی",className:"اول-1"},
-    
+
     {name:"محمدطاها احمدی",className:"چهارم-1"},
     {name:"رادمهر بشیری",className:"چهارم-1"},
     {name:"مهراد بیاتی",className:"چهارم-1"},
@@ -138,7 +141,7 @@ const students=[
     {name:"رهام لطفی",className:"چهارم-1"},
     {name:"امیرعلی ناعمی",className:"چهارم-1"},
     {name:"رایان مقدسی",className:"چهارم-1"},
-    
+
     {name:"یونا ایازیان",className:"اول-2"},
     {name:"علی اینانلو گنجی",className:"اول-2"},
     {name:"محمدرضا الماسی",className:"اول-2"},
@@ -152,7 +155,7 @@ const students=[
     {name:"رادمان نادمی",className:"اول-2"},
     {name:"کسری نعمت زاده",className:"اول-2"},
     {name:"نامی هاشمی",className:"اول-2"},
-    
+
     {name:"آراد احمدیان",className:"پنجم-3"},
     {name:"رادین امیری",className:"پنجم-3"},
     {name:"آران جهانبانی",className:"پنجم-3"},
@@ -177,7 +180,6 @@ const students=[
     {name:"هومان نصرتی",className:"پنجم-3"},
     {name:"رادمان نوروزی",className:"پنجم-3"},
     {name:"محمدرضا یارلو",className:"پنجم-3"},
-    
     {name:"آرسام حسینی",className:"چهارم-3"},
     {name:"شاهان ترکاشوند",className:"چهارم-3"},
     {name:"لیام رحمانی",className:"چهارم-3"},
@@ -191,11 +193,10 @@ const students=[
     {name:"نیکان فرجی",className:"چهارم-3"},
     {name:"دانیال کشاورز",className:"چهارم-3"},
     {name:"کارن کوهی",className:"چهارم-3"},
-    
     {name:"رایان منتظری",className:"چهارم-3"},
     {name:"آرین نیک پی",className:"چهارم-3"},
     {name:"ویهان وهابی",className:"چهارم-3"},
-    
+
     {name:"سید محمد اجاقی",className:"چهارم-2"},
     {name:"امیرمحمد امانی",className:"چهارم-2"},
     {name:"کارن امانی",className:"چهارم-2"},
@@ -212,7 +213,7 @@ const students=[
     {name:"سورنا منصوری",className:"چهارم-2"},
     {name:"ارسام مهری نژاد",className:"چهارم-2"},
     {name:"کیان مقدسی",className:"چهارم-2"},
-    
+
     {name:"فرهام احمدی نژاد",className:"سوم-3"},
     {name:"آرشا تابع",className:"سوم-3"},
     {name:"نیکان تورجی",className:"سوم-3"},
@@ -231,9 +232,8 @@ const students=[
     {name:"آریانمهر محمداکبری",className:"سوم-3"},
     {name:"کیاراد مرادی",className:"سوم-3"},
     {name:"بردیا میرشفیعی",className:"سوم-3"},
-    
+
     {name:"مهربد بلند همت",className:"اول-3"},
-    
     {name:"علیسان جهانی",className:"اول-3"},
     {name:"سامیار سلیمی",className:"اول-3"},
     {name:"لیام شریفی",className:"اول-3"},
@@ -245,7 +245,7 @@ const students=[
     {name:"آدرین نجارزاده",className:"اول-3"},
     {name:"کیاراد هوشی",className:"اول-3"},
     {name:"یزدان یوسفی",className:"اول-3"},
-    
+
     {name:"دیان احمدی",className:"دوم-2"},
     {name:"رایبد آتش بهار",className:"دوم-2"},
     {name:"آرمان تقی ماهانی",className:"دوم-2"},
@@ -270,7 +270,7 @@ const students=[
     {name:"رهام منصوری",className:"دوم-2"},
     {name:"محمد پارسا نبوی زاده",className:"دوم-2"},
     {name:"رادین هادیان",className:"دوم-2"},
-    
+
     {name:"رادمان احمدی طباطبایی",className:"دوم-1"},
     {name:"آراد بزرگی",className:"دوم-1"},
     {name:"آراد ثبوتی",className:"دوم-1"},
@@ -292,7 +292,7 @@ const students=[
     {name:"ماهور منصوری",className:"دوم-1"},
     {name:"نیهاد نجاری",className:"دوم-1"},
     {name:"یونا هاتف",className:"دوم-1"},
-    
+
     {name:"فرهاد احمدی نژاد",className:"ششم-2"},
     {name:"روهان حیدری",className:"ششم-2"},
     {name:"دانیال زارع قمشه",className:"ششم-2"},
@@ -315,7 +315,7 @@ const students=[
     {name:"فراز نعمت طلب",className:"ششم-2"},
     {name:"محمدحسین ناصری",className:"ششم-2"},
     {name:"امیرحسین وقار",className:"ششم-2"},
-    
+
     {name:"محمدمهدی ابیض",className:"پنجم-1"},
     {name:"ماهان اجتهادی",className:"پنجم-1"},
     {name:"سامیار اسکندری",className:"پنجم-1"},
@@ -341,7 +341,6 @@ const students=[
     {name:"کارن نعمتی",className:"پنجم-1"},
     {name:"فرهام هاشمی",className:"پنجم-1"},
     {name:"یاسین یوسفی",className:"پنجم-1"},
-    
     {name:"کیان امامقلی",className:"پنجم-2"},
     {name:"مهراد امانی پور",className:"پنجم-2"},
     {name:"هیوا بهرامی",className:"پنجم-2"},
@@ -367,230 +366,399 @@ const students=[
     {name:"یاسین مولایی",className:"پنجم-2"},
     {name:"محمدصدرا میرصادقی",className:"پنجم-2"},
     {name:"رادین یاهو",className:"پنجم-2"}
-    
-    ];
-    const gradeOrder=["پیش","اول","دوم","سوم","چهارم","پنجم","ششم"];
-const container=document.getElementById("classesContainer");
-const searchInput=document.getElementById("searchInput");
-const resetButton=document.getElementById("resetCalls");
+];
+
+
+const gradeOrder=[
+    "پیش",
+    "اول",
+    "دوم",
+    "سوم",
+    "چهارم",
+    "پنجم",
+    "ششم"
+];
+
+const container=
+document.getElementById("classesContainer");
+
+const searchInput=
+document.getElementById("searchInput");
+
+const resetButton=
+document.getElementById("resetCalls");
+
 
 function normalizeText(text){
-return String(text||"").replace(/ي/g,"ی").replace(/ى/g,"ی").replace(/ك/g,"ک").replace(/\u200c/g,"").replace(/\s+/g,"").trim();
+
+    return String(text||"")
+        .replace(/ي/g,"ی")
+        .replace(/ى/g,"ی")
+        .replace(/ك/g,"ک")
+        .replace(/\u200c/g,"")
+        .replace(/\s+/g,"")
+        .trim();
+
 }
+
 
 function classId(name){
-return "class-"+name.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,"");
+
+    return "class-"+
+        name.replace(
+            /[^a-zA-Z0-9\u0600-\u06FF]/g,
+            ""
+        );
+
 }
+
 
 function timeNow(){
-return new Date().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+
+    return new Date().toLocaleTimeString(
+        "fa-IR",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
+        }
+    );
+
 }
+
 
 function todayPersianDate(){
-return new Intl.DateTimeFormat(
-"fa-IR-u-nu-latn",
-{
-year:"numeric",
-month:"2-digit",
-day:"2-digit"
+
+    return new Intl.DateTimeFormat(
+        "fa-IR-u-nu-latn",
+        {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit"
+        }
+    ).format(new Date());
+
 }
-).format(new Date());
-}
+
 
 function todayDatabaseDate(){
+
     const d=new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-    }
+
+    return `${d.getFullYear()}-${
+        String(d.getMonth()+1).padStart(2,"0")
+    }-${
+        String(d.getDate()).padStart(2,"0")
+    }`;
+
+}
+
 
 function showTeacherSendPopup(call){
+
     const sound=
-    document.getElementById("teacherSendSound");
-    
+        document.getElementById(
+            "teacherSendSound"
+        );
+
     if(sound){
-    sound.currentTime=0;
-    sound.play().catch(error=>{
-    console.log("🔇 پخش خودکار صدا انجام نشد:",error);
-    });
+
+        sound.currentTime=0;
+
+        sound.play().catch(error=>{
+
+            console.log(
+                "🔇 پخش خودکار صدا انجام نشد:",
+                error
+            );
+
+        });
+
     }
-const popup=
-document.getElementById("teacherSendPopup");
 
-const text=
-document.getElementById("teacherSendPopupText");
 
-if(!popup||!text){
+    const popup=
+        document.getElementById(
+            "teacherSendPopup"
+        );
 
-console.error(
-"❌ عناصر اعلان ارسال دانش‌آموز پیدا نشدند"
-);
+    const text=
+        document.getElementById(
+            "teacherSendPopupText"
+        );
 
-return;
+
+    if(!popup||!text){
+
+        console.error(
+            "❌ عناصر اعلان ارسال دانش‌آموز پیدا نشدند"
+        );
+
+        return;
+    }
+
+
+    text.innerHTML=
+        `دانش‌آموز <strong>${call.student_name}</strong>
+        از کلاس <strong>${call.class_name}</strong>
+        توسط معلم ارسال شد.`;
+
+
+    popup.classList.add("show");
+
+
+    clearTimeout(
+        window.teacherSendPopupTimer
+    );
+
+
+    window.teacherSendPopupTimer=
+        setTimeout(()=>{
+
+            popup.classList.remove("show");
+
+        },6000);
+
 }
 
-text.innerHTML=
-`دانش‌آموز <strong>${call.student_name}</strong>
-از کلاس <strong>${call.class_name}</strong>
-توسط معلم ارسال شد.`;
-
-popup.classList.add("show");
-
-clearTimeout(window.teacherSendPopupTimer);
-
-window.teacherSendPopupTimer=
-setTimeout(()=>{
-popup.classList.remove("show");
-},6000);
-
-}
 
 const closeTeacherSendPopup=
-document.getElementById("closeTeacherSendPopup");
+    document.getElementById(
+        "closeTeacherSendPopup"
+    );
+
 
 if(closeTeacherSendPopup){
 
-closeTeacherSendPopup.onclick=()=>{
+    closeTeacherSendPopup.onclick=()=>{
 
-const popup=
-document.getElementById("teacherSendPopup");
+        const popup=
+            document.getElementById(
+                "teacherSendPopup"
+            );
 
-if(popup){
-popup.classList.remove("show");
-}
+        if(popup){
 
-};
+            popup.classList.remove(
+                "show"
+            );
+
+        }
+
+    };
 
 }
 
 
 function createClasses(){
 
-const groups={};
+    const groups={};
 
-students.forEach(s=>{
-if(!groups[s.className])
-groups[s.className]=[];
 
-groups[s.className].push(s);
-});
+    students.forEach(s=>{
 
-gradeOrder.forEach(grade=>{
+        if(!groups[s.className])
+            groups[s.className]=[];
 
-const classes=
-Object.keys(groups)
-.filter(c=>c.startsWith(grade+"-"))
-.sort(
-(a,b)=>
-Number(a.split("-")[1])-
-Number(b.split("-")[1])
-);
+        groups[s.className].push(s);
 
-if(!classes.length)return;
+    });
 
-const section=
-document.createElement("section");
 
-section.className="grade-section";
+    gradeOrder.forEach(grade=>{
 
-section.innerHTML=
-`<div class="grade-header">
-<span>📚 پایه ${grade}</span>
-<span class="grade-arrow">▼</span>
-</div>
-<div class="grade-content"></div>`;
+        const classes=
+            Object.keys(groups)
+            .filter(
+                c=>c.startsWith(
+                    grade+"-"
+                )
+            )
+            .sort(
+                (a,b)=>
+                    Number(a.split("-")[1])-
+                    Number(b.split("-")[1])
+            );
 
-const content=
-section.querySelector(".grade-content");
 
-section.querySelector(".grade-header").onclick=
-()=>section.classList.toggle("closed");
+        if(!classes.length)
+            return;
 
-classes.forEach(className=>{
 
-groups[className].sort(
-(a,b)=>a.name.localeCompare(b.name,"fa")
-);
+        const section=
+            document.createElement(
+                "section"
+            );
 
-const box=
-document.createElement("div");
 
-box.className="class-box";
+        section.className=
+            "grade-section";
 
-box.id=classId(className);
 
-box.innerHTML=
-`<div class="class-header">
-<span class="called-total" id="called-${className}">0</span>
-<span class="class-title">${className}</span>
-<span class="student-total">${groups[className].length}</span>
-</div>
-<div class="students-list"></div>`;
+        section.innerHTML=
+            `<div class="grade-header">
+                <span>📚 پایه ${grade}</span>
+                <span class="grade-arrow">▼</span>
+            </div>
+            <div class="grade-content"></div>`;
 
-const list=
-box.querySelector(".students-list");
 
-groups[className].forEach(student=>{
+        const content=
+            section.querySelector(
+                ".grade-content"
+            );
 
-const button=
-document.createElement("button");
 
-button.className=
-"student-button pending";
+        section.querySelector(
+            ".grade-header"
+        ).onclick=
+            ()=>section.classList.toggle(
+                "closed"
+            );
 
-button.dataset.name=
-student.name;
 
-button.dataset.class=
-student.className;
+        classes.forEach(className=>{
 
-button.innerHTML=
-`<span class="student-name">${student.name}</span>
-<span class="student-status"></span>
-<span class="status-time"></span>`;
+            groups[className].sort(
+                (a,b)=>
+                    a.name.localeCompare(
+                        b.name,
+                        "fa"
+                    )
+            );
 
-button.onclick=
-()=>callStudent(student,button);
 
-list.appendChild(button);
+            const box=
+                document.createElement(
+                    "div"
+                );
 
-});
 
-content.appendChild(box);
+            box.className=
+                "class-box";
 
-});
 
-container.appendChild(section);
+            box.id=
+                classId(className);
 
-});
+
+            box.innerHTML=
+                `<div class="class-header">
+                    <span class="called-total" id="called-${className}">0</span>
+                    <span class="class-title">${className}</span>
+                    <span class="student-total">${groups[className].length}</span>
+                </div>
+                <div class="students-list"></div>`;
+
+
+            const list=
+                box.querySelector(
+                    ".students-list"
+                );
+
+
+            groups[className].forEach(student=>{
+
+                const button=
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className=
+                    "student-button pending";
+
+
+                button.dataset.name=
+                    student.name;
+
+
+                button.dataset.class=
+                    student.className;
+
+
+                button.innerHTML=
+                    `<span class="student-name">${student.name}</span>
+                    <span class="student-status"></span>
+                    <span class="status-time"></span>`;
+
+
+                button.onclick=
+                    ()=>callStudent(
+                        student,
+                        button
+                    );
+
+
+                list.appendChild(
+                    button
+                );
+
+            });
+
+
+            content.appendChild(
+                box
+            );
+
+        });
+
+
+        container.appendChild(
+            section
+        );
+
+    });
 
 }
 
 
-async function callStudent(student,button){
+async function callStudent(
+    student,
+    button
+){
 
-    // اگر غایب یا توسط معلم ارسال شده، کاری نکن
     if(
-        button.classList.contains("absent") ||
-        button.classList.contains("sent")
+        button.classList.contains(
+            "absent"
+        ) ||
+        button.classList.contains(
+            "sent"
+        )
     ){
+
         return;
+
     }
 
 
-    // =========================================
-    // اگر قبلاً فراخوان شده، کلیک دوم = لغو فراخوان
-    // =========================================
+    if(
+        button.classList.contains(
+            "called"
+        )
+    ){
 
-    if(button.classList.contains("called")){
-
-        const {data,error} =
-        await supabaseClient
-        .from("calls")
-        .delete()
-        .eq("student_name",student.name)
-        .eq("class_name",student.className)
-        .eq("called_date",todayPersianDate())
-        .eq("status","فراخوان شد")
-        .select();
+        const {data,error}=
+            await supabaseClient
+            .from("calls")
+            .delete()
+            .eq(
+                "student_name",
+                student.name
+            )
+            .eq(
+                "class_name",
+                student.className
+            )
+            .eq(
+                "called_date",
+                todayPersianDate()
+            )
+            .eq(
+                "status",
+                "فراخوان شد"
+            )
+            .select();
 
 
         if(error){
@@ -608,7 +776,6 @@ async function callStudent(student,button){
         }
 
 
-        // اگر رکورد با موفقیت حذف شد
         if(data && data.length){
 
             button.classList.remove(
@@ -624,24 +791,29 @@ async function callStudent(student,button){
             button.disabled=false;
 
 
-            const statusElement =
-            button.querySelector(
-                ".student-status"
-            );
+            const statusElement=
+                button.querySelector(
+                    ".student-status"
+                );
 
-            const timeElement =
-            button.querySelector(
-                ".status-time"
-            );
+
+            const timeElement=
+                button.querySelector(
+                    ".status-time"
+                );
 
 
             if(statusElement){
+
                 statusElement.textContent="";
+
             }
 
 
             if(timeElement){
+
                 timeElement.textContent="";
+
             }
 
 
@@ -661,18 +833,26 @@ async function callStudent(student,button){
     }
 
 
-    // =========================================
-    // فراخوان معمولی دانش‌آموز
-    // =========================================
-
-    const {data,error} =
-    await supabaseClient
-    .from("calls")
-    .select("*")
-    .eq("student_name",student.name)
-    .eq("class_name",student.className)
-    .eq("called_date",todayPersianDate())
-    .neq("status","ارسال شد");
+    const {data,error}=
+        await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq(
+            "student_name",
+            student.name
+        )
+        .eq(
+            "class_name",
+            student.className
+        )
+        .eq(
+            "called_date",
+            todayPersianDate()
+        )
+        .neq(
+            "status",
+            "ارسال شد"
+        );
 
 
     if(error){
@@ -702,26 +882,27 @@ async function callStudent(student,button){
 
 
     const time=timeNow();
+
     const date=todayPersianDate();
 
 
     const {
         data:inserted,
         error:insertError
-    } =
-    await supabaseClient
-    .from("calls")
-    .insert([
-        {
-            student_name:student.name,
-            class_name:student.className,
-            status:"فراخوان شد",
-            called_date:date,
-            called_time:time
-        }
-    ])
-    .select()
-    .single();
+    }=
+        await supabaseClient
+        .from("calls")
+        .insert([
+            {
+                student_name:student.name,
+                class_name:student.className,
+                status:"فراخوان شد",
+                called_date:date,
+                called_time:time
+            }
+        ])
+        .select()
+        .single();
 
 
     if(insertError){
@@ -740,126 +921,157 @@ async function callStudent(student,button){
         inserted
     );
 
+
     updateCount(
         student.className
     );
 
 }
-
-
-function updateButton(button,call,force=false){
-
-if(!button||!call)return;
-
-if(
-!force&&
-hasAbsentAttendance(
-button.dataset.name,
-button.dataset.class
-)
+function updateButton(
+    button,
+    call,
+    force=false
 ){
 
-button.classList.remove(
-"pending",
-"called",
-"sent"
-);
+    if(!button||!call)
+        return;
 
-button.classList.add("absent");
 
-button.disabled=true;
+    if(
+        !force &&
+        hasAbsentAttendance(
+            button.dataset.name,
+            button.dataset.class
+        )
+    ){
 
-button.querySelector(
-".student-status"
-).textContent="(غایب)";
+        button.classList.remove(
+            "pending",
+            "called",
+            "sent"
+        );
 
-button.querySelector(
-".status-time"
-).textContent="";
+        button.classList.add(
+            "absent"
+        );
 
-return;
+        button.disabled=true;
 
-}
 
-button.classList.remove(
-"pending",
-"called",
-"sent",
-"absent"
-);
+        button.querySelector(
+            ".student-status"
+        ).textContent="(غایب)";
 
-if(call.status==="ارسال شد")
-button.classList.add("sent");
-else
-button.classList.add("called");
 
-button.disabled=false;
+        button.querySelector(
+            ".status-time"
+        ).textContent="";
 
-button.querySelector(
-".student-status"
-).textContent=
-`(${call.status})`;
 
-button.querySelector(
-".status-time"
-).textContent=
-call.called_time||"";
+        return;
+
+    }
+
+
+    button.classList.remove(
+        "pending",
+        "called",
+        "sent",
+        "absent"
+    );
+
+
+    if(call.status==="ارسال شد")
+        button.classList.add("sent");
+    else
+        button.classList.add("called");
+
+
+    button.disabled=false;
+
+
+    button.querySelector(
+        ".student-status"
+    ).textContent=
+        `(${call.status})`;
+
+
+    button.querySelector(
+        ".status-time"
+    ).textContent=
+        call.called_time||"";
 
 }
 
 
 function updateCount(className){
 
-const box=
-document.getElementById(
-classId(className)
-);
+    const box=
+        document.getElementById(
+            classId(className)
+        );
 
-if(!box)return;
 
-const count=
-box.querySelectorAll(
-".student-button.called,.student-button.sent"
-).length;
+    if(!box)
+        return;
 
-const counter=
-document.getElementById(
-"called-"+className
-);
 
-if(counter)
-counter.textContent=count;
+    const count=
+        box.querySelectorAll(
+            ".student-button.called,.student-button.sent"
+        ).length;
+
+
+    const counter=
+        document.getElementById(
+            "called-"+className
+        );
+
+
+    if(counter)
+        counter.textContent=count;
 
 }
 
-function findButton(name,className){
 
-    const wantedName =
+function findButton(
+    name,
+    className
+){
+
+    const wantedName=
         normalizeText(name);
 
-    const wantedClass =
+
+    const wantedClass=
         normalizeText(className);
 
-    const buttons =
+
+    const buttons=
         document.querySelectorAll(
             ".student-button"
         );
 
-    for(const button of buttons){
 
-        const buttonName =
+    for(
+        const button of buttons
+    ){
+
+        const buttonName=
             normalizeText(
-                button.dataset.name || ""
+                button.dataset.name||""
             );
 
-        const buttonClass =
+
+        const buttonClass=
             normalizeText(
-                button.dataset.class || ""
+                button.dataset.class||""
             );
+
 
         if(
-            buttonName === wantedName &&
-            buttonClass === wantedClass
+            buttonName===wantedName &&
+            buttonClass===wantedClass
         ){
 
             return button;
@@ -868,82 +1080,99 @@ function findButton(name,className){
 
     }
 
+
     console.warn(
         "❌ دکمه پیدا نشد:",
         name,
         className
     );
 
+
     return null;
+
 }
 
 
 async function loadCalls(){
 
-const today=
-todayPersianDate();
+    const today=
+        todayPersianDate();
 
-console.log(
-"📅 بارگذاری فراخوان‌های امروز:",
-today
-);
 
-const {data,error}=
-await supabaseClient
-.from("calls")
-.select("*")
-.eq("called_date",today)
-.order("id",{ascending:true});
+    console.log(
+        "📅 بارگذاری فراخوان‌های امروز:",
+        today
+    );
 
-if(error){
 
-console.error(
-"❌ خطا در دریافت فراخوان‌های امروز:",
-error
-);
+    const {data,error}=
+        await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq(
+            "called_date",
+            today
+        )
+        .order(
+            "id",
+            {
+                ascending:true
+            }
+        );
 
-return;
+
+    if(error){
+
+        console.error(
+            "❌ خطا در دریافت فراخوان‌های امروز:",
+            error
+        );
+
+        return;
+    }
+
+
+    (data||[]).forEach(call=>{
+
+        const button=
+            findButton(
+                call.student_name,
+                call.class_name
+            );
+
+
+        if(!button){
+
+            console.warn(
+                "⚠️ دکمه دانش‌آموز پیدا نشد:",
+                call.student_name,
+                call.class_name
+            );
+
+            return;
+        }
+
+
+        updateButton(
+            button,
+            call
+        );
+
+
+        updateCount(
+            call.class_name
+        );
+
+    });
+
 }
-
-(data||[]).forEach(call=>{
-
-const button=
-findButton(
-call.student_name,
-call.class_name
-);
-
-if(!button){
-
-console.warn(
-"⚠️ دکمه دانش‌آموز پیدا نشد:",
-call.student_name,
-call.class_name
-);
-
-return;
-}
-
-updateButton(
-button,
-call
-);
-
-updateCount(
-call.class_name
-);
-
-});
-
-}
-
-
 
 
 async function loadTodayAttendance(){
 
-    const today =
-    todayDatabaseDate();
+    const today=
+        todayDatabaseDate();
+
 
     console.log(
         "📅 دریافت حضور و غیاب امروز:",
@@ -951,7 +1180,7 @@ async function loadTodayAttendance(){
     );
 
 
-    const {data,error} =
+    const {data,error}=
         await supabaseClient
         .from("attendance")
         .select("*")
@@ -987,755 +1216,1172 @@ async function loadTodayAttendance(){
             ),
             record.status
         );
-    
-        applyAttendanceToNazem(record);
-    
+
+
+        applyAttendanceToNazem(
+            record
+        );
+
     });
 
 }
 
 
-
-
-
-
-    
-    
-    const attendanceState=
+const attendanceState=
     new Map();
-    
-    
-    function attendanceKey(
+
+
+function attendanceKey(
     studentName,
     className
-    ){
-    
-    return normalizeText(studentName)+
+){
+
+    return normalizeText(
+        studentName
+    )+
     "|" +
-    normalizeText(className);
-    
-    }
-    
-    
-    function hasAbsentAttendance(
+    normalizeText(
+        className
+    );
+
+}
+
+
+function hasAbsentAttendance(
     studentName,
     className
-    ){
-    
+){
+
     return attendanceState.get(
-    attendanceKey(
-    studentName,
-    className
-    )
+        attendanceKey(
+            studentName,
+            className
+        )
     )==="غایب";
-    
+
+}
+
+
+function applyAttendanceToNazem(
+    record
+){
+
+    if(!record)
+        return;
+
+
+    console.log(
+        "👤 اعمال حضور و غیاب:",
+        record.student_name,
+        record.class_name,
+        record.status
+    );
+
+
+    const button=
+        findButton(
+            record.student_name,
+            record.class_name
+        );
+
+
+    if(!button){
+
+        console.warn(
+            "❌ دکمه دانش‌آموز پیدا نشد:",
+            record.student_name,
+            record.class_name
+        );
+
+        return;
     }
-    
- 
-    
 
-    function applyAttendanceToNazem(record){
 
-        if(!record){
-            return;
+    if(record.status==="غایب"){
+
+        button.classList.remove(
+            "pending",
+            "called",
+            "sent"
+        );
+
+
+        button.classList.add(
+            "absent"
+        );
+
+
+        button.disabled=true;
+
+
+        const statusElement=
+            button.querySelector(
+                ".student-status"
+            );
+
+
+        if(statusElement){
+
+            statusElement.textContent=
+                "غایب";
+
         }
-    
+
+
         console.log(
-            "👤 اعمال حضور و غیاب:",
+            "🔴 غایب شد:",
+            record.student_name
+        );
+
+
+        return;
+
+    }
+
+
+    if(record.status==="حاضر"){
+
+        button.classList.remove(
+            "absent"
+        );
+
+
+        button.disabled=false;
+
+
+        const statusElement=
+            button.querySelector(
+                ".student-status"
+            );
+
+
+        if(statusElement){
+
+            statusElement.textContent="";
+
+        }
+
+
+        restoreCallState(
             record.student_name,
             record.class_name,
-            record.status
+            button
         );
-    
-    
-        const button =
-            findButton(
-                record.student_name,
-                record.class_name
-            );
-    
-    
-        if(!button){
-    
-            console.warn(
-                "❌ دکمه دانش‌آموز پیدا نشد:",
-                record.student_name,
-                record.class_name
-            );
-    
-            return;
-        }
-    
-    
-        /*
-        ==========================
-        دانش‌آموز غایب شده
-        ==========================
-        */
-    
-        if(record.status === "غایب"){
-    
-            button.classList.remove(
-                "pending",
-                "called",
-                "sent"
-            );
-    
-            button.classList.add(
-                "absent"
-            );
-    
-            button.disabled = true;
-    
-    
-            const statusElement =
-                button.querySelector(
-                    ".student-status"
-                );
-    
-            if(statusElement){
-    
-                statusElement.textContent =
-                    "غایب";
-    
-            }
-    
-    
-            console.log(
-                "🔴 غایب شد:",
-                record.student_name
-            );
-    
-            return;
-        }
-    
-    
-        /*
-        ==========================
-        دانش‌آموز حاضر شده
-        ==========================
-        */
-    
-        if(record.status === "حاضر"){
-    
-            button.classList.remove(
-                "absent"
-            );
-    
-            button.disabled = false;
-    
-    
-            const statusElement =
-                button.querySelector(
-                    ".student-status"
-                );
-    
-            if(statusElement){
-    
-                statusElement.textContent = "";
-    
-            }
-    
-    
-            restoreCallState(
-                record.student_name,
-                record.class_name,
-                button
-            );
-    
-    
-            console.log(
-                "🟢 حاضر شد:",
-                record.student_name
-            );
-    
-        }
-    
+
+
+        console.log(
+            "🟢 حاضر شد:",
+            record.student_name
+        );
+
     }
 
+}
 
 
-
-
-
-
-    
-    async function restoreCallState(
+async function restoreCallState(
     studentName,
     className,
     button
-    ){
-    
+){
+
     if(
-    hasAbsentAttendance(
-    studentName,
-    className
+        hasAbsentAttendance(
+            studentName,
+            className
+        )
     )
-    )return;
-    
-    
+        return;
+
+
     const {data,error}=
-    await supabaseClient
-    .from("calls")
-    .select("*")
-    .eq("student_name",studentName)
-    .eq("class_name",className)
-    .eq("called_date",todayPersianDate())
-    .neq("status","ارسال شد")
-    .order("id",{ascending:false})
-    .limit(1);
-    
-    
+        await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq(
+            "student_name",
+            studentName
+        )
+        .eq(
+            "class_name",
+            className
+        )
+        .eq(
+            "called_date",
+            todayPersianDate()
+        )
+        .neq(
+            "status",
+            "ارسال شد"
+        )
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        )
+        .limit(1);
+
+
     if(error){
-    
-    console.error(
-    "❌ خطا در بازیابی وضعیت فراخوان:",
-    error
-    );
-    
-    return;
-    
+
+        console.error(
+            "❌ خطا در بازیابی وضعیت فراخوان:",
+            error
+        );
+
+        return;
     }
-    
-    
+
+
     if(
-    hasAbsentAttendance(
-    studentName,
-    className
+        hasAbsentAttendance(
+            studentName,
+            className
+        )
     )
-    )return;
-    
-    
+        return;
+
+
     if(data&&data.length){
-    
-    updateButton(
-    button,
-    data[0],
-    true
-    );
-    
-    updateCount(
-    className
-    );
-    
-    return;
-    
+
+        updateButton(
+            button,
+            data[0],
+            true
+        );
+
+
+        updateCount(
+            className
+        );
+
+
+        return;
+
     }
-    
-    
+
+
     button.classList.remove(
-    "called",
-    "sent",
-    "absent"
+        "called",
+        "sent",
+        "absent"
     );
-    
+
+
     button.classList.add(
-    "pending"
+        "pending"
     );
-    
+
+
     button.disabled=false;
-    
+
+
     button.querySelector(
-    ".student-status"
+        ".student-status"
     ).textContent="";
-    
+
+
     button.querySelector(
-    ".status-time"
+        ".status-time"
     ).textContent="";
-    
+
+
     updateCount(
-    className
+        className
     );
-    
-    }
-    
-    
-    searchInput.addEventListener(
+
+}
+
+
+searchInput.addEventListener(
     "input",
     ()=>{
-    
-    const value=
-    normalizeText(
-    searchInput.value
-    );
-    
-    document
-    .querySelectorAll(
-    ".student-button"
-    )
-    .forEach(button=>{
-    
-    const name=
-    normalizeText(
-    button.dataset.name
-    );
-    
-    button.classList.toggle(
-    "search-hidden",
-    value&&!name.includes(value)
-    );
-    
-    });
-    
-    
-    document
-    .querySelectorAll(
-    ".class-box"
-    )
-    .forEach(box=>{
-    
-    const visible=
-    box.querySelectorAll(
-    ".student-button:not(.search-hidden)"
-    ).length;
-    
-    box.style.display=
-    visible?"":"none";
-    
-    });
-    
-    });
-    
-    
-    resetButton.addEventListener(
+
+        const value=
+            normalizeText(
+                searchInput.value
+            );
+
+
+        document
+        .querySelectorAll(
+            ".student-button"
+        )
+        .forEach(button=>{
+
+            const name=
+                normalizeText(
+                    button.dataset.name
+                );
+
+
+            button.classList.toggle(
+                "search-hidden",
+                value &&
+                !name.includes(value)
+            );
+
+        });
+
+
+        document
+        .querySelectorAll(
+            ".class-box"
+        )
+        .forEach(box=>{
+
+            const visible=
+                box.querySelectorAll(
+                    ".student-button:not(.search-hidden)"
+                ).length;
+
+
+            box.style.display=
+                visible?"":"none";
+
+        });
+
+    }
+);
+
+
+resetButton.addEventListener(
     "click",
     async()=>{
-    
-    if(
-    !confirm(
-    "آیا تمام فراخوان‌ها حذف شوند؟"
-    )
-    )return;
-    
-    
-    const {error}=
-    await supabaseClient
-    .from("calls")
-    .delete()
-    .gte("id",0);
-    
-    
-    if(error){
-    
-    console.error(error);
-    
-    alert(
-    "خطا در حذف فراخوان‌ها"
-    );
-    
-    return;
-    
-    }
-    
-    
-    document
-    .querySelectorAll(
-    ".student-button"
-    )
-    .forEach(button=>{
-    
-    /*
-    غایبین نباید با حذف فراخوان‌ها تغییر کنند
-    */
-    
-    if(
-    button.classList.contains(
-    "absent"
-    )
-    )return;
-    
-    
-    button.classList.remove(
-    "called",
-    "sent"
-    );
-    
-    button.classList.add(
-    "pending"
-    );
-    
-    button.querySelector(
-    ".student-status"
-    ).textContent="";
-    
-    button.querySelector(
-    ".status-time"
-    ).textContent="";
-    
-    });
-    
-    
-    document
-    .querySelectorAll(
-    ".called-total"
-    )
-    .forEach(counter=>{
-    
-    counter.textContent="0";
-    
-    });
-    
-    
-    console.log(
-    "✅ تمام فراخوان‌ها در ناظم ریست شدند؛ غایبین دست‌نخورده ماندند"
-    );
-    
-    });
-    
-    
-    function handleCallRealtime(payload){
 
-        console.log("🚨🚨🚨 CALL REALTIME:",payload);
-    
-        const call=payload.new||payload.old;
-    
-        if(!call){
-            console.log("⛔ اطلاعات فراخوان وجود ندارد");
+        if(
+            !confirm(
+                "آیا تمام فراخوان‌ها حذف شوند؟"
+            )
+        )
             return;
+
+
+        const {error}=
+            await supabaseClient
+            .from("calls")
+            .delete()
+            .gte("id",0);
+
+
+        if(error){
+
+            console.error(error);
+
+
+            alert(
+                "خطا در حذف فراخوان‌ها"
+            );
+
+
+            return;
+
         }
-    
-        console.log("📌 فراخوان دریافتی:",{
+
+
+        document
+        .querySelectorAll(
+            ".student-button"
+        )
+        .forEach(button=>{
+
+            if(
+                button.classList.contains(
+                    "absent"
+                )
+            )
+                return;
+
+
+            button.classList.remove(
+                "called",
+                "sent"
+            );
+
+
+            button.classList.add(
+                "pending"
+            );
+
+
+            button.querySelector(
+                ".student-status"
+            ).textContent="";
+
+
+            button.querySelector(
+                ".status-time"
+            ).textContent="";
+
+        });
+
+
+        document
+        .querySelectorAll(
+            ".called-total"
+        )
+        .forEach(counter=>{
+
+            counter.textContent="0";
+
+        });
+
+
+        console.log(
+            "✅ تمام فراخوان‌ها در ناظم ریست شدند؛ غایبین دست‌نخورده ماندند"
+        );
+
+    }
+);
+function handleCallRealtime(payload){
+
+    console.log(
+        "🚨🚨🚨 CALL REALTIME:",
+        payload
+    );
+
+
+    const call=
+        payload.new||
+        payload.old;
+
+
+    if(!call){
+
+        console.log(
+            "⛔ اطلاعات فراخوان وجود ندارد"
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "📌 فراخوان دریافتی:",
+        {
             event:payload.eventType,
             id:call.id,
             student_name:call.student_name,
             class_name:call.class_name,
             status:call.status,
             called_date:call.called_date
-        });
-    
-        const today=todayPersianDate();
-    
-        if(
-            call.called_date &&
-            call.called_date!==today
-        ){
-            console.log(
-                "⏭️ فراخوان مربوط به تاریخ دیگری است:",
-                call.called_date,
-                "امروز:",
-                today
-            );
-            return;
         }
-    
-        const button=findButton(
+    );
+
+
+    const today=
+        todayPersianDate();
+
+
+    if(
+        call.called_date &&
+        call.called_date!==today
+    ){
+
+        console.log(
+            "⏭️ فراخوان مربوط به تاریخ دیگری است:",
+            call.called_date,
+            "امروز:",
+            today
+        );
+
+        return;
+    }
+
+
+    const button=
+        findButton(
             call.student_name,
             call.class_name
         );
-    
-        if(!button){
-            console.log(
-                "❌ دکمه دانش‌آموز در ناظم پیدا نشد:",
-                call.student_name,
-                call.class_name
-            );
-            return;
-        }
-    
-        if(
-            hasAbsentAttendance(
-                call.student_name,
-                call.class_name
-            )
-        ){
-            console.log(
-                "⛔ دانش‌آموز غایب است:",
-                call.student_name
-            );
-            return;
-        }
-    
-        if(payload.eventType==="DELETE"){
-    
-            button.classList.remove(
-                "called",
-                "sent"
-            );
-    
-            button.classList.add("pending");
-    
-            const status=button.querySelector(".student-status");
-            const time=button.querySelector(".student-time");
-    
-            if(status)status.innerText="";
-            if(time)time.innerText="";
-    
-            updateCount(call.class_name);
-    
-            console.log(
-                "🗑️ فراخوان در ناظم حذف شد:",
-                call.student_name
-            );
-    
-            return;
-        }
-    
-        if(
-            call.status==="ارسال شد"
-        ){
-            showTeacherSendPopup(call);
-        }
-    
-        updateButton(
-            button,
-            call,
-            false
+
+
+    if(!button){
+
+        console.log(
+            "❌ دکمه دانش‌آموز در ناظم پیدا نشد:",
+            call.student_name,
+            call.class_name
         );
-    
+
+        return;
+    }
+
+
+    if(
+        hasAbsentAttendance(
+            call.student_name,
+            call.class_name
+        )
+    ){
+
+        console.log(
+            "⛔ دانش‌آموز غایب است:",
+            call.student_name
+        );
+
+        return;
+    }
+
+
+    if(
+        payload.eventType==="DELETE"
+    ){
+
+        button.classList.remove(
+            "called",
+            "sent"
+        );
+
+
+        button.classList.add(
+            "pending"
+        );
+
+
+        const status=
+            button.querySelector(
+                ".student-status"
+            );
+
+
+        const time=
+            button.querySelector(
+                ".status-time"
+            );
+
+
+        if(status)
+            status.innerText="";
+
+
+        if(time)
+            time.innerText="";
+
+
         updateCount(
             call.class_name
         );
-    
+
+
         console.log(
-            "✅ فراخوان در ناظم نمایش داده شد:",
-            call.student_name,
-            call.class_name,
-            call.status
+            "🗑️ فراخوان در ناظم حذف شد:",
+            call.student_name
         );
+
+
+        return;
     }
-    
-    
-    function handleAttendanceRealtime(
-    payload
+
+
+    if(
+        call.status==="ارسال شد"
     ){
-    
-    const record=
-    payload.new||
-    payload.old;
-    
-    if(!record)return;
-    
-    console.log(
-    "🔥 حضور و غیاب Realtime دریافت شد:",
-    payload
+
+        showTeacherSendPopup(
+            call
+        );
+
+    }
+
+
+    updateButton(
+        button,
+        call,
+        false
     );
-    
-    
+
+
+    updateCount(
+        call.class_name
+    );
+
+
+    console.log(
+        "✅ فراخوان در ناظم نمایش داده شد:",
+        call.student_name,
+        call.class_name,
+        call.status
+    );
+
+}
+
+
+function handleAttendanceRealtime(
+    payload
+){
+
+    const record=
+        payload.new||
+        payload.old;
+
+
+    if(!record)
+        return;
+
+
+    console.log(
+        "🔥 حضور و غیاب Realtime دریافت شد:",
+        payload
+    );
+
+
     if(
         record.attendance_date!==
         todayDatabaseDate()
-        )return;
-    
-    
-    const key=
-    attendanceKey(
-    record.student_name,
-    record.class_name
-    );
-    
-    
-    /*
-    حذف رکورد حضور و غیاب
-    */
-    
-    if(
-    payload.eventType==="DELETE"
-    ){
-    
-    attendanceState.delete(
-    key
-    );
-    
-    const button=
-    findButton(
-    record.student_name,
-    record.class_name
-    );
-    
-    if(button){
-    
-    button.classList.remove(
-    "absent"
-    );
-    
-    button.disabled=false;
-    
-    restoreCallState(
-    record.student_name,
-    record.class_name,
-    button
-    );
-    
-    }
-    
-    return;
-    
-    }
-    
-    
-    /*
-    INSERT / UPDATE حضور و غیاب
-    */
-    
-    attendanceState.set(
-    key,
-    record.status
-    );
-    
-    applyAttendanceToNazem(record);
-    
-    }
-    
-    function subscribeNazemRealtime(){
+    )
+        return;
 
-        const callsChannel =
-            supabaseClient
-            .channel("nazem-calls-realtime")
-    
-            .on(
-                "postgres_changes",
-                {
-                    event:"*",
-                    schema:"public",
-                    table:"calls"
-                },
-                payload=>{
-    
-                    console.log(
-                        "🚨🚨🚨 REALTIME CALL ناظم:",
-                        payload
-                    );
-    
-                    handleCallRealtime(payload);
-                }
-            )
-    
-            .subscribe(status=>{
-    
+
+    const key=
+        attendanceKey(
+            record.student_name,
+            record.class_name
+        );
+
+
+    if(
+        payload.eventType==="DELETE"
+    ){
+
+        attendanceState.delete(
+            key
+        );
+
+
+        const button=
+            findButton(
+                record.student_name,
+                record.class_name
+            );
+
+
+        if(button){
+
+            button.classList.remove(
+                "absent"
+            );
+
+
+            button.disabled=false;
+
+
+            restoreCallState(
+                record.student_name,
+                record.class_name,
+                button
+            );
+
+        }
+
+
+        return;
+    }
+
+
+    attendanceState.set(
+        key,
+        record.status
+    );
+
+
+    applyAttendanceToNazem(
+        record
+    );
+
+}
+
+
+function subscribeNazemRealtime(){
+
+    if(realtimeConnecting){
+
+        console.log(
+            "⏳ اتصال Realtime در حال انجام است..."
+        );
+
+        return;
+    }
+
+
+    realtimeConnecting=true;
+
+
+    console.log(
+        "🔌 اتصال Realtime ناظم..."
+    );
+
+
+    if(nazemCallsChannel){
+
+        try{
+
+            supabaseClient.removeChannel(
+                nazemCallsChannel
+            );
+
+        }catch(error){
+
+            console.log(
+                "⚠️ خطا در حذف کانال calls:",
+                error
+            );
+
+        }
+
+
+        nazemCallsChannel=null;
+
+    }
+
+
+    if(nazemAttendanceChannel){
+
+        try{
+
+            supabaseClient.removeChannel(
+                nazemAttendanceChannel
+            );
+
+        }catch(error){
+
+            console.log(
+                "⚠️ خطا در حذف کانال attendance:",
+                error
+            );
+
+        }
+
+
+        nazemAttendanceChannel=null;
+
+    }
+
+
+    nazemCallsChannel=
+        supabaseClient
+        .channel(
+            "nazem-calls-realtime"
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"calls"
+            },
+            payload=>{
+
+                console.log(
+                    "🚨🚨🚨 REALTIME CALL ناظم:",
+                    payload
+                );
+
+
+                handleCallRealtime(
+                    payload
+                );
+
+            }
+        )
+        .subscribe(
+            status=>{
+
                 console.log(
                     "📡 وضعیت Realtime فراخوان ناظم:",
                     status
                 );
-    
-                if(status==="SUBSCRIBED"){
-    
+
+
+                if(
+                    status==="SUBSCRIBED"
+                ){
+
                     console.log(
                         "✅ ناظم به Realtime جدول calls متصل شد"
                     );
-    
-                }else{
-    
+
+
+                    realtimeConnecting=false;
+
+                }
+
+
+                if(
+                    status==="CHANNEL_ERROR" ||
+                    status==="TIMED_OUT" ||
+                    status==="CLOSED"
+                ){
+
                     console.log(
-                        "❌ اتصال Realtime calls ناظم:",
+                        "❌ اتصال Realtime calls قطع شد:",
                         status
                     );
-    
+
+
+                    realtimeConnecting=false;
+
+
+                    scheduleRealtimeReconnect();
+
                 }
-    
-            });
-    
-    
-        const attendanceChannel =
-            supabaseClient
-            .channel("nazem-attendance-realtime")
-    
-            .on(
-                "postgres_changes",
-                {
-                    event:"*",
-                    schema:"public",
-                    table:"attendance"
-                },
-                payload=>{
-    
-                    console.log(
-                        "📡 تغییر Realtime حضور و غیاب:",
-                        payload
-                    );
-    
-                    const record =
-                        payload.new ||
-                        payload.old;
-    
-                    if(!record){
-    
-                        console.log(
-                            "⛔ اطلاعات حضور و غیاب وجود ندارد"
-                        );
-    
-                        return;
-                    }
-    
-                    console.log(
-                        "🧪 اطلاعات حضور و غیاب:",
-                        record.student_name,
-                        record.class_name,
-                        record.status
-                    );
-    
-                    handleAttendanceRealtime(payload);
-    
-                }
-            )
-    
-            .subscribe(status=>{
-    
+
+            }
+        );
+
+
+    nazemAttendanceChannel=
+        supabaseClient
+        .channel(
+            "nazem-attendance-realtime"
+        )
+        .on(
+            "postgres_changes",
+            {
+                event:"*",
+                schema:"public",
+                table:"attendance"
+            },
+            payload=>{
+
+                console.log(
+                    "📡 تغییر Realtime حضور و غیاب:",
+                    payload
+                );
+
+
+                handleAttendanceRealtime(
+                    payload
+                );
+
+            }
+        )
+        .subscribe(
+            status=>{
+
                 console.log(
                     "📡 وضعیت Realtime حضور و غیاب ناظم:",
                     status
                 );
-    
-                if(status==="SUBSCRIBED"){
-    
+
+
+                if(
+                    status==="SUBSCRIBED"
+                ){
+
                     console.log(
                         "✅ ناظم به Realtime جدول attendance متصل شد"
                     );
-    
-                }else{
-    
+
+                }
+
+
+                if(
+                    status==="CHANNEL_ERROR" ||
+                    status==="TIMED_OUT" ||
+                    status==="CLOSED"
+                ){
+
                     console.log(
-                        "❌ اتصال Realtime attendance ناظم:",
+                        "❌ اتصال Realtime attendance قطع شد:",
                         status
                     );
-    
+
+
+                    scheduleRealtimeReconnect();
+
                 }
-    
-            });
-    
-    
-        return {
-            callsChannel,
-            attendanceChannel
-        };
-    }
-    
-        async function initializeNazem(){
 
-            console.log("✅ پنل ناظم مستقیماً اجرا شد");
-        
-            createClasses();
-        
-            subscribeNazemRealtime();
-        
-            await loadCalls();
-        
-            await loadTodayAttendance();
-        
-        }
-        
-        initializeNazem();
-        let currentNazemDay=todayPersianDate();
-function checkNazemDayChange(){
-const newDay=todayPersianDate();
-if(newDay===currentNazemDay)return;
-console.log("📅 روز جدید شروع شد:",currentNazemDay,"→",newDay);
-currentNazemDay=newDay;
-document.querySelectorAll(".student-button").forEach(button=>{
-button.classList.remove("called","sent","absent");
-button.classList.add("pending");
-button.disabled=false;
-const status=button.querySelector(".student-status");
-const time=button.querySelector(".status-time");
-if(status)status.textContent="";
-if(time)time.textContent="";
-});
-document.querySelectorAll(".called-total").forEach(counter=>{
-counter.textContent="0";
-});
-attendanceState.clear();
-loadCalls();
-loadTodayAttendance();
+            }
+        );
+
 }
-setInterval(checkNazemDayChange,30000);
 
 
+function scheduleRealtimeReconnect(){
+
+    if(realtimeReconnectTimer){
+
+        return;
+
+    }
+
+
+    console.log(
+        "🔄 اتصال مجدد Realtime تا چند ثانیه دیگر..."
+    );
+
+
+    realtimeReconnectTimer=
+        setTimeout(
+            ()=>{
+
+                realtimeReconnectTimer=null;
+
+
+                if(!navigator.onLine){
+
+                    console.log(
+                        "📴 اینترنت قطع است؛ منتظر برقراری اینترنت می‌مانیم."
+                    );
+
+
+                    return;
+
+                }
+
+
+                subscribeNazemRealtime();
+
+
+                loadCalls();
+
+
+                loadTodayAttendance();
+
+            },
+            3000
+        );
+
+}
+
+
+function startRealtimeConnectionMonitor(){
+
+    if(realtimeCheckTimer){
+
+        clearInterval(
+            realtimeCheckTimer
+        );
+
+    }
+
+
+    realtimeCheckTimer=
+        setInterval(
+            async()=>{
+
+                console.log(
+                    "🔄 بررسی اتصال اینترنت و Supabase..."
+                );
+
+
+                if(!navigator.onLine){
+
+                    console.log(
+                        "📴 اینترنت قطع است."
+                    );
+
+
+                    return;
+
+                }
+
+
+                try{
+
+                    const {error}=
+                        await supabaseClient
+                        .from("calls")
+                        .select("id")
+                        .limit(1);
+
+
+                    if(error){
+
+                        console.log(
+                            "⚠️ ارتباط Supabase مشکل دارد:",
+                            error
+                        );
+
+
+                        scheduleRealtimeReconnect();
+
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "✅ ارتباط اینترنت و Supabase برقرار است"
+                    );
+
+
+                }catch(error){
+
+                    console.log(
+                        "❌ خطا در بررسی اتصال:",
+                        error
+                    );
+
+
+                    scheduleRealtimeReconnect();
+
+                }
+
+            },
+            10000
+        );
+
+}
+
+
+window.addEventListener(
+    "online",
+    ()=>{
+
+        console.log(
+            "🌐 اینترنت دوباره وصل شد"
+        );
+
+
+        subscribeNazemRealtime();
+
+
+        loadCalls();
+
+
+        loadTodayAttendance();
+
+    }
+);
+
+
+window.addEventListener(
+    "offline",
+    ()=>{
+
+        console.log(
+            "📴 اینترنت قطع شد"
+        );
+
+    }
+);
+
+
+async function initializeNazem(){
+
+    console.log(
+        "✅ پنل ناظم مستقیماً اجرا شد"
+    );
+
+
+    createClasses();
+
+
+    subscribeNazemRealtime();
+
+
+    startRealtimeConnectionMonitor();
+
+
+    await loadCalls();
+
+
+    await loadTodayAttendance();
+
+}
+
+
+initializeNazem();
+
+
+let currentNazemDay=
+    todayPersianDate();
+
+
+function checkNazemDayChange(){
+
+    const newDay=
+        todayPersianDate();
+
+
+    if(
+        newDay===currentNazemDay
+    )
+        return;
+
+
+    console.log(
+        "📅 روز جدید شروع شد:",
+        currentNazemDay,
+        "→",
+        newDay
+    );
+
+
+    currentNazemDay=
+        newDay;
+
+
+    document
+    .querySelectorAll(
+        ".student-button"
+    )
+    .forEach(button=>{
+
+        button.classList.remove(
+            "called",
+            "sent",
+            "absent"
+        );
+
+
+        button.classList.add(
+            "pending"
+        );
+
+
+        button.disabled=false;
+
+
+        const status=
+            button.querySelector(
+                ".student-status"
+            );
+
+
+        const time=
+            button.querySelector(
+                ".status-time"
+            );
+
+
+        if(status)
+            status.textContent="";
+
+
+        if(time)
+            time.textContent="";
+
+    });
+
+
+    document
+    .querySelectorAll(
+        ".called-total"
+    )
+    .forEach(counter=>{
+
+        counter.textContent="0";
+
+    });
+
+
+    attendanceState.clear();
+
+
+    loadCalls();
+
+
+    loadTodayAttendance();
+
+}
+
+
+setInterval(
+    checkNazemDayChange,
+    30000
+);
