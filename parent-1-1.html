@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -13,23 +12,18 @@
 
 <title>پنل والدین | دبستان علوی</title>
 
-<!-- Supabase -->
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Leaflet Map -->
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIINfQ3gQ3N9z8w4Z7j5xj5J6Y5J5M5J5M5="
-    crossorigin=""
->
 
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    crossorigin=""
-></script>
+<!-- =====================================================
+     PARENT CSS
+===================================================== -->
 
-<!-- Parent CSS -->
 <link rel="stylesheet" href="parent.css">
 
 </head>
@@ -42,9 +36,9 @@
 <div class="container">
 
 
-<!-- =========================
+<!-- =====================================================
      LOGIN
-========================= -->
+===================================================== -->
 
 <section
     class="login-screen"
@@ -103,6 +97,7 @@
 <button
     class="login-button"
     id="loginButton"
+    type="button"
 >
 
 ورود به پنل
@@ -121,9 +116,9 @@
 
 
 
-<!-- =========================
+<!-- =====================================================
      PARENT PANEL
-========================= -->
+===================================================== -->
 
 <section
     class="parent-panel"
@@ -131,7 +126,9 @@
 >
 
 
-<!-- HEADER -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header class="header">
 
@@ -171,14 +168,16 @@
 
 
 
-<!-- =========================
+<!-- =====================================================
      DASHBOARD
-========================= -->
+===================================================== -->
 
 <main class="dashboard">
 
 
-<!-- DATE -->
+<!-- =====================================================
+     DATE
+===================================================== -->
 
 <div class="date-card">
 
@@ -214,9 +213,9 @@
 
 
 
-<!-- =========================
+<!-- =====================================================
      INFO CARDS
-========================= -->
+===================================================== -->
 
 <div class="cards">
 
@@ -306,7 +305,7 @@
 </div>
 
 <div class="card-muted">
-محدوده مجاز: ۵۰۰۰ متر
+محدوده مجاز: ۵۰ متر
 </div>
 
 </div>
@@ -316,9 +315,9 @@
 
 
 
-<!-- =========================
-     MAP SECTION
-========================= -->
+<!-- =====================================================
+     LOCATION SECTION
+===================================================== -->
 
 <section
     class="location-section"
@@ -331,136 +330,135 @@
 <div>
 
 <h2>
-🗺️ موقعیت والد و محدوده مجاز
+📍 موقعیت والدین
 </h2>
 
 <p>
-موقعیت فعلی شما نسبت به مدرسه روی نقشه نمایش داده می‌شود.
+فاصله لحظه‌ای شما تا مدرسه بر اساس موقعیت GPS نمایش داده می‌شود.
 </p>
 
 </div>
 
 
 <div class="radius-badge">
-محدوده مجاز: ۵۰۰۰ متر
+محدوده مجاز: ۵۰ متر
 </div>
 
 </div>
 
 
 
-<!-- MAP -->
+<!-- =====================================================
+     LOCATION CARDS
+===================================================== -->
 
-<div
-    id="parentMap"
-    class="parent-map"
-></div>
-
+<div class="location-cards">
 
 
-<!-- MAP INFORMATION -->
+<!-- =====================================================
+     ALLOWED RADIUS
+===================================================== -->
 
-<div class="map-info-grid">
+<div class="location-card allowed-card">
 
-
-<div class="map-info-card">
-
-<div class="map-info-icon">
-🏫
-</div>
-
-<div>
-
-<span>
-محل مدرسه
-</span>
-
-<strong>
-مدرسه
-</strong>
-
-</div>
-
-</div>
-
-
-
-<div class="map-info-card">
-
-<div class="map-info-icon">
-👤
-</div>
-
-<div>
-
-<span>
-موقعیت والد
-</span>
-
-<strong id="parentLocationText">
-در انتظار دریافت موقعیت
-</strong>
-
-</div>
-
-</div>
-
-
-
-<div class="map-info-card">
-
-<div class="map-info-icon">
+<div class="location-card-icon">
 📏
 </div>
 
-<div>
+<div class="location-card-content">
 
-<span>
-فاصله تا مدرسه
+<div class="location-card-title">
+محدوده مجاز
+</div>
+
+<div class="location-card-value">
+
+<span id="allowedRadiusValue">
+۵۰
 </span>
 
-<strong id="distanceText">
----
-</strong>
+<span class="location-card-unit">
+متر
+</span>
 
+</div>
+
+<div class="location-card-description">
+حداکثر فاصله مجاز از مدرسه
 </div>
 
 </div>
 
+</div>
 
+
+
+<!-- =====================================================
+     LIVE PARENT DISTANCE
+===================================================== -->
 
 <div
-    class="map-info-card location-result-card"
-    id="mapResultCard"
+    class="location-card parent-location-card"
+    id="parentLocationCard"
 >
 
 <div
-    class="map-info-icon"
-    id="mapResultIcon"
+    class="location-card-icon"
+    id="parentLocationIcon"
 >
 📍
 </div>
 
-<div>
+<div class="location-card-content">
 
-<span>
-وضعیت محدوده
+<div class="location-card-title">
+فاصله والدین تا مدرسه
+</div>
+
+<div class="location-card-value">
+
+<span id="liveParentDistance">
+---
 </span>
 
-<strong id="mapResultText">
-بررسی نشده
-</strong>
+<span class="location-card-unit">
+متر
+</span>
 
+</div>
+
+<div
+    class="location-card-description"
+    id="liveParentStatus"
+>
+در حال دریافت موقعیت...
 </div>
 
 </div>
 
+</div>
+
 
 </div>
 
 
 
-<!-- LOCATION BUTTON -->
+<!-- =====================================================
+     LOCATION STATUS
+===================================================== -->
+
+<div
+    id="locationStatus"
+    class="location-status"
+>
+در حال دریافت موقعیت GPS...
+</div>
+
+
+
+<!-- =====================================================
+     MANUAL LOCATION REFRESH
+===================================================== -->
 
 <button
     type="button"
@@ -468,7 +466,7 @@
     id="locationRefreshButton"
 >
 
-📍 دریافت موقعیت من
+📍 بروزرسانی موقعیت
 
 </button>
 
@@ -477,9 +475,9 @@
 
 
 
-<!-- =========================
+<!-- =====================================================
      CALL SECTION
-========================= -->
+===================================================== -->
 
 <section class="call-section">
 
@@ -495,6 +493,7 @@
 <button
     class="call-button"
     id="callButton"
+    type="button"
 >
 
 📢 فراخوانی دانش‌آموز
@@ -508,7 +507,9 @@
 
 
 
-<!-- FOOTER -->
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <footer class="footer">
 
@@ -525,9 +526,10 @@
 </div>
 
 
-<!-- =========================
+
+<!-- =====================================================
      PARENT JAVASCRIPT
-========================= -->
+===================================================== -->
 
 <script src="parent.js"></script>
 

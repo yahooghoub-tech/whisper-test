@@ -1278,3 +1278,454 @@ input:focus-visible {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   LOCATION CARDS
+===================================================== */
+
+.location-cards {
+    width: 100%;
+
+    display: grid;
+
+    /*
+       همیشه دو کارت کنار هم
+    */
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 16px;
+
+    margin: 20px 0;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.location-card {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 20px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f8fafc
+        );
+
+    border: 1px solid
+        rgba(148, 163, 184, 0.18);
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
+    direction: rtl;
+}
+
+
+.location-card:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(15, 23, 42, 0.12);
+}
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.location-card-icon {
+    width: 54px;
+    height: 54px;
+
+    flex: 0 0 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #dbeafe
+        );
+
+    font-size: 27px;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(59, 130, 246, 0.08);
+}
+
+
+/* =====================================================
+   PARENT LOCATION ICON
+===================================================== */
+
+.parent-location-card
+.location-card-icon {
+    background:
+        linear-gradient(
+            135deg,
+            #ecfdf5,
+            #d1fae5
+        );
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.location-card-content {
+    min-width: 0;
+
+    flex: 1;
+
+    text-align: right;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.location-card-title {
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #475569;
+
+    margin-bottom: 6px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   VALUE
+===================================================== */
+
+.location-card-value {
+    display: flex;
+
+    align-items: baseline;
+
+    gap: 6px;
+
+    direction: rtl;
+
+    line-height: 1;
+
+    margin-bottom: 8px;
+}
+
+
+/* =====================================================
+   NUMBER
+===================================================== */
+
+#allowedRadiusValue,
+#liveParentDistance {
+    font-size: 28px;
+
+    font-weight: 900;
+
+    color: #0f172a;
+
+    font-variant-numeric:
+        tabular-nums;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* =====================================================
+   UNIT
+===================================================== */
+
+.location-card-unit {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #64748b;
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.location-card-description {
+    min-height: 20px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    color: #94a3b8;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   GPS STATUS COLORS
+===================================================== */
+
+.location-inside
+.location-card-value #liveParentDistance {
+    color: #16a34a;
+}
+
+
+.location-outside
+.location-card-value #liveParentDistance {
+    color: #dc2626;
+}
+
+
+.location-loading
+.location-card-value #liveParentDistance {
+    color: #64748b;
+}
+
+
+/* =====================================================
+   LOCATION STATUS
+===================================================== */
+
+.location-status {
+    width: 100%;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #64748b;
+
+    margin: 10px 0;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   REFRESH BUTTON
+===================================================== */
+
+.location-refresh-button {
+    width: 100%;
+
+    min-height: 48px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 18px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #1e3a8a;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #dbeafe
+        );
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.location-refresh-button:hover {
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(59, 130, 246, 0.12);
+}
+
+
+.location-refresh-button:active {
+    transform:
+        translateY(0);
+}
+
+
+.location-refresh-button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.6;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .location-cards {
+        /*
+           عمداً یک ستون نمی‌کنیم؛
+           دو کارت باید کنار هم بمانند.
+        */
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+        gap: 10px;
+    }
+
+
+    .location-card {
+        flex-direction: column;
+
+        justify-content: center;
+
+        text-align: center;
+
+        gap: 9px;
+
+        padding: 14px 8px;
+
+        border-radius: 16px;
+    }
+
+
+    .location-card-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-basis: 42px;
+
+        border-radius: 13px;
+
+        font-size: 21px;
+    }
+
+
+    .location-card-content {
+        width: 100%;
+
+        text-align: center;
+    }
+
+
+    .location-card-title {
+        font-size: 11px;
+
+        margin-bottom: 7px;
+    }
+
+
+    #allowedRadiusValue,
+    #liveParentDistance {
+        font-size: 21px;
+    }
+
+
+    .location-card-unit {
+        font-size: 10px;
+    }
+
+
+    .location-card-description {
+        font-size: 9px;
+
+        line-height: 1.5;
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL SCREENS
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .location-cards {
+        gap: 7px;
+    }
+
+
+    .location-card {
+        padding: 12px 5px;
+    }
+
+
+    #allowedRadiusValue,
+    #liveParentDistance {
+        font-size: 18px;
+    }
+
+
+    .location-card-icon {
+        width: 36px;
+        height: 36px;
+
+        flex-basis: 36px;
+
+        font-size: 18px;
+    }
+
+}
