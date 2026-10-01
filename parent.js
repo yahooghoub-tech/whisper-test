@@ -1,1866 +1,2259 @@
-const SUPABASE_URL = "https://ghnpiijihybuhfetnxjp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+/* =========================================================
+   PARENT.JS
+   پنل والد + GPS + نقشه سبک اسنپ + Supabase
+   ========================================================= */
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =========================
-   تنظیمات اصلی
-========================= */
+/* =========================================================
+   1. SUPABASE
+   ========================================================= */
+
+   const SUPABASE_URL =
+   "https://ghnpiijihybuhfetnxjp.supabase.co";
+
+const SUPABASE_KEY =
+   "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+let db = null;
+
+if (
+   typeof supabase !== "undefined" &&
+   supabase.createClient
+) {
+   db = supabase.createClient(
+       SUPABASE_URL,
+       SUPABASE_KEY
+   );
+}
+
+
+/* =========================================================
+  2. مختصات مدرسه
+  ========================================================= */
 
 const SCHOOL_LAT = 35.76494314018861;
 const SCHOOL_LNG = 51.32257158390593;
 
-// شعاع مجاز: 50 متر
 const ALLOWED_RADIUS = 50;
-
-/*
-   شعاع زمین برای محاسبه فاصله
-*/
 const EARTH_RADIUS = 6371000;
 
-/* =========================
-   متغیرهای عمومی
-========================= */
+
+/* =========================================================
+  3. برنامه زمانی فراخوان
+  ========================================================= */
+
+const callSchedules = {
+   "1":  { start: "12:00", end: "14:00" },
+   "2":  { start: "12:00", end: "14:00" },
+   "3":  { start: "12:00", end: "14:00" },
+   "4":  { start: "12:00", end: "14:00" },
+   "5":  { start: "12:00", end: "14:00" },
+   "6":  { start: "12:00", end: "14:00" },
+   "7":  { start: "12:00", end: "14:00" },
+   "8":  { start: "12:00", end: "14:00" },
+   "9":  { start: "12:00", end: "14:00" },
+   "10": { start: "12:00", end: "14:00" },
+   "11": { start: "12:00", end: "14:00" },
+   "12": { start: "12:00", end: "14:00" },
+   "13": { start: "12:00", end: "14:00" },
+   "14": { start: "12:00", end: "14:00" }
+};
+
+
+/* =========================================================
+  4. متغیرهای برنامه
+  ========================================================= */
 
 let currentStudentName = "";
 let currentClassName = "";
+let currentParentCode = "";
 
-let parentCallChannel = null;
-let parentRefreshInterval = null;
+let currentParentLat = null;
+let currentParentLng = null;
+let currentDistance = null;
 
 let mapInstance = null;
 let schoolMarker = null;
 let parentMarker = null;
-let schoolCircle = null;
+let allowedCircle = null;
+let accuracyCircle = null;
 let parentSchoolLine = null;
 let distanceLabel = null;
-let accuracyCircle = null;
 
-let leafletReadyPromise = null;
+let locationWatchId = null;
+let leafletLoaded = false;
 
-/* =========================
-   DOM
-========================= */
 
-const loginScreen = document.getElementById("loginScreen");
-const parentPanel = document.getElementById("parentPanel");
+/* =========================================================
+  5. عناصر صفحه
+  ========================================================= */
 
-const studentNameInput = document.getElementById("studentName");
-const parentCodeInput = document.getElementById("parentCode");
+const loginScreen =
+   document.getElementById("loginScreen");
 
-const loginButton = document.getElementById("loginButton");
-const message = document.getElementById("message");
+const parentPanel =
+   document.getElementById("parentPanel");
 
-const panelStudentName = document.getElementById("panelStudentName");
-const panelClassName = document.getElementById("panelClassName");
+const studentNameInput =
+   document.getElementById("studentName");
 
-const currentDate = document.getElementById("currentDate");
-const currentTime = document.getElementById("currentTime");
+const parentCodeInput =
+   document.getElementById("parentCode");
+
+const loginButton =
+   document.getElementById("loginButton");
+
+const messageBox =
+   document.getElementById("message");
+
+const panelStudentName =
+   document.getElementById("panelStudentName");
+
+const panelClassName =
+   document.getElementById("panelClassName");
+
+const currentDate =
+   document.getElementById("currentDate");
+
+const currentTime =
+   document.getElementById("currentTime");
 
 const callActivationTime =
-    document.getElementById("callActivationTime");
+   document.getElementById("callActivationTime");
 
 const callDescription =
-    document.getElementById("callDescription");
+   document.getElementById("callDescription");
 
 const callButton =
-    document.getElementById("callButton");
+   document.getElementById("callButton");
 
 const locationStatus =
-    document.getElementById("locationStatus");
+   document.getElementById("locationStatus");
 
-/* =========================
-   زمان فراخوان کلاس‌ها
-========================= */
 
-const callSchedules = {
-    "1": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "2": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "3": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "4": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "5": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "6": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "7": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "8": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "9": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "10": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "11": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "12": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "13": {
-        start: "12:00",
-        end: "14:00"
-    },
-    "14": {
-        start: "12:00",
-        end: "14:00"
-    }
-};
+/* =========================================================
+  6. پیام
+  ========================================================= */
 
-/* =========================
-   توابع عمومی
-========================= */
+function showMessage(text, type = "info") {
 
-function showMessage(text, type = "") {
-    if (!message) return;
+   if (!messageBox) {
+       alert(text);
+       return;
+   }
 
-    message.textContent = text;
-    message.className = "message";
+   messageBox.textContent = text;
 
-    if (type) {
-        message.classList.add(type);
-    }
+   messageBox.className =
+       `message ${type}`;
+
+   messageBox.style.display = "block";
 }
+
+
+/* =========================================================
+  7. نرمال‌سازی کلاس
+  ========================================================= */
 
 function normalizeClassName(className) {
-    if (!className) return "";
 
-    return String(className)
-        .replace("کلاس", "")
-        .trim();
+   if (!className) {
+       return "";
+   }
+
+   return String(className)
+       .replace(/[۰-۹]/g, digit =>
+           String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))
+       )
+       .replace(/[٠-٩]/g, digit =>
+           String("٠١٢٣٤٥٦٧٨٩".indexOf(digit))
+       )
+       .replace(/\s+/g, "")
+       .replace(/^کلاس/i, "");
 }
+
+
+/* =========================================================
+  8. برنامه کلاس
+  ========================================================= */
 
 function getClassSchedule(className) {
-    const normalized = normalizeClassName(className);
 
-    if (callSchedules[normalized]) {
-        return callSchedules[normalized];
-    }
+   const normalized =
+       normalizeClassName(className);
 
-    const numberMatch = normalized.match(/\d+/);
-
-    if (numberMatch) {
-        return callSchedules[numberMatch[0]] || null;
-    }
-
-    return null;
+   return callSchedules[normalized] || null;
 }
 
-/* =========================
-   تاریخ و ساعت ایران
-========================= */
+
+/* =========================================================
+  9. ساعت ایران
+  ========================================================= */
 
 function getIranDate() {
-    return new Date(
-        new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Tehran"
-        })
-    );
+
+   return new Date(
+       new Date().toLocaleString(
+           "en-US",
+           {
+               timeZone: "Asia/Tehran"
+           }
+       )
+   );
 }
 
-function getIranTimeString() {
-    const date = getIranDate();
 
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    return `${hours}:${minutes}:${seconds}`;
-}
-
-function getIranDateString() {
-    const date = getIranDate();
-
-    return date.toLocaleDateString("fa-IR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-    });
-}
-
-function getIranDateForDatabase() {
-    const date = getIranDate();
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-function updateDateTime() {
-    if (currentDate) {
-        currentDate.textContent = getIranDateString();
-    }
-
-    if (currentTime) {
-        currentTime.textContent = getIranTimeString();
-    }
-}
-
-setInterval(updateDateTime, 1000);
-updateDateTime();
-
-/* =========================
-   بررسی زمان فعال بودن فراخوان
-========================= */
+/* =========================================================
+  10. بررسی زمان فراخوان
+  ========================================================= */
 
 function isCallTimeActive(className) {
-    const schedule = getClassSchedule(className);
 
-    if (!schedule) {
-        return false;
-    }
+   const schedule =
+       getClassSchedule(className);
 
-    const now = getIranDate();
+   if (!schedule) {
+       return false;
+   }
 
-    const currentMinutes =
-        now.getHours() * 60 + now.getMinutes();
+   const now = getIranDate();
 
-    const [startHour, startMinute] =
-        schedule.start.split(":").map(Number);
+   const currentMinutes =
+       now.getHours() * 60 +
+       now.getMinutes();
 
-    const [endHour, endMinute] =
-        schedule.end.split(":").map(Number);
+   const [startHour, startMinute] =
+       schedule.start.split(":").map(Number);
 
-    const startMinutes =
-        startHour * 60 + startMinute;
+   const [endHour, endMinute] =
+       schedule.end.split(":").map(Number);
 
-    const endMinutes =
-        endHour * 60 + endMinute;
+   const start =
+       startHour * 60 +
+       startMinute;
 
-    return (
-        currentMinutes >= startMinutes &&
-        currentMinutes <= endMinutes
-    );
+   const end =
+       endHour * 60 +
+       endMinute;
+
+   return (
+       currentMinutes >= start &&
+       currentMinutes <= end
+   );
 }
+
+
+/* =========================================================
+  11. بروزرسانی وضعیت زمان
+  ========================================================= */
 
 function updateCallScheduleUI() {
-    if (!currentClassName) return;
 
-    const schedule =
-        getClassSchedule(currentClassName);
+   if (!currentClassName) {
+       return;
+   }
 
-    if (!schedule) {
-        if (callActivationTime) {
-            callActivationTime.textContent =
-                "زمان مشخص نشده";
-        }
+   const schedule =
+       getClassSchedule(currentClassName);
 
-        if (callDescription) {
-            callDescription.textContent =
-                "زمان فراخوان این کلاس مشخص نشده است.";
-        }
+   if (!schedule) {
+       return;
+   }
 
-        if (callButton) {
-            callButton.disabled = true;
-        }
+   if (callActivationTime) {
+       callActivationTime.textContent =
+           `${schedule.start} تا ${schedule.end}`;
+   }
 
-        return;
-    }
+   const active =
+       isCallTimeActive(currentClassName);
 
-    if (callActivationTime) {
-        callActivationTime.textContent =
-            `${schedule.start} تا ${schedule.end}`;
-    }
+   if (callButton) {
+       callButton.disabled = !active;
+   }
 
-    const active =
-        isCallTimeActive(currentClassName);
+   if (callDescription) {
 
-    if (active) {
-        if (callDescription) {
-            callDescription.textContent =
-                "اکنون زمان فعال بودن فراخوان است.";
-        }
+       if (active) {
 
-        if (callButton && !callButton.dataset.called) {
-            callButton.disabled = false;
-        }
-    } else {
-        if (callDescription) {
-            callDescription.textContent =
-                `زمان فعال بودن فراخوان: ${schedule.start} تا ${schedule.end}`;
-        }
+           callDescription.textContent =
+               "اکنون امکان فراخوانی دانش‌آموز وجود دارد.";
 
-        if (callButton && !callButton.dataset.called) {
-            callButton.disabled = true;
-        }
-    }
+       } else {
+
+           callDescription.textContent =
+               `زمان فراخوان این کلاس: ${schedule.start} تا ${schedule.end}`;
+       }
+   }
 }
 
-setInterval(updateCallScheduleUI, 10000);
 
-/* =========================
-   محاسبه فاصله
-========================= */
+/* =========================================================
+  12. محاسبه فاصله
+  ========================================================= */
 
 function calculateDistance(
-    lat1,
-    lon1,
-    lat2,
-    lon2
+   lat1,
+   lon1,
+   lat2,
+   lon2
 ) {
-    const dLat =
-        (lat2 - lat1) * Math.PI / 180;
 
-    const dLon =
-        (lon2 - lon1) * Math.PI / 180;
+   const dLat =
+       (lat2 - lat1) *
+       Math.PI / 180;
 
-    const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) ** 2;
+   const dLon =
+       (lon2 - lon1) *
+       Math.PI / 180;
 
-    const c =
-        2 * Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
-        );
+   const a =
+       Math.sin(dLat / 2) ** 2 +
+       Math.cos(lat1 * Math.PI / 180) *
+       Math.cos(lat2 * Math.PI / 180) *
+       Math.sin(dLon / 2) ** 2;
 
-    return EARTH_RADIUS * c;
+   const c =
+       2 *
+       Math.atan2(
+           Math.sqrt(a),
+           Math.sqrt(1 - a)
+       );
+
+   return EARTH_RADIUS * c;
 }
+
+
+/* =========================================================
+  13. نمایش فاصله
+  ========================================================= */
 
 function formatDistance(distance) {
-    if (!Number.isFinite(distance)) {
-        return "---";
-    }
 
-    if (distance < 1000) {
-        return `${Math.round(distance).toLocaleString("fa-IR")} متر`;
-    }
+   if (!Number.isFinite(distance)) {
+       return "---";
+   }
 
-    return `${(distance / 1000)
-        .toFixed(2)
-        .toLocaleString("fa-IR")} کیلومتر`;
+   if (distance < 1000) {
+
+       return (
+           Math.round(distance)
+               .toLocaleString("fa-IR") +
+           " متر"
+       );
+   }
+
+   return (
+       (distance / 1000)
+           .toFixed(2)
+           .toLocaleString("fa-IR") +
+       " کیلومتر"
+   );
 }
-/* =========================
-   بارگذاری Leaflet
-========================= */
+
+
+/* =========================================================
+  14. لود Leaflet
+  ========================================================= */
 
 function loadLeaflet() {
-    if (
-        window.L &&
-        typeof window.L.map === "function"
-    ) {
-        return Promise.resolve();
-    }
 
-    if (leafletReadyPromise) {
-        return leafletReadyPromise;
-    }
+   return new Promise((resolve, reject) => {
 
-    leafletReadyPromise = new Promise(
-        (resolve, reject) => {
+       if (
+           typeof L !== "undefined"
+       ) {
+           leafletLoaded = true;
+           resolve();
+           return;
+       }
 
-            const existingCss =
-                document.querySelector(
-                    'link[href*="leaflet"]'
-                );
+       if (
+           document.querySelector(
+               'script[data-leaflet="true"]'
+           )
+       ) {
 
-            if (!existingCss) {
-                const css =
-                    document.createElement("link");
+           const check =
+               setInterval(() => {
 
-                css.rel = "stylesheet";
+                   if (
+                       typeof L !== "undefined"
+                   ) {
 
-                css.href =
-                    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+                       clearInterval(check);
+                       leafletLoaded = true;
+                       resolve();
+                   }
 
-                document.head.appendChild(css);
-            }
+               }, 100);
 
-            const existingScript =
-                document.querySelector(
-                    'script[src*="leaflet"]'
-                );
+           setTimeout(() => {
 
-            if (existingScript) {
-                existingScript.addEventListener(
-                    "load",
-                    () => resolve()
-                );
+               clearInterval(check);
 
-                existingScript.addEventListener(
-                    "error",
-                    () =>
-                        reject(
-                            new Error(
-                                "Leaflet load error"
-                            )
-                        )
-                );
+               if (
+                   typeof L === "undefined"
+               ) {
+                   reject(
+                       new Error(
+                           "Leaflet load timeout"
+                       )
+                   );
+               }
 
-                return;
-            }
+           }, 15000);
 
-            const script =
-                document.createElement("script");
+           return;
+       }
 
-            script.src =
-                "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 
-            script.onload = () => resolve();
+       const css =
+           document.createElement("link");
 
-            script.onerror = () =>
-                reject(
-                    new Error(
-                        "Leaflet load error"
-                    )
-                );
+       css.rel = "stylesheet";
 
-            document.head.appendChild(script);
-        }
-    );
+       css.href =
+           "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 
-    return leafletReadyPromise;
+       document.head.appendChild(css);
+
+
+       const script =
+           document.createElement("script");
+
+       script.src =
+           "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+
+       script.dataset.leaflet = "true";
+
+       script.onload = () => {
+
+           leafletLoaded = true;
+           resolve();
+
+       };
+
+       script.onerror = () => {
+
+           reject(
+               new Error(
+                   "Leaflet load failed"
+               )
+           );
+       };
+
+       document.head.appendChild(script);
+   });
 }
 
-/* =========================
-   ساخت کارت نقشه
-========================= */
+
+/* =========================================================
+  15. CSS مخصوص نقشه
+  ========================================================= */
+
+function injectMapStyles() {
+
+   if (
+       document.getElementById(
+           "snappMapStyles"
+       )
+   ) {
+       return;
+   }
+
+   const style =
+       document.createElement("style");
+
+   style.id =
+       "snappMapStyles";
+
+   style.textContent = `
+
+       .snapp-map-card {
+           margin-top: 18px;
+           background: #ffffff;
+           border-radius: 24px;
+           overflow: hidden;
+           box-shadow:
+               0 8px 30px rgba(0,0,0,.12);
+           position: relative;
+       }
+
+       .snapp-map-header {
+           position: absolute;
+           top: 14px;
+           right: 14px;
+           left: 14px;
+           z-index: 1000;
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           pointer-events: none;
+       }
+
+       .snapp-map-title {
+           background: rgba(255,255,255,.96);
+           backdrop-filter: blur(10px);
+           padding: 10px 14px;
+           border-radius: 16px;
+           box-shadow: 0 3px 12px rgba(0,0,0,.12);
+           font-weight: bold;
+           font-size: 14px;
+           direction: rtl;
+       }
+
+       .snapp-map-center-btn {
+           pointer-events: auto;
+           width: 44px;
+           height: 44px;
+           border: none;
+           border-radius: 50%;
+           background: white;
+           box-shadow: 0 3px 12px rgba(0,0,0,.16);
+           font-size: 20px;
+           cursor: pointer;
+       }
+
+       .snapp-map {
+           width: 100%;
+           height: 390px;
+           background: #e9e9e9;
+       }
+
+       .snapp-bottom-panel {
+           position: relative;
+           margin-top: -32px;
+           z-index: 900;
+           background: white;
+           border-radius: 28px 28px 0 0;
+           padding: 18px 18px 20px;
+           box-shadow:
+               0 -5px 20px rgba(0,0,0,.08);
+           direction: rtl;
+       }
+
+       .snapp-distance {
+           font-size: 25px;
+           font-weight: 800;
+           text-align: center;
+           margin-bottom: 8px;
+       }
+
+       .snapp-distance-label {
+           color: #777;
+           text-align: center;
+           font-size: 13px;
+           margin-bottom: 15px;
+       }
+
+       .snapp-location-status {
+           border-radius: 14px;
+           padding: 11px 14px;
+           text-align: center;
+           font-size: 14px;
+           font-weight: bold;
+       }
+
+       .snapp-location-status.inside {
+           background: #e8f7ed;
+           color: #16833d;
+       }
+
+       .snapp-location-status.outside {
+           background: #fff0f0;
+           color: #c62828;
+       }
+
+       .snapp-location-status.loading {
+           background: #f3f3f3;
+           color: #666;
+       }
+
+       .school-pin {
+           width: 44px;
+           height: 44px;
+           border-radius: 50% 50% 50% 0;
+           background: #ff5a36;
+           transform: rotate(-45deg);
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           box-shadow: 0 4px 12px rgba(0,0,0,.25);
+           border: 3px solid white;
+       }
+
+       .school-pin-inner {
+           transform: rotate(45deg);
+           color: white;
+           font-size: 21px;
+       }
+
+       .parent-pin {
+           width: 46px;
+           height: 46px;
+           border-radius: 50%;
+           background: #222;
+           border: 4px solid white;
+           box-shadow: 0 3px 12px rgba(0,0,0,.3);
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           color: white;
+           font-size: 20px;
+       }
+
+       .distance-label-snapp {
+           background: white;
+           border-radius: 12px;
+           padding: 7px 11px;
+           box-shadow:
+               0 3px 12px rgba(0,0,0,.18);
+           border: 1px solid #eee;
+           font-weight: 800;
+           font-size: 12px;
+           direction: rtl;
+           white-space: nowrap;
+       }
+
+       .leaflet-control-attribution {
+           font-size: 8px !important;
+       }
+
+       .leaflet-control-zoom {
+           border: none !important;
+           box-shadow: 0 3px 12px rgba(0,0,0,.15) !important;
+       }
+
+       .leaflet-control-zoom a {
+           border: none !important;
+       }
+
+       @media (max-width: 600px) {
+
+           .snapp-map {
+               height: 350px;
+           }
+
+           .snapp-distance {
+               font-size: 22px;
+           }
+       }
+   `;
+
+   document.head.appendChild(style);
+}
+
+
+/* =========================================================
+  16. آیکون مدرسه
+  ========================================================= */
+
+function createSchoolIcon() {
+
+   return L.divIcon({
+
+       className: "",
+
+       html: `
+           <div class="school-pin">
+               <div class="school-pin-inner">
+                   🏫
+               </div>
+           </div>
+       `,
+
+       iconSize: [44, 44],
+       iconAnchor: [22, 42]
+   });
+}
+
+
+/* =========================================================
+  17. آیکون والد
+  ========================================================= */
+
+function createParentIcon() {
+
+   return L.divIcon({
+
+       className: "",
+
+       html: `
+           <div class="parent-pin">
+               🚗
+           </div>
+       `,
+
+       iconSize: [46, 46],
+       iconAnchor: [23, 23]
+   });
+}
+
+
+/* =========================================================
+  18. ساخت کارت نقشه
+  ========================================================= */
 
 function createLocationMapCard() {
-    if (
-        document.getElementById(
-            "locationMapCard"
-        )
-    ) {
-        return;
-    }
 
-    const callSection =
-        document.querySelector(
-            ".call-section"
-        );
+   injectMapStyles();
 
-    if (!callSection) return;
+   let container =
+       document.getElementById(
+           "locationMapCard"
+       );
 
-    const card =
-        document.createElement("section");
+   if (container) {
+       return container;
+   }
 
-    card.id = "locationMapCard";
+   container =
+       document.createElement("div");
 
-    card.innerHTML = `
-        <div style="
-            margin-top:25px;
-            background:rgba(255,255,255,.96);
-            border-radius:18px;
-            padding:18px;
-            box-shadow:0 8px 30px rgba(0,0,0,.12);
-            direction:rtl;
-        ">
+   container.id =
+       "locationMapCard";
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                gap:10px;
-                margin-bottom:12px;
-            ">
+   container.className =
+       "snapp-map-card";
 
-                <div>
-                    <h2 style="
-                        margin:0 0 5px 0;
-                        font-size:19px;
-                    ">
-                        🗺️ نقشه موقعیت
-                    </h2>
+   container.innerHTML = `
 
-                    <div style="
-                        font-size:13px;
-                        color:#666;
-                    ">
-                        موقعیت مدرسه و فاصله والد
-                    </div>
-                </div>
+       <div class="snapp-map-header">
 
-                <button
-                    id="mapToggleButton"
-                    type="button"
-                    style="
-                        border:0;
-                        border-radius:10px;
-                        padding:8px 12px;
-                        cursor:pointer;
-                        background:#eee;
-                        font-family:inherit;
-                    "
-                >
-                    مخفی کردن
-                </button>
-            </div>
+           <div class="snapp-map-title">
+               📍 موقعیت شما نسبت به مدرسه
+           </div>
 
-            <div
-                id="locationMapContent"
-            >
+           <button
+               type="button"
+               id="centerMapButton"
+               class="snapp-map-center-btn"
+               title="نمایش موقعیت من"
+           >
+               ◎
+           </button>
 
-                <div
-                    id="mapLocationStatus"
-                    style="
-                        padding:10px;
-                        border-radius:10px;
-                        background:#f3f4f6;
-                        margin-bottom:10px;
-                        text-align:center;
-                        font-weight:bold;
-                        font-size:14px;
-                    "
-                >
-                    📍 موقعیت والد هنوز دریافت نشده است
-                </div>
+       </div>
 
-                <div style="
-                    display:flex;
-                    flex-wrap:wrap;
-                    gap:8px;
-                    margin-bottom:10px;
-                    font-size:12px;
-                ">
+       <div
+           id="snappMap"
+           class="snapp-map"
+       ></div>
 
-                    <span style="
-                        background:#f3f4f6;
-                        padding:6px 10px;
-                        border-radius:8px;
-                    ">
-                        🏫 مدرسه
-                    </span>
+       <div class="snapp-bottom-panel">
 
-                    <span style="
-                        background:#f3f4f6;
-                        padding:6px 10px;
-                        border-radius:8px;
-                    ">
-                        📍 والد
-                    </span>
+           <div
+               id="snappDistance"
+               class="snapp-distance"
+           >
+               ---
+           </div>
 
-                    <span style="
-                        background:#f3f4f6;
-                        padding:6px 10px;
-                        border-radius:8px;
-                    ">
-                        ━ فاصله مستقیم
-                    </span>
+           <div class="snapp-distance-label">
+               فاصله مستقیم تا مدرسه
+           </div>
 
-                    <span style="
-                        background:#f3f4f6;
-                        padding:6px 10px;
-                        border-radius:8px;
-                    ">
-                        ⭕ شعاع مجاز ۵۰ متر
-                    </span>
+           <div
+               id="snappLocationStatus"
+               class="snapp-location-status loading"
+           >
+               در حال دریافت موقعیت شما...
+           </div>
 
-                </div>
+       </div>
+   `;
 
-                <div
-                    id="locationMap"
-                    style="
-                        width:100%;
-                        height:380px;
-                        min-height:300px;
-                        border-radius:15px;
-                        overflow:hidden;
-                        background:#e5e7eb;
-                    "
-                ></div>
 
-                <button
-                    id="mapLocationButton"
-                    type="button"
-                    style="
-                        width:100%;
-                        margin-top:12px;
-                        border:0;
-                        border-radius:12px;
-                        padding:13px;
-                        cursor:pointer;
-                        background:#2563eb;
-                        color:white;
-                        font-family:inherit;
-                        font-size:15px;
-                        font-weight:bold;
-                    "
-                >
-                    📍 بررسی موقعیت من
-                </button>
+   if (locationStatus) {
 
-            </div>
-        </div>
-    `;
+       locationStatus.parentNode.insertBefore(
+           container,
+           locationStatus.nextSibling
+       );
 
-    callSection.parentNode.insertBefore(
-        card,
-        callSection
-    );
+   } else if (parentPanel) {
 
-    const toggleButton =
-        document.getElementById(
-            "mapToggleButton"
-        );
+       parentPanel.appendChild(
+           container
+       );
+   }
 
-    const mapContent =
-        document.getElementById(
-            "locationMapContent"
-        );
 
-    toggleButton.addEventListener(
-        "click",
-        () => {
+   const centerButton =
+       document.getElementById(
+           "centerMapButton"
+       );
 
-            const hidden =
-                mapContent.style.display ===
-                "none";
+   if (centerButton) {
 
-            if (hidden) {
-                mapContent.style.display =
-                    "block";
+       centerButton.addEventListener(
+           "click",
+           () => {
 
-                toggleButton.textContent =
-                    "مخفی کردن";
+               if (
+                   mapInstance &&
+                   currentParentLat !== null
+               ) {
 
-                setTimeout(() => {
-                    if (mapInstance) {
-                        mapInstance.invalidateSize();
-                    }
-                }, 200);
+                   mapInstance.setView(
+                       [
+                           currentParentLat,
+                           currentParentLng
+                       ],
+                       18,
+                       {
+                           animate: true
+                       }
+                   );
+               }
+           }
+       );
+   }
 
-            } else {
-                mapContent.style.display =
-                    "none";
-
-                toggleButton.textContent =
-                    "نمایش نقشه";
-            }
-        }
-    );
-
-    document
-        .getElementById(
-            "mapLocationButton"
-        )
-        .addEventListener(
-            "click",
-            checkParentLocation
-        );
+   return container;
 }
 
-/* =========================
-   وضعیت نقشه
-========================= */
 
-function setMapStatus(
-    text,
-    type = "normal"
+/* =========================================================
+  19. ساخت نقشه
+  ========================================================= */
+
+async function initializeMap() {
+
+   try {
+
+       await loadLeaflet();
+
+       const card =
+           createLocationMapCard();
+
+       const mapElement =
+           document.getElementById(
+               "snappMap"
+           );
+
+       if (!mapElement) {
+           return;
+       }
+
+
+       if (mapInstance) {
+
+           setTimeout(() => {
+
+               mapInstance.invalidateSize();
+
+           }, 300);
+
+           return;
+       }
+
+
+       mapInstance =
+           L.map(
+               mapElement,
+               {
+                   zoomControl: false,
+                   attributionControl: true
+               }
+           );
+
+
+       /* نقشه روشن و ساده */
+       L.tileLayer(
+           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+           {
+               maxZoom: 19,
+               attribution:
+                   '&copy; OpenStreetMap contributors'
+           }
+       ).addTo(mapInstance);
+
+
+       /* کنترل زوم */
+       L.control.zoom({
+           position: "bottomleft"
+       }).addTo(mapInstance);
+
+
+       /* مرکز اولیه */
+       mapInstance.setView(
+           [
+               SCHOOL_LAT,
+               SCHOOL_LNG
+           ],
+           17
+       );
+
+
+       /* مدرسه */
+       schoolMarker =
+           L.marker(
+               [
+                   SCHOOL_LAT,
+                   SCHOOL_LNG
+               ],
+               {
+                   icon:
+                       createSchoolIcon(),
+                   zIndexOffset: 1000
+               }
+           )
+           .addTo(mapInstance)
+           .bindTooltip(
+               "مدرسه",
+               {
+                   direction: "top",
+                   offset: [0, -35]
+               }
+           );
+
+
+       /* محدوده ۵۰ متری */
+       allowedCircle =
+           L.circle(
+               [
+                   SCHOOL_LAT,
+                   SCHOOL_LNG
+               ],
+               {
+                   radius:
+                       ALLOWED_RADIUS,
+
+                   color: "#18a957",
+
+                   fillColor: "#35c878",
+
+                   fillOpacity: 0.18,
+
+                   weight: 2
+               }
+           )
+           .addTo(mapInstance);
+
+
+       setTimeout(() => {
+
+           mapInstance.invalidateSize();
+
+       }, 500);
+
+
+   } catch (error) {
+
+       console.error(
+           "MAP ERROR:",
+           error
+       );
+   }
+}
+
+
+/* =========================================================
+  20. بروزرسانی نقشه با موقعیت والد
+  ========================================================= */
+
+function updateMapPosition(
+   lat,
+   lng,
+   accuracy = null
 ) {
-    const element =
-        document.getElementById(
-            "mapLocationStatus"
-        );
 
-    if (!element) return;
+   if (!mapInstance) {
+       return;
+   }
 
-    element.textContent = text;
 
-    if (type === "inside") {
-        element.style.background =
-            "#dcfce7";
+   currentParentLat = lat;
+   currentParentLng = lng;
 
-        element.style.color =
-            "#166534";
-    } else if (type === "outside") {
-        element.style.background =
-            "#fee2e2";
 
-        element.style.color =
-            "#991b1b";
-    } else {
-        element.style.background =
-            "#f3f4f6";
+   const parentLatLng =
+       [lat, lng];
 
-        element.style.color =
-            "#374151";
-    }
+   const schoolLatLng =
+       [
+           SCHOOL_LAT,
+           SCHOOL_LNG
+       ];
+
+
+   /* -----------------------------------------
+      مارکر والد
+      ----------------------------------------- */
+
+   if (!parentMarker) {
+
+       parentMarker =
+           L.marker(
+               parentLatLng,
+               {
+                   icon:
+                       createParentIcon(),
+                   zIndexOffset: 2000
+               }
+           )
+           .addTo(mapInstance)
+           .bindTooltip(
+               "موقعیت شما",
+               {
+                   direction: "top",
+                   offset: [0, -24]
+               }
+           );
+
+   } else {
+
+       parentMarker.setLatLng(
+           parentLatLng
+       );
+   }
+
+
+   /* -----------------------------------------
+      دایره دقت GPS
+      ----------------------------------------- */
+
+   if (
+       Number.isFinite(accuracy) &&
+       accuracy > 0
+   ) {
+
+       if (!accuracyCircle) {
+
+           accuracyCircle =
+               L.circle(
+                   parentLatLng,
+                   {
+                       radius: accuracy,
+                       color: "#777",
+                       fillColor: "#777",
+                       fillOpacity: 0.08,
+                       weight: 1,
+                       dashArray: "4, 5"
+                   }
+               ).addTo(mapInstance);
+
+       } else {
+
+           accuracyCircle.setLatLng(
+               parentLatLng
+           );
+
+           accuracyCircle.setRadius(
+               accuracy
+           );
+       }
+   }
+
+
+   /* -----------------------------------------
+      فاصله
+      ----------------------------------------- */
+
+   const distance =
+       calculateDistance(
+           SCHOOL_LAT,
+           SCHOOL_LNG,
+           lat,
+           lng
+       );
+
+   currentDistance =
+       distance;
+
+
+   /* -----------------------------------------
+      خط بین مدرسه و والد
+      ----------------------------------------- */
+
+   if (!parentSchoolLine) {
+
+       parentSchoolLine =
+           L.polyline(
+               [
+                   schoolLatLng,
+                   parentLatLng
+               ],
+               {
+                   color: "#333",
+                   weight: 4,
+                   opacity: 0.85,
+                   dashArray: "7, 8"
+               }
+           )
+           .addTo(mapInstance);
+
+   } else {
+
+       parentSchoolLine.setLatLngs(
+           [
+               schoolLatLng,
+               parentLatLng
+           ]
+       );
+   }
+
+
+   /* -----------------------------------------
+      فاصله روی خط
+      ----------------------------------------- */
+
+   const middleLat =
+       (
+           SCHOOL_LAT +
+           lat
+       ) / 2;
+
+   const middleLng =
+       (
+           SCHOOL_LNG +
+           lng
+       ) / 2;
+
+
+   if (!distanceLabel) {
+
+       distanceLabel =
+           L.marker(
+               [
+                   middleLat,
+                   middleLng
+               ],
+               {
+                   interactive: false,
+
+                   icon:
+                       L.divIcon({
+                           className: "",
+                           html: `
+                               <div class="distance-label-snapp">
+                                   📏 ${formatDistance(distance)}
+                               </div>
+                           `,
+                           iconSize: null
+                       })
+               }
+           )
+           .addTo(mapInstance);
+
+   } else {
+
+       distanceLabel.setLatLng(
+           [
+               middleLat,
+               middleLng
+           ]
+       );
+
+       distanceLabel.setIcon(
+           L.divIcon({
+               className: "",
+               html: `
+                   <div class="distance-label-snapp">
+                       📏 ${formatDistance(distance)}
+                   </div>
+               `,
+               iconSize: null
+           })
+       );
+   }
+
+
+   /* -----------------------------------------
+      پنل پایین
+      ----------------------------------------- */
+
+   const distanceElement =
+       document.getElementById(
+           "snappDistance"
+       );
+
+   if (distanceElement) {
+
+       distanceElement.textContent =
+           formatDistance(distance);
+   }
+
+
+   const statusElement =
+       document.getElementById(
+           "snappLocationStatus"
+       );
+
+
+   const inside =
+       distance <= ALLOWED_RADIUS;
+
+
+   if (statusElement) {
+
+       statusElement.className =
+           "snapp-location-status " +
+           (
+               inside
+                   ? "inside"
+                   : "outside"
+           );
+
+       statusElement.textContent =
+           inside
+               ? "✓ شما داخل محدوده مجاز هستید"
+               : "✕ شما خارج از محدوده مجاز هستید";
+   }
+
+
+   /* -----------------------------------------
+      وضعیت قبلی
+      ----------------------------------------- */
+
+   if (locationStatus) {
+
+       locationStatus.textContent =
+           inside
+               ? `✓ داخل محدوده مجاز — فاصله: ${formatDistance(distance)}`
+               : `✕ خارج از محدوده مجاز — فاصله: ${formatDistance(distance)}`;
+
+       locationStatus.className =
+           inside
+               ? "location-status success"
+               : "location-status error";
+   }
+
+
+   /* -----------------------------------------
+      فعال / غیرفعال کردن فراخوان
+      ----------------------------------------- */
+
+   if (callButton) {
+
+       const timeActive =
+           isCallTimeActive(
+               currentClassName
+           );
+
+       callButton.disabled =
+           !(
+               inside &&
+               timeActive
+           );
+   }
+
+
+   /* -----------------------------------------
+      تنظیم کادر نقشه
+      ----------------------------------------- */
+
+   const bounds =
+       L.latLngBounds([
+           schoolLatLng,
+           parentLatLng
+       ]);
+
+
+   if (
+       distance > 100
+   ) {
+
+       mapInstance.fitBounds(
+           bounds,
+           {
+               padding: [70, 70],
+               maxZoom: 17,
+               animate: true
+           }
+       );
+
+   } else {
+
+       mapInstance.setView(
+           parentLatLng,
+           18,
+           {
+               animate: true
+           }
+       );
+   }
 }
 
-/* =========================
-   ساخت نقشه
-========================= */
 
-async function initializeLocationMap() {
-    createLocationMapCard();
-
-    try {
-        await loadLeaflet();
-
-        if (!window.L) {
-            throw new Error(
-                "Leaflet unavailable"
-            );
-        }
-
-        const mapElement =
-            document.getElementById(
-                "locationMap"
-            );
-
-        if (!mapElement) return;
-
-        if (mapInstance) {
-            setTimeout(() => {
-                mapInstance.invalidateSize();
-            }, 200);
-
-            return;
-        }
-
-        mapInstance =
-            L.map(
-                "locationMap",
-                {
-                    zoomControl: true
-                }
-            );
-
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                maxZoom: 19,
-                attribution:
-                    "&copy; OpenStreetMap contributors"
-            }
-        ).addTo(mapInstance);
-
-        const schoolLatLng = [
-            SCHOOL_LAT,
-            SCHOOL_LNG
-        ];
-
-        schoolMarker =
-            L.marker(
-                schoolLatLng
-            )
-                .addTo(mapInstance)
-                .bindPopup(`
-                    <div style="
-                        text-align:center;
-                        direction:rtl;
-                    ">
-                        <strong>🏫 مدرسه</strong><br>
-                        محل مدرسه
-                    </div>
-                `);
-
-        schoolCircle =
-            L.circle(
-                schoolLatLng,
-                {
-                    radius:
-                        ALLOWED_RADIUS,
-
-                    weight: 2,
-
-                    fillOpacity: 0.12
-                }
-            ).addTo(mapInstance);
-
-        mapInstance.fitBounds(
-            schoolCircle.getBounds(),
-            {
-                padding: [30, 30]
-            }
-        );
-
-        setTimeout(() => {
-            mapInstance.invalidateSize();
-        }, 300);
-
-    } catch (error) {
-
-        console.error(
-            "Map initialization error:",
-            error
-        );
-
-        setMapStatus(
-            "نقشه آنلاین بارگذاری نشد.",
-            "normal"
-        );
-    }
-}
-
-/* =========================
-   درخواست دسترسی موقعیت در Median
-========================= */
+/* =========================================================
+  21. درخواست مجوز GPS در Median
+  ========================================================= */
 
 function isMedianAndroid() {
-    return (
-        !!(
-            window.median &&
-            window.median.android
-        ) ||
-        /MedianAndroid|GoNativeAndroid/i.test(
-            navigator.userAgent
-        )
-    );
+
+   return (
+       window.median &&
+       window.median.android
+   );
 }
+
 
 function waitForMedianBridge(
-    timeout = 3000
+   timeout = 7000
 ) {
-    return new Promise(resolve => {
 
-        if (
-            window.median &&
-            window.median.android
-        ) {
-            resolve(true);
-            return;
-        }
+   return new Promise(resolve => {
 
-        const start =
-            Date.now();
+       if (
+           window.median
+       ) {
+           resolve(true);
+           return;
+       }
 
-        const timer =
-            setInterval(() => {
 
-                if (
-                    window.median &&
-                    window.median.android
-                ) {
-                    clearInterval(timer);
-                    resolve(true);
-                    return;
-                }
+       const start =
+           Date.now();
 
-                if (
-                    Date.now() - start >=
-                    timeout
-                ) {
-                    clearInterval(timer);
-                    resolve(false);
-                }
 
-            }, 100);
-    });
+       const timer =
+           setInterval(() => {
+
+               if (
+                   window.median
+               ) {
+
+                   clearInterval(timer);
+                   resolve(true);
+                   return;
+               }
+
+
+               if (
+                   Date.now() -
+                   start >
+                   timeout
+               ) {
+
+                   clearInterval(timer);
+                   resolve(false);
+               }
+
+           }, 100);
+   });
 }
+
 
 async function requestMedianLocationPermission() {
 
-    if (!isMedianAndroid()) {
-        return;
-    }
+   if (!isMedianAndroid()) {
+       return;
+   }
 
-    try {
 
-        const bridgeReady =
-            await waitForMedianBridge();
+   try {
 
-        if (
-            bridgeReady &&
-            window.median &&
-            window.median.android &&
-            window.median.android.geoLocation &&
-            typeof window.median.android.geoLocation
-                .promptLocationServices ===
-                "function"
-        ) {
+       const ready =
+           await waitForMedianBridge();
 
-            window.median.android.geoLocation
-                .promptLocationServices();
 
-            await new Promise(resolve =>
-                setTimeout(resolve, 700)
-            );
-        }
+       if (
+           ready &&
+           window.median &&
+           window.median.android &&
+           window.median.android.geoLocation &&
+           typeof
+               window.median.android.geoLocation
+                   .promptLocationServices ===
+               "function"
+       ) {
 
-    } catch (error) {
+           window.median.android.geoLocation
+               .promptLocationServices();
 
-        console.warn(
-            "Median location permission error:",
-            error
-        );
-    }
+           await new Promise(
+               resolve =>
+                   setTimeout(
+                       resolve,
+                       700
+                   )
+           );
+       }
+
+   } catch (error) {
+
+       console.warn(
+           "Median GPS permission:",
+           error
+       );
+   }
 }
 
-/* =========================
-   دریافت موقعیت والد
-========================= */
 
-function getParentLocation() {
+/* =========================================================
+  22. دریافت موقعیت والد
+  ========================================================= */
 
-    return new Promise(
-        async (resolve, reject) => {
+async function getParentLocation() {
 
-            if (
-                !navigator.geolocation
-            ) {
-                reject({
-                    code: 0,
-                    message:
-                        "مرورگر از موقعیت مکانی پشتیبانی نمی‌کند."
-                });
+   await initializeMap();
 
-                return;
-            }
+   await requestMedianLocationPermission();
 
-            await requestMedianLocationPermission();
 
-            navigator.geolocation
-                .getCurrentPosition(
-                    resolve,
-                    reject,
-                    {
-                        enableHighAccuracy:
-                            true,
+   return new Promise(
+       (resolve, reject) => {
 
-                        timeout:
-                            15000,
+           if (
+               !navigator.geolocation
+           ) {
 
-                        maximumAge:
-                            0
-                    }
-                );
-        }
-    );
-}
-/* =========================
-   نمایش موقعیت والد روی نقشه
-========================= */
+               reject(
+                   new Error(
+                       "GPS در این دستگاه در دسترس نیست."
+                   )
+               );
 
-function updateMapWithParentLocation(
-    lat,
-    lng,
-    distance,
-    accuracy = null
-) {
-    if (
-        !mapInstance ||
-        !window.L
-    ) {
-        return;
-    }
+               return;
+           }
 
-    const parentLatLng = [
-        lat,
-        lng
-    ];
 
-    const schoolLatLng = [
-        SCHOOL_LAT,
-        SCHOOL_LNG
-    ];
+           navigator.geolocation.getCurrentPosition(
 
-    /* حذف marker قبلی والد */
+               position => {
 
-    if (parentMarker) {
-        mapInstance.removeLayer(
-            parentMarker
-        );
-    }
+                   const {
+                       latitude,
+                       longitude,
+                       accuracy
+                   } =
+                       position.coords;
 
-    /* حذف دقت GPS قبلی */
 
-    if (accuracyCircle) {
-        mapInstance.removeLayer(
-            accuracyCircle
-        );
-    }
+                   updateMapPosition(
+                       latitude,
+                       longitude,
+                       accuracy
+                   );
 
-    /* حذف خط قبلی */
 
-    if (parentSchoolLine) {
-        mapInstance.removeLayer(
-            parentSchoolLine
-        );
-    }
+                   resolve({
+                       latitude,
+                       longitude,
+                       accuracy
+                   });
 
-    /* حذف برچسب فاصله قبلی */
+               },
 
-    if (distanceLabel) {
-        mapInstance.removeLayer(
-            distanceLabel
-        );
-    }
+               error => {
 
-    /* =========================
-       Marker والد
-    ========================= */
+                   console.error(
+                       "GPS ERROR:",
+                       error
+                   );
 
-    parentMarker =
-        L.marker(
-            parentLatLng
-        )
-            .addTo(mapInstance)
-            .bindPopup(`
-                <div style="
-                    text-align:center;
-                    direction:rtl;
-                    min-width:150px;
-                ">
-                    <strong>📍 موقعیت والد</strong>
-                    <br>
-                    <span>
-                        فاصله تا مدرسه:
-                    </span>
-                    <br>
-                    <strong>
-                        ${formatDistance(distance)}
-                    </strong>
-                </div>
-            `);
 
-    /* =========================
-       دایره دقت GPS
-    ========================= */
+                   let message =
+                       "دریافت موقعیت ناموفق بود.";
 
-    if (
-        Number.isFinite(accuracy) &&
-        accuracy > 0
-    ) {
-        accuracyCircle =
-            L.circle(
-                parentLatLng,
-                {
-                    radius: accuracy,
-                    weight: 1,
-                    fillOpacity: 0.08
-                }
-            ).addTo(mapInstance);
-    }
 
-    /* =========================
-       خط مستقیم مدرسه تا والد
-    ========================= */
+                   if (
+                       error.code === 1
+                   ) {
 
-    parentSchoolLine =
-        L.polyline(
-            [
-                schoolLatLng,
-                parentLatLng
-            ],
-            {
-                weight: 4,
-                opacity: 0.9,
-                dashArray: "8, 8"
-            }
-        ).addTo(mapInstance);
+                       message =
+                           "دسترسی به موقعیت مکانی داده نشده است.";
 
-    /* =========================
-       نمایش فاصله روی خط
-    ========================= */
+                   } else if (
+                       error.code === 2
+                   ) {
 
-    const middleLat =
-        (
-            SCHOOL_LAT + lat
-        ) / 2;
+                       message =
+                           "موقعیت مکانی قابل دریافت نیست.";
 
-    const middleLng =
-        (
-            SCHOOL_LNG + lng
-        ) / 2;
+                   } else if (
+                       error.code === 3
+                   ) {
 
-    distanceLabel =
-        L.marker(
-            [
-                middleLat,
-                middleLng
-            ],
-            {
-                interactive: false,
+                       message =
+                           "دریافت موقعیت بیش از حد طول کشید.";
+                   }
 
-                icon:
-                    L.divIcon({
-                        className:
-                            "distance-label",
 
-                        html: `
-                            <div style="
-                                background:white;
-                                padding:6px 10px;
-                                border-radius:8px;
-                                box-shadow:0 2px 8px rgba(0,0,0,.25);
-                                font-weight:bold;
-                                font-size:13px;
-                                direction:rtl;
-                                white-space:nowrap;
-                                border:1px solid #ddd;
-                                text-align:center;
-                            ">
-                                📏
-                                ${formatDistance(distance)}
-                            </div>
-                        `,
+                   reject(
+                       new Error(
+                           message
+                       )
+                   );
 
-                        iconSize:
-                            null
-                    })
-            }
-        ).addTo(mapInstance);
+               },
 
-    /* =========================
-       بررسی محدوده
-    ========================= */
+               {
+                   enableHighAccuracy: true,
 
-    const inside =
-        distance <= ALLOWED_RADIUS;
+                   timeout: 15000,
 
-    if (inside) {
-
-        setMapStatus(
-            `✅ داخل محدوده مجاز — فاصله: ${formatDistance(distance)}`,
-            "inside"
-        );
-
-        if (locationStatus) {
-            locationStatus.textContent =
-                "داخل محدوده مجاز";
-
-            locationStatus.style.color =
-                "#16a34a";
-        }
-
-    } else {
-
-        setMapStatus(
-            `❌ خارج از محدوده مجاز — فاصله: ${formatDistance(distance)}`,
-            "outside"
-        );
-
-        if (locationStatus) {
-            locationStatus.textContent =
-                "خارج از محدوده مجاز";
-
-            locationStatus.style.color =
-                "#dc2626";
-        }
-    }
-
-    /* =========================
-       نمایش مدرسه و والد
-       همزمان روی صفحه
-    ========================= */
-
-    const bounds =
-        L.latLngBounds([
-            schoolLatLng,
-            parentLatLng
-        ]);
-
-    mapInstance.fitBounds(
-        bounds,
-        {
-            padding: [
-                50,
-                50
-            ]
-        }
-    );
-
-    setTimeout(() => {
-        mapInstance.invalidateSize();
-    }, 300);
+                   maximumAge: 0
+               }
+           );
+       }
+   );
 }
 
-/* =========================
-   بررسی موقعیت والد
-========================= */
+
+/* =========================================================
+  23. بررسی موقعیت
+  ========================================================= */
 
 async function checkParentLocation() {
 
-    const button =
-        document.getElementById(
-            "mapLocationButton"
-        );
+   try {
 
-    if (button) {
-        button.disabled = true;
+       if (locationStatus) {
 
-        button.textContent =
-            "📍 در حال دریافت موقعیت...";
-    }
+           locationStatus.textContent =
+               "در حال دریافت موقعیت دقیق شما...";
 
-    setMapStatus(
-        "📍 در حال دریافت موقعیت دقیق والد...",
-        "normal"
-    );
+           locationStatus.className =
+               "location-status";
+       }
 
-    try {
 
-        const position =
-            await getParentLocation();
+       const position =
+           await getParentLocation();
 
-        const lat =
-            position.coords.latitude;
 
-        const lng =
-            position.coords.longitude;
+       const distance =
+           calculateDistance(
+               SCHOOL_LAT,
+               SCHOOL_LNG,
+               position.latitude,
+               position.longitude
+           );
 
-        const accuracy =
-            position.coords.accuracy;
 
-        const distance =
-            calculateDistance(
-                lat,
-                lng,
-                SCHOOL_LAT,
-                SCHOOL_LNG
-            );
+       currentParentLat =
+           position.latitude;
 
-        await initializeLocationMap();
+       currentParentLng =
+           position.longitude;
 
-        updateMapWithParentLocation(
-            lat,
-            lng,
-            distance,
-            accuracy
-        );
+       currentDistance =
+           distance;
 
-    } catch (error) {
 
-        console.error(
-            "Geolocation error:",
-            error
-        );
+       return {
+           ...position,
+           distance,
+           inside:
+               distance <=
+               ALLOWED_RADIUS
+       };
 
-        let text =
-            "دریافت موقعیت انجام نشد.";
 
-        if (error && error.code === 1) {
-            text =
-                "❌ دسترسی به موقعیت مکانی رد شده است.";
-        } else if (
-            error &&
-            error.code === 2
-        ) {
-            text =
-                "❌ موقعیت مکانی در دسترس نیست.";
-        } else if (
-            error &&
-            error.code === 3
-        ) {
-            text =
-                "❌ دریافت موقعیت زمان‌بر شد.";
-        }
+   } catch (error) {
 
-        setMapStatus(
-            text,
-            "outside"
-        );
+       console.error(
+           "LOCATION CHECK:",
+           error
+       );
 
-        if (locationStatus) {
-            locationStatus.textContent =
-                "دریافت نشد";
-        }
 
-    } finally {
+       if (locationStatus) {
 
-        if (button) {
-            button.disabled = false;
+           locationStatus.textContent =
+               error.message;
 
-            button.textContent =
-                "📍 بررسی موقعیت من";
-        }
-    }
+           locationStatus.className =
+               "location-status error";
+       }
+
+
+       throw error;
+   }
 }
 
-/* =========================
-   بارگذاری فراخوان قبلی
-========================= */
+
+/* =========================================================
+  24. بررسی فراخوان قبلی
+  ========================================================= */
 
 async function loadExistingCall() {
 
-    if (!currentStudentName) {
-        return null;
-    }
+   if (!db) {
+       return null;
+   }
 
-    try {
 
-        const today =
-            getIranDateForDatabase();
+   const now =
+       getIranDate();
 
-        const {
-            data,
-            error
-        } = await db
-            .from("calls")
-            .select("*")
-            .eq(
-                "student_name",
-                currentStudentName
-            )
-            .eq(
-                "called_date",
-                today
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1);
 
-        if (error) {
-            console.error(
-                "Load call error:",
-                error
-            );
+   const calledDate =
+       `${now.getFullYear()}-${String(
+           now.getMonth() + 1
+       ).padStart(2, "0")}-${String(
+           now.getDate()
+       ).padStart(2, "0")}`;
 
-            return null;
-        }
 
-        if (
-            data &&
-            data.length > 0
-        ) {
+   try {
 
-            callButton.dataset.called =
-                "true";
+       const {
+           data,
+           error
+       } =
+           await db
+               .from("calls")
+               .select("*")
+               .eq(
+                   "student_name",
+                   currentStudentName
+               )
+               .eq(
+                   "class_name",
+                   currentClassName
+               )
+               .eq(
+                   "called_date",
+                   calledDate
+               )
+               .order(
+                   "called_time",
+                   {
+                       ascending: false
+                   }
+               )
+               .limit(1)
+               .maybeSingle();
 
-            callButton.disabled =
-                true;
 
-            callButton.textContent =
-                "✅ فراخوان ثبت شده است";
+       if (error) {
 
-            return data[0];
-        }
+           console.error(
+               "LOAD CALL ERROR:",
+               error
+           );
 
-    } catch (error) {
+           return null;
+       }
 
-        console.error(
-            "Existing call error:",
-            error
-        );
-    }
 
-    return null;
+       return data;
+
+   } catch (error) {
+
+       console.error(
+           error
+       );
+
+       return null;
+   }
 }
 
-/* =========================
-   بروزرسانی وضعیت فراخوان
-========================= */
 
-async function updateParentCallStatus() {
+/* =========================================================
+  25. وضعیت فراخوان
+  ========================================================= */
 
-    if (!currentStudentName) {
-        return;
-    }
+function updateParentCallStatus(
+   callData
+) {
 
-    await loadExistingCall();
+   if (!callData) {
+       return;
+   }
 
-    updateCallScheduleUI();
+
+   if (callButton) {
+
+       callButton.disabled = true;
+
+       callButton.textContent =
+           "✓ دانش‌آموز فراخوان شده است";
+   }
+
+
+   if (callDescription) {
+
+       callDescription.textContent =
+           `آخرین فراخوان در ساعت ${callData.called_time} ثبت شده است.`;
+   }
 }
 
-/* =========================
-   ورود والد
-========================= */
+
+/* =========================================================
+  26. ورود والد
+  ========================================================= */
 
 async function loginParent() {
 
-    const studentName =
-        studentNameInput.value.trim();
+   const studentName =
+       studentNameInput
+           ?.value
+           ?.trim();
 
-    const parentCode =
-        parentCodeInput.value.trim();
+   const parentCode =
+       parentCodeInput
+           ?.value
+           ?.trim();
 
-    if (!studentName) {
 
-        showMessage(
-            "لطفاً نام دانش‌آموز را وارد کنید.",
-            "error"
-        );
+   if (!studentName) {
 
-        return;
-    }
+       showMessage(
+           "لطفاً نام دانش‌آموز را وارد کنید.",
+           "error"
+       );
 
-    if (
-        !/^\d{4}$/.test(parentCode)
-    ) {
+       return;
+   }
 
-        showMessage(
-            "کد ورود باید ۴ رقمی باشد.",
-            "error"
-        );
 
-        return;
-    }
+   if (
+       !/^\d{4}$/.test(
+           parentCode
+       )
+   ) {
 
-    loginButton.disabled = true;
+       showMessage(
+           "کد والد باید ۴ رقمی باشد.",
+           "error"
+       );
 
-    loginButton.textContent =
-        "در حال بررسی...";
+       return;
+   }
 
-    showMessage("");
 
-    try {
+   if (!db) {
 
-        const {
-            data,
-            error
-        } = await db
-            .from("parent_accounts")
-            .select("*")
-            .eq(
-                "student_name",
-                studentName
-            )
-            .eq(
-                "parent_code",
-                parentCode
-            )
-            .limit(1);
+       showMessage(
+           "اتصال Supabase برقرار نشده است.",
+           "error"
+       );
 
-        if (error) {
-            throw error;
-        }
+       console.error(
+           "Supabase client is not initialized."
+       );
 
-        if (
-            !data ||
-            data.length === 0
-        ) {
+       return;
+   }
 
-            showMessage(
-                "نام دانش‌آموز یا کد ورود صحیح نیست.",
-                "error"
-            );
 
-            return;
-        }
+   loginButton.disabled = true;
 
-        const account =
-            data[0];
+   loginButton.textContent =
+       "در حال ورود...";
 
-        currentStudentName =
-            account.student_name;
 
-        currentClassName =
-            account.class_name;
+   try {
 
-        if (panelStudentName) {
-            panelStudentName.textContent =
-                currentStudentName;
-        }
+       const {
+           data,
+           error
+       } =
+           await db
+               .from("parent_accounts")
+               .select(
+                   "student_name, parent_code, class_name"
+               )
+               .eq(
+                   "student_name",
+                   studentName
+               )
+               .eq(
+                   "parent_code",
+                   parentCode
+               )
+               .maybeSingle();
 
-        if (panelClassName) {
-            panelClassName.textContent =
-                `کلاس ${currentClassName}`;
-        }
 
-        loginScreen.style.display =
-            "none";
+       if (error) {
 
-        parentPanel.style.display =
-            "block";
+           console.error(
+               "SUPABASE LOGIN ERROR:",
+               error
+           );
 
-        createLocationMapCard();
 
-        await initializeLocationMap();
+           showMessage(
+               "خطای Supabase: " +
+               (
+                   error.message ||
+                   "خطای نامشخص"
+               ),
+               "error"
+           );
 
-        await updateParentCallStatus();
 
-        if (parentRefreshInterval) {
-            clearInterval(
-                parentRefreshInterval
-            );
-        }
+           return;
+       }
 
-        parentRefreshInterval =
-            setInterval(
-                updateParentCallStatus,
-                10000
-            );
 
-        setupRealtime();
+       if (!data) {
 
-    } catch (error) {
+           showMessage(
+               "نام دانش‌آموز یا کد والد صحیح نیست.",
+               "error"
+           );
 
-        console.error(
-            "Login error:",
-            error
-        );
+           return;
+       }
 
-        showMessage(
-            "خطا در ارتباط با سامانه.",
-            "error"
-        );
 
-    } finally {
+       currentStudentName =
+           data.student_name;
 
-        loginButton.disabled =
-            false;
+       currentClassName =
+           data.class_name;
 
-        loginButton.textContent =
-            "ورود به پنل";
-    }
+       currentParentCode =
+           data.parent_code;
+
+
+       if (panelStudentName) {
+
+           panelStudentName.textContent =
+               currentStudentName;
+       }
+
+
+       if (panelClassName) {
+
+           panelClassName.textContent =
+               currentClassName;
+       }
+
+
+       if (loginScreen) {
+           loginScreen.style.display =
+               "none";
+       }
+
+
+       if (parentPanel) {
+           parentPanel.style.display =
+               "block";
+       }
+
+
+       updateCallScheduleUI();
+
+
+       await initializeMap();
+
+
+       try {
+
+           const previousCall =
+               await loadExistingCall();
+
+           if (previousCall) {
+
+               updateParentCallStatus(
+                   previousCall
+               );
+           }
+
+       } catch (error) {
+
+           console.warn(
+               "Previous call check:",
+               error
+           );
+       }
+
+
+       await checkParentLocation();
+
+
+   } catch (error) {
+
+       console.error(
+           "LOGIN ERROR:",
+           error
+       );
+
+
+       showMessage(
+           "خطا در ارتباط با سامانه: " +
+           (
+               error.message ||
+               "خطای نامشخص"
+           ),
+           "error"
+       );
+
+   } finally {
+
+       loginButton.disabled = false;
+
+       loginButton.textContent =
+           "ورود به پنل";
+   }
 }
 
-/* =========================
-   ثبت فراخوان
-========================= */
+
+/* =========================================================
+  27. فراخوانی دانش‌آموز
+  ========================================================= */
 
 async function callStudent() {
 
-    if (!currentStudentName) {
+   if (!currentStudentName) {
 
-        alert(
-            "ابتدا وارد پنل شوید."
-        );
+       alert(
+           "ابتدا وارد حساب والد شوید."
+       );
 
-        return;
-    }
+       return;
+   }
 
-    if (
-        !isCallTimeActive(
-            currentClassName
-        )
-    ) {
 
-        alert(
-            "در حال حاضر زمان فراخوان این کلاس فعال نیست."
-        );
+   if (
+       !isCallTimeActive(
+           currentClassName
+       )
+   ) {
 
-        return;
-    }
+       alert(
+           "در حال حاضر زمان فراخوان این کلاس نیست."
+       );
 
-    if (
-        callButton.dataset.called ===
-        "true"
-    ) {
+       return;
+   }
 
-        alert(
-            "برای این دانش‌آموز قبلاً فراخوان ثبت شده است."
-        );
 
-        return;
-    }
+   callButton.disabled = true;
 
-    callButton.disabled = true;
+   callButton.textContent =
+       "در حال بررسی موقعیت...";
 
-    callButton.textContent =
-        "📍 در حال بررسی موقعیت...";
 
-    try {
+   try {
 
-        const position =
-            await getParentLocation();
+       const location =
+           await checkParentLocation();
 
-        const lat =
-            position.coords.latitude;
 
-        const lng =
-            position.coords.longitude;
+       if (
+           location.distance >
+           ALLOWED_RADIUS
+       ) {
 
-        const accuracy =
-            position.coords.accuracy;
+           alert(
+               `❌ خارج از محدوده مجاز هستید.
 
-        const distance =
-            calculateDistance(
-                lat,
-                lng,
-                SCHOOL_LAT,
-                SCHOOL_LNG
-            );
+فاصله شما تا مدرسه:
+${formatDistance(location.distance)}
 
-        await initializeLocationMap();
+شعاع مجاز:
+${formatDistance(ALLOWED_RADIUS)}`
+           );
 
-        updateMapWithParentLocation(
-            lat,
-            lng,
-            distance,
-            accuracy
-        );
 
-        /*
-           اگر بیشتر از 50 متر باشد،
-           فراخوان ثبت نمی‌شود.
-        */
+           callButton.disabled = false;
 
-        if (
-            distance >
-            ALLOWED_RADIUS
-        ) {
+           callButton.textContent =
+               "📢 فراخوانی دانش‌آموز";
 
-            alert(
-                `❌ خارج از محدوده مجاز هستید.\n\nفاصله شما تا مدرسه: ${formatDistance(distance)}\nشعاع مجاز: ${formatDistance(ALLOWED_RADIUS)}`
-            );
+           return;
+       }
 
-            callButton.disabled =
-                false;
 
-            callButton.textContent =
-                "📢 فراخوانی دانش‌آموز";
+       const now =
+           getIranDate();
 
-            return;
-        }
 
-        /* =========================
-           ثبت فراخوان در Supabase
-        ========================= */
+       const calledDate =
+           `${now.getFullYear()}-${String(
+               now.getMonth() + 1
+           ).padStart(2, "0")}-${String(
+               now.getDate()
+           ).padStart(2, "0")}`;
 
-        callButton.textContent =
-            "📢 در حال ثبت فراخوان...";
 
-        const calledDate =
-            getIranDateForDatabase();
+       const calledTime =
+           `${String(
+               now.getHours()
+           ).padStart(2, "0")}:${String(
+               now.getMinutes()
+           ).padStart(2, "0")}:${String(
+               now.getSeconds()
+           ).padStart(2, "0")}`;
 
-        const calledTime =
-            getIranTimeString();
 
-        const {
-            error
-        } = await db
-            .from("calls")
-            .insert([
-                {
-                    student_name:
-                        currentStudentName,
+       callButton.textContent =
+           "در حال ثبت فراخوان...";
 
-                    class_name:
-                        currentClassName,
 
-                    status:
-                        "فراخوان شد",
+       const {
+           error
+       } =
+           await db
+               .from("calls")
+               .insert([
+                   {
+                       student_name:
+                           currentStudentName,
 
-                    called_date:
-                        calledDate,
+                       class_name:
+                           currentClassName,
 
-                    called_time:
-                        calledTime
-                }
-            ]);
+                       status:
+                           "فراخوان شد",
 
-        if (error) {
-            throw error;
-        }
+                       called_date:
+                           calledDate,
 
-        callButton.dataset.called =
-            "true";
+                       called_time:
+                           calledTime
+                   }
+               ]);
 
-        callButton.disabled =
-            true;
 
-        callButton.textContent =
-            "✅ فراخوان با موفقیت ثبت شد";
+       if (error) {
 
-        if (callDescription) {
-            callDescription.textContent =
-                "فراخوان دانش‌آموز با موفقیت ثبت شد.";
-        }
+           console.error(
+               "CALL INSERT ERROR:",
+               error
+           );
 
-        alert(
-            "✅ فراخوان دانش‌آموز با موفقیت ثبت شد."
-        );
+           throw error;
+       }
 
-    } catch (error) {
 
-        console.error(
-            "Call error:",
-            error
-        );
+       callButton.textContent =
+           "✓ فراخوان ثبت شد";
 
-        if (
-            error &&
-            error.code === 1
-        ) {
+       callButton.disabled =
+           true;
 
-            alert(
-                "❌ دسترسی موقعیت مکانی داده نشد."
-            );
 
-        } else if (
-            error &&
-            error.code === 2
-        ) {
+       if (callDescription) {
 
-            alert(
-                "❌ موقعیت مکانی در دسترس نیست."
-            );
+           callDescription.textContent =
+               `فراخوان دانش‌آموز در ساعت ${calledTime} ثبت شد.`;
+       }
 
-        } else if (
-            error &&
-            error.code === 3
-        ) {
 
-            alert(
-                "❌ دریافت موقعیت مکانی زمان‌بر شد."
-            );
+       showMessage(
+           "✓ فراخوان با موفقیت ثبت شد.",
+           "success"
+       );
 
-        } else {
 
-            alert(
-                "❌ خطا در ثبت فراخوان."
-            );
-        }
+   } catch (error) {
 
-        callButton.disabled =
-            false;
+       console.error(
+           "CALL ERROR:",
+           error
+       );
 
-        callButton.textContent =
-            "📢 فراخوانی دانش‌آموز";
-    }
+
+       alert(
+           "خطا در ثبت فراخوان:\n" +
+           (
+               error.message ||
+               "خطای نامشخص"
+           )
+       );
+
+
+       callButton.disabled =
+           false;
+
+       callButton.textContent =
+           "📢 فراخوانی دانش‌آموز";
+   }
 }
 
-/* =========================
-   Realtime Supabase
-========================= */
+
+/* =========================================================
+  28. ساعت و تاریخ پنل
+  ========================================================= */
+
+function updateDateTime() {
+
+   const now =
+       getIranDate();
+
+
+   if (currentDate) {
+
+       currentDate.textContent =
+           now.toLocaleDateString(
+               "fa-IR"
+           );
+   }
+
+
+   if (currentTime) {
+
+       currentTime.textContent =
+           now.toLocaleTimeString(
+               "fa-IR",
+               {
+                   hour: "2-digit",
+                   minute: "2-digit",
+                   second: "2-digit"
+               }
+           );
+   }
+
+
+   if (currentClassName) {
+
+       updateCallScheduleUI();
+   }
+}
+
+
+/* =========================================================
+  29. Realtime Supabase
+  ========================================================= */
 
 function setupRealtime() {
 
-    if (parentCallChannel) {
+   if (!db) {
+       return;
+   }
 
-        db.removeChannel(
-            parentCallChannel
-        );
-    }
 
-    parentCallChannel =
-        db.channel(
-            `parent-call-${currentStudentName}-${Date.now()}`
-        );
+   db
+       .channel(
+           "parent-calls-channel"
+       )
+       .on(
+           "postgres_changes",
+           {
+               event: "INSERT",
+               schema: "public",
+               table: "calls"
+           },
+           payload => {
 
-    parentCallChannel
-        .on(
-            "postgres_changes",
-            {
-                event: "*",
-                schema: "public",
-                table: "calls"
-            },
-            payload => {
+               const row =
+                   payload.new;
 
-                const student =
-                    payload.new &&
-                    payload.new.student_name;
 
-                if (
-                    student ===
-                    currentStudentName
-                ) {
+               if (
+                   row.student_name ===
+                   currentStudentName
+               ) {
 
-                    updateParentCallStatus();
-                }
-            }
-        )
-        .subscribe();
+                   if (row.class_name ===
+                       currentClassName) {
+
+                       updateParentCallStatus(
+                           row
+                       );
+                   }
+               }
+           }
+       )
+       .subscribe();
 }
 
-/* =========================
-   رویدادها
-========================= */
 
-loginButton.addEventListener(
-    "click",
-    loginParent
-);
+/* =========================================================
+  30. Event ها
+  ========================================================= */
 
-callButton.addEventListener(
-    "click",
-    callStudent
-);
+if (loginButton) {
 
-studentNameInput.addEventListener(
-    "keydown",
-    event => {
+   loginButton.addEventListener(
+       "click",
+       loginParent
+   );
+}
 
-        if (
-            event.key ===
-            "Enter"
-        ) {
-            loginParent();
-        }
-    }
-);
 
-parentCodeInput.addEventListener(
-    "keydown",
-    event => {
+if (callButton) {
 
-        if (
-            event.key ===
-            "Enter"
-        ) {
-            loginParent();
-        }
-    }
-);
+   callButton.addEventListener(
+       "click",
+       callStudent
+   );
+}
 
-/* =========================
-   فقط عدد برای کد ورود
-========================= */
 
-parentCodeInput.addEventListener(
-    "input",
-    () => {
+if (parentCodeInput) {
 
-        parentCodeInput.value =
-            parentCodeInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(0, 4);
-    }
-);
+   parentCodeInput.addEventListener(
+       "input",
+       () => {
 
-/* =========================
-   آماده بودن Median Bridge
-========================= */
+           parentCodeInput.value =
+               parentCodeInput.value
+                   .replace(/\D/g, "")
+                   .slice(0, 4);
+       }
+   );
+}
+
+
+if (parentCodeInput) {
+
+   parentCodeInput.addEventListener(
+       "keydown",
+       event => {
+
+           if (
+               event.key === "Enter"
+           ) {
+
+               loginParent();
+           }
+       }
+   );
+}
+
+
+/* =========================================================
+  31. Median آماده شد
+  ========================================================= */
 
 window.median_library_ready =
-    function () {
+   function () {
 
-        console.log(
-            "Median JavaScript Bridge is ready."
-        );
-    };
+       console.log(
+           "Median library ready"
+       );
+   };
+
 
 window.median_geolocation_ready =
-    function () {
+   function () {
 
-        console.log(
-            "Median geolocation is ready."
-        );
-    };
+       console.log(
+           "Median geolocation ready"
+       );
+   };
 
-/* =========================
-   وضعیت اولیه
-========================= */
 
-if (parentPanel) {
-    parentPanel.style.display =
-        "none";
-}
-
-if (loginScreen) {
-    loginScreen.style.display =
-        "block";
-}
+/* =========================================================
+  32. شروع برنامه
+  ========================================================= */
 
 updateDateTime();
+
+setInterval(
+   updateDateTime,
+   1000
+);
+
+setupRealtime();
+
+
+/* =========================================================
+  33. آماده‌سازی اولیه نقشه
+  ========================================================= */
+
+document.addEventListener(
+   "DOMContentLoaded",
+   () => {
+
+       if (
+           parentPanel &&
+           parentPanel.style.display !==
+               "none"
+       ) {
+
+           initializeMap();
+       }
+   }
+);
