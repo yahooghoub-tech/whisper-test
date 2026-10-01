@@ -1,97 +1,536 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>پنل والدین | دبستان علوی</title>
+
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Leaflet Map -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIINfQ3gQ3N9z8w4Z7j5xj5J6Y5J5M5J5M5="
+    crossorigin=""
+>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+></script>
+
+<!-- Parent CSS -->
 <link rel="stylesheet" href="parent.css">
+
 </head>
+
+
 <body>
+
 <div class="page">
+
 <div class="container">
-<section class="login-screen" id="loginScreen">
+
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<section
+    class="login-screen"
+    id="loginScreen"
+>
+
 <div class="login-box">
-<div class="login-icon">👨‍👩‍👧</div>
-<div class="title">پنل والدین</div>
-<div class="subtitle">برای ورود، اطلاعات دانش‌آموز را وارد کنید</div>
+
+<div class="login-icon">
+👨‍👩‍👧
+</div>
+
+<div class="title">
+پنل والدین
+</div>
+
+<div class="subtitle">
+برای ورود، اطلاعات دانش‌آموز را وارد کنید
+</div>
+
+
 <div class="input-group">
-<label for="studentName">نام و نام خانوادگی دانش‌آموز</label>
-<input type="text" id="studentName" placeholder="نام و نام خانوادگی دانش‌آموز" autocomplete="off">
+
+<label for="studentName">
+نام و نام خانوادگی دانش‌آموز
+</label>
+
+<input
+    type="text"
+    id="studentName"
+    placeholder="نام و نام خانوادگی دانش‌آموز"
+    autocomplete="off"
+>
+
 </div>
+
+
 <div class="input-group">
-<label for="parentCode">کد ورود ۴ رقمی</label>
-<input type="text" id="parentCode" placeholder="کد ۴ رقمی" inputmode="numeric" maxlength="4" autocomplete="off">
+
+<label for="parentCode">
+کد ورود ۴ رقمی
+</label>
+
+<input
+    type="text"
+    id="parentCode"
+    placeholder="کد ۴ رقمی"
+    inputmode="numeric"
+    maxlength="4"
+    autocomplete="off"
+>
+
 </div>
-<button class="login-button" id="loginButton">ورود به پنل</button>
-<div class="message" id="message"></div>
+
+
+<button
+    class="login-button"
+    id="loginButton"
+>
+
+ورود به پنل
+
+</button>
+
+
+<div
+    class="message"
+    id="message"
+></div>
+
 </div>
+
 </section>
-<section class="parent-panel" id="parentPanel">
+
+
+
+<!-- =========================
+     PARENT PANEL
+========================= -->
+
+<section
+    class="parent-panel"
+    id="parentPanel"
+>
+
+
+<!-- HEADER -->
+
 <header class="header">
+
 <div class="header-top">
+
 <div class="welcome">
-<div class="avatar">👨‍👩‍👧</div>
+
+<div class="avatar">
+👨‍👩‍👧
+</div>
+
 <div>
-<small>خوش آمدید</small>
-<h1 id="panelStudentName">---</h1>
+
+<small>
+خوش آمدید
+</small>
+
+<h1 id="panelStudentName">
+---
+</h1>
+
 </div>
+
 </div>
-<div class="class-badge" id="panelClassName">کلاس ---</div>
+
+
+<div
+    class="class-badge"
+    id="panelClassName"
+>
+کلاس ---
 </div>
+
+</div>
+
 </header>
+
+
+
+<!-- =========================
+     DASHBOARD
+========================= -->
+
 <main class="dashboard">
+
+
+<!-- DATE -->
+
 <div class="date-card">
+
 <div class="date-info">
-<div class="info-icon">📅</div>
+
+<div class="info-icon">
+📅
+</div>
+
 <div>
-<strong>تاریخ امروز</strong>
-<span id="currentDate">---</span>
-</div>
-</div>
-<div class="clock" id="currentTime">00:00:00</div>
-</div>
-<div class="cards">
-<div class="info-card">
-<div class="card-title">
-<div class="card-icon">🔔</div>
-زمان فعال بودن فراخوان
-</div>
-<div class="card-value" id="callActivationTime">در حال بررسی...</div>
-<div class="card-muted">بازه فعال بودن فراخوان دانش‌آموز</div>
-</div>
-<div class="info-card">
-<div class="card-title">
-<div class="card-icon">📢</div>
-وضعیت فراخوان
-</div>
-<div class="card-value">
-<span class="status">
-<span class="status-dot"></span>
-آماده
+
+<strong>
+تاریخ امروز
+</strong>
+
+<span id="currentDate">
+---
 </span>
+
 </div>
-<div class="card-muted">وضعیت فراخوان در این قسمت نمایش داده می‌شود</div>
+
 </div>
+
+
+<div
+    class="clock"
+    id="currentTime"
+>
+00:00:00
+</div>
+
+</div>
+
+
+
+<!-- =========================
+     INFO CARDS
+========================= -->
+
+<div class="cards">
+
+
+<!-- CALL TIME -->
+
 <div class="info-card">
+
 <div class="card-title">
-<div class="card-icon">📍</div>
+
+<div class="card-icon">
+🔔
+</div>
+
+زمان فعال بودن فراخوان
+
+</div>
+
+<div
+    class="card-value"
+    id="callActivationTime"
+>
+در حال بررسی...
+</div>
+
+<div class="card-muted">
+بازه فعال بودن فراخوان دانش‌آموز
+</div>
+
+</div>
+
+
+
+<!-- CALL STATUS -->
+
+<div class="info-card">
+
+<div class="card-title">
+
+<div class="card-icon">
+📢
+</div>
+
+وضعیت فراخوان
+
+</div>
+
+<div class="card-value">
+
+<span class="status">
+
+<span class="status-dot"></span>
+
+آماده
+
+</span>
+
+</div>
+
+<div class="card-muted">
+وضعیت فراخوان در این قسمت نمایش داده می‌شود
+</div>
+
+</div>
+
+
+
+<!-- LOCATION STATUS -->
+
+<div class="info-card">
+
+<div class="card-title">
+
+<div class="card-icon">
+📍
+</div>
+
 وضعیت موقعیت
+
 </div>
-<div class="card-value" id="locationStatus">بررسی نشده</div>
-<div class="card-muted">محدوده مجاز: ۵۰۰۰ متر</div>
+
+<div
+    class="card-value"
+    id="locationStatus"
+>
+بررسی نشده
 </div>
+
+<div class="card-muted">
+محدوده مجاز: ۵۰۰۰ متر
 </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =========================
+     MAP SECTION
+========================= -->
+
+<section
+    class="location-section"
+    id="locationSection"
+>
+
+
+<div class="location-section-header">
+
+<div>
+
+<h2>
+🗺️ موقعیت والد و محدوده مجاز
+</h2>
+
+<p>
+موقعیت فعلی شما نسبت به مدرسه روی نقشه نمایش داده می‌شود.
+</p>
+
+</div>
+
+
+<div class="radius-badge">
+محدوده مجاز: ۵۰۰۰ متر
+</div>
+
+</div>
+
+
+
+<!-- MAP -->
+
+<div
+    id="parentMap"
+    class="parent-map"
+></div>
+
+
+
+<!-- MAP INFORMATION -->
+
+<div class="map-info-grid">
+
+
+<div class="map-info-card">
+
+<div class="map-info-icon">
+🏫
+</div>
+
+<div>
+
+<span>
+محل مدرسه
+</span>
+
+<strong>
+مدرسه
+</strong>
+
+</div>
+
+</div>
+
+
+
+<div class="map-info-card">
+
+<div class="map-info-icon">
+👤
+</div>
+
+<div>
+
+<span>
+موقعیت والد
+</span>
+
+<strong id="parentLocationText">
+در انتظار دریافت موقعیت
+</strong>
+
+</div>
+
+</div>
+
+
+
+<div class="map-info-card">
+
+<div class="map-info-icon">
+📏
+</div>
+
+<div>
+
+<span>
+فاصله تا مدرسه
+</span>
+
+<strong id="distanceText">
+---
+</strong>
+
+</div>
+
+</div>
+
+
+
+<div
+    class="map-info-card location-result-card"
+    id="mapResultCard"
+>
+
+<div
+    class="map-info-icon"
+    id="mapResultIcon"
+>
+📍
+</div>
+
+<div>
+
+<span>
+وضعیت محدوده
+</span>
+
+<strong id="mapResultText">
+بررسی نشده
+</strong>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- LOCATION BUTTON -->
+
+<button
+    type="button"
+    class="location-refresh-button"
+    id="locationRefreshButton"
+>
+
+📍 دریافت موقعیت من
+
+</button>
+
+
+</section>
+
+
+
+<!-- =========================
+     CALL SECTION
+========================= -->
+
 <section class="call-section">
-<h2>فراخوانی دانش‌آموز</h2>
-<p id="callDescription">در حال بررسی زمان فعال بودن فراخوان...</p>
-<button class="call-button" id="callButton">📢 فراخوانی دانش‌آموز</button>
+
+<h2>
+فراخوانی دانش‌آموز
+</h2>
+
+<p id="callDescription">
+در حال بررسی زمان فعال بودن فراخوان...
+</p>
+
+
+<button
+    class="call-button"
+    id="callButton"
+>
+
+📢 فراخوانی دانش‌آموز
+
+</button>
+
 </section>
+
+
 </main>
-<footer class="footer">سامانه هوشمند والدین دبستان علوی</footer>
+
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+سامانه هوشمند والدین دبستان علوی
+
+</footer>
+
+
 </section>
+
+
 </div>
+
 </div>
+
+
+<!-- =========================
+     PARENT JAVASCRIPT
+========================= -->
+
 <script src="parent.js"></script>
+
 </body>
+
 </html>

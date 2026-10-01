@@ -1,457 +1,1280 @@
+
 * {
     box-sizing: border-box;
-    }
-    html {
+}
+
+html {
     scroll-behavior: smooth;
-    }
-    body {
+}
+
+body {
     margin: 0;
     min-height: 100vh;
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: "IRANSans", Tahoma, Arial, sans-serif;
     color: #172033;
+
     background:
-    radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.30), transparent 30%),
-    radial-gradient(circle at 85% 20%, rgba(124, 58, 237, 0.30), transparent 30%),
-    radial-gradient(circle at 50% 100%, rgba(79, 70, 229, 0.22), transparent 35%),
-    linear-gradient(135deg, #06132f 0%, #101f4d 45%, #24104f 75%, #32145c 100%);
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(99, 102, 241, 0.28),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(59, 130, 246, 0.25),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(124, 58, 237, 0.30),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #07142f 0%,
+            #101b4d 42%,
+            #24104f 72%,
+            #35135f 100%
+        );
+
     background-attachment: fixed;
-    }
-    @font-face {
-        font-family: "IRANSans";
-        src: url("IRANSans.woff2") format("woff2");
-        font-weight: 100 900;
-        font-style: normal;
-        font-display: swap;
-        }
-        * {
-        box-sizing: border-box;
-        }
-        html {
-        scroll-behavior: smooth;
-        }
-        body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: "IRANSans", Tahoma, Arial, sans-serif;
-        color: #172033;
-        background:
-        radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.28), transparent 30%),
-        radial-gradient(circle at 90% 15%, rgba(59, 130, 246, 0.25), transparent 28%),
-        radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.30), transparent 35%),
-        linear-gradient(135deg, #07142f 0%, #101b4d 42%, #24104f 72%, #35135f 100%);
-        background-attachment: fixed;
-        }
-        button,
-        input {
-        font-family: inherit;
-        }
-    button,
-    input {
+}
+
+@font-face {
+    font-family: "IRANSans";
+    src: url("IRANSans.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+button,
+input {
     font-family: inherit;
-    }
-    .page {
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.page {
     width: 100%;
     min-height: 100vh;
     padding: 24px;
-    }
-    .container {
+}
+
+.container {
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
-    }
-    /* LOGIN */
-    .login-screen {
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-screen {
     min-height: calc(100vh - 48px);
+
     display: flex;
     align-items: center;
     justify-content: center;
-    }
-    .login-box {
+}
+
+.login-box {
     width: 100%;
     max-width: 430px;
+
     padding: 34px;
+
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 28px;
+
     background: rgba(255, 255, 255, 0.82);
+
     box-shadow:
-    0 25px 70px rgba(30, 64, 175, 0.16);
+        0 25px 70px rgba(30, 64, 175, 0.16);
+
     backdrop-filter: blur(18px);
-    }
-    .login-icon {
+}
+
+.login-icon {
     width: 70px;
     height: 70px;
+
     margin: 0 auto 18px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     border-radius: 22px;
+
     color: #fff;
     font-size: 32px;
+
     background:
-    linear-gradient(135deg, #2563eb, #0ea5e9);
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #0ea5e9
+        );
+
     box-shadow:
-    0 12px 30px rgba(37, 99, 235, 0.28);
-    }
-    .title {
+        0 12px 30px rgba(37, 99, 235, 0.28);
+}
+
+.title {
     text-align: center;
+
     margin-bottom: 8px;
+
     color: #172554;
+
     font-size: 27px;
     font-weight: bold;
-    }
-    .subtitle {
+}
+
+.subtitle {
     text-align: center;
+
     color: #64748b;
+
     margin-bottom: 28px;
+
     font-size: 14px;
     line-height: 1.8;
-    }
-    label {
+}
+
+label {
     display: block;
+
     margin-bottom: 8px;
+
     color: #334155;
+
     font-weight: bold;
     font-size: 14px;
-    }
-    input {
+}
+
+input {
     width: 100%;
     height: 52px;
+
     border: 1px solid #d5deeb;
     border-radius: 14px;
+
     padding: 0 16px;
+
     font-size: 16px;
+
     outline: none;
+
     background: #fff;
+
     transition: 0.2s;
-    }
-    input:focus {
+}
+
+input:focus {
     border-color: #2563eb;
+
     box-shadow:
-    0 0 0 4px rgba(37, 99, 235, 0.10);
-    }
-    .input-group {
+        0 0 0 4px rgba(37, 99, 235, 0.10);
+}
+
+.input-group {
     margin-bottom: 18px;
-    }
-    .login-button {
+}
+
+.login-button {
     width: 100%;
     height: 54px;
+
     border: none;
     border-radius: 14px;
+
     background:
-    linear-gradient(135deg, #2563eb, #0ea5e9);
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #0ea5e9
+        );
+
     color: white;
+
     font-size: 17px;
     font-weight: bold;
+
     cursor: pointer;
+
     box-shadow:
-    0 12px 25px rgba(37, 99, 235, 0.22);
+        0 12px 25px rgba(37, 99, 235, 0.22);
+
     transition: 0.2s;
-    }
-    .login-button:hover {
+}
+
+.login-button:hover {
     transform: translateY(-2px);
-    }
-    .login-button:disabled {
+}
+
+.login-button:disabled {
     opacity: 0.65;
     cursor: wait;
     transform: none;
-    }
-    .message {
+}
+
+.message {
     margin-top: 18px;
+
     text-align: center;
+
     font-size: 14px;
+
     min-height: 20px;
+
     line-height: 1.7;
-    }
-    /* PARENT PANEL */
-    .parent-panel {
+}
+
+
+/* =========================
+   PARENT PANEL
+========================= */
+
+.parent-panel {
     display: none;
-    }
-    .header {
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
     position: relative;
     overflow: hidden;
+
     padding: 30px;
+
     border-radius: 28px;
+
     color: #fff;
+
     background:
-    radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0.18), transparent 28%),
-    linear-gradient(135deg, #172554, #1d4ed8 55%, #0284c7);
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(255, 255, 255, 0.18),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #172554,
+            #1d4ed8 55%,
+            #0284c7
+        );
+
     box-shadow:
-    0 25px 55px rgba(30, 64, 175, 0.20);
-    }
-    .header::after {
+        0 25px 55px rgba(30, 64, 175, 0.20);
+}
+
+.header::after {
     content: "";
+
     position: absolute;
+
     width: 180px;
     height: 180px;
+
     left: -60px;
     bottom: -90px;
+
     border-radius: 50%;
+
     background:
-    rgba(255, 255, 255, 0.08);
-    }
-    .header-top {
+        rgba(255, 255, 255, 0.08);
+}
+
+.header-top {
     position: relative;
+
     z-index: 1;
+
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
-    }
-    .welcome {
+}
+
+.welcome {
     display: flex;
+
     align-items: center;
+
     gap: 16px;
-    }
-    .avatar {
+}
+
+.avatar {
     width: 62px;
     height: 62px;
+
     flex: 0 0 62px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     border-radius: 20px;
+
     background:
-    rgba(255, 255, 255, 0.16);
+        rgba(255, 255, 255, 0.16);
+
     border:
-    1px solid rgba(255, 255, 255, 0.25);
+        1px solid rgba(255, 255, 255, 0.25);
+
     font-size: 28px;
-    }
-    .welcome small {
+}
+
+.welcome small {
     display: block;
+
     margin-bottom: 5px;
+
     color:
-    rgba(255, 255, 255, 0.75);
+        rgba(255, 255, 255, 0.75);
+
     font-size: 13px;
-    }
-    .welcome h1 {
+}
+
+.welcome h1 {
     margin: 0;
+
     font-size: 25px;
-    }
-    .class-badge {
+}
+
+.class-badge {
     padding: 10px 16px;
+
     border-radius: 14px;
+
     background:
-    rgba(255, 255, 255, 0.13);
+        rgba(255, 255, 255, 0.13);
+
     border:
-    1px solid rgba(255, 255, 255, 0.22);
+        1px solid rgba(255, 255, 255, 0.22);
+
     font-size: 14px;
+
     white-space: nowrap;
-    }
-    .dashboard {
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard {
     margin-top: 22px;
-    }
-    .date-card {
+}
+
+.date-card {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
+
     padding: 20px 24px;
+
     border-radius: 22px;
+
     background:
-    rgba(255, 255, 255, 0.86);
+        rgba(255, 255, 255, 0.86);
+
     border:
-    1px solid rgba(255, 255, 255, 0.9);
+        1px solid rgba(255, 255, 255, 0.9);
+
     box-shadow:
-    0 15px 40px rgba(15, 23, 42, 0.07);
-    }
-    .date-info {
+        0 15px 40px rgba(15, 23, 42, 0.07);
+}
+
+.date-info {
     display: flex;
+
     align-items: center;
+
     gap: 14px;
-    }
-    .info-icon {
+}
+
+.info-icon {
     width: 46px;
     height: 46px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     border-radius: 14px;
+
     background: #e0edff;
+
     font-size: 22px;
-    }
-    .date-info strong {
+}
+
+.date-info strong {
     display: block;
+
     margin-bottom: 5px;
+
     font-size: 15px;
-    }
-    .date-info span {
+}
+
+.date-info span {
     color: #64748b;
+
     font-size: 13px;
-    }
-    .clock {
+}
+
+.clock {
     direction: ltr;
+
     color: #1d4ed8;
+
     font-size: 30px;
+
     font-weight: bold;
+
     letter-spacing: 1px;
-    }
-    .cards {
+}
+
+
+/* =========================
+   INFO CARDS
+========================= */
+
+.cards {
     display: grid;
+
     grid-template-columns:
-    repeat(3, 1fr);
+        repeat(3, 1fr);
+
     gap: 18px;
+
     margin-top: 18px;
-    }
-    .info-card {
+}
+
+.info-card {
     padding: 23px;
+
     border-radius: 22px;
+
     background:
-    rgba(255, 255, 255, 0.88);
+        rgba(255, 255, 255, 0.88);
+
     border:
-    1px solid rgba(255, 255, 255, 0.95);
+        1px solid rgba(255, 255, 255, 0.95);
+
     box-shadow:
-    0 15px 40px rgba(15, 23, 42, 0.06);
-    }
-    .card-title {
+        0 15px 40px rgba(15, 23, 42, 0.06);
+}
+
+.card-title {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
+
     margin-bottom: 16px;
+
     color: #475569;
+
     font-size: 14px;
-    }
-    .card-icon {
+}
+
+.card-icon {
     width: 38px;
     height: 38px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     border-radius: 12px;
+
     background: #eff6ff;
+
     font-size: 18px;
-    }
-    .card-value {
+}
+
+.card-value {
     color: #172033;
+
     font-size: 18px;
+
     font-weight: bold;
-    }
-    .card-muted {
+}
+
+.card-muted {
     margin-top: 7px;
+
     color: #94a3b8;
+
     font-size: 12px;
-    }
-    .status {
+}
+
+.status {
     display: inline-flex;
+
     align-items: center;
+
     gap: 7px;
+
     color: #64748b;
-    }
-    .status-dot {
+}
+
+.status-dot {
     width: 9px;
     height: 9px;
+
     border-radius: 50%;
+
     background: #94a3b8;
-    }
-    /* CALL */
-    .call-section {
+}
+
+
+/* =========================
+   LOCATION / MAP SECTION
+========================= */
+
+.location-section {
     margin-top: 18px;
-    padding: 30px;
-    text-align: center;
+
+    padding: 24px;
+
     border-radius: 26px;
+
     background:
-    rgba(255, 255, 255, 0.90);
+        rgba(255, 255, 255, 0.92);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.95);
+
     box-shadow:
-    0 15px 40px rgba(15, 23, 42, 0.07);
-    }
-    .call-section h2 {
-    margin: 0 0 8px;
+        0 15px 40px rgba(15, 23, 42, 0.07);
+}
+
+.location-section-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+}
+
+.location-section-header h2 {
+    margin: 0 0 7px;
+
     color: #172554;
-    font-size: 23px;
-    }
-    .call-section p {
-    margin: 0 auto 24px;
-    max-width: 600px;
-    color: #64748b;
-    font-size: 14px;
-    line-height: 1.9;
-    }
-    .call-button {
-    width: min(100%, 430px);
-    min-height: 66px;
-    border: none;
-    border-radius: 18px;
-    color: white;
-    background:
-    linear-gradient(135deg, #2563eb, #0284c7);
-    font-size: 19px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow:
-    0 15px 30px rgba(37, 99, 235, 0.25);
-    transition: 0.2s;
-    }
-    .call-button:hover {
-    transform: translateY(-2px);
-    box-shadow:
-    0 18px 35px rgba(37, 99, 235, 0.30);
-    }
-    .call-button:active {
-    transform: translateY(0);
-    }
-    .call-button:disabled {
-    cursor: not-allowed;
-    }
-    .footer {
-    padding: 22px 0 8px;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 12px;
-    }
-    /* RESPONSIVE */
-    @media (max-width: 800px) {
-    .cards {
-    grid-template-columns: 1fr;
-    }
-    .header-top {
-    align-items: flex-start;
-    flex-direction: column;
-    }
-    .class-badge {
-    align-self: flex-start;
-    }
-    }
-    @media (max-width: 600px) {
-    .page {
-    padding: 12px;
-    }
-    .login-screen {
-    min-height:
-    calc(100vh - 24px);
-    }
-    .login-box {
-    padding: 25px 20px;
-    border-radius: 22px;
-    }
-    .header {
-    padding: 22px 18px;
-    border-radius: 22px;
-    }
-    .welcome h1 {
+
     font-size: 21px;
-    }
-    .avatar {
-    width: 54px;
-    height: 54px;
-    flex-basis: 54px;
-    }
-    .date-card {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 18px;
-    }
-    .clock {
+}
+
+.location-section-header p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+.radius-badge {
+    flex-shrink: 0;
+
+    padding: 10px 15px;
+
+    border-radius: 14px;
+
+    color: #1d4ed8;
+
+    background: #eff6ff;
+
+    border:
+        1px solid #dbeafe;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   MAP
+========================= */
+
+.parent-map {
     width: 100%;
+
+    height: 430px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    border:
+        1px solid #dbe5f2;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+    background:
+        #e2e8f0;
+
+    z-index: 1;
+}
+
+.parent-map .leaflet-control {
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+}
+
+.parent-map .leaflet-control-zoom {
+    border: none;
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.18);
+}
+
+.parent-map .leaflet-control-zoom a {
+    color: #172554;
+}
+
+
+/* =========================
+   MAP INFORMATION
+========================= */
+
+.map-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin-top: 15px;
+}
+
+.map-info-card {
+    min-height: 75px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    padding: 13px;
+
+    border-radius: 16px;
+
+    background:
+        #f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+.map-info-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    font-size: 19px;
+}
+
+.map-info-card span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+.map-info-card strong {
+    display: block;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.location-result-card {
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+
+.location-refresh-button {
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 15px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    color: #1d4ed8;
+
+    background:
+        #eff6ff;
+
+    border:
+        1px solid #dbeafe;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        0.2s;
+}
+
+.location-refresh-button:hover {
+    background: #dbeafe;
+
+    transform: translateY(-1px);
+}
+
+.location-refresh-button:active {
+    transform: translateY(0);
+}
+
+.location-refresh-button:disabled {
+    opacity: 0.65;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+/* =========================
+   CALL SECTION
+========================= */
+
+.call-section {
+    margin-top: 18px;
+
+    padding: 30px;
+
     text-align: center;
-    font-size: 28px;
+
+    border-radius: 26px;
+
+    background:
+        rgba(255, 255, 255, 0.90);
+
+    box-shadow:
+        0 15px 40px rgba(15, 23, 42, 0.07);
+}
+
+.call-section h2 {
+    margin: 0 0 8px;
+
+    color: #172554;
+
+    font-size: 23px;
+}
+
+.call-section p {
+    margin: 0 auto 24px;
+
+    max-width: 600px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.9;
+}
+
+.call-button {
+    width: min(100%, 430px);
+
+    min-height: 66px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #0284c7
+        );
+
+    font-size: 19px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 15px 30px rgba(37, 99, 235, 0.25);
+
+    transition:
+        0.2s;
+}
+
+.call-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 18px 35px rgba(37, 99, 235, 0.30);
+}
+
+.call-button:active {
+    transform: translateY(0);
+}
+
+.call-button:disabled {
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+    padding: 22px 0 8px;
+
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .cards {
+        grid-template-columns:
+            repeat(2, 1fr);
     }
+
+    .map-info-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .header-top {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .class-badge {
+        align-self: flex-start;
+    }
+
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 700px) {
+
+    .page {
+        padding: 16px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .location-section {
+        padding: 18px;
+    }
+
+    .location-section-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .radius-badge {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .parent-map {
+        height: 360px;
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .page {
+        padding: 12px;
+    }
+
+    .login-screen {
+        min-height:
+            calc(100vh - 24px);
+    }
+
+    .login-box {
+        padding: 25px 20px;
+
+        border-radius: 22px;
+    }
+
+    .header {
+        padding: 22px 18px;
+
+        border-radius: 22px;
+    }
+
+    .welcome h1 {
+        font-size: 21px;
+    }
+
+    .avatar {
+        width: 54px;
+        height: 54px;
+
+        flex-basis: 54px;
+    }
+
+    .date-card {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 18px;
+    }
+
+    .clock {
+        width: 100%;
+
+        text-align: center;
+
+        font-size: 28px;
+    }
+
     .call-section {
-    padding: 24px 18px;
-    border-radius: 22px;
+        padding: 24px 18px;
+
+        border-radius: 22px;
     }
+
     .call-section h2 {
-    font-size: 20px;
+        font-size: 20px;
     }
+
     .call-button {
-    font-size: 17px;
+        font-size: 17px;
     }
+
+
+    /* MAP MOBILE */
+
+    .location-section {
+        padding: 16px;
+
+        border-radius: 22px;
     }
+
+    .location-section-header h2 {
+        font-size: 19px;
+    }
+
+    .location-section-header p {
+        font-size: 12px;
+    }
+
+    .parent-map {
+        height: 320px;
+
+        border-radius: 17px;
+    }
+
+    .map-info-grid {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .map-info-card {
+        min-height: 68px;
+
+        padding: 11px;
+    }
+
+    .map-info-icon {
+        width: 40px;
+        height: 40px;
+
+        flex-basis: 40px;
+    }
+
+    .location-refresh-button {
+        min-height: 54px;
+
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================
+   VERY SMALL PHONES
+========================= */
+
+@media (max-width: 380px) {
+
+    .page {
+        padding: 8px;
+    }
+
+    .header {
+        padding: 18px 14px;
+    }
+
+    .welcome {
+        gap: 11px;
+    }
+
+    .welcome h1 {
+        font-size: 18px;
+    }
+
+    .class-badge {
+        font-size: 12px;
+
+        padding: 8px 12px;
+    }
+
+    .date-card {
+        padding: 15px;
+    }
+
+    .clock {
+        font-size: 24px;
+    }
+
+    .location-section {
+        padding: 13px;
+    }
+
+    .parent-map {
+        height: 290px;
+    }
+
+    .call-section {
+        padding: 21px 14px;
+    }
+
+    .call-button {
+        min-height: 60px;
+
+        font-size: 16px;
+    }
+
+}
+
+
+/* =========================
+   LEAFLET RTL / POPUP
+========================= */
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    direction: rtl;
+}
+
+.leaflet-popup-content {
+    margin: 12px 14px;
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+.map-popup-title {
+    margin-bottom: 4px;
+
+    color: #172554;
+
+    font-weight: bold;
+}
+
+.map-popup-text {
+    color: #64748b;
+}
+
+
+/* =========================
+   LOCATION STATES
+========================= */
+
+.location-inside {
+    color: #15803d !important;
+
+    background: #f0fdf4 !important;
+
+    border-color: #bbf7d0 !important;
+}
+
+.location-outside {
+    color: #dc2626 !important;
+
+    background: #fef2f2 !important;
+
+    border-color: #fecaca !important;
+}
+
+.location-loading {
+    color: #2563eb !important;
+
+    background: #eff6ff !important;
+
+    border-color: #dbeafe !important;
+}
+
+
+/* =========================
+   MAP MARKERS
+========================= */
+
+.school-marker,
+.parent-marker {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    font-size: 22px;
+
+    background: white;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.25);
+
+    border: 3px solid white;
+}
+
+.school-marker {
+    background: #2563eb;
+}
+
+.parent-marker {
+    background: #16a34a;
+}
+
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================
+   REDUCE MOTION
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
+
+}
