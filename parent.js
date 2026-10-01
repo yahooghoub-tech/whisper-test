@@ -12,7 +12,7 @@
    "https://ghnpiijihybuhfetnxjp.supabase.co";
 
 const SUPABASE_KEY =
-   "YOUR_SUPABASE_PUBLISHABLE_KEY";
+"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
 
 let db = null;
 
