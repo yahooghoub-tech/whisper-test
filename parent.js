@@ -47,9 +47,9 @@ className === "پیش-1" ||
 className === "پیش-2"
 ) {
 return {
-start: 14 * 60,
-end: 24 * 60,
-text: "۱۴:۰۰ تا ۲۴:۰۰"
+start: 1 * 60,
+end: 14 * 60,
+text: "۱:۰۰ تا ۱۴:۰۰"
 };
 }
 if (
