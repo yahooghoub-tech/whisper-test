@@ -1507,7 +1507,7 @@ function showParentCallNotification() {
 
         <div class="parent-call-notification-content">
             <div class="parent-call-notification-title">
-                فراخوان ارسال شد
+                دانش‌آموز در حال آمدن است
             </div>
 
             <div class="parent-call-notification-text">
@@ -1755,7 +1755,7 @@ async function loadExistingCall() {
     ) {
 
         callButton.textContent =
-            "📢 فراخوان ارسال شده";
+            "📢 فراخوان برای معلم ارسال شده";
 
     }
 
@@ -1775,7 +1775,7 @@ async function loadExistingCall() {
     ) {
 
         callButton.textContent =
-            "✅ فراخوان ارسال شد";
+            "✅ دانش آموز ارسال شد";
 
     }
 
@@ -1866,7 +1866,10 @@ function startParentRealtime() {
                 payload => {
 
                     const call =
-                        payload.new;
+    payload.new;
+
+const oldCall =
+    payload.old;
 
                     if (!call) {
                         return;
@@ -1924,10 +1927,26 @@ function startParentRealtime() {
                         call.status ===
                         "ارسال شد"
                     ) {
-
+                    
                         callButton.textContent =
-                            "✅ فراخوان ارسال شد";
-
+                            "📢 فراخوان ارسال شد";
+                    
+                        callButton.style.background =
+                            "linear-gradient(135deg, #f97316, #fb923c)";
+                    
+                        callButton.style.boxShadow =
+                            "0 15px 30px rgba(249, 115, 22, 0.25)";
+                    
+                        if (
+                            oldCall &&
+                            oldCall.status !==
+                            "ارسال شد"
+                        ) {
+                    
+                            showParentCallNotification();
+                    
+                        }
+                    
                     }
 
                 }
@@ -2474,7 +2493,7 @@ callButton.addEventListener(
 
         callButton.textContent =
             "✅ فراخوان ارسال شد";
-            showParentCallNotification();
+            
 
         callButton.style.background =
         "linear-gradient(135deg, #f97316, #fb923c)";
