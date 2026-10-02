@@ -747,154 +747,63 @@ async function callStudent(student,button){
 }
 
 
-function updateButton(button, call, force = false) {
+function updateButton(button,call,force=false){
 
-    if (!button || !call) {
-        return;
-    }
+if(!button||!call)return;
 
-    button.classList.remove(
-        "pending",
-        "called",
-        "sent",
-        "parent-called",
-        "parent-sent"
-    );
+if(
+!force&&
+hasAbsentAttendance(
+button.dataset.name,
+button.dataset.class
+)
+){
 
-    const studentKey =
-        compactName(
-            button.dataset.name
-        );
+button.classList.remove(
+"pending",
+"called",
+"sent"
+);
 
-    const callKey =
-        compactName(
-            call.student_name
-        );
+button.classList.add("absent");
 
-    if (
-        studentKey !== callKey ||
-        normalizeText(button.dataset.class) !==
-        normalizeText(call.class_name)
-    ) {
+button.disabled=true;
 
-        return;
+button.querySelector(
+".student-status"
+).textContent="(غایب)";
 
-    }
+button.querySelector(
+".status-time"
+).textContent="";
 
-    if (
-        absentStudents.has(
-            studentKey
-        )
-    ) {
+return;
 
-        button.classList.add(
-            "absent"
-        );
+}
 
-        const statusElement =
-            button.querySelector(
-                ".student-status"
-            );
+button.classList.remove(
+"pending",
+"called",
+"sent",
+"absent"
+);
 
-        if (statusElement) {
+if(call.status==="ارسال شد")
+button.classList.add("sent");
+else
+button.classList.add("called");
 
-            statusElement.textContent =
-                "(غایب)";
+button.disabled=false;
 
-        }
+button.querySelector(
+".student-status"
+).textContent=
+`(${call.status})`;
 
-        return;
-
-    }
-
-    if (
-        call.status ===
-        "ارسال شد"
-    ) {
-
-        button.classList.add(
-            "sent"
-        );
-
-    }
-
-    else if (
-        call.caller_type ===
-        "parent"
-    ) {
-
-        button.classList.add(
-            "parent-called"
-        );
-
-    }
-
-    else if (
-        call.status ===
-        "فراخوان شد"
-    ) {
-
-        button.classList.add(
-            "called"
-        );
-
-    }
-
-    else {
-
-        button.classList.add(
-            "pending"
-        );
-
-    }
-
-    const statusElement =
-        button.querySelector(
-            ".student-status"
-        );
-
-    const timeElement =
-        button.querySelector(
-            ".status-time"
-        );
-
-    if (statusElement) {
-
-        if (
-            call.status ===
-            "ارسال شد"
-        ) {
-
-            statusElement.textContent =
-                "ارسال شد";
-
-        }
-
-        else if (
-            call.caller_type ===
-            "parent"
-        ) {
-
-            statusElement.textContent =
-                "فراخوان والد";
-
-        }
-
-        else {
-
-            statusElement.textContent =
-                call.status || "";
-
-        }
-
-    }
-
-    if (timeElement) {
-
-        timeElement.textContent =
-            call.called_time || "";
-
-    }
+button.querySelector(
+".status-time"
+).textContent=
+call.called_time||"";
 
 }
 
@@ -1702,34 +1611,7 @@ async function loadTodayAttendance(){
             return;
         }
         
-        if (
-            payload.eventType === "INSERT" &&
-            call.caller_type === "parent" &&
-            call.status === "فراخوان شد"
-        ) {
         
-            showParentCallPopup(
-                call
-            );
-        
-            updateParentCallButton(
-                button,
-                call
-            );
-        
-            updateCount(
-                call.class_name
-            );
-        
-            console.log(
-                "🔵 فراخوان والد در ناظم نمایش داده شد:",
-                call.student_name,
-                call.class_name
-            );
-        
-            return;
-        
-        }
         if(
             hasAbsentAttendance(
                 call.student_name,
