@@ -1889,41 +1889,7 @@ async function loadExistingCall() {
     callButton.disabled =
         true;
 
-    if (
-        data.status ===
-        "فراخوان شد"
-    ) {
-
-        callButton.textContent =
-            "📢 فراخوان برای معلم ارسال شده";
-
-    }
-
-    else if (
-        data.status ===
-        "دریافت فراخوان"
-    ) {
-
-        callButton.textContent =
-            "📢 فراخوان در حال پیگیری";
-
-    }
-
-    else if (
-        data.status ===
-        "ارسال شد"
-    ) {
-
-        callButton.textContent =
-            "✅ دانش آموز فرستاده شد  ";
-            callButton.style.background =
-    "linear-gradient(135deg, #7c3aed, #a855f7)";
-
-callButton.style.boxShadow =
-    "0 15px 30px rgba(124, 58, 237, 0.25)";
-
-    }
-
+    
 }
 
 
@@ -2041,12 +2007,10 @@ const oldCall =
                     updateParentCallStatus(
                         call
                     );
-
-                    callButton.dataset.locked =
-                        "true";
-
-                    callButton.disabled =
-                        true;
+                    
+                    updateParentCallButton(
+                        call
+                    );
 
                     if (
                         call.status ===
