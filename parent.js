@@ -1790,14 +1790,8 @@ async function loadExistingCall() {
     }
 
     if (!data) {
-
-        callButton.dataset.locked =
-            "false";
-
-        updateCallScheduleUI();
-
+        resetParentCallButton();
         return;
-
     }
 
     updateParentCallStatus(
