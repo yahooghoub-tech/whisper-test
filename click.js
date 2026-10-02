@@ -1382,6 +1382,185 @@ async function loadTodayAttendance(){
     
     });
     
+
+    function showParentCallPopup(call) {
+
+        const existingPopup =
+            document.getElementById(
+                "parentCallPopup"
+            );
+    
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+    
+        const popup =
+            document.createElement("div");
+    
+        popup.id =
+            "parentCallPopup";
+    
+        popup.innerHTML = `
+            <div class="parent-call-popup-icon">
+                📢
+            </div>
+    
+            <div class="parent-call-popup-content">
+    
+                <div class="parent-call-popup-title">
+                    فراخوانی توسط والد
+                </div>
+    
+                <div class="parent-call-popup-text">
+                    دانش‌آموز
+                    <strong>${call.student_name}</strong>
+                    از کلاس
+                    <strong>${call.class_name}</strong>
+                    توسط والد فراخوانی شد.
+                </div>
+    
+            </div>
+    
+            <button
+                type="button"
+                class="parent-call-popup-close"
+            >
+                ×
+            </button>
+        `;
+    
+        document.body.appendChild(
+            popup
+        );
+    
+        requestAnimationFrame(() => {
+    
+            popup.classList.add(
+                "show"
+            );
+    
+        });
+    
+        const closeButton =
+            popup.querySelector(
+                ".parent-call-popup-close"
+            );
+    
+        if (closeButton) {
+    
+            closeButton.onclick =
+                () => {
+    
+                    popup.classList.remove(
+                        "show"
+                    );
+    
+                    setTimeout(() => {
+    
+                        if (
+                            popup &&
+                            popup.parentNode
+                        ) {
+    
+                            popup.remove();
+    
+                        }
+    
+                    }, 300);
+    
+                };
+    
+        }
+    
+        clearTimeout(
+            window.parentCallPopupTimer
+        );
+    
+        window.parentCallPopupTimer =
+            setTimeout(() => {
+    
+                if (!popup) {
+                    return;
+                }
+    
+                popup.classList.remove(
+                    "show"
+                );
+    
+                setTimeout(() => {
+    
+                    if (
+                        popup &&
+                        popup.parentNode
+                    ) {
+    
+                        popup.remove();
+    
+                    }
+    
+                }, 300);
+    
+            }, 7000);
+    
+    }
+    function updateParentCallButton(
+        button,
+        call
+    ) {
+    
+        if (!button) {
+            return;
+        }
+    
+        button.classList.remove(
+            "pending",
+            "called",
+            "sent",
+            "absent"
+        );
+    
+        button.classList.add(
+            "called"
+        );
+    
+        button.disabled =
+            false;
+    
+        button.style.background =
+            "linear-gradient(135deg, #2563eb, #3b82f6)";
+    
+        button.style.color =
+            "#ffffff";
+    
+        button.style.boxShadow =
+            "0 8px 20px rgba(37, 99, 235, 0.25)";
+    
+        const statusElement =
+            button.querySelector(
+                ".student-status"
+            );
+    
+        const timeElement =
+            button.querySelector(
+                ".status-time"
+            );
+    
+        if (statusElement) {
+    
+            statusElement.textContent =
+                "(فراخوان والد)";
+    
+        }
+    
+        if (timeElement) {
+    
+            timeElement.textContent =
+                call.called_time || "";
+    
+        }
+    
+    }
+
     
     function handleCallRealtime(payload){
 
@@ -1431,7 +1610,35 @@ async function loadTodayAttendance(){
             );
             return;
         }
-    
+        
+        if (
+            payload.eventType === "INSERT" &&
+            call.caller_type === "parent" &&
+            call.status === "فراخوان شد"
+        ) {
+        
+            showParentCallPopup(
+                call
+            );
+        
+            updateParentCallButton(
+                button,
+                call
+            );
+        
+            updateCount(
+                call.class_name
+            );
+        
+            console.log(
+                "🔵 فراخوان والد در ناظم نمایش داده شد:",
+                call.student_name,
+                call.class_name
+            );
+        
+            return;
+        
+        }
         if(
             hasAbsentAttendance(
                 call.student_name,

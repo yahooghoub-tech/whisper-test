@@ -2513,7 +2513,10 @@ callButton.addEventListener(
                             calledDate,
 
                         called_time:
-                            calledTime
+                            calledTime,
+
+                            caller_type:
+                            "parent"
                     }
                 ])
                 .select()
