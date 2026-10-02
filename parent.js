@@ -10,7 +10,257 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
+/* =====================================================
+   PERSIAN NAME NORMALIZATION
+===================================================== */
 
+function normalizePersianName(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    let text = String(value);
+
+    // تبدیل حروف عربی به فارسی
+    text = text
+        .replace(/ي/g, "ی")
+        .replace(/ى/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/ة/g, "ه")
+        .replace(/ۀ/g, "ه");
+
+    // حذف اعراب
+    text = text.replace(
+        /[\u064B-\u065F\u0670]/g,
+        ""
+    );
+
+    // حذف نیم‌فاصله و فاصله‌های اضافی
+    text = text.replace(
+        /[\u200c\u200d]/g,
+        " "
+    );
+
+    // یکسان‌سازی فاصله‌ها
+    text = text.replace(
+        /\s+/g,
+        " "
+    );
+
+    // حذف فاصله ابتدا و انتها
+    text = text.trim();
+
+    // کوچک کردن حروف انگلیسی در صورت وجود
+    text = text.toLowerCase();
+
+    return text;
+}
+
+
+/* =====================================================
+   REMOVE SPACES FOR NAME COMPARISON
+===================================================== */
+
+function compactName(value) {
+
+    return normalizePersianName(value)
+        .replace(/\s+/g, "");
+
+}
+
+
+/* =====================================================
+   LEVENSHTEIN DISTANCE
+===================================================== */
+
+function levenshteinDistance(a, b) {
+
+    a = compactName(a);
+    b = compactName(b);
+
+
+    if (a === b) {
+        return 0;
+    }
+
+
+    if (!a.length) {
+        return b.length;
+    }
+
+
+    if (!b.length) {
+        return a.length;
+    }
+
+
+    const matrix = [];
+
+
+    for (
+        let i = 0;
+        i <= b.length;
+        i++
+    ) {
+
+        matrix[i] = [i];
+
+    }
+
+
+    for (
+        let j = 0;
+        j <= a.length;
+        j++
+    ) {
+
+        matrix[0][j] = j;
+
+    }
+
+
+    for (
+        let i = 1;
+        i <= b.length;
+        i++
+    ) {
+
+        for (
+            let j = 1;
+            j <= a.length;
+            j++
+        ) {
+
+            if (
+                b.charAt(i - 1) ===
+                a.charAt(j - 1)
+            ) {
+
+                matrix[i][j] =
+                    matrix[i - 1][j - 1];
+
+            } else {
+
+                matrix[i][j] =
+                    Math.min(
+
+                        matrix[i - 1][j] + 1,
+
+                        matrix[i][j - 1] + 1,
+
+                        matrix[i - 1][j - 1] + 1
+
+                    );
+
+            }
+
+        }
+
+    }
+
+
+    return matrix[b.length][a.length];
+
+}
+
+
+/* =====================================================
+   NAME SIMILARITY
+===================================================== */
+
+function nameSimilarity(
+    enteredName,
+    databaseName
+) {
+
+    const a =
+        compactName(enteredName);
+
+    const b =
+        compactName(databaseName);
+
+
+    if (
+        !a ||
+        !b
+    ) {
+
+        return 0;
+
+    }
+
+
+    if (
+        a === b
+    ) {
+
+        return 1;
+
+    }
+
+
+    const distance =
+        levenshteinDistance(
+            a,
+            b
+        );
+
+
+    const maxLength =
+        Math.max(
+            a.length,
+            b.length
+        );
+
+
+    if (
+        maxLength === 0
+    ) {
+
+        return 1;
+
+    }
+
+
+    return (
+        1 -
+        distance / maxLength
+    );
+
+}
+
+
+/* =====================================================
+   CHECK NAME
+===================================================== */
+
+function isNameSimilar(
+    enteredName,
+    databaseName
+) {
+
+    const similarity =
+        nameSimilarity(
+            enteredName,
+            databaseName
+        );
+
+
+    /*
+       0.90 به بالا:
+       تقریباً بدون اشتباه
+
+       0.80 تا 0.90:
+       چند اشتباه جزئی
+
+       کمتر از 0.80:
+       احتمالاً نام متفاوت است
+    */
+
+    return similarity >= 0.80;
+
+}
 /* =====================================================
    ELEMENTS
 ===================================================== */
@@ -126,7 +376,7 @@ const SCHOOL_LNG =
 */
 
 const ALLOWED_RADIUS =
-    50;
+    5000;
 
 
 /*
@@ -1539,41 +1789,144 @@ async function loadExistingCall() {
         getIranDate();
 
 
-    const {
-        data,
+/* =====================================================
+   SEARCH PARENT BY CODE
+===================================================== */
+
+const {
+    data: accounts,
+    error
+} =
+    await supabaseClient
+        .from("parent_accounts")
+        .select(
+            "id, student_name, class_name"
+        )
+        .eq(
+            "parent_code",
+            code
+        );
+
+
+/* =====================================================
+   DATABASE ERROR
+===================================================== */
+
+if (
+    error
+) {
+
+    console.error(
+        "LOGIN ERROR:",
         error
-    } =
-        await supabaseClient
-            .from("calls")
-            .select("*")
-            .eq(
-                "student_name",
-                currentStudentName
-            )
-            .eq(
-                "class_name",
-                currentClassName
-            )
-            .eq(
-                "called_date",
-                today
-            )
-            .in(
-                "status",
-                [
-                    "فراخوان شد",
-                    "دریافت فراخوان",
-                    "ارسال شد"
-                ]
-            )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1)
-            .maybeSingle();
+    );
+
+
+    message.textContent =
+        "خطا در ارتباط با سامانه.";
+
+    message.style.color =
+        "#dc2626";
+
+
+    loginButton.disabled =
+        false;
+
+    loginButton.textContent =
+        "ورود به پنل";
+
+
+    return;
+
+}
+
+
+/* =====================================================
+   FIND SIMILAR NAME
+===================================================== */
+
+const enteredName =
+    normalizePersianName(
+        name
+    );
+
+
+let matchedAccount =
+    null;
+
+
+let bestSimilarity =
+    0;
+
+
+if (
+    accounts &&
+    accounts.length
+) {
+
+    for (
+        const account of accounts
+    ) {
+
+        const similarity =
+            nameSimilarity(
+                enteredName,
+                account.student_name
+            );
+
+
+        if (
+            similarity >
+            bestSimilarity
+        ) {
+
+            bestSimilarity =
+                similarity;
+
+            matchedAccount =
+                account;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   NAME NOT FOUND
+===================================================== */
+
+if (
+    !matchedAccount ||
+    bestSimilarity < 0.80
+) {
+
+    message.textContent =
+        "نام دانش‌آموز یا کد ورود صحیح نیست.";
+
+    message.style.color =
+        "#dc2626";
+
+
+    loginButton.disabled =
+        false;
+
+    loginButton.textContent =
+        "ورود به پنل";
+
+
+    return;
+
+}
+
+
+/* =====================================================
+   LOGIN SUCCESS
+===================================================== */
+
+const data =
+    matchedAccount;
 
 
     if (
