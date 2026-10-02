@@ -1645,7 +1645,17 @@ function showParentCallNotification() {
 /* =====================================================
    CALL STATUS
 ===================================================== */
+function resetParentCallButton() {
+    if (!callButton) return;
 
+    callButton.dataset.locked = "false";
+    callButton.disabled = false;
+    callButton.textContent = "فراخوانی دانش‌آموز";
+    callButton.style.background = "linear-gradient(135deg, #2563eb, #3b82f6)";
+    callButton.style.boxShadow = "0 15px 30px rgba(37, 99, 235, 0.25)";
+
+    updateCallScheduleUI();
+}
 function updateParentCallStatus(
     call
 ) {
