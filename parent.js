@@ -1781,14 +1781,22 @@ function updateParentCallButton(
         call.status ===
         "ارسال شد"
     ) {
-
+    
+        const callTime =
+            call.called_time
+                ? call.called_time.slice(0, 5)
+                : "---";
+    
         const sentTime =
             call.sent_time
                 ? call.sent_time.slice(0, 5)
                 : "---";
-
-        callButton.textContent =
-            "✅ دانش‌آموز فرستاده شد — " +
+    
+        callButton.innerHTML =
+            "🕐 فراخوان: " +
+            callTime +
+            "<br>" +
+            "📤 ارسال دانش‌آموز: " +
             sentTime;
 
         callButton.style.background =
@@ -2004,6 +2012,7 @@ const oldCall =
 
                     }
 
+                   
                     updateParentCallStatus(
                         call
                     );
@@ -2011,52 +2020,15 @@ const oldCall =
                     updateParentCallButton(
                         call
                     );
-
+                    
                     if (
-                        call.status ===
-                        "فراخوان شد"
+                        oldCall &&
+                        oldCall.status !== "ارسال شد" &&
+                        call.status === "ارسال شد"
                     ) {
-
-                        callButton.textContent =
-                            "📢 فراخوان ارسال شده";
-
+                        showParentCallNotification();
                     }
-
-                    else if (
-                        call.status ===
-                        "دریافت فراخوان"
-                    ) {
-
-                        callButton.textContent =
-                            "📢 فراخوان در حال پیگیری";
-
-                    }
-
-                    else if (
-                        call.status ===
-                        "ارسال شد"
-                    ) {
                     
-                        callButton.textContent =
-                            "📢 فراخوان ارسال شد";
-                    
-                        callButton.style.background =
-                            "linear-gradient(135deg, #f97316, #fb923c)";
-                    
-                        callButton.style.boxShadow =
-                            "0 15px 30px rgba(249, 115, 22, 0.25)";
-                    
-                        if (
-                            oldCall &&
-                            oldCall.status !==
-                            "ارسال شد"
-                        ) {
-                    
-                            showParentCallNotification();
-                    
-                        }
-                    
-                    }
 
                 }
             )
