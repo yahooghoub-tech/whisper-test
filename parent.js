@@ -1,3 +1,4 @@
+
 const SUPABASE_URL =
     "https://ghnpiijihybuhfetnxjp.supabase.co";
 
@@ -23,10 +24,6 @@ function normalizePersianName(value) {
 
     let text = String(value);
 
-    /*
-       حروف عربی → فارسی
-    */
-
     text = text
         .replace(/ي/g, "ی")
         .replace(/ى/g, "ی")
@@ -34,50 +31,24 @@ function normalizePersianName(value) {
         .replace(/ة/g, "ه")
         .replace(/ۀ/g, "ه");
 
-
-    /*
-       حذف اعراب
-    */
-
     text = text.replace(
         /[\u064B-\u065F\u0670]/g,
         ""
     );
-
-
-    /*
-       نیم‌فاصله و کاراکترهای نامرئی
-    */
 
     text = text.replace(
         /[\u200B-\u200D\uFEFF]/g,
         " "
     );
 
-
-    /*
-       تمام فاصله‌های متوالی → یک فاصله
-    */
-
     text = text.replace(
         /\s+/g,
         " "
     );
 
-
-    /*
-       حذف فاصله ابتدا و انتها
-    */
-
     text = text.trim();
 
-
-    /*
-       حروف انگلیسی
-    */
-
     text = text.toLowerCase();
-
 
     return text;
 
@@ -108,24 +79,19 @@ function levenshteinDistance(
     a = compactName(a);
     b = compactName(b);
 
-
     if (a === b) {
         return 0;
     }
-
 
     if (!a.length) {
         return b.length;
     }
 
-
     if (!b.length) {
         return a.length;
     }
 
-
     const matrix = [];
-
 
     for (
         let i = 0;
@@ -137,7 +103,6 @@ function levenshteinDistance(
 
     }
 
-
     for (
         let j = 0;
         j <= a.length;
@@ -147,7 +112,6 @@ function levenshteinDistance(
         matrix[0][j] = j;
 
     }
-
 
     for (
         let i = 1;
@@ -190,7 +154,6 @@ function levenshteinDistance(
 
     }
 
-
     return matrix[b.length][a.length];
 
 }
@@ -215,7 +178,6 @@ function nameSimilarity(
             databaseName
         );
 
-
     if (
         !a ||
         !b
@@ -225,7 +187,6 @@ function nameSimilarity(
 
     }
 
-
     if (
         a === b
     ) {
@@ -234,20 +195,17 @@ function nameSimilarity(
 
     }
 
-
     const distance =
         levenshteinDistance(
             a,
             b
         );
 
-
     const maxLength =
         Math.max(
             a.length,
             b.length
         );
-
 
     if (
         maxLength === 0
@@ -256,7 +214,6 @@ function nameSimilarity(
         return 1;
 
     }
-
 
     return (
         1 -
@@ -395,128 +352,6 @@ const parentLocationCard =
     );
 
 
-/*
-   اعلان فراخوان معلم
-*/
-
-const teacherCallNotification =
-    document.getElementById(
-        "teacherCallNotification"
-    );
-
-const teacherCallNotificationText =
-    document.getElementById(
-        "teacherCallNotificationText"
-    );
-
-const teacherCallNotificationTime =
-    document.getElementById(
-        "teacherCallNotificationTime"
-    );
-
-const closeTeacherCallNotification =
-    document.getElementById(
-        "closeTeacherCallNotification"
-    );
-
-
-/*
-   صدای اعلان
-*/
-
-const teacherCallNotificationSound =
-    document.getElementById(
-        "teacherCallNotificationSound"
-    );
-    console.log(
-        "اعلان والدین:",
-        teacherCallNotification
-    );
-    
-    console.log(
-        "صدای اعلان:",
-        teacherCallNotificationSound
-    );
-/* =====================================================
-   UNLOCK NOTIFICATION AUDIO
-===================================================== */
-
-let notificationAudioUnlocked = false;
-
-async function unlockNotificationAudio() {
-
-    if (
-        !teacherCallNotificationSound ||
-        notificationAudioUnlocked
-    ) {
-
-        return;
-
-    }
-
-    try {
-
-        /*
-           صدا را در حالت بی‌صدا پخش می‌کنیم
-           تا مرورگر اجازه پخش صوت را بدهد.
-        */
-
-        teacherCallNotificationSound.muted = true;
-
-        teacherCallNotificationSound.volume = 0;
-
-        teacherCallNotificationSound.currentTime = 0;
-
-        const playPromise =
-            teacherCallNotificationSound.play();
-
-
-        if (
-            playPromise !== undefined
-        ) {
-
-            await playPromise;
-
-        }
-
-
-        /*
-           بعد از فعال شدن Audio،
-           پخش را متوقف می‌کنیم.
-        */
-
-        teacherCallNotificationSound.pause();
-
-        teacherCallNotificationSound.currentTime = 0;
-
-        teacherCallNotificationSound.muted = false;
-
-        teacherCallNotificationSound.volume = 1;
-
-
-        notificationAudioUnlocked = true;
-
-
-        console.log(
-            "Notification audio unlocked successfully."
-        );
-
-    }
-
-    catch (error) {
-
-        console.warn(
-            "Notification audio unlock failed:",
-            error
-        );
-
-        teacherCallNotificationSound.muted = false;
-
-        teacherCallNotificationSound.volume = 1;
-
-    }
-
-}
 /* =====================================================
    GLOBAL VARIABLES
 ===================================================== */
@@ -532,14 +367,6 @@ let lastParentPosition = null;
 let locationRequestInProgress = false;
 
 let parentLocationWatchId = null;
-
-
-/*
-   جلوگیری از پخش دوباره اعلان
-   برای یک فراخوان
-*/
-
-let lastNotifiedCallId = null;
 
 
 /* =====================================================
@@ -603,7 +430,6 @@ function getIranTimeParts() {
             new Date()
         );
 
-
     const hour =
         Number(
             parts.find(
@@ -611,7 +437,6 @@ function getIranTimeParts() {
                     item.type === "hour"
             ).value
         );
-
 
     const minute =
         Number(
@@ -621,7 +446,6 @@ function getIranTimeParts() {
             ).value
         );
 
-
     const second =
         Number(
             parts.find(
@@ -629,7 +453,6 @@ function getIranTimeParts() {
                     item.type === "second"
             ).value
         );
-
 
     return {
         hour,
@@ -667,7 +490,6 @@ function getIranTime() {
 
     const iran =
         getIranTimeParts();
-
 
     return (
         String(
@@ -722,7 +544,6 @@ function updateDateTime() {
     const iran =
         getIranTimeParts();
 
-
     if (currentDate) {
 
         currentDate.textContent =
@@ -730,14 +551,12 @@ function updateDateTime() {
 
     }
 
-
     if (currentTime) {
 
         const formatter =
             new Intl.NumberFormat(
                 "fa-IR"
             );
-
 
         currentTime.textContent =
             formatter.format(
@@ -780,16 +599,13 @@ function isCallTimeActive() {
 
     }
 
-
     const schedule =
         getCallSchedule(
             currentClassName
         );
 
-
     const iran =
         getIranTimeParts();
-
 
     return (
         iran.totalMinutes >=
@@ -816,12 +632,10 @@ function updateCallScheduleUI() {
 
     }
 
-
     const schedule =
         getCallSchedule(
             currentClassName
         );
-
 
     if (callActivationTime) {
 
@@ -830,7 +644,6 @@ function updateCallScheduleUI() {
             schedule.text;
 
     }
-
 
     if (callDescription) {
 
@@ -841,10 +654,8 @@ function updateCallScheduleUI() {
 
     }
 
-
     const active =
         isCallTimeActive();
-
 
     if (
         callButton.dataset.locked ===
@@ -854,7 +665,6 @@ function updateCallScheduleUI() {
         return;
 
     }
-
 
     if (active) {
 
@@ -916,12 +726,10 @@ function calculateDistance(
         Math.PI /
         180;
 
-
     const lat2 =
         SCHOOL_LAT *
         Math.PI /
         180;
-
 
     const dLat =
         (
@@ -931,7 +739,6 @@ function calculateDistance(
         Math.PI /
         180;
 
-
     const dLng =
         (
             SCHOOL_LNG -
@@ -939,7 +746,6 @@ function calculateDistance(
         ) *
         Math.PI /
         180;
-
 
     const a =
         Math.sin(
@@ -952,14 +758,12 @@ function calculateDistance(
             dLng / 2
         ) ** 2;
 
-
     const c =
         2 *
         Math.atan2(
             Math.sqrt(a),
             Math.sqrt(1 - a)
         );
-
 
     return Math.round(
         EARTH_RADIUS * c
@@ -993,7 +797,6 @@ function formatDistance(
 
     }
 
-
     return (
         new Intl.NumberFormat(
             "fa-IR",
@@ -1018,7 +821,6 @@ function updateAllowedRadiusUI() {
     if (!allowedRadiusValue) {
         return;
     }
-
 
     allowedRadiusValue.textContent =
         new Intl.NumberFormat(
@@ -1045,7 +847,6 @@ function setLiveParentLoading() {
 
     }
 
-
     if (liveParentDistance) {
 
         liveParentDistance.textContent =
@@ -1053,14 +854,12 @@ function setLiveParentLoading() {
 
     }
 
-
     if (liveParentStatus) {
 
         liveParentStatus.textContent =
             "در حال دریافت موقعیت...";
 
     }
-
 
     if (parentLocationIcon) {
 
@@ -1089,18 +888,15 @@ function updateLiveParentDistance(
 
     }
 
-
     if (!parentLocationCard) {
         return;
     }
-
 
     parentLocationCard.classList.remove(
         "location-loading",
         "location-inside",
         "location-outside"
     );
-
 
     if (
         distance <=
@@ -1111,14 +907,12 @@ function updateLiveParentDistance(
             "location-inside"
         );
 
-
         if (liveParentStatus) {
 
             liveParentStatus.textContent =
                 "داخل محدوده مجاز";
 
         }
-
 
         if (parentLocationIcon) {
 
@@ -1135,14 +929,12 @@ function updateLiveParentDistance(
             "location-outside"
         );
 
-
         if (liveParentStatus) {
 
             liveParentStatus.textContent =
                 "خارج از محدوده مجاز";
 
         }
-
 
         if (parentLocationIcon) {
 
@@ -1157,168 +949,6 @@ function updateLiveParentDistance(
 
 
 updateAllowedRadiusUI();
-
-/* =====================================================
-   TEACHER CALL NOTIFICATION
-===================================================== */
-
-function showTeacherCallNotification(
-    call
-) {
-
-    if (!teacherCallNotification) {
-        return;
-    }
-
-
-    /*
-       نمایش نام دانش‌آموز
-    */
-
-    if (
-        teacherCallNotificationText
-    ) {
-
-        teacherCallNotificationText.textContent =
-            "دانش‌آموز " +
-            call.student_name +
-            " توسط معلم فراخوان شده است.";
-
-    }
-
-
-    /*
-       نمایش زمان فراخوان
-    */
-
-    if (
-        teacherCallNotificationTime
-    ) {
-
-        teacherCallNotificationTime.textContent =
-            "زمان فراخوان: " +
-            (
-                call.called_time ||
-                getIranTime()
-            );
-
-    }
-
-
-    /*
-       نمایش اعلان
-    */
-
-    teacherCallNotification.classList.add(
-        "show"
-    );
-
-
-    /*
-       پخش notification.mp3
-    */
-
-    if (
-        teacherCallNotificationSound
-    ) {
-
-        try {
-
-            teacherCallNotificationSound.pause();
-
-            teacherCallNotificationSound.currentTime =
-                0;
-
-
-            const playPromise =
-                teacherCallNotificationSound.play();
-
-
-            if (
-                playPromise !== undefined
-            ) {
-
-                playPromise.catch(
-                    error => {
-
-                        console.warn(
-                            "پخش صدای اعلان توسط مرورگر مسدود شد:",
-                            error
-                        );
-
-                    }
-                );
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "NOTIFICATION SOUND ERROR:",
-                error
-            );
-
-        }
-
-    }
-
-
-    /*
-       لرزش در دستگاه‌هایی که پشتیبانی می‌کنند
-    */
-
-    if (
-        navigator.vibrate
-    ) {
-
-        try {
-
-            navigator.vibrate(
-                [
-                    200,
-                    100,
-                    200
-                ]
-            );
-
-        }
-
-        catch (error) {
-
-            console.warn(
-                "Vibration error:",
-                error
-            );
-
-        }
-
-    }
-
-}
-
-
-/* =====================================================
-   CLOSE TEACHER NOTIFICATION
-===================================================== */
-
-if (
-    closeTeacherCallNotification
-) {
-
-    closeTeacherCallNotification.addEventListener(
-        "click",
-        () => {
-
-            teacherCallNotification.classList.remove(
-                "show"
-            );
-
-        }
-    );
-
-}
 
 
 /* =====================================================
@@ -1335,7 +965,6 @@ async function requestMedianLocationPermission() {
         return true;
 
     }
-
 
     try {
 
@@ -1385,7 +1014,6 @@ function getCurrentParentLocation() {
 
             await requestMedianLocationPermission();
 
-
             if (
                 !navigator.geolocation
             ) {
@@ -1399,7 +1027,6 @@ function getCurrentParentLocation() {
                 return;
 
             }
-
 
             navigator.geolocation.getCurrentPosition(
 
@@ -1459,7 +1086,6 @@ function startLiveParentLocation() {
 
     }
 
-
     if (
         parentLocationWatchId !== null
     ) {
@@ -1470,9 +1096,7 @@ function startLiveParentLocation() {
 
     }
 
-
     setLiveParentLoading();
-
 
     parentLocationWatchId =
         navigator.geolocation.watchPosition(
@@ -1488,13 +1112,11 @@ function startLiveParentLocation() {
                 const accuracy =
                     position.coords.accuracy;
 
-
                 const distance =
                     calculateDistance(
                         latitude,
                         longitude
                     );
-
 
                 lastParentPosition = {
                     latitude,
@@ -1503,11 +1125,9 @@ function startLiveParentLocation() {
                     distance
                 };
 
-
                 updateLiveParentDistance(
                     distance
                 );
-
 
                 if (locationStatus) {
 
@@ -1544,14 +1164,12 @@ function startLiveParentLocation() {
 
             },
 
-
             error => {
 
                 console.error(
                     "LIVE GPS ERROR:",
                     error
                 );
-
 
                 if (liveParentStatus) {
 
@@ -1592,7 +1210,6 @@ function startLiveParentLocation() {
                 }
 
             },
-
 
             {
                 enableHighAccuracy:
@@ -1648,13 +1265,10 @@ async function refreshParentLocation(
 
     }
 
-
     locationRequestInProgress =
         true;
 
-
     setLiveParentLoading();
-
 
     if (locationRefreshButton) {
 
@@ -1666,12 +1280,10 @@ async function refreshParentLocation(
 
     }
 
-
     try {
 
         const position =
             await getCurrentParentLocation();
-
 
         const latitude =
             position.coords.latitude;
@@ -1682,13 +1294,11 @@ async function refreshParentLocation(
         const accuracy =
             position.coords.accuracy;
 
-
         const distance =
             calculateDistance(
                 latitude,
                 longitude
             );
-
 
         lastParentPosition = {
             latitude,
@@ -1697,11 +1307,9 @@ async function refreshParentLocation(
             distance
         };
 
-
         updateLiveParentDistance(
             distance
         );
-
 
         if (locationStatus) {
 
@@ -1715,7 +1323,6 @@ async function refreshParentLocation(
                     : "خارج از محدوده مجاز — " +
                       formatDistance(distance);
 
-
             locationStatus.style.color =
                 (
                     distance <=
@@ -1726,7 +1333,6 @@ async function refreshParentLocation(
 
         }
 
-
         if (locationRefreshButton) {
 
             locationRefreshButton.disabled =
@@ -1736,7 +1342,6 @@ async function refreshParentLocation(
                 "📍 بروزرسانی موقعیت";
 
         }
-
 
         return {
             latitude,
@@ -1750,7 +1355,6 @@ async function refreshParentLocation(
 
     }
 
-
     catch (error) {
 
         console.error(
@@ -1758,10 +1362,8 @@ async function refreshParentLocation(
             error
         );
 
-
         let errorText =
             "خطا در دریافت موقعیت";
-
 
         if (
             error &&
@@ -1793,7 +1395,6 @@ async function refreshParentLocation(
 
         }
 
-
         if (locationStatus) {
 
             locationStatus.textContent =
@@ -1804,14 +1405,12 @@ async function refreshParentLocation(
 
         }
 
-
         if (liveParentStatus) {
 
             liveParentStatus.textContent =
                 errorText;
 
         }
-
 
         if (liveParentDistance) {
 
@@ -1820,14 +1419,12 @@ async function refreshParentLocation(
 
         }
 
-
         if (parentLocationIcon) {
 
             parentLocationIcon.textContent =
                 "⚠️";
 
         }
-
 
         if (locationRefreshButton) {
 
@@ -1839,7 +1436,6 @@ async function refreshParentLocation(
 
         }
 
-
         if (showAlert) {
 
             alert(
@@ -1848,11 +1444,9 @@ async function refreshParentLocation(
 
         }
 
-
         return null;
 
     }
-
 
     finally {
 
@@ -1898,7 +1492,6 @@ function updateParentCallStatus(
         return;
     }
 
-
     const statusElement =
         document.querySelector(
             ".status"
@@ -1909,7 +1502,6 @@ function updateParentCallStatus(
             ".status-dot"
         );
 
-
     if (
         !statusElement ||
         !statusDot
@@ -1918,7 +1510,6 @@ function updateParentCallStatus(
         return;
 
     }
-
 
     if (
         call.status ===
@@ -1961,7 +1552,6 @@ function updateParentCallStatus(
 
 }
 
-
 /* =====================================================
    LOAD EXISTING CALL
 ===================================================== */
@@ -1977,10 +1567,8 @@ async function loadExistingCall() {
 
     }
 
-
     const today =
         getIranDate();
-
 
     const {
         data,
@@ -2018,7 +1606,6 @@ async function loadExistingCall() {
             .limit(1)
             .maybeSingle();
 
-
     if (error) {
 
         console.error(
@@ -2029,7 +1616,6 @@ async function loadExistingCall() {
         return;
 
     }
-
 
     if (!data) {
 
@@ -2042,19 +1628,15 @@ async function loadExistingCall() {
 
     }
 
-
     updateParentCallStatus(
         data
     );
 
-
     callButton.dataset.locked =
         "true";
 
-
     callButton.disabled =
         true;
-
 
     if (
         data.status ===
@@ -2105,7 +1687,6 @@ function startParentAutoRefresh() {
 
     }
 
-
     parentRefreshInterval =
         setInterval(
             async () => {
@@ -2118,7 +1699,6 @@ function startParentAutoRefresh() {
                     return;
 
                 }
-
 
                 await loadExistingCall();
 
@@ -2146,7 +1726,6 @@ function startParentRealtime() {
 
     }
 
-
     if (
         parentCallChannel
     ) {
@@ -2156,7 +1735,6 @@ function startParentRealtime() {
         );
 
     }
-
 
     parentCallChannel =
         supabaseClient
@@ -2179,15 +1757,9 @@ function startParentRealtime() {
                     const call =
                         payload.new;
 
-
                     if (!call) {
                         return;
                     }
-
-
-                    /*
-                       فقط مربوط به همین دانش‌آموز
-                    */
 
                     if (
                         call.student_name !==
@@ -2198,11 +1770,6 @@ function startParentRealtime() {
 
                     }
 
-
-                    /*
-                       فقط مربوط به امروز
-                    */
-
                     if (
                         call.called_date !==
                         getIranDate()
@@ -2212,63 +1779,15 @@ function startParentRealtime() {
 
                     }
 
-
-                    /*
-   =====================================
-   اعلان فراخوان معلم
-   =====================================
-   
-   وقتی وضعیت فراخوان به
-   "فراخوان شد" برسد،
-   برای والد اعلان نمایش داده می‌شود.
-*/
-
-if (
-    (
-        payload.eventType === "INSERT" ||
-        payload.eventType === "UPDATE"
-    )
-    &&
-    call.status === "فراخوان شد"
-) {
-
-    /*
-       جلوگیری از اعلان تکراری
-    */
-
-    if (
-        lastNotifiedCallId !==
-        call.id
-    ) {
-
-        lastNotifiedCallId =
-            call.id;
-
-        showTeacherCallNotification(
-            call
-        );
-
-    }
-
-}
-
-
-                    /*
-                       بروزرسانی وضعیت فراخوان
-                    */
-
                     updateParentCallStatus(
                         call
                     );
 
-
                     callButton.dataset.locked =
                         "true";
 
-
                     callButton.disabled =
                         true;
-
 
                     if (
                         call.status ===
@@ -2330,14 +1849,8 @@ loginButton.addEventListener(
         const code =
             parentCodeInput.value.trim();
 
-
         message.textContent =
             "";
-
-
-        /* =================================================
-           VALIDATION
-        ================================================= */
 
         if (
             !name ||
@@ -2354,7 +1867,6 @@ loginButton.addEventListener(
 
         }
 
-
         if (
             !/^\d{4}$/.test(code)
         ) {
@@ -2369,22 +1881,13 @@ loginButton.addEventListener(
 
         }
 
-
         loginButton.disabled =
             true;
 
         loginButton.textContent =
             "در حال بررسی...";
 
-
         try {
-
-            /*
-               ابتدا تمام حساب‌هایی که همین کد را دارند
-               دریافت می‌کنیم.
-
-               سپس نام را با تطبیق تقریبی بررسی می‌کنیم.
-            */
 
             const {
                 data: accounts,
@@ -2400,14 +1903,12 @@ loginButton.addEventListener(
                         code
                     );
 
-
             if (error) {
 
                 console.error(
                     "LOGIN ERROR:",
                     error
                 );
-
 
                 message.textContent =
                     "خطا در ارتباط با سامانه.";
@@ -2419,17 +1920,11 @@ loginButton.addEventListener(
 
             }
 
-
             let matchedAccount =
                 null;
 
             let bestSimilarity =
                 0;
-
-
-            /*
-               پیدا کردن نزدیک‌ترین نام
-            */
 
             for (
                 const account of
@@ -2441,7 +1936,6 @@ loginButton.addEventListener(
                         name,
                         account.student_name
                     );
-
 
                 if (
                     similarity >
@@ -2457,11 +1951,6 @@ loginButton.addEventListener(
                 }
 
             }
-
-
-            /*
-               حداقل شباهت ۸۵٪
-            */
 
             if (
                 !matchedAccount ||
@@ -2489,32 +1978,23 @@ loginButton.addEventListener(
             currentClassName =
                 matchedAccount.class_name;
 
-
             panelStudentName.textContent =
                 matchedAccount.student_name;
-
 
             panelClassName.textContent =
                 "کلاس " +
                 matchedAccount.class_name;
 
-
             message.textContent =
                 "ورود موفق بود ✅";
 
-
             message.style.color =
                 "#16a34a";
-
 
             updateAllowedRadiusUI();
 
             updateCallScheduleUI();
 
-
-            /*
-               باز کردن پنل
-            */
 
             setTimeout(
                 async () => {
@@ -2525,7 +2005,6 @@ loginButton.addEventListener(
                     parentPanel.style.display =
                         "block";
 
-
                     window.scrollTo(
                         {
                             top: 0,
@@ -2533,46 +2012,11 @@ loginButton.addEventListener(
                         }
                     );
 
-
-                    /*
-                       فعال کردن Audio Context
-                       با تعامل کاربر در زمان ورود.
-
-                       این کار احتمال موفقیت پخش
-                       notification.mp3 را بیشتر می‌کند.
-                    */
-
-                    if (
-                        teacherCallNotificationSound
-                    ) {
-
-                        try {
-
-                            teacherCallNotificationSound
-                                .load();
-
-                        }
-
-                        catch (error) {
-
-                            console.warn(
-                                "Audio preload error:",
-                                error
-                            );
-
-                        }
-
-                    }
-
-
                     await loadExistingCall();
-
 
                     startParentRealtime();
 
-
                     startParentAutoRefresh();
-
 
                     startLiveParentLocation();
 
@@ -2582,14 +2026,12 @@ loginButton.addEventListener(
 
         }
 
-
         catch (error) {
 
             console.error(
                 "LOGIN EXCEPTION:",
                 error
             );
-
 
             message.textContent =
                 "خطایی هنگام ورود رخ داد.";
@@ -2598,7 +2040,6 @@ loginButton.addEventListener(
                 "#dc2626";
 
         }
-
 
         finally {
 
@@ -2674,7 +2115,6 @@ parentCodeInput.addEventListener(
     }
 );
 
-
 /* =====================================================
    CALL BUTTON
 ===================================================== */
@@ -2696,7 +2136,6 @@ callButton.addEventListener(
 
         }
 
-
         if (
             !isCallTimeActive()
         ) {
@@ -2706,20 +2145,17 @@ callButton.addEventListener(
                     currentClassName
                 );
 
-
             alert(
                 "فراخوانی این کلاس فقط از ساعت " +
                 schedule.text +
                 " فعال است."
             );
 
-
             updateCallScheduleUI();
 
             return;
 
         }
-
 
         if (
             callButton.dataset.locked ===
@@ -2730,19 +2166,16 @@ callButton.addEventListener(
 
         }
 
-
         callButton.disabled =
             true;
 
         callButton.textContent =
             "📍 در حال بررسی موقعیت...";
 
-
         const locationResult =
             await refreshParentLocation(
                 true
             );
-
 
         if (!locationResult) {
 
@@ -2752,14 +2185,8 @@ callButton.addEventListener(
 
         }
 
-
         const distance =
             locationResult.distance;
-
-
-        /*
-           بررسی محدوده ۵۰ متری
-        */
 
         if (
             distance >
@@ -2767,7 +2194,6 @@ callButton.addEventListener(
         ) {
 
             updateCallScheduleUI();
-
 
             alert(
                 "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
@@ -2782,19 +2208,15 @@ callButton.addEventListener(
                 )
             );
 
-
             return;
 
         }
 
-
         callButton.textContent =
             "📢 در حال بررسی فراخوان قبلی...";
 
-
         const today =
             getIranDate();
-
 
         const {
             data: activeCall,
@@ -2831,26 +2253,21 @@ callButton.addEventListener(
                 .limit(1)
                 .maybeSingle();
 
-
         if (activeError) {
 
             console.error(
                 activeError
             );
 
-
             updateCallScheduleUI();
-
 
             alert(
                 "خطا در بررسی فراخوان قبلی."
             );
 
-
             return;
 
         }
-
 
         if (activeCall) {
 
@@ -2858,23 +2275,18 @@ callButton.addEventListener(
                 activeCall
             );
 
-
             callButton.dataset.locked =
                 "true";
-
 
             callButton.disabled =
                 true;
 
-
             callButton.textContent =
                 "📢 فراخوان قبلاً ارسال شده";
-
 
             alert(
                 "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
             );
-
 
             return;
 
@@ -2888,14 +2300,11 @@ callButton.addEventListener(
         callButton.textContent =
             "📢 در حال ارسال فراخوان...";
 
-
         const calledDate =
             getIranDate();
 
-
         const calledTime =
             getIranTime();
-
 
         const {
             data: newCall,
@@ -2924,7 +2333,6 @@ callButton.addEventListener(
                 .select()
                 .single();
 
-
         if (insertError) {
 
             console.error(
@@ -2932,14 +2340,11 @@ callButton.addEventListener(
                 insertError
             );
 
-
             updateCallScheduleUI();
-
 
             alert(
                 "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
             );
-
 
             return;
 
@@ -2953,27 +2358,21 @@ callButton.addEventListener(
         callButton.dataset.locked =
             "true";
 
-
         callButton.disabled =
             true;
-
 
         callButton.textContent =
             "✅ فراخوان ارسال شد";
 
-
         callButton.style.background =
             "linear-gradient(135deg, #16a34a, #22c55e)";
-
 
         callButton.style.boxShadow =
             "0 15px 30px rgba(22, 163, 74, 0.25)";
 
-
         updateParentCallStatus(
             newCall
         );
-
 
         alert(
             "فراخوان با موفقیت ارسال شد.\n\n" +
@@ -2988,6 +2387,7 @@ callButton.addEventListener(
 
     }
 );
+
 
 /* =====================================================
    BEFORE UNLOAD
@@ -3006,16 +2406,6 @@ window.addEventListener(
 /* =====================================================
    PAGE VISIBILITY
 ===================================================== */
-
-/*
-   وقتی والد دوباره به صفحه برمی‌گردد،
-   وضعیت فراخوان را بررسی می‌کنیم.
-
-   نکته:
-   این قسمت عمداً صدای اعلان را پخش نمی‌کند،
-   چون صدای اعلان باید فقط برای INSERT جدید
-   پخش شود.
-*/
 
 document.addEventListener(
     "visibilitychange",
@@ -3061,77 +2451,8 @@ if (
 
 
 /* =====================================================
-   AUDIO ERROR HANDLING
-===================================================== */
-
-if (
-    teacherCallNotificationSound
-) {
-
-    teacherCallNotificationSound.addEventListener(
-        "error",
-        event => {
-
-            console.error(
-                "notification.mp3 قابل بارگذاری نیست.",
-                event
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   AUDIO ENDED
-===================================================== */
-
-if (
-    teacherCallNotificationSound
-) {
-
-    teacherCallNotificationSound.addEventListener(
-        "ended",
-        () => {
-
-            /*
-               صدا تمام شد.
-               هیچ عملیات دیگری لازم نیست.
-            */
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   NOTIFICATION STATE
-===================================================== */
-
-/*
-   اگر پنل والدین برای مدت طولانی باز باشد،
-   این تابع اجازه نمی‌دهد یک فراخوان با همان ID
-   چند بار اعلان صوتی ایجاد کند.
-*/
-
-function resetNotificationState() {
-
-    lastNotifiedCallId =
-        null;
-
-}
-
-
-/* =====================================================
    LOGOUT / RESET
 ===================================================== */
-
-/*
-   اگر در آینده دکمه خروج اضافه کردی،
-   می‌توانی این تابع را هنگام خروج صدا بزنی.
-*/
 
 function resetParentSession() {
 
@@ -3143,10 +2464,6 @@ function resetParentSession() {
 
     lastParentPosition =
         null;
-
-    lastNotifiedCallId =
-        null;
-
 
     if (
         parentCallChannel
@@ -3161,7 +2478,6 @@ function resetParentSession() {
 
     }
 
-
     if (
         parentRefreshInterval
     ) {
@@ -3175,44 +2491,7 @@ function resetParentSession() {
 
     }
 
-
     stopLiveParentLocation();
-
-
-    if (
-        teacherCallNotification
-    ) {
-
-        teacherCallNotification.classList.remove(
-            "show"
-        );
-
-    }
-
-
-    if (
-        teacherCallNotificationSound
-    ) {
-
-        try {
-
-            teacherCallNotificationSound.pause();
-
-            teacherCallNotificationSound.currentTime =
-                0;
-
-        }
-
-        catch (error) {
-
-            console.warn(
-                "Audio reset error:",
-                error
-            );
-
-        }
-
-    }
 
 }
 
@@ -3220,10 +2499,6 @@ function resetParentSession() {
 /* =====================================================
    REALTIME CONNECTION WATCH
 ===================================================== */
-
-/*
-   برای بررسی وضعیت اتصال Realtime
-*/
 
 function getParentRealtimeStatus() {
 
@@ -3268,79 +2543,9 @@ window.parentPanelDebug = {
 
         return lastParentPosition;
 
-    },
-
-    getLastNotifiedCallId: () => {
-
-        return lastNotifiedCallId;
-
-    },
-
-    resetNotification: () => {
-
-        resetNotificationState();
-
     }
 
 };
-
-
-/* =====================================================
-   OPTIONAL TEST NOTIFICATION
-===================================================== */
-
-/*
-   این تابع فقط برای تست دستی است.
-
-   در حالت عادی نیازی به اجرای آن نیست.
-
-   مثال در Console:
-
-   testTeacherCallNotification();
-
-*/
-
-function testTeacherCallNotification() {
-
-    const testCall = {
-
-        id:
-            "test-" +
-            Date.now(),
-
-        student_name:
-            currentStudentName ||
-            "دانش‌آموز تست",
-
-        class_name:
-            currentClassName ||
-            "تست",
-
-        status:
-            "فراخوان شد",
-
-        called_date:
-            getIranDate(),
-
-        called_time:
-            getIranTime()
-
-    };
-
-
-    showTeacherCallNotification(
-        testCall
-    );
-
-}
-
-
-/* =====================================================
-   EXPORT FOR DEBUG
-===================================================== */
-
-window.testTeacherCallNotification =
-    testTeacherCallNotification;
 
 
 /* =====================================================
@@ -3349,15 +2554,4 @@ window.testTeacherCallNotification =
 
 console.log(
     "Parent panel initialized successfully."
-);
-
-console.log(
-    "Teacher notification system initialized."
-);
-
-console.log(
-    "Notification sound:",
-    teacherCallNotificationSound
-        ? "READY"
-        : "NOT FOUND"
 );
