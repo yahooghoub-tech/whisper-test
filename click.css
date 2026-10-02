@@ -1268,3 +1268,13 @@ h1{
     justify-content: center;
 
 }
+.student-button.parent-called {
+    background: #2563eb !important;
+    color: #fff !important;
+}
+
+.student-button.parent-called .student-name,
+.student-button.parent-called .student-status,
+.student-button.parent-called .status-time {
+    color: #fff !important;
+}
