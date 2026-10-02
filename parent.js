@@ -80,6 +80,7 @@ function normalizePersianName(value) {
 
 
     return text;
+
 }
 
 
@@ -168,7 +169,9 @@ function levenshteinDistance(
                 matrix[i][j] =
                     matrix[i - 1][j - 1];
 
-            } else {
+            }
+
+            else {
 
                 matrix[i][j] =
                     Math.min(
@@ -392,6 +395,120 @@ const parentLocationCard =
     );
 
 
+/*
+   اعلان فراخوان معلم
+*/
+
+const teacherCallNotification =
+    document.getElementById(
+        "teacherCallNotification"
+    );
+
+const teacherCallNotificationText =
+    document.getElementById(
+        "teacherCallNotificationText"
+    );
+
+const teacherCallNotificationTime =
+    document.getElementById(
+        "teacherCallNotificationTime"
+    );
+
+const closeTeacherCallNotification =
+    document.getElementById(
+        "closeTeacherCallNotification"
+    );
+
+
+/*
+   صدای اعلان
+*/
+
+const teacherCallNotificationSound =
+    document.getElementById(
+        "teacherCallNotificationSound"
+    );
+
+/* =====================================================
+   UNLOCK NOTIFICATION AUDIO
+===================================================== */
+
+let notificationAudioUnlocked = false;
+
+async function unlockNotificationAudio() {
+
+    if (
+        !teacherCallNotificationSound ||
+        notificationAudioUnlocked
+    ) {
+
+        return;
+
+    }
+
+    try {
+
+        /*
+           صدا را در حالت بی‌صدا پخش می‌کنیم
+           تا مرورگر اجازه پخش صوت را بدهد.
+        */
+
+        teacherCallNotificationSound.muted = true;
+
+        teacherCallNotificationSound.volume = 0;
+
+        teacherCallNotificationSound.currentTime = 0;
+
+        const playPromise =
+            teacherCallNotificationSound.play();
+
+
+        if (
+            playPromise !== undefined
+        ) {
+
+            await playPromise;
+
+        }
+
+
+        /*
+           بعد از فعال شدن Audio،
+           پخش را متوقف می‌کنیم.
+        */
+
+        teacherCallNotificationSound.pause();
+
+        teacherCallNotificationSound.currentTime = 0;
+
+        teacherCallNotificationSound.muted = false;
+
+        teacherCallNotificationSound.volume = 1;
+
+
+        notificationAudioUnlocked = true;
+
+
+        console.log(
+            "Notification audio unlocked successfully."
+        );
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "Notification audio unlock failed:",
+            error
+        );
+
+        teacherCallNotificationSound.muted = false;
+
+        teacherCallNotificationSound.volume = 1;
+
+    }
+
+}
 /* =====================================================
    GLOBAL VARIABLES
 ===================================================== */
@@ -407,6 +524,14 @@ let lastParentPosition = null;
 let locationRequestInProgress = false;
 
 let parentLocationWatchId = null;
+
+
+/*
+   جلوگیری از پخش دوباره اعلان
+   برای یک فراخوان
+*/
+
+let lastNotifiedCallId = null;
 
 
 /* =====================================================
@@ -1025,6 +1150,168 @@ function updateLiveParentDistance(
 
 updateAllowedRadiusUI();
 
+/* =====================================================
+   TEACHER CALL NOTIFICATION
+===================================================== */
+
+function showTeacherCallNotification(
+    call
+) {
+
+    if (!teacherCallNotification) {
+        return;
+    }
+
+
+    /*
+       نمایش نام دانش‌آموز
+    */
+
+    if (
+        teacherCallNotificationText
+    ) {
+
+        teacherCallNotificationText.textContent =
+            "دانش‌آموز " +
+            call.student_name +
+            " توسط معلم فراخوان شده است.";
+
+    }
+
+
+    /*
+       نمایش زمان فراخوان
+    */
+
+    if (
+        teacherCallNotificationTime
+    ) {
+
+        teacherCallNotificationTime.textContent =
+            "زمان فراخوان: " +
+            (
+                call.called_time ||
+                getIranTime()
+            );
+
+    }
+
+
+    /*
+       نمایش اعلان
+    */
+
+    teacherCallNotification.classList.add(
+        "show"
+    );
+
+
+    /*
+       پخش notification.mp3
+    */
+
+    if (
+        teacherCallNotificationSound
+    ) {
+
+        try {
+
+            teacherCallNotificationSound.pause();
+
+            teacherCallNotificationSound.currentTime =
+                0;
+
+
+            const playPromise =
+                teacherCallNotificationSound.play();
+
+
+            if (
+                playPromise !== undefined
+            ) {
+
+                playPromise.catch(
+                    error => {
+
+                        console.warn(
+                            "پخش صدای اعلان توسط مرورگر مسدود شد:",
+                            error
+                        );
+
+                    }
+                );
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "NOTIFICATION SOUND ERROR:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+       لرزش در دستگاه‌هایی که پشتیبانی می‌کنند
+    */
+
+    if (
+        navigator.vibrate
+    ) {
+
+        try {
+
+            navigator.vibrate(
+                [
+                    200,
+                    100,
+                    200
+                ]
+            );
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "Vibration error:",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   CLOSE TEACHER NOTIFICATION
+===================================================== */
+
+if (
+    closeTeacherCallNotification
+) {
+
+    closeTeacherCallNotification.addEventListener(
+        "click",
+        () => {
+
+            teacherCallNotification.classList.remove(
+                "show"
+            );
+
+        }
+    );
+
+}
+
 
 /* =====================================================
    LOCATION PERMISSION
@@ -1455,6 +1742,7 @@ async function refreshParentLocation(
 
     }
 
+
     catch (error) {
 
         console.error(
@@ -1556,6 +1844,7 @@ async function refreshParentLocation(
         return null;
 
     }
+
 
     finally {
 
@@ -1888,6 +2177,10 @@ function startParentRealtime() {
                     }
 
 
+                    /*
+                       فقط مربوط به همین دانش‌آموز
+                    */
+
                     if (
                         call.student_name !==
                         currentStudentName
@@ -1897,6 +2190,10 @@ function startParentRealtime() {
 
                     }
 
+
+                    /*
+                       فقط مربوط به امروز
+                    */
 
                     if (
                         call.called_date !==
@@ -1908,6 +2205,51 @@ function startParentRealtime() {
                     }
 
 
+                    /*
+                       =====================================
+                       اعلان جدید معلم
+                       =====================================
+
+                       فقط در زمان INSERT اجرا می‌شود.
+
+                       بنابراین Auto Refresh و
+                       UPDATE باعث پخش مجدد صدا نمی‌شوند.
+                    */
+
+                    if (
+                        payload.eventType ===
+                        "INSERT"
+                        &&
+                        call.status ===
+                        "فراخوان شد"
+                    ) {
+
+                        /*
+                           جلوگیری از اعلان تکراری
+                        */
+
+                        if (
+                            lastNotifiedCallId !==
+                            call.id
+                        ) {
+
+                            lastNotifiedCallId =
+                                call.id;
+
+
+                            showTeacherCallNotification(
+                                call
+                            );
+
+                        }
+
+                    }
+
+
+                    /*
+                       بروزرسانی وضعیت فراخوان
+                    */
+
                     updateParentCallStatus(
                         call
                     );
@@ -1915,6 +2257,7 @@ function startParentRealtime() {
 
                     callButton.dataset.locked =
                         "true";
+
 
                     callButton.disabled =
                         true;
@@ -1952,8 +2295,16 @@ function startParentRealtime() {
 
                 }
             )
-            .subscribe();
+            .subscribe(
+                status => {
 
+                    console.log(
+                        "Parent Realtime:",
+                        status
+                    );
+
+                }
+            );
 
 }
 
@@ -2144,6 +2495,7 @@ loginButton.addEventListener(
             message.textContent =
                 "ورود موفق بود ✅";
 
+
             message.style.color =
                 "#16a34a";
 
@@ -2175,6 +2527,37 @@ loginButton.addEventListener(
                     );
 
 
+                    /*
+                       فعال کردن Audio Context
+                       با تعامل کاربر در زمان ورود.
+
+                       این کار احتمال موفقیت پخش
+                       notification.mp3 را بیشتر می‌کند.
+                    */
+
+                    if (
+                        teacherCallNotificationSound
+                    ) {
+
+                        try {
+
+                            teacherCallNotificationSound
+                                .load();
+
+                        }
+
+                        catch (error) {
+
+                            console.warn(
+                                "Audio preload error:",
+                                error
+                            );
+
+                        }
+
+                    }
+
+
                     await loadExistingCall();
 
 
@@ -2192,6 +2575,7 @@ loginButton.addEventListener(
 
         }
 
+
         catch (error) {
 
             console.error(
@@ -2207,6 +2591,7 @@ loginButton.addEventListener(
                 "#dc2626";
 
         }
+
 
         finally {
 
@@ -2470,8 +2855,10 @@ callButton.addEventListener(
             callButton.dataset.locked =
                 "true";
 
+
             callButton.disabled =
                 true;
+
 
             callButton.textContent =
                 "📢 فراخوان قبلاً ارسال شده";
@@ -2497,6 +2884,7 @@ callButton.addEventListener(
 
         const calledDate =
             getIranDate();
+
 
         const calledTime =
             getIranTime();
@@ -2558,8 +2946,10 @@ callButton.addEventListener(
         callButton.dataset.locked =
             "true";
 
+
         callButton.disabled =
             true;
+
 
         callButton.textContent =
             "✅ فراخوان ارسال شد";
@@ -2592,7 +2982,6 @@ callButton.addEventListener(
     }
 );
 
-
 /* =====================================================
    BEFORE UNLOAD
 ===================================================== */
@@ -2604,4 +2993,364 @@ window.addEventListener(
         stopLiveParentLocation();
 
     }
+);
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+/*
+   وقتی والد دوباره به صفحه برمی‌گردد،
+   وضعیت فراخوان را بررسی می‌کنیم.
+
+   نکته:
+   این قسمت عمداً صدای اعلان را پخش نمی‌کند،
+   چون صدای اعلان باید فقط برای INSERT جدید
+   پخش شود.
+*/
+
+document.addEventListener(
+    "visibilitychange",
+    async () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            if (
+                currentStudentName &&
+                currentClassName
+            ) {
+
+                await loadExistingCall();
+
+                updateCallScheduleUI();
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL UI
+===================================================== */
+
+if (
+    callButton
+) {
+
+    callButton.dataset.locked =
+        "false";
+
+    callButton.dataset.timeBlocked =
+        "true";
+
+}
+
+
+/* =====================================================
+   AUDIO ERROR HANDLING
+===================================================== */
+
+if (
+    teacherCallNotificationSound
+) {
+
+    teacherCallNotificationSound.addEventListener(
+        "error",
+        event => {
+
+            console.error(
+                "notification.mp3 قابل بارگذاری نیست.",
+                event
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   AUDIO ENDED
+===================================================== */
+
+if (
+    teacherCallNotificationSound
+) {
+
+    teacherCallNotificationSound.addEventListener(
+        "ended",
+        () => {
+
+            /*
+               صدا تمام شد.
+               هیچ عملیات دیگری لازم نیست.
+            */
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NOTIFICATION STATE
+===================================================== */
+
+/*
+   اگر پنل والدین برای مدت طولانی باز باشد،
+   این تابع اجازه نمی‌دهد یک فراخوان با همان ID
+   چند بار اعلان صوتی ایجاد کند.
+*/
+
+function resetNotificationState() {
+
+    lastNotifiedCallId =
+        null;
+
+}
+
+
+/* =====================================================
+   LOGOUT / RESET
+===================================================== */
+
+/*
+   اگر در آینده دکمه خروج اضافه کردی،
+   می‌توانی این تابع را هنگام خروج صدا بزنی.
+*/
+
+function resetParentSession() {
+
+    currentStudentName =
+        "";
+
+    currentClassName =
+        "";
+
+    lastParentPosition =
+        null;
+
+    lastNotifiedCallId =
+        null;
+
+
+    if (
+        parentCallChannel
+    ) {
+
+        supabaseClient.removeChannel(
+            parentCallChannel
+        );
+
+        parentCallChannel =
+            null;
+
+    }
+
+
+    if (
+        parentRefreshInterval
+    ) {
+
+        clearInterval(
+            parentRefreshInterval
+        );
+
+        parentRefreshInterval =
+            null;
+
+    }
+
+
+    stopLiveParentLocation();
+
+
+    if (
+        teacherCallNotification
+    ) {
+
+        teacherCallNotification.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    if (
+        teacherCallNotificationSound
+    ) {
+
+        try {
+
+            teacherCallNotificationSound.pause();
+
+            teacherCallNotificationSound.currentTime =
+                0;
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "Audio reset error:",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   REALTIME CONNECTION WATCH
+===================================================== */
+
+/*
+   برای بررسی وضعیت اتصال Realtime
+*/
+
+function getParentRealtimeStatus() {
+
+    if (
+        !parentCallChannel
+    ) {
+
+        return "DISCONNECTED";
+
+    }
+
+    return "CONNECTED";
+
+}
+
+
+/* =====================================================
+   DEBUG
+===================================================== */
+
+window.parentPanelDebug = {
+
+    getStudentName: () => {
+
+        return currentStudentName;
+
+    },
+
+    getClassName: () => {
+
+        return currentClassName;
+
+    },
+
+    getRealtimeStatus: () => {
+
+        return getParentRealtimeStatus();
+
+    },
+
+    getLastPosition: () => {
+
+        return lastParentPosition;
+
+    },
+
+    getLastNotifiedCallId: () => {
+
+        return lastNotifiedCallId;
+
+    },
+
+    resetNotification: () => {
+
+        resetNotificationState();
+
+    }
+
+};
+
+
+/* =====================================================
+   OPTIONAL TEST NOTIFICATION
+===================================================== */
+
+/*
+   این تابع فقط برای تست دستی است.
+
+   در حالت عادی نیازی به اجرای آن نیست.
+
+   مثال در Console:
+
+   testTeacherCallNotification();
+
+*/
+
+function testTeacherCallNotification() {
+
+    const testCall = {
+
+        id:
+            "test-" +
+            Date.now(),
+
+        student_name:
+            currentStudentName ||
+            "دانش‌آموز تست",
+
+        class_name:
+            currentClassName ||
+            "تست",
+
+        status:
+            "فراخوان شد",
+
+        called_date:
+            getIranDate(),
+
+        called_time:
+            getIranTime()
+
+    };
+
+
+    showTeacherCallNotification(
+        testCall
+    );
+
+}
+
+
+/* =====================================================
+   EXPORT FOR DEBUG
+===================================================== */
+
+window.testTeacherCallNotification =
+    testTeacherCallNotification;
+
+
+/* =====================================================
+   READY
+===================================================== */
+
+console.log(
+    "Parent panel initialized successfully."
+);
+
+console.log(
+    "Teacher notification system initialized."
+);
+
+console.log(
+    "Notification sound:",
+    teacherCallNotificationSound
+        ? "READY"
+        : "NOT FOUND"
 );
