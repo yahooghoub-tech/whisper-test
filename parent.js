@@ -401,10 +401,55 @@ function getCallSchedule(
     className
 ) {
 
+    const normalizedClass =
+        normalizePersianName(
+            className
+        );
+
+    if (
+        normalizedClass.startsWith("پیش")
+    ) {
+
+        return {
+            start: 14 * 60,
+            end: 24 * 60,
+            text: "14:00 تا 24:00"
+        };
+
+    }
+
+    if (
+        normalizedClass.startsWith("اول")
+    ) {
+
+        return {
+            start: 14 * 60 + 30,
+            end: 24 * 60,
+            text: "14:30 تا 24:00"
+        };
+
+    }
+
+    if (
+        normalizedClass.startsWith("دوم") ||
+        normalizedClass.startsWith("سوم") ||
+        normalizedClass.startsWith("چهارم") ||
+        normalizedClass.startsWith("پنجم") ||
+        normalizedClass.startsWith("ششم")
+    ) {
+
+        return {
+            start: 14 * 60 + 40,
+            end: 24 * 60,
+            text: "14:40 تا 24:00"
+        };
+
+    }
+
     return {
         start: 14 * 60,
-        end: 23 * 60,
-        text: "14:00 تا 23:00"
+        end: 24 * 60,
+        text: "14:00 تا 24:00"
     };
 
 }
