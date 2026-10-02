@@ -1668,9 +1668,7 @@ function updateParentCallStatus(
         !statusElement ||
         !statusDot
     ) {
-
         return;
-
     }
 
     if (
@@ -1714,6 +1712,94 @@ function updateParentCallStatus(
 
 }
 
+/* =====================================================
+   UPDATE PARENT CALL BUTTON
+===================================================== */
+
+function updateParentCallButton(
+    call
+) {
+
+    if (
+        !callButton ||
+        !call
+    ) {
+        return;
+    }
+
+    callButton.dataset.locked =
+        "true";
+
+    callButton.disabled =
+        true;
+
+    if (
+        call.status ===
+        "فراخوان شد"
+    ) {
+
+        const callTime =
+            call.called_time
+                ? call.called_time.slice(0, 5)
+                : "---";
+
+        callButton.textContent =
+            "📢 فراخوان برای معلم ارسال شد — " +
+            callTime;
+
+        callButton.style.background =
+            "linear-gradient(135deg, #f97316, #fb923c)";
+
+        callButton.style.boxShadow =
+            "0 15px 30px rgba(249, 115, 22, 0.25)";
+
+    }
+
+    else if (
+        call.status ===
+        "دریافت فراخوان"
+    ) {
+
+        const callTime =
+            call.called_time
+                ? call.called_time.slice(0, 5)
+                : "---";
+
+        callButton.textContent =
+            "📢 فراخوان دریافت شد — " +
+            callTime;
+
+        callButton.style.background =
+            "linear-gradient(135deg, #2563eb, #3b82f6)";
+
+        callButton.style.boxShadow =
+            "0 15px 30px rgba(37, 99, 235, 0.25)";
+
+    }
+
+    else if (
+        call.status ===
+        "ارسال شد"
+    ) {
+
+        const sentTime =
+            call.sent_time
+                ? call.sent_time.slice(0, 5)
+                : "---";
+
+        callButton.textContent =
+            "✅ دانش‌آموز فرستاده شد — " +
+            sentTime;
+
+        callButton.style.background =
+            "linear-gradient(135deg, #7c3aed, #a855f7)";
+
+        callButton.style.boxShadow =
+            "0 15px 30px rgba(124, 58, 237, 0.25)";
+
+    }
+
+}
 /* =====================================================
    LOAD EXISTING CALL
 ===================================================== */
@@ -1793,7 +1879,10 @@ async function loadExistingCall() {
     updateParentCallStatus(
         data
     );
-
+    updateParentCallButton(
+        data
+    );
+    
     callButton.dataset.locked =
         "true";
 
