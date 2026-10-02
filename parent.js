@@ -402,9 +402,9 @@ function getCallSchedule(
 ) {
 
     return {
-        start: 1 * 60,
-        end: 14 * 60,
-        text: "۱:۰۰ تا ۱۴:۰۰"
+        start: 14 * 60,
+        end: 23 * 60,
+        text: "14:00 تا 23:00"
     };
 
 }
