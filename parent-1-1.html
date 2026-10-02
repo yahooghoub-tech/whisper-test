@@ -174,8 +174,7 @@
 
 <div
     class="parent-notification"
-    id="parentNotification"
-    style="display:none;"
+    id="teacherCallNotification"
 >
 
 <div class="parent-notification-icon">
@@ -188,15 +187,17 @@
 فراخوان دانش‌آموز
 </strong>
 
-<span id="parentNotificationText">
+<span id="teacherCallNotificationText">
 دانش‌آموز توسط معلم فراخوان شده است.
 </span>
+
+<small id="teacherCallNotificationTime"></small>
 
 </div>
 
 <button
     type="button"
-    id="closeNotificationButton"
+    id="closeTeacherCallNotification"
     class="close-notification-button"
 >
 ×
@@ -211,7 +212,7 @@
 ===================================================== -->
 
 <audio
-    id="notificationSound"
+    id="teacherCallNotificationSound"
     preload="auto"
 >
 
@@ -528,67 +529,64 @@
 
 
 </section>
-
-
-
 <!-- =====================================================
      CALL SECTION
 ===================================================== -->
 
 <section class="call-section">
 
-<h2>
-فراخوانی دانش‌آموز
-</h2>
-
-<p id="callDescription">
-در حال بررسی زمان فعال بودن فراخوان...
-</p>
-
-
-<button
-    class="call-button"
-    id="callButton"
-    type="button"
->
-
-📢 فراخوانی دانش‌آموز
-
-</button>
-
-</section>
-
-
-</main>
-
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
-<footer class="footer">
-
-سامانه هوشمند والدین دبستان علوی
-
-</footer>
-
-
-</section>
-
-
-</div>
-
-</div>
-
-
-
-<!-- =====================================================
-     PARENT JAVASCRIPT
-===================================================== -->
-
-<script src="parent.js"></script>
-
-</body>
-
-</html>
+    <h2>
+    فراخوانی دانش‌آموز
+    </h2>
+    
+    <p id="callDescription">
+    در حال بررسی زمان فعال بودن فراخوان...
+    </p>
+    
+    
+    <button
+        class="call-button"
+        id="callButton"
+        type="button"
+    >
+    
+    📢 فراخوانی دانش‌آموز
+    
+    </button>
+    
+    </section>
+    
+    
+    </main>
+    
+    
+    
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+    
+    <footer class="footer">
+    
+    سامانه هوشمند والدین دبستان علوی
+    
+    </footer>
+    
+    
+    </section>
+    
+    
+    </div>
+    
+    </div>
+    
+    
+    
+    <!-- =====================================================
+         PARENT JAVASCRIPT
+    ===================================================== -->
+    
+    <script src="parent.js"></script>
+    
+    </body>
+    
+    </html>

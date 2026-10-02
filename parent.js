@@ -428,7 +428,15 @@ const teacherCallNotificationSound =
     document.getElementById(
         "teacherCallNotificationSound"
     );
-
+    console.log(
+        "اعلان والدین:",
+        teacherCallNotification
+    );
+    
+    console.log(
+        "صدای اعلان:",
+        teacherCallNotificationSound
+    );
 /* =====================================================
    UNLOCK NOTIFICATION AUDIO
 ===================================================== */
