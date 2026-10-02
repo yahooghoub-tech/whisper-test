@@ -1479,7 +1479,118 @@ if (
 
 }
 
+/* =====================================================
+   PARENT NOTIFICATION
+===================================================== */
 
+function showParentCallNotification() {
+
+    const existingNotification =
+        document.getElementById(
+            "parentCallNotification"
+        );
+
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    const notification =
+        document.createElement("div");
+
+    notification.id =
+        "parentCallNotification";
+
+    notification.innerHTML = `
+        <div class="parent-call-notification-icon">
+            📢
+        </div>
+
+        <div class="parent-call-notification-content">
+            <div class="parent-call-notification-title">
+                فراخوان ارسال شد
+            </div>
+
+            <div class="parent-call-notification-text">
+                دانش‌آموز در حال آمدن به سمت شماست.
+            </div>
+        </div>
+
+        <button
+            class="parent-call-notification-close"
+            type="button"
+            aria-label="بستن"
+        >
+            ×
+        </button>
+    `;
+
+    document.body.appendChild(
+        notification
+    );
+
+    requestAnimationFrame(() => {
+
+        notification.classList.add(
+            "show"
+        );
+
+    });
+
+    const closeButton =
+        notification.querySelector(
+            ".parent-call-notification-close"
+        );
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            () => {
+
+                notification.classList.remove(
+                    "show"
+                );
+
+                setTimeout(() => {
+
+                    notification.remove();
+
+                }, 350);
+
+            }
+        );
+
+    }
+
+    setTimeout(() => {
+
+        if (
+            notification &&
+            notification.parentNode
+        ) {
+
+            notification.classList.remove(
+                "show"
+            );
+
+            setTimeout(() => {
+
+                if (
+                    notification &&
+                    notification.parentNode
+                ) {
+
+                    notification.remove();
+
+                }
+
+            }, 350);
+
+        }
+
+    }, 7000);
+
+}
 /* =====================================================
    CALL STATUS
 ===================================================== */
@@ -2363,12 +2474,14 @@ callButton.addEventListener(
 
         callButton.textContent =
             "✅ فراخوان ارسال شد";
+            showParentCallNotification();
 
         callButton.style.background =
-            "linear-gradient(135deg, #16a34a, #22c55e)";
+        "linear-gradient(135deg, #f97316, #fb923c)";
+
 
         callButton.style.boxShadow =
-            "0 15px 30px rgba(22, 163, 74, 0.25)";
+        "0 15px 30px rgba(249, 115, 22, 0.30)";
 
         updateParentCallStatus(
             newCall
