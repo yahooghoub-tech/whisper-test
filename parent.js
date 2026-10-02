@@ -2214,44 +2214,43 @@ function startParentRealtime() {
 
 
                     /*
-                       =====================================
-                       اعلان جدید معلم
-                       =====================================
+   =====================================
+   اعلان فراخوان معلم
+   =====================================
+   
+   وقتی وضعیت فراخوان به
+   "فراخوان شد" برسد،
+   برای والد اعلان نمایش داده می‌شود.
+*/
 
-                       فقط در زمان INSERT اجرا می‌شود.
+if (
+    (
+        payload.eventType === "INSERT" ||
+        payload.eventType === "UPDATE"
+    )
+    &&
+    call.status === "فراخوان شد"
+) {
 
-                       بنابراین Auto Refresh و
-                       UPDATE باعث پخش مجدد صدا نمی‌شوند.
-                    */
+    /*
+       جلوگیری از اعلان تکراری
+    */
 
-                    if (
-                        payload.eventType ===
-                        "INSERT"
-                        &&
-                        call.status ===
-                        "فراخوان شد"
-                    ) {
+    if (
+        lastNotifiedCallId !==
+        call.id
+    ) {
 
-                        /*
-                           جلوگیری از اعلان تکراری
-                        */
+        lastNotifiedCallId =
+            call.id;
 
-                        if (
-                            lastNotifiedCallId !==
-                            call.id
-                        ) {
+        showTeacherCallNotification(
+            call
+        );
 
-                            lastNotifiedCallId =
-                                call.id;
+    }
 
-
-                            showTeacherCallNotification(
-                                call
-                            );
-
-                        }
-
-                    }
+}
 
 
                     /*
