@@ -1278,3 +1278,14 @@ h1{
 .student-button.parent-called .status-time {
     color: #fff !important;
 }
+.student-button.sent {
+    background: #16a34a !important;
+    color: #fff !important;
+    border-color: #16a34a !important;
+}
+
+.student-button.sent .student-name,
+.student-button.sent .student-status,
+.student-button.sent .status-time {
+    color: #fff !important;
+}
