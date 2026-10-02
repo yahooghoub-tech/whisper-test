@@ -551,7 +551,7 @@ const SCHOOL_LNG =
 */
 
 const ALLOWED_RADIUS =
-    50;
+    5000;
 
 
 const EARTH_RADIUS =
