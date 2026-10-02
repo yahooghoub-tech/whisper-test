@@ -1781,7 +1781,12 @@ async function loadExistingCall() {
     ) {
 
         callButton.textContent =
-            "✅ دانش آموز ارسال شد";
+            "✅ دانش آموز فرستاده شد  ";
+            callButton.style.background =
+    "linear-gradient(135deg, #7c3aed, #a855f7)";
+
+callButton.style.boxShadow =
+    "0 15px 30px rgba(124, 58, 237, 0.25)";
 
     }
 
