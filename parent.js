@@ -1,4 +1,3 @@
-
 const SUPABASE_URL =
     "https://ghnpiijihybuhfetnxjp.supabase.co";
 
@@ -320,7 +319,11 @@ const locationRefreshButton =
     document.getElementById(
         "locationRefreshButton"
     );
-    let currentParentAccountId = null;
+
+
+let currentParentAccountId = null;
+
+
 /* =====================================================
    CHANGE PARENT PASSWORD ELEMENTS
 ===================================================== */
@@ -349,7 +352,9 @@ const changeParentCodeMessage =
     document.getElementById(
         "changeParentCodeMessage"
     );
-    /* =====================================================
+
+
+/* =====================================================
    PARENT PASSWORD - ONLY 4 DIGITS
 ===================================================== */
 
@@ -385,6 +390,7 @@ const changeParentCodeMessage =
     }
 );
 
+
 /* =====================================================
    CHANGE PASSWORD VALIDATION
 ===================================================== */
@@ -416,7 +422,12 @@ if (changeParentCodeButton) {
     changeParentCodeButton.addEventListener(
         "click",
         async () => {
-            console.log("CHANGE PASSWORD BUTTON CLICKED");
+
+            console.log(
+                "CHANGE PASSWORD BUTTON CLICKED"
+            );
+
+
             const currentCode =
                 currentParentCodeInput.value.trim();
 
@@ -427,7 +438,9 @@ if (changeParentCodeButton) {
                 confirmParentCodeInput.value.trim();
 
 
-            showChangeParentCodeMessage("");
+            showChangeParentCodeMessage(
+                ""
+            );
 
 
             if (
@@ -446,7 +459,9 @@ if (changeParentCodeButton) {
 
 
             if (
-                !/^\d{4}$/.test(currentCode)
+                !/^\d{4}$/.test(
+                    currentCode
+                )
             ) {
 
                 showChangeParentCodeMessage(
@@ -459,7 +474,9 @@ if (changeParentCodeButton) {
 
 
             if (
-                !/^\d{4}$/.test(newCode)
+                !/^\d{4}$/.test(
+                    newCode
+                )
             ) {
 
                 showChangeParentCodeMessage(
@@ -472,7 +489,9 @@ if (changeParentCodeButton) {
 
 
             if (
-                !/^\d{4}$/.test(confirmCode)
+                !/^\d{4}$/.test(
+                    confirmCode
+                )
             ) {
 
                 showChangeParentCodeMessage(
@@ -515,22 +534,28 @@ if (changeParentCodeButton) {
                 "#2563eb"
             );
 
-            if (!currentParentAccountId) {
+
+            if (
+                !currentParentAccountId
+            ) {
 
                 showChangeParentCodeMessage(
                     "اطلاعات حساب والد پیدا نشد."
                 );
-            
+
                 return;
-            
+
             }
-            
+
+
             const {
                 data: accountData,
                 error: accountError
             } =
                 await supabaseClient
-                    .from("parent_accounts")
+                    .from(
+                        "parent_accounts"
+                    )
                     .select(
                         "id, student_name, class_name, parent_code"
                     )
@@ -539,161 +564,180 @@ if (changeParentCodeButton) {
                         currentParentAccountId
                     )
                     .maybeSingle();
-            
-            
-            if (accountError) {
-            
+
+
+            if (
+                accountError
+            ) {
+
                 console.error(
                     "CHECK PARENT ACCOUNT ERROR:",
                     accountError
                 );
-            
+
                 showChangeParentCodeMessage(
                     "خطا در بررسی حساب والد. دوباره تلاش کنید."
                 );
-            
+
                 return;
-            
+
             }
-            
-            
-            if (!accountData) {
-            
+
+
+            if (
+                !accountData
+            ) {
+
                 showChangeParentCodeMessage(
                     "حساب والد پیدا نشد."
                 );
-            
+
                 return;
-            
+
             }
-            
-            
+
+
             /* =====================================================
                CHECK CURRENT PASSWORD
             ===================================================== */
-            
+
             if (
-                String(accountData.parent_code).trim() !==
-                String(currentCode).trim()
+                String(
+                    accountData.parent_code
+                ).trim() !==
+                String(
+                    currentCode
+                ).trim()
             ) {
-            
+
                 showChangeParentCodeMessage(
                     "رمز فعلی صحیح نیست."
                 );
-            
+
                 return;
-            
+
             }
-            
-            
+
+
+            showChangeParentCodeMessage(
+                "رمز فعلی صحیح است. در حال تغییر رمز...",
+                "#2563eb"
+            );
+
+
             /* =====================================================
                UPDATE PASSWORD
             ===================================================== */
-            
-           
+
             const {
+                data: updatedAccount,
                 error: updateError
             } =
                 await supabaseClient
-                    .from("parent_accounts")
+                    .from(
+                        "parent_accounts"
+                    )
                     .update({
-                        parent_code: newCode
+                        parent_code:
+                            newCode
                     })
                     .eq(
                         "id",
                         currentParentAccountId
-                    );
-            
-            
-            if (updateError) {
-            
+                    )
+                    .select(
+                        "id, parent_code"
+                    )
+                    .maybeSingle();
+
+
+            if (
+                updateError
+            ) {
+
                 console.error(
                     "CHANGE PASSWORD ERROR:",
                     updateError
                 );
-            
+
                 showChangeParentCodeMessage(
                     "خطا در تغییر رمز. دوباره تلاش کنید."
                 );
-            
+
                 return;
-            
+
             }
-            
-            
-            /* =====================================================
-               SUCCESS
-            ===================================================== */
-            
-            showChangeParentCodeMessage(
-                "رمز ورود با موفقیت تغییر کرد. ✅",
-                "#16a34a"
-            );
-            
-            
-            currentParentCodeInput.value = "";
-            
-            newParentCodeInput.value = "";
-            
-            confirmParentCodeInput.value = "";
-            
-            if (updateError) {
-            
+
+
+            if (
+                !updatedAccount
+            ) {
+
                 console.error(
-                    "CHANGE PASSWORD ERROR:",
-                    updateError
+                    "PASSWORD UPDATE RETURNED NO ROW"
                 );
-            
+
                 showChangeParentCodeMessage(
-                    "خطا در تغییر رمز. دوباره تلاش کنید."
+                    "رمز در پایگاه داده تغییر نکرد. دسترسی تغییر حساب را بررسی کنید."
                 );
-            
+
                 return;
-            
+
             }
-            
-            
-            if (!updatedAccount) {
-            
-                showChangeParentCodeMessage(
-                    "تغییر رمز انجام نشد."
-                );
-            
-                return;
-            
-            }
-            
-            
+
+
             /* =====================================================
-               SUCCESS
+               VERIFY PASSWORD CHANGE
             ===================================================== */
-            
+
+            if (
+                String(
+                    updatedAccount.parent_code
+                ).trim() !==
+                String(
+                    newCode
+                ).trim()
+            ) {
+
+                console.error(
+                    "PASSWORD UPDATE VERIFICATION FAILED:",
+                    updatedAccount
+                );
+
+                showChangeParentCodeMessage(
+                    "رمز در پایگاه داده تغییر نکرده است."
+                );
+
+                return;
+
+            }
+
+
+            /* =====================================================
+               PASSWORD CHANGE CONFIRMED
+            ===================================================== */
+
             showChangeParentCodeMessage(
                 "رمز ورود با موفقیت تغییر کرد. ✅",
                 "#16a34a"
             );
-            
-            
-            currentParentCodeInput.value = "";
-            
-            newParentCodeInput.value = "";
-            
-            confirmParentCodeInput.value = "";
-            
-            showChangeParentCodeMessage(
-                "رمز ورود با موفقیت تغییر کرد. ✅",
-                "#16a34a"
-            );
-            
-            currentParentCodeInput.value = "";
-            newParentCodeInput.value = "";
-            confirmParentCodeInput.value = "";
-            
+
+
+            currentParentCodeInput.value =
+                "";
+
+            newParentCodeInput.value =
+                "";
+
+            confirmParentCodeInput.value =
+                "";
+
 
         }
     );
 
 }
+
 
 /*
    کارت‌های موقعیت
@@ -1092,12 +1136,12 @@ function updateCallScheduleUI() {
         callButton.dataset.timeBlocked =
             "false";
 
-            callButton.textContent =
+        callButton.textContent =
             "فراخوانی دانش‌آموز";
-        
+
         callButton.style.background =
             "linear-gradient(135deg, #2563eb, #3b82f6)";
-        
+
         callButton.style.boxShadow =
             "0 15px 30px rgba(37, 99, 235, 0.25)";
 
@@ -1487,8 +1531,6 @@ function getCurrentParentLocation() {
     );
 
 }
-
-
 /* =====================================================
    LIVE GPS
 ===================================================== */
@@ -1903,6 +1945,7 @@ if (
 
 }
 
+
 /* =====================================================
    PARENT NOTIFICATION
 ===================================================== */
@@ -2015,6 +2058,8 @@ function showParentCallNotification() {
     }, 7000);
 
 }
+
+
 /* =====================================================
    CALL STATUS
 ===================================================== */
@@ -2085,6 +2130,7 @@ function updateParentCallStatus(
 
 }
 
+
 /* =====================================================
    UPDATE PARENT CALL BUTTON
 ===================================================== */
@@ -2154,17 +2200,17 @@ function updateParentCallButton(
         call.status ===
         "ارسال شد"
     ) {
-    
+
         const callTime =
             call.called_time
                 ? call.called_time.slice(0, 5)
                 : "---";
-    
+
         const sentTime =
             call.sent_time
                 ? call.sent_time.slice(0, 5)
                 : "---";
-    
+
         callButton.innerHTML =
             "🕐 فراخوان: " +
             callTime +
@@ -2181,6 +2227,8 @@ function updateParentCallButton(
     }
 
 }
+
+
 /* =====================================================
    LOAD EXISTING CALL
 ===================================================== */
@@ -2260,17 +2308,17 @@ async function loadExistingCall() {
     updateParentCallStatus(
         data
     );
+
     updateParentCallButton(
         data
     );
-    
+
     callButton.dataset.locked =
         "true";
 
     callButton.disabled =
         true;
 
-    
 }
 
 
@@ -2358,10 +2406,10 @@ function startParentRealtime() {
                 payload => {
 
                     const call =
-    payload.new;
+                        payload.new;
 
-const oldCall =
-    payload.old;
+                    const oldCall =
+                        payload.old;
 
                     if (!call) {
                         return;
@@ -2385,23 +2433,23 @@ const oldCall =
 
                     }
 
-                   
                     updateParentCallStatus(
                         call
                     );
-                    
+
                     updateParentCallButton(
                         call
                     );
-                    
+
                     if (
                         oldCall &&
                         oldCall.status !== "ارسال شد" &&
                         call.status === "ارسال شد"
                     ) {
+
                         showParentCallNotification();
+
                     }
-                    
 
                 }
             )
@@ -2479,7 +2527,9 @@ loginButton.addEventListener(
             } =
                 await supabaseClient
                     .from("parent_accounts")
-                    .select("id, student_name, class_name, parent_code")
+                    .select(
+                        "id, student_name, class_name, parent_code"
+                    )
                     .eq(
                         "parent_code",
                         code
@@ -2555,13 +2605,13 @@ loginButton.addEventListener(
             ================================================= */
 
             currentStudentName =
-    matchedAccount.student_name;
+                matchedAccount.student_name;
 
-currentParentAccountId =
-    matchedAccount.id;
+            currentParentAccountId =
+                matchedAccount.id;
 
-currentClassName =
-    matchedAccount.class_name;
+            currentClassName =
+                matchedAccount.class_name;
 
             panelStudentName.textContent =
                 matchedAccount.student_name;
@@ -2699,7 +2749,6 @@ parentCodeInput.addEventListener(
 
     }
 );
-
 /* =====================================================
    CALL BUTTON
 ===================================================== */
@@ -2913,7 +2962,7 @@ callButton.addEventListener(
 
                         called_time:
                             calledTime
-                            
+
                     }
                 ])
                 .select()
@@ -2949,18 +2998,20 @@ callButton.addEventListener(
 
         callButton.textContent =
             "✅ فراخوان ارسال شد";
-            
+
 
         callButton.style.background =
-        "linear-gradient(135deg, #f97316, #fb923c)";
+            "linear-gradient(135deg, #f97316, #fb923c)";
 
 
         callButton.style.boxShadow =
-        "0 15px 30px rgba(249, 115, 22, 0.30)";
+            "0 15px 30px rgba(249, 115, 22, 0.30)";
+
 
         updateParentCallStatus(
             newCall
         );
+
 
         alert(
             "فراخوان با موفقیت ارسال شد.\n\n" +
@@ -3049,6 +3100,457 @@ function resetParentSession() {
 
     currentClassName =
         "";
+
+    currentParentAccountId =
+        null;
+
+    lastParentPosition =
+        null;
+
+    if (
+        parentCallChannel
+    ) {
+
+        supabaseClient.removeChannel(
+            parentCallChannel
+        );
+
+        parentCallChannel =
+            null;
+
+    }
+
+    if (
+        parentRefreshInterval
+    ) {
+
+        clearInterval(
+            parentRefreshInterval
+        );
+
+        parentRefreshInterval =
+            null;
+
+    }
+
+    stopLiveParentLocation();
+
+}
+
+
+/* =====================================================
+   REALTIME CONNECTION WATCH
+===================================================== */
+
+function getParentRealtimeStatus() {
+
+    if (
+        !parentCallChannel
+    ) {
+
+        return "DISCONNECTED";
+
+    }
+
+    return "CONNECTED";
+
+}
+
+
+/* =====================================================
+   DEBUG
+===================================================== */
+
+window.parentPanelDebug = {
+
+    getStudentName: () => {
+
+        return currentStudentName;
+
+    },
+
+    getClassName: () => {
+
+        return currentClassName;
+
+    },
+
+    getRealtimeStatus: () => {
+
+        return getParentRealtimeStatus();
+
+    },
+
+    getLastPosition: () => {
+
+        return lastParentPosition;
+
+    }
+
+};
+
+
+/* =====================================================
+   READY
+===================================================== */
+
+console.log(
+    "Parent panel initialized successfully."
+);
+/* =====================================================
+   CALL BUTTON
+===================================================== */
+
+callButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            !currentStudentName ||
+            !currentClassName
+        ) {
+
+            alert(
+                "اطلاعات دانش‌آموز یافت نشد."
+            );
+
+            return;
+
+        }
+
+        if (
+            !isCallTimeActive()
+        ) {
+
+            const schedule =
+                getCallSchedule(
+                    currentClassName
+                );
+
+            alert(
+                "فراخوانی این کلاس فقط از ساعت " +
+                schedule.text +
+                " فعال است."
+            );
+
+            updateCallScheduleUI();
+
+            return;
+
+        }
+
+        if (
+            callButton.dataset.locked ===
+            "true"
+        ) {
+
+            return;
+
+        }
+
+        callButton.disabled =
+            true;
+
+        callButton.textContent =
+            "📍 در حال بررسی موقعیت...";
+
+        const locationResult =
+            await refreshParentLocation(
+                true
+            );
+
+        if (!locationResult) {
+
+            updateCallScheduleUI();
+
+            return;
+
+        }
+
+        const distance =
+            locationResult.distance;
+
+        if (
+            distance >
+            ALLOWED_RADIUS
+        ) {
+
+            updateCallScheduleUI();
+
+            alert(
+                "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
+                "فاصله شما: " +
+                formatDistance(
+                    distance
+                ) +
+                "\n" +
+                "محدوده مجاز: " +
+                formatDistance(
+                    ALLOWED_RADIUS
+                )
+            );
+
+            return;
+
+        }
+
+        callButton.textContent =
+            "📢 در حال بررسی فراخوان قبلی...";
+
+        const today =
+            getIranDate();
+
+        const {
+            data: activeCall,
+            error: activeError
+        } =
+            await supabaseClient
+                .from("calls")
+                .select("*")
+                .eq(
+                    "student_name",
+                    currentStudentName
+                )
+                .eq(
+                    "class_name",
+                    currentClassName
+                )
+                .eq(
+                    "called_date",
+                    today
+                )
+                .in(
+                    "status",
+                    [
+                        "فراخوان شد",
+                        "دریافت فراخوان"
+                    ]
+                )
+                .order(
+                    "id",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(1)
+                .maybeSingle();
+
+        if (activeError) {
+
+            console.error(
+                activeError
+            );
+
+            updateCallScheduleUI();
+
+            alert(
+                "خطا در بررسی فراخوان قبلی."
+            );
+
+            return;
+
+        }
+
+        if (activeCall) {
+
+            updateParentCallStatus(
+                activeCall
+            );
+
+            callButton.dataset.locked =
+                "true";
+
+            callButton.disabled =
+                true;
+
+            callButton.textContent =
+                "📢 فراخوان قبلاً ارسال شده";
+
+            alert(
+                "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           INSERT CALL
+        ================================================= */
+
+        callButton.textContent =
+            "📢 در حال ارسال فراخوان...";
+
+        const calledDate =
+            getIranDate();
+
+        const calledTime =
+            getIranTime();
+
+        const {
+            data: newCall,
+            error: insertError
+        } =
+            await supabaseClient
+                .from("calls")
+                .insert([
+                    {
+                        student_name:
+                            currentStudentName,
+
+                        class_name:
+                            currentClassName,
+
+                        status:
+                            "فراخوان شد",
+
+                        called_date:
+                            calledDate,
+
+                        called_time:
+                            calledTime
+
+                    }
+                ])
+                .select()
+                .single();
+
+        if (insertError) {
+
+            console.error(
+                "CALL INSERT ERROR:",
+                insertError
+            );
+
+            updateCallScheduleUI();
+
+            alert(
+                "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           SUCCESS
+        ================================================= */
+
+        callButton.dataset.locked =
+            "true";
+
+        callButton.disabled =
+            true;
+
+        callButton.textContent =
+            "✅ فراخوان ارسال شد";
+
+
+        callButton.style.background =
+            "linear-gradient(135deg, #f97316, #fb923c)";
+
+
+        callButton.style.boxShadow =
+            "0 15px 30px rgba(249, 115, 22, 0.30)";
+
+
+        updateParentCallStatus(
+            newCall
+        );
+
+
+        alert(
+            "فراخوان با موفقیت ارسال شد.\n\n" +
+            "فاصله شما تا مدرسه: " +
+            formatDistance(
+                distance
+            ) +
+            "\n" +
+            "زمان ارسال: " +
+            calledTime
+        );
+
+    }
+);
+
+
+/* =====================================================
+   BEFORE UNLOAD
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        stopLiveParentLocation();
+
+    }
+);
+
+
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    async () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            if (
+                currentStudentName &&
+                currentClassName
+            ) {
+
+                await loadExistingCall();
+
+                updateCallScheduleUI();
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL UI
+===================================================== */
+
+if (
+    callButton
+) {
+
+    callButton.dataset.locked =
+        "false";
+
+    callButton.dataset.timeBlocked =
+        "true";
+
+}
+
+
+/* =====================================================
+   LOGOUT / RESET
+===================================================== */
+
+function resetParentSession() {
+
+    currentStudentName =
+        "";
+
+    currentClassName =
+        "";
+
+    currentParentAccountId =
+        null;
 
     lastParentPosition =
         null;
