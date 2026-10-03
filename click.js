@@ -1756,11 +1756,130 @@ async function loadTodayAttendance(){
     
     }
     
+    
+    let nazemCallsChannel = null;
+    let nazemAttendanceChannel = null;
+    
+    let nazemRealtimeReconnectTimer = null;
+    
+    let nazemCallsConnected = false;
+    let nazemAttendanceConnected = false;
+    
+    
+    function scheduleNazemRealtimeReconnect(reason){
+    
+        console.log(
+            "🔄 درخواست اتصال مجدد Realtime ناظم:",
+            reason
+        );
+    
+        clearTimeout(
+            nazemRealtimeReconnectTimer
+        );
+    
+        nazemRealtimeReconnectTimer =
+            setTimeout(
+                () => {
+                    reconnectNazemRealtime(reason);
+                },
+                3000
+            );
+    }
+    
+    
+    async function reconnectNazemRealtime(reason){
+    
+        console.log(
+            "♻️ در حال اتصال مجدد Realtime ناظم:",
+            reason
+        );
+    
+        clearTimeout(
+            nazemRealtimeReconnectTimer
+        );
+    
+        nazemCallsConnected = false;
+        nazemAttendanceConnected = false;
+    
+    
+        if(nazemCallsChannel){
+    
+            try{
+    
+                await supabaseClient.removeChannel(
+                    nazemCallsChannel
+                );
+    
+            }catch(error){
+    
+                console.error(
+                    "❌ خطا در حذف کانال calls:",
+                    error
+                );
+    
+            }
+    
+            nazemCallsChannel = null;
+        }
+    
+    
+        if(nazemAttendanceChannel){
+    
+            try{
+    
+                await supabaseClient.removeChannel(
+                    nazemAttendanceChannel
+                );
+    
+            }catch(error){
+    
+                console.error(
+                    "❌ خطا در حذف کانال attendance:",
+                    error
+                );
+    
+            }
+    
+            nazemAttendanceChannel = null;
+        }
+    
+    
+        subscribeNazemRealtime();
+    
+    
+        setTimeout(
+            async () => {
+    
+                console.log(
+                    "🔄 همگام‌سازی اطلاعات ناظم بعد از اتصال مجدد"
+                );
+    
+                await loadCalls();
+    
+                await loadTodayAttendance();
+    
+            },
+            1500
+        );
+    }
+    
+    
     function subscribeNazemRealtime(){
-
-        const callsChannel =
+    
+        console.log(
+            "📡 شروع اتصال Realtime ناظم..."
+        );
+    
+    
+        /* ==============================
+           REALTIME جدول CALLS
+        ============================== */
+    
+        nazemCallsChannel =
             supabaseClient
-            .channel("nazem-calls-realtime")
+            .channel(
+                "nazem-calls-realtime"
+            )
     
             .on(
                 "postgres_changes",
@@ -1769,45 +1888,74 @@ async function loadTodayAttendance(){
                     schema:"public",
                     table:"calls"
                 },
-                payload=>{
+                payload => {
     
                     console.log(
-                        "🚨🚨🚨 REALTIME CALL ناظم:",
+                        "🚨 REALTIME CALL ناظم:",
                         payload
                     );
     
-                    handleCallRealtime(payload);
+                    handleCallRealtime(
+                        payload
+                    );
+    
                 }
             )
     
-            .subscribe(status=>{
-    
-                console.log(
-                    "📡 وضعیت Realtime فراخوان ناظم:",
-                    status
-                );
-    
-                if(status==="SUBSCRIBED"){
+            .subscribe(
+                status => {
     
                     console.log(
-                        "✅ ناظم به Realtime جدول calls متصل شد"
-                    );
-    
-                }else{
-    
-                    console.log(
-                        "❌ اتصال Realtime calls ناظم:",
+                        "📡 وضعیت Realtime فراخوان ناظم:",
                         status
                     );
     
+    
+                    if(status === "SUBSCRIBED"){
+    
+                        nazemCallsConnected = true;
+    
+                        console.log(
+                            "✅ ناظم به Realtime جدول calls متصل شد"
+                        );
+    
+                    }else{
+    
+                        nazemCallsConnected = false;
+    
+                        console.log(
+                            "⚠️ اتصال Realtime calls ناظم قطع شد:",
+                            status
+                        );
+    
+    
+                        if(
+                            status === "CHANNEL_ERROR" ||
+                            status === "TIMED_OUT" ||
+                            status === "CLOSED"
+                        ){
+    
+                            scheduleNazemRealtimeReconnect(
+                                "calls: " + status
+                            );
+    
+                        }
+    
+                    }
+    
                 }
+            );
     
-            });
     
+        /* ==============================
+           REALTIME جدول ATTENDANCE
+        ============================== */
     
-        const attendanceChannel =
+        nazemAttendanceChannel =
             supabaseClient
-            .channel("nazem-attendance-realtime")
+            .channel(
+                "nazem-attendance-realtime"
+            )
     
             .on(
                 "postgres_changes",
@@ -1816,16 +1964,18 @@ async function loadTodayAttendance(){
                     schema:"public",
                     table:"attendance"
                 },
-                payload=>{
+                payload => {
     
                     console.log(
                         "📡 تغییر Realtime حضور و غیاب:",
                         payload
                     );
     
+    
                     const record =
                         payload.new ||
                         payload.old;
+    
     
                     if(!record){
     
@@ -1836,6 +1986,7 @@ async function loadTodayAttendance(){
                         return;
                     }
     
+    
                     console.log(
                         "🧪 اطلاعات حضور و غیاب:",
                         record.student_name,
@@ -1843,41 +1994,159 @@ async function loadTodayAttendance(){
                         record.status
                     );
     
-                    handleAttendanceRealtime(payload);
+    
+                    handleAttendanceRealtime(
+                        payload
+                    );
     
                 }
             )
     
-            .subscribe(status=>{
-    
-                console.log(
-                    "📡 وضعیت Realtime حضور و غیاب ناظم:",
-                    status
-                );
-    
-                if(status==="SUBSCRIBED"){
+            .subscribe(
+                status => {
     
                     console.log(
-                        "✅ ناظم به Realtime جدول attendance متصل شد"
-                    );
-    
-                }else{
-    
-                    console.log(
-                        "❌ اتصال Realtime attendance ناظم:",
+                        "📡 وضعیت Realtime حضور و غیاب ناظم:",
                         status
                     );
     
-                }
     
-            });
+                    if(status === "SUBSCRIBED"){
+    
+                        nazemAttendanceConnected = true;
+    
+                        console.log(
+                            "✅ ناظم به Realtime جدول attendance متصل شد"
+                        );
+    
+                    }else{
+    
+                        nazemAttendanceConnected = false;
+    
+                        console.log(
+                            "⚠️ اتصال Realtime attendance ناظم قطع شد:",
+                            status
+                        );
+    
+    
+                        if(
+                            status === "CHANNEL_ERROR" ||
+                            status === "TIMED_OUT" ||
+                            status === "CLOSED"
+                        ){
+    
+                            scheduleNazemRealtimeReconnect(
+                                "attendance: " + status
+                            );
+    
+                        }
+    
+                    }
+    
+                }
+            );
     
     
         return {
-            callsChannel,
-            attendanceChannel
+    
+            callsChannel:
+                nazemCallsChannel,
+    
+            attendanceChannel:
+                nazemAttendanceChannel
+    
         };
+    
     }
+
+
+    setInterval(
+        () => {
+    
+            console.log(
+                "🔍 بررسی وضعیت Realtime ناظم..."
+            );
+    
+            if(
+                !nazemCallsConnected ||
+                !nazemAttendanceConnected
+            ){
+    
+                console.log(
+                    "⚠️ یکی از اتصال‌های Realtime ناظم قطع است"
+                );
+    
+                scheduleNazemRealtimeReconnect(
+                    "watchdog"
+                );
+    
+            }
+    
+        },
+        30000
+    );
+
+
+
+    window.addEventListener(
+        "online",
+        async () => {
+    
+            console.log(
+                "🌐 اینترنت دوباره وصل شد"
+            );
+    
+            scheduleNazemRealtimeReconnect(
+                "internet-online"
+            );
+    
+            setTimeout(
+                async () => {
+    
+                    await loadCalls();
+    
+                    await loadTodayAttendance();
+    
+                },
+                2000
+            );
+    
+        }
+    );
+
+
+    document.addEventListener(
+        "visibilitychange",
+        async () => {
+    
+            if(
+                document.visibilityState !== "visible"
+            ){
+                return;
+            }
+    
+            console.log(
+                "👁️ پنل ناظم دوباره فعال شد"
+            );
+    
+            scheduleNazemRealtimeReconnect(
+                "visibility-visible"
+            );
+    
+            setTimeout(
+                async () => {
+    
+                    await loadCalls();
+    
+                    await loadTodayAttendance();
+    
+                },
+                2000
+            );
+    
+        }
+    );
+
     
         async function initializeNazem(){
 
