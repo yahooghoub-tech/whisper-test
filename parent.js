@@ -590,8 +590,8 @@ if (changeParentCodeButton) {
                UPDATE PASSWORD
             ===================================================== */
             
+           
             const {
-                data: updatedAccount,
                 error: updateError
             } =
                 await supabaseClient
@@ -602,12 +602,40 @@ if (changeParentCodeButton) {
                     .eq(
                         "id",
                         currentParentAccountId
-                    )
-                    .select(
-                        "id, student_name, class_name"
-                    )
-                    .maybeSingle();
+                    );
             
+            
+            if (updateError) {
+            
+                console.error(
+                    "CHANGE PASSWORD ERROR:",
+                    updateError
+                );
+            
+                showChangeParentCodeMessage(
+                    "خطا در تغییر رمز. دوباره تلاش کنید."
+                );
+            
+                return;
+            
+            }
+            
+            
+            /* =====================================================
+               SUCCESS
+            ===================================================== */
+            
+            showChangeParentCodeMessage(
+                "رمز ورود با موفقیت تغییر کرد. ✅",
+                "#16a34a"
+            );
+            
+            
+            currentParentCodeInput.value = "";
+            
+            newParentCodeInput.value = "";
+            
+            confirmParentCodeInput.value = "";
             
             if (updateError) {
             
