@@ -320,7 +320,204 @@ const locationRefreshButton =
     document.getElementById(
         "locationRefreshButton"
     );
+/* =====================================================
+   CHANGE PARENT PASSWORD ELEMENTS
+===================================================== */
 
+const currentParentCodeInput =
+    document.getElementById(
+        "currentParentCode"
+    );
+
+const newParentCodeInput =
+    document.getElementById(
+        "newParentCode"
+    );
+
+const confirmParentCodeInput =
+    document.getElementById(
+        "confirmParentCode"
+    );
+
+const changeParentCodeButton =
+    document.getElementById(
+        "changeParentCodeButton"
+    );
+
+const changeParentCodeMessage =
+    document.getElementById(
+        "changeParentCodeMessage"
+    );
+    /* =====================================================
+   PARENT PASSWORD - ONLY 4 DIGITS
+===================================================== */
+
+[
+    currentParentCodeInput,
+    newParentCodeInput,
+    confirmParentCodeInput
+].forEach(
+    input => {
+
+        if (!input) {
+            return;
+        }
+
+        input.addEventListener(
+            "input",
+            () => {
+
+                input.value =
+                    input.value
+                        .replace(
+                            /\D/g,
+                            ""
+                        )
+                        .slice(
+                            0,
+                            4
+                        );
+
+            }
+        );
+
+    }
+);
+
+/* =====================================================
+   CHANGE PASSWORD VALIDATION
+===================================================== */
+
+function showChangeParentCodeMessage(
+    text,
+    color = "#dc2626"
+) {
+
+    if (!changeParentCodeMessage) {
+        return;
+    }
+
+    changeParentCodeMessage.textContent =
+        text;
+
+    changeParentCodeMessage.style.color =
+        color;
+
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD BUTTON
+===================================================== */
+
+if (changeParentCodeButton) {
+
+    changeParentCodeButton.addEventListener(
+        "click",
+        () => {
+
+            const currentCode =
+                currentParentCodeInput.value.trim();
+
+            const newCode =
+                newParentCodeInput.value.trim();
+
+            const confirmCode =
+                confirmParentCodeInput.value.trim();
+
+
+            showChangeParentCodeMessage("");
+
+
+            if (
+                !currentCode ||
+                !newCode ||
+                !confirmCode
+            ) {
+
+                showChangeParentCodeMessage(
+                    "لطفاً هر سه کادر را کامل کنید."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !/^\d{4}$/.test(currentCode)
+            ) {
+
+                showChangeParentCodeMessage(
+                    "رمز فعلی باید دقیقاً ۴ رقم باشد."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !/^\d{4}$/.test(newCode)
+            ) {
+
+                showChangeParentCodeMessage(
+                    "رمز جدید باید دقیقاً ۴ رقم باشد."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !/^\d{4}$/.test(confirmCode)
+            ) {
+
+                showChangeParentCodeMessage(
+                    "تکرار رمز جدید باید دقیقاً ۴ رقم باشد."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                newCode !== confirmCode
+            ) {
+
+                showChangeParentCodeMessage(
+                    "رمز جدید و تکرار آن یکسان نیستند."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                currentCode === newCode
+            ) {
+
+                showChangeParentCodeMessage(
+                    "رمز جدید باید با رمز فعلی متفاوت باشد."
+                );
+
+                return;
+
+            }
+
+
+            showChangeParentCodeMessage(
+                "اطلاعات صحیح است. در حال بررسی...",
+                "#2563eb"
+            );
+
+        }
+    );
+
+}
 
 /*
    کارت‌های موقعیت
