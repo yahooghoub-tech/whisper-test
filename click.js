@@ -749,61 +749,93 @@ async function callStudent(student,button){
 
 function updateButton(button,call,force=false){
 
-if(!button||!call)return;
+    if(!button || !call) return;
 
-if(
-!force&&
-hasAbsentAttendance(
-button.dataset.name,
-button.dataset.class
-)
-){
+    const incomingId = Number(call.id || 0);
+    const currentId = Number(button.dataset.callId || 0);
+    const currentStatus = button.dataset.callStatus || "";
 
-button.classList.remove(
-"pending",
-"called",
-"sent"
-);
+    if(
+        incomingId &&
+        currentId &&
+        incomingId < currentId
+    ){
+        return;
+    }
 
-button.classList.add("absent");
+    if(
+        incomingId &&
+        currentId &&
+        incomingId === currentId &&
+        currentStatus === "ارسال شد" &&
+        call.status === "فراخوان شد"
+    ){
+        return;
+    }
 
-button.disabled=true;
+    if(
+        !force &&
+        hasAbsentAttendance(
+            button.dataset.name,
+            button.dataset.class
+        )
+    ){
 
-button.querySelector(
-".student-status"
-).textContent="(غایب)";
+        button.classList.remove(
+            "pending",
+            "called",
+            "sent"
+        );
 
-button.querySelector(
-".status-time"
-).textContent="";
+        button.classList.add("absent");
 
-return;
+        button.disabled = true;
 
-}
+        button.querySelector(
+            ".student-status"
+        ).textContent = "(غایب)";
 
-button.classList.remove(
-"pending",
-"called",
-"sent",
-"absent"
-);
+        button.querySelector(
+            ".status-time"
+        ).textContent = "";
 
-if(call.status==="ارسال شد")
-button.classList.add("sent");
-else
-button.classList.add("called");
+        return;
+    }
 
-button.disabled=false;
+    button.dataset.callId =
+        String(incomingId);
 
-button.querySelector(
-".student-status"
-).textContent=
-`(${call.status})`;
+    button.dataset.callStatus =
+        call.status || "";
 
-button.querySelector(
-".status-time"
-).textContent=
-call.called_time||"";
+    button.classList.remove(
+        "pending",
+        "called",
+        "sent",
+        "absent"
+    );
+
+    if(call.status === "ارسال شد"){
+
+        button.classList.add("sent");
+
+    }else{
+
+        button.classList.add("called");
+
+    }
+
+    button.disabled = false;
+
+    button.querySelector(
+        ".student-status"
+    ).textContent =
+        `(${call.status})`;
+
+    button.querySelector(
+        ".status-time"
+    ).textContent =
+        call.called_time || "";
 
 }
 
@@ -880,60 +912,54 @@ function findButton(name,className){
 
 async function loadCalls(){
 
-const today=
-todayPersianDate();
+    const today = todayPersianDate();
 
-console.log(
-"📅 بارگذاری فراخوان‌های امروز:",
-today
-);
+    const { data, error } = await supabaseClient
+        .from("calls")
+        .select("*")
+        .eq("called_date", today)
+        .order("id", { ascending: false });
 
-const {data,error}=
-await supabaseClient
-.from("calls")
-.select("*")
-.eq("called_date",today)
-.order("id",{ascending:true});
+    if(error){
+        console.error("❌ خطا در دریافت فراخوان‌ها:", error);
+        return;
+    }
 
-if(error){
+    const latestCalls = new Map();
 
-console.error(
-"❌ خطا در دریافت فراخوان‌های امروز:",
-error
-);
+    (data || []).forEach(call => {
 
-return;
-}
+        const key =
+            call.student_name +
+            "|" +
+            call.class_name;
 
-(data||[]).forEach(call=>{
+        if(!latestCalls.has(key)){
+            latestCalls.set(key, call);
+        }
 
-const button=
-findButton(
-call.student_name,
-call.class_name
-);
+    });
 
-if(!button){
+    latestCalls.forEach(call => {
 
-console.warn(
-"⚠️ دکمه دانش‌آموز پیدا نشد:",
-call.student_name,
-call.class_name
-);
+        const button =
+            findButton(
+                call.student_name,
+                call.class_name
+            );
 
-return;
-}
+        if(!button) return;
 
-updateButton(
-button,
-call
-);
+        updateButton(
+            button,
+            call
+        );
 
-updateCount(
-call.class_name
-);
+        updateCount(
+            call.class_name
+        );
 
-});
+    });
 
 }
 
@@ -1181,7 +1207,7 @@ async function loadTodayAttendance(){
     .eq("student_name",studentName)
     .eq("class_name",className)
     .eq("called_date",todayPersianDate())
-    .neq("status","ارسال شد")
+    
     .order("id",{ascending:false})
     .limit(1);
     
@@ -1626,42 +1652,58 @@ async function loadTodayAttendance(){
         }
     
         if(payload.eventType==="DELETE"){
-    
+
             button.classList.remove(
                 "called",
-                "sent"
+                "sent",
+                "absent"
             );
-    
+        
             button.classList.add("pending");
-    
-            const status=button.querySelector(".student-status");
-            const time=button.querySelector(".student-time");
-    
-            if(status)status.innerText="";
-            if(time)time.innerText="";
-    
-            updateCount(call.class_name);
-    
+        
+            button.disabled = false;
+        
+            const status =
+                button.querySelector(".student-status");
+        
+            const time =
+                button.querySelector(".status-time");
+        
+            if(status){
+                status.innerText = "";
+            }
+        
+            if(time){
+                time.innerText = "";
+            }
+        
+            delete button.dataset.callId;
+            delete button.dataset.callStatus;
+        
+            updateCount(
+                call.class_name
+            );
+        
             console.log(
                 "🗑️ فراخوان در ناظم حذف شد:",
                 call.student_name
             );
-    
+        
             return;
         }
     
-        if(
-            call.status==="ارسال شد"
-        ){
+        if(call.status==="ارسال شد"){
+
             showTeacherSendPopup(call);
+        
         }
-    
+        
         updateButton(
             button,
             call,
             false
         );
-    
+        
         updateCount(
             call.class_name
         );
