@@ -320,6 +320,7 @@ const locationRefreshButton =
     document.getElementById(
         "locationRefreshButton"
     );
+    let currentParentAccountId = null;
 /* =====================================================
    CHANGE PARENT PASSWORD ELEMENTS
 ===================================================== */
@@ -414,7 +415,7 @@ if (changeParentCodeButton) {
 
     changeParentCodeButton.addEventListener(
         "click",
-        () => {
+        async () => {
 
             const currentCode =
                 currentParentCodeInput.value.trim();
@@ -513,6 +514,73 @@ if (changeParentCodeButton) {
                 "اطلاعات صحیح است. در حال بررسی...",
                 "#2563eb"
             );
+
+            if (!currentParentAccountId) {
+
+                showChangeParentCodeMessage(
+                    "اطلاعات حساب والد پیدا نشد."
+                );
+            
+                return;
+            
+            }
+            
+            const {
+                data: updatedAccount,
+                error: updateError
+            } =
+                await supabaseClient
+                    .from("parent_accounts")
+                    .update({
+                        parent_code: newCode
+                    })
+                    .eq(
+                        "id",
+                        currentParentAccountId
+                    )
+                    .eq(
+                        "parent_code",
+                        currentCode
+                    )
+                    .select(
+                        "id, student_name, class_name"
+                    )
+                    .maybeSingle();
+            
+            if (updateError) {
+            
+                console.error(
+                    "CHANGE PASSWORD ERROR:",
+                    updateError
+                );
+            
+                showChangeParentCodeMessage(
+                    "خطا در تغییر رمز. دوباره تلاش کنید."
+                );
+            
+                return;
+            
+            }
+            
+            if (!updatedAccount) {
+            
+                showChangeParentCodeMessage(
+                    "رمز فعلی صحیح نیست."
+                );
+            
+                return;
+            
+            }
+            
+            showChangeParentCodeMessage(
+                "رمز ورود با موفقیت تغییر کرد. ✅",
+                "#16a34a"
+            );
+            
+            currentParentCodeInput.value = "";
+            newParentCodeInput.value = "";
+            confirmParentCodeInput.value = "";
+            
 
         }
     );
@@ -2303,9 +2371,7 @@ loginButton.addEventListener(
             } =
                 await supabaseClient
                     .from("parent_accounts")
-                    .select(
-                        "id, student_name, class_name"
-                    )
+                    .select("id, student_name, class_name, parent_code")
                     .eq(
                         "parent_code",
                         code
@@ -2381,10 +2447,13 @@ loginButton.addEventListener(
             ================================================= */
 
             currentStudentName =
-                matchedAccount.student_name;
+    matchedAccount.student_name;
 
-            currentClassName =
-                matchedAccount.class_name;
+currentParentAccountId =
+    matchedAccount.id;
+
+currentClassName =
+    matchedAccount.class_name;
 
             panelStudentName.textContent =
                 matchedAccount.student_name;
