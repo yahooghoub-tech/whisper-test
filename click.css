@@ -1281,3 +1281,20 @@ h1{
 .student-button.sent .status-time {
     color: #fff !important;
 }
+.student-button.sent {
+    background: #16a34a !important;
+    color: #fff !important;
+    border-color: #16a34a !important;
+
+    animation: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+.student-button.sent .student-name,
+.student-button.sent .student-status,
+.student-button.sent .status-time {
+    color: #fff !important;
+}
