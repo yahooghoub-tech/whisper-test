@@ -526,6 +526,71 @@ if (changeParentCodeButton) {
             }
             
             const {
+                data: accountData,
+                error: accountError
+            } =
+                await supabaseClient
+                    .from("parent_accounts")
+                    .select(
+                        "id, student_name, class_name, parent_code"
+                    )
+                    .eq(
+                        "id",
+                        currentParentAccountId
+                    )
+                    .maybeSingle();
+            
+            
+            if (accountError) {
+            
+                console.error(
+                    "CHECK PARENT ACCOUNT ERROR:",
+                    accountError
+                );
+            
+                showChangeParentCodeMessage(
+                    "خطا در بررسی حساب والد. دوباره تلاش کنید."
+                );
+            
+                return;
+            
+            }
+            
+            
+            if (!accountData) {
+            
+                showChangeParentCodeMessage(
+                    "حساب والد پیدا نشد."
+                );
+            
+                return;
+            
+            }
+            
+            
+            /* =====================================================
+               CHECK CURRENT PASSWORD
+            ===================================================== */
+            
+            if (
+                String(accountData.parent_code).trim() !==
+                String(currentCode).trim()
+            ) {
+            
+                showChangeParentCodeMessage(
+                    "رمز فعلی صحیح نیست."
+                );
+            
+                return;
+            
+            }
+            
+            
+            /* =====================================================
+               UPDATE PASSWORD
+            ===================================================== */
+            
+            const {
                 data: updatedAccount,
                 error: updateError
             } =
@@ -538,14 +603,11 @@ if (changeParentCodeButton) {
                         "id",
                         currentParentAccountId
                     )
-                    .eq(
-                        "parent_code",
-                        currentCode
-                    )
                     .select(
                         "id, student_name, class_name"
                     )
                     .maybeSingle();
+            
             
             if (updateError) {
             
@@ -562,15 +624,33 @@ if (changeParentCodeButton) {
             
             }
             
+            
             if (!updatedAccount) {
             
                 showChangeParentCodeMessage(
-                    "رمز فعلی صحیح نیست."
+                    "تغییر رمز انجام نشد."
                 );
             
                 return;
             
             }
+            
+            
+            /* =====================================================
+               SUCCESS
+            ===================================================== */
+            
+            showChangeParentCodeMessage(
+                "رمز ورود با موفقیت تغییر کرد. ✅",
+                "#16a34a"
+            );
+            
+            
+            currentParentCodeInput.value = "";
+            
+            newParentCodeInput.value = "";
+            
+            confirmParentCodeInput.value = "";
             
             showChangeParentCodeMessage(
                 "رمز ورود با موفقیت تغییر کرد. ✅",
