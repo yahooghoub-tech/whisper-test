@@ -382,11 +382,11 @@ const SCHOOL_LNG =
 
 /*
    حداکثر فاصله مجاز:
-   ۵۰ متر
+   150 متر
 */
 
 const ALLOWED_RADIUS =
-    5000;
+    150;
 
 
 const EARTH_RADIUS =
