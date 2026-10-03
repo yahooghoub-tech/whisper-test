@@ -416,7 +416,7 @@ if (changeParentCodeButton) {
     changeParentCodeButton.addEventListener(
         "click",
         async () => {
-
+            console.log("CHANGE PASSWORD BUTTON CLICKED");
             const currentCode =
                 currentParentCodeInput.value.trim();
 
