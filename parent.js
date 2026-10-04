@@ -3639,22 +3639,42 @@ window.parentPanelDebug = {
 
 
 /* =====================================================
-   READY
-===================================================== */
-
-console.log(
-    "Parent panel initialized successfully."
-);
-/* =====================================================
    CINEMATIC INTRO
 ===================================================== */
 
-setTimeout(() => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    const intro = document.getElementById("teacherIntro");
+        const intro =
+            document.getElementById(
+                "teacherIntro"
+            );
 
-    if (intro) {
-        intro.classList.add("hide");
+        if (!intro) {
+            return;
+        }
+
+        setTimeout(
+            () => {
+
+                intro.classList.add(
+                    "hide"
+                );
+
+                setTimeout(
+                    () => {
+
+                        intro.style.display =
+                            "none";
+
+                    },
+                    900
+                );
+
+            },
+            4800
+        );
+
     }
-
-}, 4800);
+);
