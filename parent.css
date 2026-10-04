@@ -1262,28 +1262,6 @@ input:focus-visible {
 }
 
 
-/* =========================
-   REDUCE MOTION
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    html {
-        scroll-behavior: auto;
-    }
-
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-
-        animation-duration: 0.01ms !important;
-
-        animation-iteration-count: 1 !important;
-    }
-}
-
-
 /* =====================================================
    LOCATION CARDS
 ===================================================== */
@@ -1304,7 +1282,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   CARD
+   LOCATION CARD
 ===================================================== */
 
 .location-card {
@@ -1353,7 +1331,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   ICON
+   LOCATION ICON
 ===================================================== */
 
 .location-card-icon {
@@ -1383,11 +1361,6 @@ input:focus-visible {
         rgba(59, 130, 246, 0.08);
 }
 
-
-/* =====================================================
-   PARENT LOCATION ICON
-===================================================== */
-
 .parent-location-card .location-card-icon {
     background:
         linear-gradient(
@@ -1399,7 +1372,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   CONTENT
+   LOCATION CONTENT
 ===================================================== */
 
 .location-card-content {
@@ -1412,7 +1385,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   TITLE
+   LOCATION TITLE
 ===================================================== */
 
 .location-card-title {
@@ -1433,7 +1406,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   VALUE
+   LOCATION VALUE
 ===================================================== */
 
 .location-card-value {
@@ -1452,7 +1425,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   NUMBER
+   LOCATION NUMBER
 ===================================================== */
 
 #allowedRadiusValue,
@@ -1473,7 +1446,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   UNIT
+   LOCATION UNIT
 ===================================================== */
 
 .location-card-unit {
@@ -1486,7 +1459,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   DESCRIPTION
+   LOCATION DESCRIPTION
 ===================================================== */
 
 .location-card-description {
@@ -1677,8 +1650,6 @@ input:focus-visible {
     box-shadow:
         0 10px 35px rgba(0, 0, 0, 0.20);
 
-    box-sizing: border-box;
-
     overflow: hidden;
 }
 
@@ -1694,7 +1665,7 @@ input:focus-visible {
 
     width: 5px;
 
-    background: #f97316;
+    background: #d32f2f;
 }
 
 .parent-notification.show {
@@ -1946,6 +1917,11 @@ input:focus-visible {
         rgba(255, 255, 255, 0.16);
 }
 
+
+/* =========================
+   NOTIFICATIONS MOBILE
+========================= */
+
 @media (max-width: 600px) {
 
     .parent-notification {
@@ -2033,7 +2009,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   TITLE
+   CHANGE PASSWORD TITLE
 ===================================================== */
 
 .change-password-title {
@@ -2050,7 +2026,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   DESCRIPTION
+   CHANGE PASSWORD DESCRIPTION
 ===================================================== */
 
 .change-password-description {
@@ -2067,7 +2043,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   FORM
+   CHANGE PASSWORD FORM
 ===================================================== */
 
 .change-password-form {
@@ -2080,7 +2056,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   INPUTS
+   CHANGE PASSWORD INPUTS
 ===================================================== */
 
 .change-password-form input {
@@ -2125,7 +2101,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   BUTTON
+   CHANGE PASSWORD BUTTON
 ===================================================== */
 
 #changeParentCodeButton {
@@ -2186,7 +2162,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   MESSAGE
+   CHANGE PASSWORD MESSAGE
 ===================================================== */
 
 .change-password-message {
@@ -3237,6 +3213,20 @@ input:focus-visible {
 ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+    }
 
     #parentIntroLogo,
     #parentIntro::before,
