@@ -1,3 +1,9 @@
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 1 / 5
+===================================================== */
+
 * {
     box-sizing: border-box;
 }
@@ -20,26 +26,25 @@ body {
 
     background:
         radial-gradient(
-            circle at 10% 10%,
-            rgba(99, 102, 241, 0.28),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(59, 130, 246, 0.25),
+            circle at 0% 0%,
+            rgba(8, 167, 181, 0.18),
             transparent 28%
         ),
         radial-gradient(
+            circle at 100% 10%,
+            rgba(37, 99, 235, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
             circle at 50% 100%,
-            rgba(124, 58, 237, 0.30),
+            rgba(14, 165, 233, 0.10),
             transparent 35%
         ),
         linear-gradient(
-            135deg,
-            #07142f 0%,
-            #101b4d 42%,
-            #24104f 72%,
-            #35135f 100%
+            145deg,
+            #f8fcfd 0%,
+            #eef7f9 48%,
+            #f6f8fc 100%
         );
 
     background-attachment: fixed;
@@ -47,9 +52,15 @@ body {
 
 @font-face {
     font-family: "IRANSans";
-    src: url("IRANSans.woff2") format("woff2");
+
+    src:
+        url("IRANSans.woff2")
+        format("woff2");
+
     font-weight: 100 900;
+
     font-style: normal;
+
     font-display: swap;
 }
 
@@ -58,356 +69,724 @@ input {
     font-family: inherit;
 }
 
+button {
+    -webkit-tap-highlight-color: transparent;
+}
 
-/* =========================
+input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
+:root {
+
+    --app-primary:
+        #08a7b5;
+
+    --app-primary-dark:
+        #087c88;
+
+    --app-primary-light:
+        #e8f8fa;
+
+    --app-blue:
+        #2563eb;
+
+    --app-blue-light:
+        #eff6ff;
+
+    --app-navy:
+        #102a43;
+
+    --app-text:
+        #172033;
+
+    --app-muted:
+        #718096;
+
+    --app-soft:
+        #f5f9fa;
+
+    --app-white:
+        #ffffff;
+
+    --app-border:
+        rgba(255, 255, 255, 0.90);
+
+    --app-shadow:
+        0 18px 50px
+        rgba(15, 45, 60, 0.08);
+
+    --app-shadow-heavy:
+        0 25px 65px
+        rgba(15, 45, 60, 0.13);
+
+    --app-radius:
+        26px;
+
+    --app-radius-small:
+        17px;
+}
+
+
+/* =====================================================
    PAGE
-========================= */
+===================================================== */
 
 .page {
     width: 100%;
+
     min-height: 100vh;
-    padding: 24px;
+
+    padding: 18px;
 }
 
 .container {
     width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
+
+    max-width: 980px;
+
+    margin:
+        0 auto;
 }
 
 
-/* =========================
-   LOGIN
-========================= */
+/* =====================================================
+   LOGIN SCREEN
+===================================================== */
 
 .login-screen {
-    min-height: calc(100vh - 48px);
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-box {
-    width: 100%;
-    max-width: 430px;
-
-    padding: 34px;
-
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 28px;
-
-    background: rgba(255, 255, 255, 0.82);
-
-    box-shadow:
-        0 25px 70px rgba(30, 64, 175, 0.16);
-
-    backdrop-filter: blur(18px);
-}
-
-.login-icon {
-    width: 70px;
-    height: 70px;
-
-    margin: 0 auto 18px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 22px;
-
-    color: #fff;
-    font-size: 32px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #0ea5e9
-        );
-
-    box-shadow:
-        0 12px 30px rgba(37, 99, 235, 0.28);
-}
-
-.title {
-    text-align: center;
-
-    margin-bottom: 8px;
-
-    color: #172554;
-
-    font-size: 27px;
-    font-weight: bold;
-}
-
-.subtitle {
-    text-align: center;
-
-    color: #64748b;
-
-    margin-bottom: 28px;
-
-    font-size: 14px;
-    line-height: 1.8;
-}
-
-label {
-    display: block;
-
-    margin-bottom: 8px;
-
-    color: #334155;
-
-    font-weight: bold;
-    font-size: 14px;
-}
-
-input {
-    width: 100%;
-    height: 52px;
-
-    border: 1px solid #d5deeb;
-    border-radius: 14px;
-
-    padding: 0 16px;
-
-    font-size: 16px;
-
-    outline: none;
-
-    background: #fff;
-
-    transition: 0.2s;
-}
-
-input:focus {
-    border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 4px rgba(37, 99, 235, 0.10);
-}
-
-.input-group {
-    margin-bottom: 18px;
-}
-
-.login-button {
-    width: 100%;
-    height: 54px;
-
-    border: none;
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #0ea5e9
-        );
-
-    color: white;
-
-    font-size: 17px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 12px 25px rgba(37, 99, 235, 0.22);
-
-    transition: 0.2s;
-}
-
-.login-button:hover {
-    transform: translateY(-2px);
-}
-
-.login-button:disabled {
-    opacity: 0.65;
-    cursor: wait;
-    transform: none;
-}
-
-.message {
-    margin-top: 18px;
-
-    text-align: center;
-
-    font-size: 14px;
-
-    min-height: 20px;
-
-    line-height: 1.7;
-}
-
-
-/* =========================
-   PARENT PANEL
-========================= */
-
-.parent-panel {
-    display: none;
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-.header {
     position: relative;
+
+    min-height:
+        calc(100vh - 36px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
     overflow: hidden;
-
-    padding: 30px;
-
-    border-radius: 28px;
-
-    color: #fff;
-
-    background:
-        radial-gradient(
-            circle at 90% 20%,
-            rgba(255, 255, 255, 0.18),
-            transparent 28%
-        ),
-        linear-gradient(
-            135deg,
-            #172554,
-            #1d4ed8 55%,
-            #0284c7
-        );
-
-    box-shadow:
-        0 25px 55px rgba(30, 64, 175, 0.20);
 }
 
-.header::after {
+
+/* =====================================================
+   LOGIN BACKGROUND DECORATION
+===================================================== */
+
+.login-screen::before {
+
     content: "";
 
     position: absolute;
 
-    width: 180px;
-    height: 180px;
+    width: 430px;
 
-    left: -60px;
-    bottom: -90px;
+    height: 430px;
+
+    top: -200px;
+
+    right: -160px;
 
     border-radius: 50%;
 
     background:
-        rgba(255, 255, 255, 0.08);
+        radial-gradient(
+            circle,
+            rgba(8, 167, 181, 0.20),
+            transparent 68%
+        );
+
+    pointer-events: none;
 }
 
-.header-top {
+.login-screen::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+
+    height: 350px;
+
+    bottom: -200px;
+
+    left: -160px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.13),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   LOGIN BOX
+===================================================== */
+
+.login-box {
+
     position: relative;
 
-    z-index: 1;
+    z-index: 5;
 
-    display: flex;
+    width: 100%;
 
-    align-items: center;
-    justify-content: space-between;
+    max-width: 430px;
 
-    gap: 20px;
-}
-
-.welcome {
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-}
-
-.avatar {
-    width: 62px;
-    height: 62px;
-
-    flex: 0 0 62px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 20px;
-
-    background:
-        rgba(255, 255, 255, 0.16);
+    padding:
+        38px
+        32px
+        32px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.25);
+        1px solid
+        rgba(255, 255, 255, 0.95);
 
-    font-size: 28px;
-}
-
-.welcome small {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color:
-        rgba(255, 255, 255, 0.75);
-
-    font-size: 13px;
-}
-
-.welcome h1 {
-    margin: 0;
-
-    font-size: 25px;
-}
-
-.class-badge {
-    padding: 10px 16px;
-
-    border-radius: 14px;
+    border-radius: 32px;
 
     background:
-        rgba(255, 255, 255, 0.13);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.22);
-
-    font-size: 14px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-.dashboard {
-    margin-top: 22px;
-}
-
-.date-card {
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding: 20px 24px;
-
-    border-radius: 22px;
-
-    background:
-        rgba(255, 255, 255, 0.86);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.9);
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.95),
+            rgba(255,255,255,0.78)
+        );
 
     box-shadow:
-        0 15px 40px rgba(15, 23, 42, 0.07);
+
+        0 30px 80px
+        rgba(20, 60, 75, 0.12),
+
+        inset 0 1px 0
+        rgba(255,255,255,0.95);
+
+    backdrop-filter:
+        blur(25px);
+
+    -webkit-backdrop-filter:
+        blur(25px);
+
+    animation:
+        appLoginEnter
+        .8s
+        cubic-bezier(.16,1,.3,1);
 }
 
-.date-info {
+
+@keyframes appLoginEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(25px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =====================================================
+   LOGIN ICON
+===================================================== */
+
+.login-icon {
+
+    width: 84px;
+
+    height: 84px;
+
+    margin:
+        0 auto 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 27px;
+
+    color: #ffffff;
+
+    font-size: 34px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #08b8c4,
+            #087d8d
+        );
+
+    box-shadow:
+
+        0 18px 38px
+        rgba(8, 167, 181, 0.25),
+
+        inset 0 1px 0
+        rgba(255,255,255,.35);
+
+    animation:
+        loginIconFloat
+        4s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes loginIconFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-5px);
+    }
+}
+
+
+/* =====================================================
+   LOGIN TITLE
+===================================================== */
+
+.title {
+
+    margin-bottom: 7px;
+
+    text-align: center;
+
+    color:
+        var(--app-navy);
+
+    font-size: 28px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -0.7px;
+}
+
+
+.subtitle {
+
+    margin-bottom: 30px;
+
+    text-align: center;
+
+    color:
+        var(--app-muted);
+
+    font-size: 13px;
+
+    line-height: 2;
+}
+
+
+/* =====================================================
+   LABEL
+===================================================== */
+
+label {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color:
+        #34495e;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+input {
+
+    width: 100%;
+
+    height: 56px;
+
+    padding:
+        0 17px;
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.28);
+
+    border-radius: 17px;
+
+    outline: none;
+
+    color:
+        var(--app-text);
+
+    background:
+        rgba(248,250,252,.90);
+
+    font-size: 15px;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        transform .25s ease;
+}
+
+
+input:hover {
+
+    border-color:
+        rgba(8,167,181,.30);
+}
+
+
+input:focus {
+
+    border-color:
+        var(--app-primary);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+
+        0 0 0 4px
+        rgba(8,167,181,.10),
+
+        0 8px 22px
+        rgba(8,167,181,.06);
+}
+
+
+/* =====================================================
+   INPUT GROUP
+===================================================== */
+
+.input-group {
+
+    margin-bottom: 17px;
+}
+
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+.login-button {
+
+    position: relative;
+
+    overflow: hidden;
+
+    width: 100%;
+
+    height: 58px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #08b7c3,
+            #087d8c
+        );
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 15px 32px
+        rgba(8,167,181,.22);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
+}
+
+
+.login-button::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -120%;
+
+    width: 80%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.30),
+            transparent
+        );
+
+    transform:
+        skewX(-20deg);
+
+    transition:
+        left .7s ease;
+}
+
+
+.login-button:hover::before {
+
+    left: 140%;
+}
+
+
+.login-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+
+        0 20px 40px
+        rgba(8,167,181,.28);
+}
+
+
+.login-button:active {
+
+    transform:
+        scale(.985);
+}
+
+
+.login-button:disabled {
+
+    opacity: .65;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+/* =====================================================
+   LOGIN MESSAGE
+===================================================== */
+
+.message {
+
+    min-height: 22px;
+
+    margin-top: 17px;
+
+    text-align: center;
+
+    color:
+        #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   PARENT PANEL
+===================================================== */
+
+.parent-panel {
+
+    display: none;
+
+    width: 100%;
+
+    max-width: 980px;
+
+    margin:
+        0 auto;
+
+    padding:
+        10px
+        18px
+        35px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 24px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius: 30px;
+
+    background:
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.22),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(0,220,220,.13),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #063d47,
+            #087f8d 48%,
+            #075d73 100%
+        );
+
+    box-shadow:
+
+        0 25px 55px
+        rgba(4,72,82,.20);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+}
+
+
+.header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 230px;
+
+    height: 230px;
+
+    top: -130px;
+
+    left: -90px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 0 25px
+        rgba(255,255,255,.025),
+
+        0 0 0 50px
+        rgba(255,255,255,.018);
+
+    pointer-events: none;
+}
+
+
+.header::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+
+    height: 150px;
+
+    right: -65px;
+
+    bottom: -85px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.055);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   HEADER TOP
+===================================================== */
+
+.header-top {
+
+    position: relative;
+
+    z-index: 3;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.welcome {
+
     display: flex;
 
     align-items: center;
@@ -415,850 +794,676 @@ input:focus {
     gap: 14px;
 }
 
-.info-icon {
-    width: 46px;
-    height: 46px;
+
+.avatar {
+
+    width: 62px;
+
+    height: 62px;
+
+    flex:
+        0 0 62px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border-radius: 14px;
+    border:
+        1px solid
+        rgba(255,255,255,.25);
 
-    background: #e0edff;
+    border-radius: 21px;
 
-    font-size: 22px;
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.24),
+            rgba(255,255,255,.08)
+        );
+
+    box-shadow:
+
+        inset 0 1px 0
+        rgba(255,255,255,.25),
+
+        0 10px 25px
+        rgba(0,0,0,.12);
+
+    font-size: 28px;
 }
 
-.date-info strong {
+
+.welcome small {
+
     display: block;
 
-    margin-bottom: 5px;
+    color:
+        rgba(255,255,255,.67);
 
-    font-size: 15px;
+    font-size: 11px;
 }
 
-.date-info span {
-    color: #64748b;
+
+.welcome h1 {
+
+    margin:
+        4px 0 0;
+
+    color: #ffffff;
+
+    font-size: 23px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -.5px;
+}
+
+
+/* =====================================================
+   CLASS BADGE
+===================================================== */
+
+.class-badge {
+
+    padding:
+        10px 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 15px;
+
+    color: #ffffff;
+
+    background:
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.12);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+.dashboard {
+
+    margin-top: 16px;
+}
+
+
+/* =====================================================
+   DATE CARD
+===================================================== */
+
+.date-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 84px;
+
+    padding:
+        17px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 23px;
+
+    background:
+        rgba(255,255,255,.84);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+.date-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+
+    height: 130px;
+
+    left: -65px;
+
+    bottom: -75px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.06);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   DATE INFO
+===================================================== */
+
+.date-info {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.info-icon {
+
+    width: 47px;
+
+    height: 47px;
+
+    flex:
+        0 0 47px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e2f8fa,
+            #d7eff5
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 20px;
+}
+
+
+.date-info strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color:
+        var(--app-navy);
 
     font-size: 13px;
 }
 
-.clock {
-    direction: ltr;
 
-    color: #1d4ed8;
+.date-info span {
 
-    font-size: 30px;
+    color:
+        #7a8b98;
 
-    font-weight: bold;
-
-    letter-spacing: 1px;
+    font-size: 11px;
 }
 
 
-/* =========================
+/* =====================================================
+   CLOCK
+===================================================== */
+
+.clock {
+
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--app-primary-dark);
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        1px;
+
+    direction: ltr;
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 2 / 5
+===================================================== */
+
+
+/* =====================================================
    INFO CARDS
-========================= */
+===================================================== */
 
 .cards {
+
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(3, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 14px;
 
-    margin-top: 18px;
+    margin-top: 14px;
 }
+
 
 .info-card {
-    padding: 23px;
 
-    border-radius: 22px;
+    position: relative;
 
-    background:
-        rgba(255, 255, 255, 0.88);
+    overflow: hidden;
+
+    min-height: 145px;
+
+    padding: 19px;
 
     border:
-        1px solid rgba(255, 255, 255, 0.95);
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 23px;
+
+    background:
+        rgba(255,255,255,.84);
 
     box-shadow:
-        0 15px 40px rgba(15, 23, 42, 0.06);
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
 }
 
+
+.info-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 95px;
+
+    height: 95px;
+
+    left: -48px;
+
+    bottom: -52px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.06);
+
+    pointer-events: none;
+}
+
+
+.info-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+
+        0 22px 50px
+        rgba(15,45,60,.11);
+}
+
+
+/* =====================================================
+   CARD TITLE
+===================================================== */
+
 .card-title {
+
+    position: relative;
+
+    z-index: 2;
+
     display: flex;
 
     align-items: center;
 
     gap: 10px;
 
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 
-    color: #475569;
+    color:
+        #637383;
 
-    font-size: 14px;
+    font-size: 12px;
+
+    font-weight: 800;
 }
 
+
+/* =====================================================
+   CARD ICON
+===================================================== */
+
 .card-icon {
-    width: 38px;
-    height: 38px;
+
+    width: 42px;
+
+    height: 42px;
+
+    flex:
+        0 0 42px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border-radius: 12px;
+    border-radius: 14px;
 
-    background: #eff6ff;
+    background:
+        linear-gradient(
+            145deg,
+            #e5f8fa,
+            #e0effa
+        );
 
-    font-size: 18px;
+    box-shadow:
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 19px;
 }
+
+
+/* =====================================================
+   CARD VALUE
+===================================================== */
 
 .card-value {
-    color: #172033;
+
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--app-navy);
 
     font-size: 18px;
 
-    font-weight: bold;
+    font-weight: 900;
 }
+
+
+/* =====================================================
+   CARD MUTED
+===================================================== */
 
 .card-muted {
+
+    position: relative;
+
+    z-index: 2;
+
     margin-top: 7px;
 
-    color: #94a3b8;
+    color:
+        #9aa8b3;
 
-    font-size: 12px;
+    font-size: 10px;
+
+    line-height: 1.7;
 }
 
+
+/* =====================================================
+   STATUS
+===================================================== */
+
 .status {
+
     display: inline-flex;
 
     align-items: center;
 
-    gap: 7px;
+    gap: 8px;
 
-    color: #64748b;
+    padding:
+        7px 11px;
+
+    border-radius: 12px;
+
+    color:
+        #60727c;
+
+    background:
+        #f1f7f8;
+
+    font-size: 13px;
+
+    font-weight: 800;
 }
 
+
 .status-dot {
-    width: 9px;
-    height: 9px;
+
+    width: 8px;
+
+    height: 8px;
+
+    flex:
+        0 0 8px;
 
     border-radius: 50%;
 
-    background: #94a3b8;
-}
-
-
-/* =========================
-   LOCATION / MAP SECTION
-========================= */
-
-.location-section {
-    margin-top: 18px;
-
-    padding: 24px;
-
-    border-radius: 26px;
-
     background:
-        rgba(255, 255, 255, 0.92);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.95);
+        #0ca7b5;
 
     box-shadow:
-        0 15px 40px rgba(15, 23, 42, 0.07);
+        0 0 0 4px
+        rgba(12,167,181,.10);
+
+    animation:
+        statusPulse
+        2s
+        ease-in-out
+        infinite;
 }
 
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   LOCATION SECTION
+===================================================== */
+
+.location-section {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 14px;
+
+    padding: 22px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 27px;
+
+    background:
+        rgba(255,255,255,.84);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+.location-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 180px;
+
+    top: -100px;
+
+    left: -90px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.045);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   LOCATION SECTION HEADER
+===================================================== */
+
 .location-section-header {
+
+    position: relative;
+
+    z-index: 2;
+
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
     gap: 18px;
 
-    margin-bottom: 18px;
+    margin-bottom: 17px;
 }
+
 
 .location-section-header h2 {
-    margin: 0 0 7px;
 
-    color: #172554;
+    margin:
+        0 0 6px;
 
-    font-size: 21px;
-}
-
-.location-section-header p {
-    margin: 0;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    line-height: 1.8;
-}
-
-.radius-badge {
-    flex-shrink: 0;
-
-    padding: 10px 15px;
-
-    border-radius: 14px;
-
-    color: #1d4ed8;
-
-    background: #eff6ff;
-
-    border:
-        1px solid #dbeafe;
-
-    font-size: 13px;
-
-    font-weight: bold;
-}
-
-
-/* =========================
-   MAP
-========================= */
-
-.parent-map {
-    width: 100%;
-
-    height: 430px;
-
-    overflow: hidden;
-
-    border-radius: 20px;
-
-    border:
-        1px solid #dbe5f2;
-
-    box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-
-    background:
-        #e2e8f0;
-
-    z-index: 1;
-}
-
-.parent-map .leaflet-control {
-    font-family:
-        "IRANSans",
-        Tahoma,
-        Arial,
-        sans-serif;
-}
-
-.parent-map .leaflet-control-zoom {
-    border: none;
-
-    box-shadow:
-        0 5px 18px rgba(15, 23, 42, 0.18);
-}
-
-.parent-map .leaflet-control-zoom a {
-    color: #172554;
-}
-
-
-/* =========================
-   MAP INFORMATION
-========================= */
-
-.map-info-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 12px;
-
-    margin-top: 15px;
-}
-
-.map-info-card {
-    min-height: 75px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-    padding: 13px;
-
-    border-radius: 16px;
-
-    background:
-        #f8fafc;
-
-    border:
-        1px solid #e2e8f0;
-}
-
-.map-info-icon {
-    width: 42px;
-    height: 42px;
-
-    flex: 0 0 42px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background: #eff6ff;
+    color:
+        var(--app-navy);
 
     font-size: 19px;
+
+    font-weight: 900;
 }
 
-.map-info-card span {
-    display: block;
 
-    margin-bottom: 4px;
+.location-section-header p {
 
-    color: #94a3b8;
+    margin: 0;
+
+    color:
+        #82919c;
 
     font-size: 11px;
-}
-
-.map-info-card strong {
-    display: block;
-
-    color: #334155;
-
-    font-size: 13px;
-
-    line-height: 1.6;
-}
-
-.location-result-card {
-    transition:
-        background 0.2s,
-        border-color 0.2s;
-}
-
-.location-refresh-button {
-    width: 100%;
-
-    min-height: 48px;
-
-    margin-top: 15px;
-
-    padding: 12px 18px;
-
-    border: none;
-
-    border-radius: 14px;
-
-    color: #1e3a8a;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff,
-            #dbeafe
-        );
-
-    font-family: inherit;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.location-refresh-button:hover {
-    background: #dbeafe;
-
-    transform:
-        translateY(-1px);
-
-    box-shadow:
-        0 8px 20px
-        rgba(59, 130, 246, 0.12);
-}
-
-.location-refresh-button:active {
-    transform:
-        translateY(0);
-}
-
-.location-refresh-button:disabled {
-    opacity: 0.6;
-
-    cursor: not-allowed;
-
-    transform: none;
-}
-
-
-/* =========================
-   CALL SECTION
-========================= */
-
-.call-section {
-    margin-top: 18px;
-
-    padding: 30px;
-
-    text-align: center;
-
-    border-radius: 26px;
-
-    background:
-        rgba(255, 255, 255, 0.90);
-
-    box-shadow:
-        0 15px 40px rgba(15, 23, 42, 0.07);
-}
-
-.call-section h2 {
-    margin: 0 0 8px;
-
-    color: #172554;
-
-    font-size: 23px;
-}
-
-.call-section p {
-    margin: 0 auto 24px;
-
-    max-width: 600px;
-
-    color: #64748b;
-
-    font-size: 14px;
 
     line-height: 1.9;
 }
 
-.call-button {
-    width: min(100%, 430px);
 
-    min-height: 66px;
+/* =====================================================
+   RADIUS BADGE
+===================================================== */
 
-    border: none;
+.radius-badge {
 
-    border-radius: 18px;
+    flex-shrink: 0;
 
-    color: white;
+    padding:
+        9px 13px;
+
+    border:
+        1px solid
+        #d4f0f3;
+
+    border-radius: 13px;
+
+    color:
+        var(--app-primary-dark);
 
     background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #0284c7
-        );
+        #e8f8fa;
 
-    font-size: 19px;
+    font-size: 11px;
 
-    font-weight: bold;
+    font-weight: 800;
 
-    cursor: pointer;
-
-    box-shadow:
-        0 15px 30px rgba(37, 99, 235, 0.25);
-
-    transition:
-        0.2s;
-}
-
-.call-button:hover {
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 18px 35px rgba(37, 99, 235, 0.30);
-}
-
-.call-button:active {
-    transform:
-        translateY(0);
-}
-
-.call-button:disabled {
-    cursor: not-allowed;
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-.footer {
-    padding: 22px 0 8px;
-
-    text-align: center;
-
-    color: #94a3b8;
-
-    font-size: 12px;
-}
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 900px) {
-
-    .cards {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .map-info-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    .header-top {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-    .class-badge {
-        align-self: flex-start;
-    }
-}
-
-
-/* =========================
-   TABLET
-========================= */
-
-@media (max-width: 700px) {
-
-    .page {
-        padding: 16px;
-    }
-
-    .cards {
-        grid-template-columns: 1fr;
-    }
-
-    .location-section {
-        padding: 18px;
-    }
-
-    .location-section-header {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-    .radius-badge {
-        width: 100%;
-
-        text-align: center;
-    }
-
-    .parent-map {
-        height: 360px;
-    }
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 600px) {
-
-    .page {
-        padding: 12px;
-    }
-
-    .login-screen {
-        min-height:
-            calc(100vh - 24px);
-    }
-
-    .login-box {
-        padding: 25px 20px;
-
-        border-radius: 22px;
-    }
-
-    .header {
-        padding: 22px 18px;
-
-        border-radius: 22px;
-    }
-
-    .welcome h1 {
-        font-size: 21px;
-    }
-
-    .avatar {
-        width: 54px;
-        height: 54px;
-
-        flex-basis: 54px;
-    }
-
-    .date-card {
-        align-items: flex-start;
-
-        flex-direction: column;
-
-        padding: 18px;
-    }
-
-    .clock {
-        width: 100%;
-
-        text-align: center;
-
-        font-size: 28px;
-    }
-
-    .call-section {
-        padding: 24px 18px;
-
-        border-radius: 22px;
-    }
-
-    .call-section h2 {
-        font-size: 20px;
-    }
-
-    .call-button {
-        font-size: 17px;
-    }
-
-
-    /* MAP MOBILE */
-
-    .location-section {
-        padding: 16px;
-
-        border-radius: 22px;
-    }
-
-    .location-section-header h2 {
-        font-size: 19px;
-    }
-
-    .location-section-header p {
-        font-size: 12px;
-    }
-
-    .parent-map {
-        height: 320px;
-
-        border-radius: 17px;
-    }
-
-    .map-info-grid {
-        grid-template-columns: 1fr;
-
-        gap: 10px;
-    }
-
-    .map-info-card {
-        min-height: 68px;
-
-        padding: 11px;
-    }
-
-    .map-info-icon {
-        width: 40px;
-        height: 40px;
-
-        flex-basis: 40px;
-    }
-
-    .location-refresh-button {
-        min-height: 54px;
-
-        font-size: 14px;
-    }
-}
-
-
-/* =========================
-   VERY SMALL PHONES
-========================= */
-
-@media (max-width: 380px) {
-
-    .page {
-        padding: 8px;
-    }
-
-    .header {
-        padding: 18px 14px;
-    }
-
-    .welcome {
-        gap: 11px;
-    }
-
-    .welcome h1 {
-        font-size: 18px;
-    }
-
-    .class-badge {
-        font-size: 12px;
-
-        padding: 8px 12px;
-    }
-
-    .date-card {
-        padding: 15px;
-    }
-
-    .clock {
-        font-size: 24px;
-    }
-
-    .location-section {
-        padding: 13px;
-    }
-
-    .parent-map {
-        height: 290px;
-    }
-
-    .call-section {
-        padding: 21px 14px;
-    }
-
-    .call-button {
-        min-height: 60px;
-
-        font-size: 16px;
-    }
-}
-
-
-/* =========================
-   LEAFLET RTL / POPUP
-========================= */
-
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-    direction: rtl;
-}
-
-.leaflet-popup-content {
-    margin: 12px 14px;
-
-    font-family:
-        "IRANSans",
-        Tahoma,
-        Arial,
-        sans-serif;
-
-    font-size: 13px;
-
-    line-height: 1.8;
-}
-
-.map-popup-title {
-    margin-bottom: 4px;
-
-    color: #172554;
-
-    font-weight: bold;
-}
-
-.map-popup-text {
-    color: #64748b;
-}
-
-
-/* =========================
-   LOCATION STATES
-========================= */
-
-.location-inside {
-    color: #15803d !important;
-
-    background: #f0fdf4 !important;
-
-    border-color: #bbf7d0 !important;
-}
-
-.location-outside {
-    color: #dc2626 !important;
-
-    background: #fef2f2 !important;
-
-    border-color: #fecaca !important;
-}
-
-.location-loading {
-    color: #2563eb !important;
-
-    background: #eff6ff !important;
-
-    border-color: #dbeafe !important;
-}
-
-
-/* =========================
-   MAP MARKERS
-========================= */
-
-.school-marker,
-.parent-marker {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    font-size: 22px;
-
-    background: white;
-
-    box-shadow:
-        0 5px 18px rgba(15, 23, 42, 0.25);
-
-    border: 3px solid white;
-}
-
-.school-marker {
-    background: #2563eb;
-}
-
-.parent-marker {
-    background: #16a34a;
-}
-
-
-/* =========================
-   ACCESSIBILITY
-========================= */
-
-button:focus-visible,
-input:focus-visible {
-    outline:
-        3px solid rgba(37, 99, 235, 0.25);
-
-    outline-offset: 2px;
+    white-space: nowrap;
 }
 
 
@@ -1267,17 +1472,22 @@ input:focus-visible {
 ===================================================== */
 
 .location-cards {
+
+    position: relative;
+
+    z-index: 2;
+
     width: 100%;
 
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 16px;
+    gap: 12px;
 
-    margin: 20px 0;
+    margin:
+        16px 0;
 }
 
 
@@ -1286,47 +1496,54 @@ input:focus-visible {
 ===================================================== */
 
 .location-card {
+
     min-width: 0;
 
     display: flex;
 
     align-items: center;
 
-    gap: 14px;
+    gap: 13px;
 
-    padding: 20px;
+    padding: 17px;
 
-    border-radius: 20px;
+    border:
+        1px solid
+        rgba(226,232,240,.72);
+
+    border-radius: 21px;
 
     background:
         linear-gradient(
             145deg,
-            #ffffff,
-            #f8fafc
+            rgba(255,255,255,.96),
+            rgba(247,251,252,.88)
         );
 
-    border:
-        1px solid rgba(148, 163, 184, 0.18);
-
     box-shadow:
-        0 10px 30px
-        rgba(15, 23, 42, 0.08);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+        0 10px 28px
+        rgba(15,45,60,.055);
 
     direction: rtl;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
 
+
 .location-card:hover {
+
     transform:
-        translateY(-2px);
+        translateY(-3px);
+
+    border-color:
+        rgba(8,167,181,.15);
 
     box-shadow:
-        0 15px 35px
-        rgba(15, 23, 42, 0.12);
+        0 17px 35px
+        rgba(15,45,60,.09);
 }
 
 
@@ -1335,38 +1552,44 @@ input:focus-visible {
 ===================================================== */
 
 .location-card-icon {
-    width: 54px;
-    height: 54px;
 
-    flex: 0 0 54px;
+    width: 50px;
+
+    height: 50px;
+
+    flex:
+        0 0 50px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     border-radius: 16px;
 
     background:
         linear-gradient(
-            135deg,
-            #eff6ff,
-            #dbeafe
+            145deg,
+            #e4f8fa,
+            #dff1f7
         );
 
-    font-size: 27px;
-
     box-shadow:
-        inset 0 0 0 1px
-        rgba(59, 130, 246, 0.08);
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 22px;
 }
 
+
 .parent-location-card .location-card-icon {
+
     background:
         linear-gradient(
-            135deg,
-            #ecfdf5,
-            #d1fae5
+            145deg,
+            #e9f9f1,
+            #d8f3e5
         );
 }
 
@@ -1376,125 +1599,143 @@ input:focus-visible {
 ===================================================== */
 
 .location-card-content {
+
     min-width: 0;
 
     flex: 1;
-
-    text-align: right;
 }
 
-
-/* =====================================================
-   LOCATION TITLE
-===================================================== */
 
 .location-card-title {
-    font-size: 14px;
 
-    font-weight: 700;
+    margin-bottom: 4px;
 
-    color: #475569;
+    color:
+        #657581;
 
-    margin-bottom: 6px;
+    font-size: 11px;
 
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
+    font-weight: 800;
 }
 
-
-/* =====================================================
-   LOCATION VALUE
-===================================================== */
 
 .location-card-value {
-    display: flex;
 
-    align-items: baseline;
+    color:
+        var(--app-navy);
 
-    gap: 6px;
+    font-size: 25px;
 
-    direction: rtl;
+    font-weight: 950;
 
-    line-height: 1;
-
-    margin-bottom: 8px;
+    line-height: 1.2;
 }
 
-
-/* =====================================================
-   LOCATION NUMBER
-===================================================== */
-
-#allowedRadiusValue,
-#liveParentDistance {
-    font-size: 28px;
-
-    font-weight: 900;
-
-    color: #0f172a;
-
-    font-variant-numeric:
-        tabular-nums;
-
-    transition:
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-/* =====================================================
-   LOCATION UNIT
-===================================================== */
 
 .location-card-unit {
-    font-size: 13px;
 
-    font-weight: 700;
+    color:
+        #83919b;
 
-    color: #64748b;
+    font-size: 10px;
+
+    font-weight: 600;
 }
 
 
-/* =====================================================
-   LOCATION DESCRIPTION
-===================================================== */
-
 .location-card-description {
-    min-height: 20px;
 
-    font-size: 12px;
+    margin-top: 3px;
 
-    font-weight: 500;
+    color:
+        #a0adb5;
 
-    color: #94a3b8;
+    font-size: 9px;
 
     line-height: 1.6;
 }
 
 
 /* =====================================================
-   GPS STATUS COLORS
+   DISTANCE VALUES
 ===================================================== */
 
-.location-inside
-.location-card-value
+#allowedRadiusValue,
 #liveParentDistance {
-    color: #16a34a;
+
+    color:
+        var(--app-navy);
+
+    font-size: 27px;
+
+    font-weight: 950;
 }
 
-.location-outside
-.location-card-value
-#liveParentDistance {
-    color: #dc2626;
+
+/* =====================================================
+   LOCATION RESULT STATES
+===================================================== */
+
+.location-inside {
+
+    color:
+        #15803d !important;
+
+    background:
+        #f0fdf4 !important;
+
+    border-color:
+        #bbf7d0 !important;
 }
 
-.location-loading
-.location-card-value
-#liveParentDistance {
-    color: #64748b;
+
+.location-outside {
+
+    color:
+        #dc2626 !important;
+
+    background:
+        #fef2f2 !important;
+
+    border-color:
+        #fecaca !important;
+}
+
+
+.location-loading {
+
+    color:
+        #2563eb !important;
+
+    background:
+        #eff6ff !important;
+
+    border-color:
+        #dbeafe !important;
+}
+
+
+.location-inside .location-card-value,
+.location-inside #liveParentDistance {
+
+    color:
+        #15803d !important;
+}
+
+
+.location-outside .location-card-value,
+.location-outside #liveParentDistance {
+
+    color:
+        #dc2626 !important;
+}
+
+
+.location-loading .location-card-value,
+.location-loading #liveParentDistance {
+
+    color:
+        #2563eb !important;
 }
 
 
@@ -1503,115 +1744,653 @@ input:focus-visible {
 ===================================================== */
 
 .location-status {
-    width: 100%;
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        9px 13px;
+
+    border:
+        1px solid
+        #e5edf0;
+
+    border-radius: 14px;
+
+    color:
+        #72828d;
+
+    background:
+        #f5f9fa;
+
+    font-size: 11px;
+
+    line-height: 1.7;
 
     text-align: center;
+}
+
+
+/* =====================================================
+   LOCATION REFRESH BUTTON
+===================================================== */
+
+.location-refresh-button {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 12px;
+
+    padding:
+        12px 18px;
+
+    border:
+        1px solid
+        rgba(8,167,181,.10);
+
+    border-radius: 16px;
+
+    color:
+        var(--app-primary-dark);
+
+    background:
+        linear-gradient(
+            135deg,
+            #e9f9fa,
+            #e0f3f6
+        );
 
     font-size: 13px;
 
-    color: #64748b;
+    font-weight: 800;
 
-    margin: 10px 0;
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px
+        rgba(8,167,181,.06);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        opacity .25s ease;
+}
+
+
+.location-refresh-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #def6f8,
+            #d7eff3
+        );
+
+    box-shadow:
+        0 13px 27px
+        rgba(8,167,181,.10);
+}
+
+
+.location-refresh-button:active {
+
+    transform:
+        scale(.985);
+}
+
+
+.location-refresh-button:disabled {
+
+    opacity: .6;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+}
+
+
+/* =====================================================
+   LOCATION RESULT CARD
+===================================================== */
+
+.location-result-card {
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.parent-map {
+
+    position: relative;
+
+    z-index: 1;
+
+    width: 100%;
+
+    height: 400px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        #dce8ed;
+
+    border-radius: 21px;
+
+    background:
+        #e2e8f0;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255,255,255,.55);
+}
+
+
+.parent-map .leaflet-control {
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+}
+
+
+.parent-map .leaflet-control-zoom {
+
+    border: none;
+
+    overflow: hidden;
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 7px 20px
+        rgba(15,23,42,.16);
+}
+
+
+.parent-map .leaflet-control-zoom a {
+
+    color:
+        var(--app-navy);
+}
+
+
+/* =====================================================
+   LEAFLET POPUP
+===================================================== */
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+
+    direction: rtl;
+}
+
+
+.leaflet-popup-content {
+
+    margin:
+        12px 14px;
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 12px;
 
     line-height: 1.8;
 }
 
 
+.map-popup-title {
+
+    margin-bottom: 4px;
+
+    color:
+        #172554;
+
+    font-weight:
+        900;
+}
+
+
+.map-popup-text {
+
+    color:
+        #64748b;
+}
 /* =====================================================
-   LOCATION CARDS MOBILE
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 3 / 5
 ===================================================== */
 
-@media (max-width: 600px) {
 
-    .location-cards {
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(0, 1fr);
+/* =====================================================
+   MAP INFORMATION GRID
+===================================================== */
 
-        gap: 10px;
-    }
+.map-info-grid {
 
-    .location-card {
-        flex-direction: column;
+    display: grid;
 
-        justify-content: center;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-        text-align: center;
+    gap: 10px;
 
-        gap: 9px;
+    margin-top: 13px;
+}
 
-        padding: 14px 8px;
 
-        border-radius: 16px;
-    }
+.map-info-card {
 
-    .location-card-icon {
-        width: 42px;
-        height: 42px;
+    min-height: 72px;
 
-        flex-basis: 42px;
+    display: flex;
 
-        border-radius: 13px;
+    align-items: center;
 
-        font-size: 21px;
-    }
+    gap: 10px;
 
-    .location-card-content {
-        width: 100%;
+    padding: 12px;
 
-        text-align: center;
-    }
+    border:
+        1px solid
+        #e5edf1;
 
-    .location-card-title {
-        font-size: 11px;
+    border-radius: 17px;
 
-        margin-bottom: 7px;
-    }
+    background:
+        #f8fafc;
 
-    #allowedRadiusValue,
-    #liveParentDistance {
-        font-size: 21px;
-    }
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
 
-    .location-card-unit {
-        font-size: 10px;
-    }
 
-    .location-card-description {
-        font-size: 9px;
+.map-info-card:hover {
 
-        line-height: 1.5;
-    }
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(15,45,60,.06);
+}
+
+
+.map-info-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex:
+        0 0 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        #eff6ff;
+
+    font-size: 19px;
+}
+
+
+.map-info-card span {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color:
+        #94a3b8;
+
+    font-size: 10px;
+}
+
+
+.map-info-card strong {
+
+    display: block;
+
+    color:
+        #334155;
+
+    font-size: 12px;
+
+    line-height: 1.6;
 }
 
 
 /* =====================================================
-   VERY SMALL LOCATION CARDS
+   MAP MARKERS
 ===================================================== */
 
-@media (max-width: 360px) {
+.school-marker,
+.parent-marker {
 
-    .location-cards {
-        gap: 7px;
-    }
+    display: flex;
 
-    .location-card {
-        padding: 12px 5px;
-    }
+    align-items: center;
 
-    #allowedRadiusValue,
-    #liveParentDistance {
-        font-size: 18px;
-    }
+    justify-content: center;
 
-    .location-card-icon {
-        width: 36px;
-        height: 36px;
+    width: 42px;
 
-        flex-basis: 36px;
+    height: 42px;
 
-        font-size: 18px;
-    }
+    border:
+        3px solid
+        #ffffff;
+
+    border-radius: 50%;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(15,23,42,.25);
+}
+
+
+.school-marker {
+
+    background:
+        #2563eb;
+}
+
+
+.parent-marker {
+
+    background:
+        #16a34a;
+}
+
+
+/* =====================================================
+   CALL SECTION
+===================================================== */
+
+.call-section {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 14px;
+
+    padding:
+        28px 22px
+        25px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius: 28px;
+
+    background:
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.22),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(0,220,220,.10),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #073d47,
+            #078795
+        );
+
+    box-shadow:
+        0 25px 50px
+        rgba(4,80,90,.18);
+}
+
+
+.call-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+
+    height: 190px;
+
+    left: -90px;
+
+    bottom: -120px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 22px
+        rgba(255,255,255,.025);
+
+    pointer-events: none;
+}
+
+
+.call-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 120px;
+
+    height: 120px;
+
+    right: -55px;
+
+    top: -70px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.045);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   CALL TITLE
+===================================================== */
+
+.call-section h2 {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin:
+        0 0 7px;
+
+    color:
+        #ffffff;
+
+    font-size: 21px;
+
+    font-weight: 900;
+}
+
+
+.call-section p {
+
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 600px;
+
+    margin:
+        0 auto 22px;
+
+    color:
+        rgba(255,255,255,.70);
+
+    font-size: 11px;
+
+    line-height: 1.9;
+}
+
+
+/* =====================================================
+   MAIN CALL BUTTON
+===================================================== */
+
+.call-button {
+
+    position: relative;
+
+    z-index: 3;
+
+    width:
+        min(100%, 460px);
+
+    min-height: 68px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.85);
+
+    border-radius: 20px;
+
+    color:
+        #087987;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #edfafa
+        );
+
+    font-size: 17px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 15px 35px
+        rgba(0,0,0,.16),
+
+        inset 0 1px 0
+        rgba(255,255,255,.95);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
+}
+
+
+.call-button:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+
+        0 20px 42px
+        rgba(0,0,0,.20);
+}
+
+
+.call-button:active {
+
+    transform:
+        scale(.98);
+}
+
+
+.call-button:disabled {
+
+    opacity:
+        .55;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    padding:
+        22px 0 6px;
+
+    text-align: center;
+
+    color:
+        #9aa8b1;
+
+    font-size: 10px;
+
+    opacity: .85;
 }
 
 
@@ -1620,163 +2399,252 @@ input:focus-visible {
 ===================================================== */
 
 .parent-notification {
+
     position: fixed;
 
-    top: 20px;
-    right: 20px;
-    left: 20px;
+    z-index: 999999;
 
-    z-index: 99999;
+    top: 18px;
 
-    width: auto;
+    right: 18px;
 
-    display: none;
+    width:
+        min(430px, calc(100% - 36px));
+
+    display: flex;
 
     align-items: center;
 
-    gap: 15px;
+    gap: 13px;
 
-    padding: 18px 20px;
+    padding: 15px;
 
-    margin: 0;
+    border:
+        1px solid
+        rgba(255,255,255,.25);
 
-    background: #ffffff;
+    border-radius: 20px;
 
-    border-radius: 16px;
+    color: #ffffff;
 
-    border-right:
-        5px solid #d32f2f;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(7,61,71,.96),
+            rgba(8,126,140,.96)
+        );
 
     box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.20);
 
-    overflow: hidden;
+        0 20px 50px
+        rgba(0,40,50,.25),
+
+        inset 0 1px 0
+        rgba(255,255,255,.15);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(-15px)
+        scale(.97);
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease,
+        transform .3s ease;
 }
 
+
+.parent-notification.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
 .parent-notification::before {
+
     content: "";
 
     position: absolute;
 
-    right: 0;
+    width: 100px;
 
-    top: 0;
-    bottom: 0;
+    height: 100px;
 
-    width: 5px;
+    right: -45px;
 
-    background: #d32f2f;
+    top: -55px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.05);
+
+    pointer-events: none;
 }
 
-.parent-notification.show {
-    display: flex;
-}
+
+/* =====================================================
+   NOTIFICATION ICON
+===================================================== */
 
 .parent-notification-icon {
-    width: 52px;
-    height: 52px;
 
-    min-width: 52px;
+    width: 48px;
+
+    height: 48px;
+
+    min-width: 48px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border-radius: 50%;
+    border:
+        1px solid
+        rgba(255,255,255,.20);
 
-    font-size: 32px;
+    border-radius: 15px;
 
-    background: #fed7aa;
+    background:
+        rgba(255,255,255,.12);
 
-    flex-shrink: 0;
+    font-size: 26px;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.15);
 }
 
+
+/* =====================================================
+   NOTIFICATION CONTENT
+===================================================== */
+
 .parent-notification-content {
+
     flex: 1;
+
+    min-width: 0;
+
+    text-align: right;
+}
+
+
+.parent-notification-content strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 900;
+}
+
+
+.parent-notification-content span {
+
+    display: block;
+
+    color:
+        rgba(255,255,255,.80);
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.parent-notification-content small {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 10px;
+}
+
+
+/* =====================================================
+   NOTIFICATION CLOSE
+===================================================== */
+
+.close-notification-button {
+
+    width: 32px;
+
+    height: 32px;
+
+    min-width: 32px;
 
     display: flex;
 
-    flex-direction: column;
+    align-items: center;
 
-    gap: 6px;
-}
+    justify-content: center;
 
-.parent-notification-content strong {
-    font-size: 16px;
+    border: 0;
 
-    color: #9a3412;
-}
+    border-radius: 10px;
 
-.parent-notification-content span {
-    font-size: 14px;
+    color: #ffffff;
 
-    line-height: 1.8;
+    background:
+        rgba(255,255,255,.08);
 
-    color: #7c2d12;
-}
-
-.parent-notification-content small {
-    font-size: 12px;
-
-    opacity: 0.7;
-}
-
-.close-notification-button {
-    width: 34px;
-    height: 34px;
-
-    border: none;
-
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    font-size: 28px;
+    font-size: 20px;
 
     line-height: 1;
 
-    padding: 5px 10px;
+    cursor: pointer;
 
-    background:
-        rgba(255, 255, 255, 0.7);
-
-    color: #9a3412;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
+    transition:
+        background .2s ease,
+        transform .2s ease;
 }
+
 
 .close-notification-button:hover {
-    background: #ffffff;
+
+    background:
+        rgba(255,255,255,.16);
+
+    transform:
+        scale(1.05);
 }
+
 
 .notification-show {
-    animation:
-        parentNotificationIn
-        0.45s
-        ease-out;
-}
 
-@keyframes parentNotificationIn {
+    opacity: 1 !important;
 
-    0% {
-        opacity: 0;
+    visibility: visible !important;
 
-        transform:
-            translateY(-20px)
-            scale(0.96);
-    }
-
-    100% {
-        opacity: 1;
-
-        transform:
-            translateY(0)
-            scale(1);
-    }
+    transform:
+        translateY(0)
+        scale(1) !important;
 }
 
 
@@ -1785,226 +2653,239 @@ input:focus-visible {
 ===================================================== */
 
 #parentCallNotification {
+
     position: fixed;
-
-    top: 20px;
-    left: 50%;
-
-    width:
-        min(
-            calc(100% - 30px),
-            520px
-        );
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    padding: 16px 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #0f172a,
-            #1e293b
-        );
-
-    color: #ffffff;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 20px 50px
-        rgba(0, 0, 0, 0.25);
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.12);
 
     z-index: 999999;
 
-    direction: rtl;
+    top: 18px;
+
+    right: 50%;
+
+    width:
+        min(460px, calc(100% - 28px));
+
+    padding: 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 21px;
+
+    color: #ffffff;
+
+    background:
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.15),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #102a43,
+            #087987
+        );
+
+    box-shadow:
+        0 22px 55px
+        rgba(5,40,50,.27);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 
     opacity: 0;
 
+    visibility: hidden;
+
     transform:
-        translate(-50%, -130%);
+        translate(50%, -20px)
+        scale(.97);
 
     transition:
-        opacity 0.35s ease,
-        transform 0.35s ease;
+        opacity .3s ease,
+        visibility .3s ease,
+        transform .3s ease;
 }
+
 
 #parentCallNotification.show {
+
     opacity: 1;
 
+    visibility: visible;
+
     transform:
-        translate(-50%, 0);
+        translate(50%, 0)
+        scale(1);
 }
 
-.parent-call-notification-icon {
-    width: 48px;
-    height: 48px;
 
-    min-width: 48px;
+/* =====================================================
+   CALL NOTIFICATION ICON
+===================================================== */
+
+.parent-call-notification-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    min-width: 50px;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
-    border-radius: 14px;
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 16px;
 
     background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #3b82f6
-        );
+        rgba(255,255,255,.11);
 
     font-size: 23px;
 }
 
+
 .parent-call-notification-content {
+
     flex: 1;
+
+    min-width: 0;
 
     text-align: right;
 }
 
-.parent-call-notification-title {
-    font-size: 16px;
 
-    font-weight: 800;
+.parent-call-notification-title {
 
     margin-bottom: 4px;
-}
-
-.parent-call-notification-text {
-    font-size: 14px;
-
-    line-height: 1.8;
 
     color:
-        rgba(255, 255, 255, 0.82);
+        #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 900;
 }
 
+
+.parent-call-notification-text {
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 12px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   CALL NOTIFICATION CLOSE
+===================================================== */
+
 .parent-call-notification-close {
+
     width: 32px;
+
     height: 32px;
 
     min-width: 32px;
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
     border: 0;
-
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    color: #ffffff;
 
     border-radius: 10px;
 
-    font-size: 22px;
+    color: #ffffff;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-size: 21px;
 
     line-height: 1;
 
     cursor: pointer;
 }
 
+
 .parent-call-notification-close:hover {
+
     background:
-        rgba(255, 255, 255, 0.16);
+        rgba(255,255,255,.16);
 }
 
 
-/* =========================
-   NOTIFICATIONS MOBILE
-========================= */
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
 
-@media (max-width: 600px) {
+button:focus-visible,
+input:focus-visible {
 
-    .parent-notification {
-        top: 12px;
+    outline:
+        3px solid
+        rgba(8,167,181,.25);
 
-        right: 10px;
-        left: 10px;
-
-        gap: 10px;
-
-        padding: 14px;
-    }
-
-    .parent-notification-icon {
-        width: 42px;
-        height: 42px;
-
-        min-width: 42px;
-
-        font-size: 25px;
-    }
-
-    .parent-notification-content strong {
-        font-size: 15px;
-    }
-
-    .parent-notification-content span {
-        font-size: 13px;
-    }
-
-    #parentCallNotification {
-        top: 12px;
-
-        width:
-            calc(100% - 20px);
-
-        padding: 14px;
-
-        border-radius: 16px;
-    }
-
-    .parent-call-notification-icon {
-        width: 42px;
-        height: 42px;
-
-        min-width: 42px;
-
-        font-size: 20px;
-    }
-
-    .parent-call-notification-title {
-        font-size: 15px;
-    }
-
-    .parent-call-notification-text {
-        font-size: 13px;
-    }
+    outline-offset:
+        2px;
 }
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 4 / 5
+===================================================== */
+
+
 /* =====================================================
    CHANGE PASSWORD CARD
 ===================================================== */
 
 .change-password-card {
+
     width: 100%;
-    max-width: 520px;
 
-    margin: 25px auto 0;
+    max-width: 560px;
 
-    padding: 24px;
+    margin:
+        18px auto 0;
 
-    box-sizing: border-box;
-
-    background:
-        rgba(255, 255, 255, 0.96);
-
-    border-radius: 22px;
+    padding: 22px;
 
     border:
-        1px solid rgba(37, 99, 235, 0.10);
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 25px;
+
+    background:
+        rgba(255,255,255,.82);
 
     box-shadow:
-        0 15px 35px
-        rgba(15, 23, 42, 0.08);
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 }
 
 
@@ -2013,15 +2894,17 @@ input:focus-visible {
 ===================================================== */
 
 .change-password-title {
-    font-size: 20px;
 
-    font-weight: 800;
-
-    color: #1e293b;
+    margin-bottom: 7px;
 
     text-align: center;
 
-    margin-bottom: 8px;
+    color:
+        var(--app-navy);
+
+    font-size: 18px;
+
+    font-weight: 900;
 }
 
 
@@ -2030,15 +2913,17 @@ input:focus-visible {
 ===================================================== */
 
 .change-password-description {
-    font-size: 14px;
 
-    color: #64748b;
+    margin-bottom: 19px;
 
     text-align: center;
 
-    line-height: 1.8;
+    color:
+        #82909a;
 
-    margin-bottom: 20px;
+    font-size: 11px;
+
+    line-height: 1.8;
 }
 
 
@@ -2047,11 +2932,12 @@ input:focus-visible {
 ===================================================== */
 
 .change-password-form {
+
     display: flex;
 
     flex-direction: column;
 
-    gap: 12px;
+    gap: 11px;
 }
 
 
@@ -2060,43 +2946,50 @@ input:focus-visible {
 ===================================================== */
 
 .change-password-form input {
+
     width: 100%;
 
     height: 52px;
 
-    box-sizing: border-box;
+    padding:
+        0 16px;
 
     border:
-        1px solid #e2e8f0;
+        1px solid
+        #e2e8f0;
 
-    border-radius: 14px;
-
-    background: #f8fafc;
-
-    padding: 0 16px;
-
-    font-family: inherit;
-
-    font-size: 16px;
-
-    text-align: center;
+    border-radius: 16px;
 
     outline: none;
 
+    color:
+        var(--app-text);
+
+    background:
+        #f7fafb;
+
+    font-size: 15px;
+
+    text-align: center;
+
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
 }
 
-.change-password-form input:focus {
-    background: #ffffff;
 
-    border-color: #3b82f6;
+.change-password-form input:focus {
+
+    border-color:
+        var(--app-primary);
+
+    background:
+        #ffffff;
 
     box-shadow:
         0 0 0 4px
-        rgba(59, 130, 246, 0.10);
+        rgba(8,167,181,.09);
 }
 
 
@@ -2105,59 +2998,69 @@ input:focus-visible {
 ===================================================== */
 
 #changeParentCodeButton {
+
     width: 100%;
 
-    height: 52px;
+    height: 54px;
 
     border: none;
 
-    border-radius: 14px;
+    border-radius: 17px;
+
+    color: #ffffff;
 
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #3b82f6
+            #08a7b5,
+            #087c88
         );
 
-    color: #ffffff;
+    font-size: 15px;
 
-    font-family: inherit;
-
-    font-size: 16px;
-
-    font-weight: 700;
+    font-weight: 900;
 
     cursor: pointer;
 
     box-shadow:
-        0 10px 25px
-        rgba(37, 99, 235, 0.20);
+        0 12px 25px
+        rgba(8,167,181,.18);
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.2s ease;
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
 }
+
 
 #changeParentCodeButton:hover {
+
     transform:
-        translateY(-1px);
+        translateY(-2px);
 
     box-shadow:
-        0 14px 28px
-        rgba(37, 99, 235, 0.25);
+        0 16px 30px
+        rgba(8,167,181,.23);
 }
+
 
 #changeParentCodeButton:active {
+
     transform:
-        translateY(0);
+        scale(.985);
 }
 
-#changeParentCodeButton:disabled {
-    opacity: 0.6;
 
-    cursor: not-allowed;
+#changeParentCodeButton:disabled {
+
+    opacity:
+        .6;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
 }
 
 
@@ -2166,46 +3069,29 @@ input:focus-visible {
 ===================================================== */
 
 .change-password-message {
+
     min-height: 24px;
 
     text-align: center;
 
-    font-size: 14px;
+    color:
+        #64748b;
 
-    font-weight: 600;
+    font-size: 12px;
+
+    font-weight: 700;
 
     line-height: 1.7;
 }
 
 
 /* =====================================================
-   CHANGE PASSWORD MOBILE
+   CINEMATIC INTRO
+   NEW VERSION
 ===================================================== */
 
-@media (max-width: 600px) {
+#cinematicIntro {
 
-    .change-password-card {
-        padding: 18px;
-
-        border-radius: 18px;
-    }
-
-    .change-password-title {
-        font-size: 18px;
-    }
-
-    .change-password-form input,
-    #changeParentCodeButton {
-        height: 50px;
-    }
-}
-
-
-/* =====================================================
-   PARENT CINEMATIC INTRO
-===================================================== */
-
-#parentIntro {
     position: fixed;
 
     inset: 0;
@@ -2215,22 +3101,25 @@ input:focus-visible {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     overflow: hidden;
 
     background:
+
         radial-gradient(
             circle at 50% 45%,
-            rgba(37, 99, 235, .20) 0%,
-            rgba(0, 0, 0, 0) 32%
+            rgba(8,190,202,.20),
+            transparent 28%
         ),
+
         radial-gradient(
             circle at 50% 50%,
-            #111d35 0%,
-            #081225 42%,
-            #030812 75%,
-            #000 100%
+            #073b43 0%,
+            #03252d 42%,
+            #011217 75%,
+            #000507 100%
         );
 
     opacity: 1;
@@ -2238,1058 +3127,10 @@ input:focus-visible {
     visibility: visible;
 
     transition:
-        opacity .9s cubic-bezier(.4,0,.2,1),
-        visibility .9s;
-}
+        opacity 1.2s
+        cubic-bezier(.4,0,.2,1),
 
-#parentIntro.hide {
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
-}
-
-#parentIntro::before {
-    content: "";
-
-    position: absolute;
-
-    width: 42vmin;
-    height: 42vmin;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(59,130,246,.26),
-            rgba(37,99,235,0) 68%
-        );
-
-    filter: blur(12px);
-
-    opacity: 0;
-
-    transform: scale(.25);
-
-    animation:
-        parentIntroGlow
-        5.2s
-        ease-out
-        forwards;
-}
-
-#parentIntro::after {
-    content: "";
-
-    position: absolute;
-
-    width: 62vmin;
-    height: 62vmin;
-
-    border-radius: 50%;
-
-    border:
-        1px solid rgba(147,197,253,.12);
-
-    box-shadow:
-        0 0 55px rgba(37,99,235,.08),
-        inset 0 0 55px rgba(59,130,246,.06);
-
-    opacity: 0;
-
-    transform: scale(.45);
-
-    animation:
-        parentIntroRing
-        5.2s
-        cubic-bezier(.2,.75,.25,1)
-        forwards;
-}
-
-
-/* =====================================================
-   INTRO RINGS
-===================================================== */
-
-#parentIntro .intro-ring {
-    position: absolute;
-
-    border-radius: 50%;
-
-    border:
-        1px solid rgba(96,165,250,.12);
-
-    box-shadow:
-        0 0 25px rgba(37,99,235,.06);
-
-    opacity: 0;
-
-    pointer-events: none;
-}
-
-#parentIntro .intro-ring.r1 {
-    width: 34vmin;
-    height: 34vmin;
-
-    animation:
-        parentRingOne
-        5.2s
-        ease-out
-        forwards;
-}
-
-#parentIntro .intro-ring.r2 {
-    width: 48vmin;
-    height: 48vmin;
-
-    animation:
-        parentRingTwo
-        5.2s
-        ease-out
-        .15s
-        forwards;
-}
-
-#parentIntro .intro-ring.r3 {
-    width: 72vmin;
-    height: 72vmin;
-
-    animation:
-        parentRingThree
-        5.2s
-        ease-out
-        .25s
-        forwards;
-}
-
-
-/* =====================================================
-   PARTICLES
-===================================================== */
-
-#parentIntro .intro-particles {
-    position: absolute;
-
-    inset: 0;
-
-    overflow: hidden;
-
-    pointer-events: none;
-}
-
-#parentIntro .intro-particles span {
-    position: absolute;
-
-    width: 3px;
-    height: 3px;
-
-    border-radius: 50%;
-
-    background: #93c5fd;
-
-    box-shadow:
-        0 0 10px #60a5fa;
-
-    opacity: 0;
-
-    animation:
-        parentParticleFloat
-        4s
-        ease-out
-        forwards;
-}
-
-#parentIntro .intro-particles span:nth-child(1) {
-    left: 17%;
-    top: 70%;
-
-    animation-delay: .2s;
-}
-
-#parentIntro .intro-particles span:nth-child(2) {
-    left: 25%;
-    top: 25%;
-
-    animation-delay: .5s;
-}
-
-#parentIntro .intro-particles span:nth-child(3) {
-    left: 34%;
-    top: 78%;
-
-    animation-delay: .8s;
-}
-
-#parentIntro .intro-particles span:nth-child(4) {
-    left: 43%;
-    top: 18%;
-
-    animation-delay: .35s;
-}
-
-#parentIntro .intro-particles span:nth-child(5) {
-    left: 57%;
-    top: 80%;
-
-    animation-delay: .7s;
-}
-
-#parentIntro .intro-particles span:nth-child(6) {
-    left: 66%;
-    top: 23%;
-
-    animation-delay: .4s;
-}
-
-#parentIntro .intro-particles span:nth-child(7) {
-    left: 76%;
-    top: 68%;
-
-    animation-delay: .9s;
-}
-
-#parentIntro .intro-particles span:nth-child(8) {
-    left: 83%;
-    top: 35%;
-
-    animation-delay: .6s;
-}
-
-#parentIntro .intro-particles span:nth-child(9) {
-    left: 12%;
-    top: 43%;
-
-    animation-delay: 1s;
-}
-
-#parentIntro .intro-particles span:nth-child(10) {
-    left: 89%;
-    top: 58%;
-
-    animation-delay: .3s;
-}
-
-#parentIntro .intro-particles span:nth-child(11) {
-    left: 31%;
-    top: 47%;
-
-    animation-delay: .9s;
-}
-
-#parentIntro .intro-particles span:nth-child(12) {
-    left: 69%;
-    top: 51%;
-
-    animation-delay: .55s;
-}
-
-
-/* =====================================================
-   INTRO CONTENT
-===================================================== */
-
-#parentIntro .intro-content {
-    position: relative;
-
-    z-index: 10;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    width: 100%;
-    height: 100%;
-
-    perspective: 1000px;
-}
-
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-#parentIntroLogo {
-    width: min(45vw, 280px);
-    height: min(45vw, 280px);
-
-    object-fit: contain;
-
-    opacity: 0;
-
-    transform:
-        perspective(1000px)
-        rotateY(-80deg)
-        rotateX(12deg)
-        rotateZ(-6deg)
-        scale(.12);
-
-    filter:
-        drop-shadow(
-            0 0 0
-            rgba(0,0,0,0)
-        )
-        drop-shadow(
-            0 0 15px
-            rgba(37,99,235,.12)
-        );
-
-    animation:
-        parentLogoCinema
-        5.2s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-
-    will-change:
-        transform,
-        opacity,
-        filter;
-}
-
-#parentIntro .intro-logo-glow {
-    position: absolute;
-
-    width: min(34vw, 220px);
-    height: min(34vw, 220px);
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(59,130,246,.25),
-            rgba(37,99,235,0) 68%
-        );
-
-    filter: blur(8px);
-
-    opacity: 0;
-
-    animation:
-        parentLogoHalo
-        5.2s
-        ease-out
-        forwards;
-
-    pointer-events: none;
-}
-
-
-/* =====================================================
-   INTRO TEXT
-===================================================== */
-
-#parentIntro .intro-title {
-    position: relative;
-
-    margin-top: 20px;
-
-    font-size:
-        clamp(
-            30px,
-            5vw,
-            54px
-        );
-
-    font-weight: 900;
-
-    letter-spacing: 1px;
-
-    color: #fff;
-
-    text-shadow:
-        0 0 10px rgba(255,255,255,.18),
-        0 0 28px rgba(37,99,235,.30);
-
-    opacity: 0;
-
-    transform:
-        translateY(25px)
-        scale(.92);
-
-    animation:
-        parentIntroTitle
-        1.1s
-        cubic-bezier(.16,1,.3,1)
-        2.15s
-        forwards;
-}
-
-#parentIntro .intro-subtitle {
-    position: relative;
-
-    margin-top: 12px;
-
-    font-size:
-        clamp(
-            12px,
-            2vw,
-            18px
-        );
-
-    font-weight: 500;
-
-    color:
-        rgba(219,234,254,.80);
-
-    letter-spacing: .2px;
-
-    opacity: 0;
-
-    transform:
-        translateY(18px);
-
-    animation:
-        parentIntroSubtitle
-        1s
-        ease-out
-        2.55s
-        forwards;
-}
-
-#parentIntro .intro-line {
-    width: 0;
-
-    height: 1px;
-
-    margin-top: 18px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #60a5fa,
-            transparent
-        );
-
-    box-shadow:
-        0 0 12px
-        rgba(96,165,250,.5);
-
-    animation:
-        parentIntroLine
-        1.2s
-        ease-out
-        2.65s
-        forwards;
-}
-
-
-/* =====================================================
-   LOADING
-===================================================== */
-
-#parentIntro .intro-loading {
-    position: absolute;
-
-    bottom: 11%;
-
-    font-size: 11px;
-
-    color:
-        rgba(191,219,254,.55);
-
-    opacity: 0;
-
-    animation:
-        parentLoadingText
-        .8s
-        ease-out
-        3s
-        forwards;
-}
-
-#parentIntro .intro-loading::after {
-    content: "";
-
-    display: inline-block;
-
-    width: 18px;
-    height: 3px;
-
-    margin-right: 7px;
-
-    vertical-align: middle;
-
-    background:
-        linear-gradient(
-            90deg,
-            #60a5fa,
-            #2563eb,
-            #93c5fd
-        );
-
-    border-radius: 10px;
-
-    animation:
-        parentLoadingPulse
-        1.1s
-        ease-in-out
-        infinite;
-}
-
-
-/* =====================================================
-   ANIMATIONS
-===================================================== */
-
-@keyframes parentIntroGlow {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.25);
-    }
-
-    25% {
-        opacity: 1;
-
-        transform:
-            scale(.82);
-    }
-
-    58% {
-        opacity: .78;
-
-        transform:
-            scale(1.15);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.5);
-    }
-}
-
-@keyframes parentIntroRing {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.45);
-    }
-
-    25% {
-        opacity: .32;
-
-        transform:
-            scale(.72);
-    }
-
-    55% {
-        opacity: .18;
-
-        transform:
-            scale(1);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.18);
-    }
-}
-
-@keyframes parentRingOne {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.35);
-    }
-
-    25% {
-        opacity: .3;
-
-        transform:
-            scale(.75);
-    }
-
-    65% {
-        opacity: .12;
-
-        transform:
-            scale(1.12);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.3);
-    }
-}
-
-@keyframes parentRingTwo {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.4);
-    }
-
-    30% {
-        opacity: .22;
-
-        transform:
-            scale(.75);
-    }
-
-    70% {
-        opacity: .1;
-
-        transform:
-            scale(1.12);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.25);
-    }
-}
-
-@keyframes parentRingThree {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.5);
-    }
-
-    35% {
-        opacity: .15;
-
-        transform:
-            scale(.8);
-    }
-
-    75% {
-        opacity: .06;
-
-        transform:
-            scale(1.08);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.2);
-    }
-}
-
-@keyframes parentParticleFloat {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translateY(30px)
-            scale(.2);
-    }
-
-    20% {
-        opacity: .8;
-    }
-
-    70% {
-        opacity: .55;
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            translateY(-100px)
-            scale(1);
-    }
-}
-
-@keyframes parentLogoCinema {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            perspective(1000px)
-            rotateY(-80deg)
-            rotateX(12deg)
-            rotateZ(-6deg)
-            scale(.12);
-
-        filter:
-            drop-shadow(
-                0 0 0
-                rgba(0,0,0,0)
-            );
-    }
-
-    10% {
-        opacity: 1;
-
-        transform:
-            perspective(1000px)
-            rotateY(-48deg)
-            rotateX(8deg)
-            rotateZ(-4deg)
-            scale(.28);
-
-        filter:
-            drop-shadow(
-                0 0 20px
-                rgba(37,99,235,.2)
-            );
-    }
-
-    28% {
-        opacity: 1;
-
-        transform:
-            perspective(1000px)
-            rotateY(-8deg)
-            rotateX(2deg)
-            rotateZ(1deg)
-            scale(.72);
-
-        filter:
-            drop-shadow(
-                0 12px 25px
-                rgba(0,0,0,.35)
-            )
-            drop-shadow(
-                0 0 30px
-                rgba(59,130,246,.22)
-            );
-    }
-
-    47% {
-        opacity: 1;
-
-        transform:
-            perspective(1000px)
-            rotateY(360deg)
-            rotateX(0)
-            rotateZ(0)
-            scale(1.08);
-
-        filter:
-            drop-shadow(
-                0 15px 30px
-                rgba(0,0,0,.4)
-            )
-            drop-shadow(
-                0 0 38px
-                rgba(59,130,246,.28)
-            );
-    }
-
-    62% {
-        opacity: 1;
-
-        transform:
-            perspective(1000px)
-            rotateY(360deg)
-            rotateX(0)
-            rotateZ(0)
-            scale(1);
-
-        filter:
-            drop-shadow(
-                0 15px 30px
-                rgba(0,0,0,.4)
-            )
-            drop-shadow(
-                0 0 28px
-                rgba(59,130,246,.22)
-            );
-    }
-
-    80% {
-        opacity: 1;
-
-        transform:
-            perspective(1000px)
-            rotateY(360deg)
-            rotateX(0)
-            rotateZ(0)
-            scale(1);
-
-        filter:
-            drop-shadow(
-                0 10px 25px
-                rgba(0,0,0,.35)
-            )
-            drop-shadow(
-                0 0 20px
-                rgba(59,130,246,.15)
-            );
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            perspective(1000px)
-            rotateY(360deg)
-            rotateX(0)
-            rotateZ(0)
-            scale(1.08);
-
-        filter:
-            drop-shadow(
-                0 0 35px
-                rgba(59,130,246,.04)
-            );
-    }
-}
-
-@keyframes parentLogoHalo {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(.2);
-    }
-
-    25% {
-        opacity: .75;
-
-        transform:
-            scale(.7);
-    }
-
-    50% {
-        opacity: .55;
-
-        transform:
-            scale(1);
-    }
-
-    78% {
-        opacity: .2;
-
-        transform:
-            scale(1.25);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            scale(1.45);
-    }
-}
-
-@keyframes parentIntroTitle {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translateY(25px)
-            scale(.92);
-
-        filter: blur(8px);
-    }
-
-    100% {
-        opacity: 1;
-
-        transform:
-            translateY(0)
-            scale(1);
-
-        filter: blur(0);
-    }
-}
-
-@keyframes parentIntroSubtitle {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translateY(18px);
-
-        filter: blur(5px);
-    }
-
-    100% {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
-        filter: blur(0);
-    }
-}
-
-@keyframes parentIntroLine {
-
-    0% {
-        width: 0;
-
-        opacity: 0;
-    }
-
-    100% {
-        width:
-            min(230px, 55vw);
-
-        opacity: 1;
-    }
-}
-
-@keyframes parentLoadingText {
-
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes parentLoadingPulse {
-
-    0%,
-    100% {
-        width: 8px;
-
-        opacity: .45;
-    }
-
-    50% {
-        width: 24px;
-
-        opacity: 1;
-    }
-}
-
-
-/* =====================================================
-   INTRO MOBILE
-===================================================== */
-
-@media (max-width: 600px) {
-
-    #parentIntroLogo {
-        width: 58vw;
-        height: 58vw;
-    }
-
-    #parentIntro .intro-title {
-        font-size: 32px;
-    }
-
-    #parentIntro .intro-subtitle {
-        font-size: 12px;
-
-        padding: 0 20px;
-    }
-}
-
-
-/* =====================================================
-   REDUCED MOTION
-===================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-
-    html {
-        scroll-behavior: auto;
-    }
-
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
-
-        animation-duration: 0.01ms !important;
-
-        animation-iteration-count: 1 !important;
-    }
-
-    #parentIntroLogo,
-    #parentIntro::before,
-    #parentIntro::after,
-    #parentIntro .intro-ring,
-    #parentIntro .intro-particles span,
-    #parentIntro .intro-title,
-    #parentIntro .intro-subtitle,
-    #parentIntro .intro-line,
-    #parentIntro .intro-loading {
-        animation: none !important;
-    }
-
-    #parentIntroLogo {
-        opacity: 1;
-
-        transform: none;
-    }
-
-    #parentIntro .intro-title,
-    #parentIntro .intro-subtitle,
-    #parentIntro .intro-line,
-    #parentIntro .intro-loading {
-        opacity: 1;
-    }
-}
-
-/* =====================================================
-   CINEMATIC INTRO
-===================================================== */
-
-#cinematicIntro {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 999999;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at center,
-            #073f46 0%,
-            #031f25 38%,
-            #010b10 72%,
-            #000307 100%
-        );
-
-    opacity: 1;
-
-    visibility: visible;
-
-    transition:
-        opacity 1.4s ease,
-        visibility 1.4s ease;
+        visibility 1.2s;
 }
 
 
@@ -3304,7 +3145,7 @@ input:focus-visible {
 
 
 /* =====================================================
-   BACKGROUND
+   INTRO BACKGROUND
 ===================================================== */
 
 .intro-background {
@@ -3317,41 +3158,47 @@ input:focus-visible {
 
         radial-gradient(
             circle at 50% 45%,
-            rgba(22, 214, 225, 0.20),
+            rgba(20,205,216,.22),
             transparent 25%
         ),
 
         radial-gradient(
-            circle at 20% 80%,
-            rgba(0, 174, 190, 0.10),
+            circle at 15% 80%,
+            rgba(0,180,195,.10),
             transparent 30%
         ),
 
         radial-gradient(
-            circle at 80% 20%,
-            rgba(255, 190, 70, 0.08),
-            transparent 25%
+            circle at 85% 20%,
+            rgba(255,190,70,.08),
+            transparent 28%
         );
 
     animation:
-        introBackgroundMove 8s ease-in-out infinite alternate;
+        introBackgroundMove
+        8s
+        ease-in-out
+        infinite
+        alternate;
 }
 
 
 @keyframes introBackgroundMove {
 
     from {
-        transform: scale(1);
+        transform:
+            scale(1);
     }
 
     to {
-        transform: scale(1.12);
+        transform:
+            scale(1.12);
     }
 }
 
 
 /* =====================================================
-   LIGHT GLOWS
+   INTRO GLOW
 ===================================================== */
 
 .intro-glow {
@@ -3360,23 +3207,30 @@ input:focus-visible {
 
     border-radius: 50%;
 
-    filter: blur(80px);
+    filter:
+        blur(80px);
 
     opacity: 0;
 
-    animation: introGlowAppear 2s ease forwards;
+    animation:
+        introGlowAppear
+        2s
+        ease
+        forwards;
 }
 
 
 .intro-glow-1 {
 
-    width: 420px;
+    width: 430px;
 
-    height: 420px;
+    height: 430px;
 
-    background: rgba(0, 210, 220, 0.20);
+    background:
+        rgba(0,210,220,.20);
 
-    animation-delay: .3s;
+    animation-delay:
+        .3s;
 }
 
 
@@ -3386,608 +3240,36 @@ input:focus-visible {
 
     height: 250px;
 
-    background: rgba(255, 190, 65, 0.12);
+    background:
+        rgba(255,190,65,.12);
 
-    animation-delay: .8s;
+    animation-delay:
+        .8s;
 }
 
 
 @keyframes introGlowAppear {
 
     from {
-        opacity: 0;
-        transform: scale(.5);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-
-/* =====================================================
-   CONTENT
-===================================================== */
-
-.intro-content {
-
-    position: relative;
-
-    z-index: 10;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    width: 100%;
-
-    height: 100%;
-}
-
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-.intro-logo-wrapper {
-
-    position: relative;
-
-    width: 300px;
-
-    height: 300px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    opacity: 0;
-
-    transform:
-        scale(.35)
-        rotate(-8deg);
-
-    animation:
-        introLogoReveal 2s
-        cubic-bezier(.16,1,.3,1)
-        .25s
-        forwards;
-}
-
-
-@keyframes introLogoReveal {
-
-    0% {
 
         opacity: 0;
 
         transform:
-            scale(.35)
-            rotate(-8deg);
-
-        filter:
-            blur(14px);
+            scale(.5);
     }
 
-    60% {
+    to {
 
         opacity: 1;
 
         transform:
-            scale(1.08)
-            rotate(2deg);
-
-        filter:
-            blur(0);
-    }
-
-    100% {
-
-        opacity: 1;
-
-        transform:
-            scale(1)
-            rotate(0);
-    }
-}
-
-
-.intro-logo {
-
-    position: relative;
-
-    z-index: 5;
-
-    width: 235px;
-
-    height: 235px;
-
-    object-fit: contain;
-
-    border-radius: 50%;
-
-    filter:
-
-        drop-shadow(
-            0 0 18px
-            rgba(255, 196, 80, .45)
-        )
-
-        drop-shadow(
-            0 0 45px
-            rgba(0, 211, 221, .28)
-        );
-
-    animation:
-        introLogoFloat 4s
-        ease-in-out
-        2s
-        infinite;
-}
-
-
-@keyframes introLogoFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-7px);
+            scale(1);
     }
 }
 
 
 /* =====================================================
-   LOGO GLOW
-===================================================== */
-
-.intro-logo-glow {
-
-    position: absolute;
-
-    width: 230px;
-
-    height: 230px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 196, 75, .24),
-            rgba(0, 213, 222, .12) 45%,
-            transparent 72%
-        );
-
-    filter: blur(18px);
-
-    animation:
-        logoGlowPulse 2.5s
-        ease-in-out
-        infinite;
-}
-
-
-@keyframes logoGlowPulse {
-
-    0%,
-    100% {
-        transform: scale(.90);
-
-        opacity: .55;
-    }
-
-    50% {
-        transform: scale(1.12);
-
-        opacity: .95;
-    }
-}
-
-
-/* =====================================================
-   ROTATING RINGS
-===================================================== */
-
-.intro-ring {
-
-    position: absolute;
-
-    border-radius: 50%;
-
-    pointer-events: none;
-
-    border: 1px solid rgba(255, 195, 72, .65);
-
-    box-shadow:
-        0 0 10px rgba(255, 190, 60, .25),
-        inset 0 0 10px rgba(255, 190, 60, .10);
-}
-
-
-.intro-ring-1 {
-
-    width: 275px;
-
-    height: 275px;
-
-    border-top-color: transparent;
-
-    border-left-color: rgba(255, 211, 107, .9);
-
-    animation:
-        introRingRotate 7s
-        linear
-        infinite;
-}
-
-
-.intro-ring-2 {
-
-    width: 315px;
-
-    height: 315px;
-
-    border-right-color: transparent;
-
-    border-bottom-color: rgba(0, 211, 221, .55);
-
-    animation:
-        introRingRotateReverse 10s
-        linear
-        infinite;
-}
-
-
-.intro-ring-3 {
-
-    width: 350px;
-
-    height: 350px;
-
-    border-left-color: transparent;
-
-    border-top-color: rgba(255, 213, 116, .30);
-
-    animation:
-        introRingRotate 14s
-        linear
-        infinite;
-}
-
-
-@keyframes introRingRotate {
-
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-@keyframes introRingRotateReverse {
-
-    from {
-        transform: rotate(360deg);
-    }
-
-    to {
-        transform: rotate(0deg);
-    }
-}
-
-
-/* =====================================================
-   LIGHT SWEEP
-===================================================== */
-
-.intro-light-sweep {
-
-    position: absolute;
-
-    z-index: 8;
-
-    width: 70px;
-
-    height: 360px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.60),
-            rgba(255,215,120,.85),
-            transparent
-        );
-
-    filter: blur(12px);
-
-    transform:
-        rotate(28deg)
-        translateX(-300px);
-
-    opacity: 0;
-
-    animation:
-        introLightSweep 1.6s
-        ease-out
-        1.7s
-        forwards;
-}
-
-
-@keyframes introLightSweep {
-
-    0% {
-
-        opacity: 0;
-
-        transform:
-            rotate(28deg)
-            translateX(-300px);
-    }
-
-    20% {
-        opacity: .8;
-    }
-
-    100% {
-
-        opacity: 0;
-
-        transform:
-            rotate(28deg)
-            translateX(300px);
-    }
-}
-
-
-/* =====================================================
-   TITLE
-===================================================== */
-
-.intro-title {
-
-    margin-top: 28px;
-
-    font-size: 30px;
-
-    font-weight: 800;
-
-    color: #ffffff;
-
-    letter-spacing: -1px;
-
-    text-shadow:
-        0 0 18px rgba(255,255,255,.18),
-        0 0 35px rgba(0,210,220,.18);
-
-    opacity: 0;
-
-    transform: translateY(20px);
-
-    animation:
-        introTitleReveal
-        1s
-        ease
-        2s
-        forwards;
-}
-
-
-@keyframes introTitleReveal {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateY(20px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-    }
-}
-
-
-/* =====================================================
-   DIVIDER
-===================================================== */
-
-.intro-divider {
-
-    width: 0;
-
-    height: 1px;
-
-    margin-top: 14px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #d9a83e,
-            #ffffff,
-            #d9a83e,
-            transparent
-        );
-
-    box-shadow:
-        0 0 12px rgba(255,200,80,.55);
-
-    animation:
-        introDividerReveal
-        1s
-        ease
-        2.3s
-        forwards;
-}
-
-
-@keyframes introDividerReveal {
-
-    from {
-        width: 0;
-        opacity: 0;
-    }
-
-    to {
-        width: 180px;
-        opacity: 1;
-    }
-}
-
-
-/* =====================================================
-   SCHOOL NAME
-===================================================== */
-
-.intro-school {
-
-    margin-top: 12px;
-
-    font-size: 19px;
-
-    font-weight: 600;
-
-    color: #e8c36a;
-
-    letter-spacing: 1px;
-
-    text-shadow:
-        0 0 12px rgba(225,180,65,.30);
-
-    opacity: 0;
-
-    transform: translateY(12px);
-
-    animation:
-        introSchoolReveal
-        1s
-        ease
-        2.5s
-        forwards;
-}
-
-
-@keyframes introSchoolReveal {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateY(12px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-    }
-}
-
-
-/* =====================================================
-   LOADING DOTS
-===================================================== */
-
-.intro-loading {
-
-    display: flex;
-
-    gap: 7px;
-
-    margin-top: 30px;
-
-    opacity: 0;
-
-    animation:
-        introLoadingAppear
-        .8s
-        ease
-        2.8s
-        forwards;
-}
-
-
-.intro-loading span {
-
-    width: 5px;
-
-    height: 5px;
-
-    border-radius: 50%;
-
-    background: #e9c467;
-
-    box-shadow:
-        0 0 8px rgba(233,196,103,.8);
-
-    animation:
-        introDotPulse 1.2s
-        ease-in-out
-        infinite;
-}
-
-
-.intro-loading span:nth-child(2) {
-    animation-delay: .15s;
-}
-
-.intro-loading span:nth-child(3) {
-    animation-delay: .3s;
-}
-
-
-@keyframes introLoadingAppear {
-
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-
-@keyframes introDotPulse {
-
-    0%,
-    100% {
-        transform: scale(.7);
-
-        opacity: .35;
-    }
-
-    50% {
-        transform: scale(1.4);
-
-        opacity: 1;
-    }
-}
-
-
-/* =====================================================
-   PARTICLES
+   INTRO PARTICLES
 ===================================================== */
 
 .intro-particles {
@@ -4012,10 +3294,12 @@ input:focus-visible {
 
     border-radius: 50%;
 
-    background: #e9c467;
+    background:
+        #e9c467;
 
     box-shadow:
-        0 0 8px rgba(233,196,103,.7);
+        0 0 8px
+        rgba(233,196,103,.7);
 
     opacity: 0;
 
@@ -4131,62 +3415,1952 @@ input:focus-visible {
 
 
 /* =====================================================
+   INTRO CONTENT
+===================================================== */
+
+.intro-content {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   INTRO LOGO WRAPPER
+===================================================== */
+
+.intro-logo-wrapper {
+
+    position: relative;
+
+    width: 300px;
+
+    height: 300px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    opacity: 0;
+
+    transform:
+        scale(.35)
+        rotate(-8deg);
+
+    animation:
+        introLogoReveal
+        2s
+        cubic-bezier(.16,1,.3,1)
+        .25s
+        forwards;
+}
+
+
+@keyframes introLogoReveal {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            scale(.35)
+            rotate(-8deg);
+
+        filter:
+            blur(14px);
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform:
+            scale(1.08)
+            rotate(2deg);
+
+        filter:
+            blur(0);
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            rotate(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOGO
+===================================================== */
+
+.intro-logo {
+
+    position: relative;
+
+    z-index: 5;
+
+    width: 235px;
+
+    height: 235px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+
+    filter:
+
+        drop-shadow(
+            0 0 18px
+            rgba(255,196,80,.45)
+        )
+
+        drop-shadow(
+            0 0 45px
+            rgba(0,211,221,.28)
+        );
+
+    animation:
+        introLogoFloat
+        4s
+        ease-in-out
+        2s
+        infinite;
+}
+
+
+@keyframes introLogoFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-7px);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOGO GLOW
+===================================================== */
+
+.intro-logo-glow {
+
+    position: absolute;
+
+    width: 230px;
+
+    height: 230px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,196,75,.24),
+            rgba(0,213,222,.12) 45%,
+            transparent 72%
+        );
+
+    filter:
+        blur(18px);
+
+    animation:
+        logoGlowPulse
+        2.5s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes logoGlowPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(.90);
+
+        opacity:
+            .55;
+    }
+
+    50% {
+        transform:
+            scale(1.12);
+
+        opacity:
+            .95;
+    }
+}
+
+
+/* =====================================================
+   INTRO RINGS
+===================================================== */
+
+.intro-ring {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    border:
+        1px solid
+        rgba(255,195,72,.65);
+
+    box-shadow:
+
+        0 0 10px
+        rgba(255,190,60,.25),
+
+        inset 0 0 10px
+        rgba(255,190,60,.10);
+}
+
+
+.intro-ring-1 {
+
+    width: 275px;
+
+    height: 275px;
+
+    border-top-color:
+        transparent;
+
+    border-left-color:
+        rgba(255,211,107,.9);
+
+    animation:
+        introRingRotate
+        7s
+        linear
+        infinite;
+}
+
+
+.intro-ring-2 {
+
+    width: 315px;
+
+    height: 315px;
+
+    border-right-color:
+        transparent;
+
+    border-bottom-color:
+        rgba(0,211,221,.55);
+
+    animation:
+        introRingRotateReverse
+        10s
+        linear
+        infinite;
+}
+
+
+.intro-ring-3 {
+
+    width: 350px;
+
+    height: 350px;
+
+    border-left-color:
+        transparent;
+
+    border-top-color:
+        rgba(255,213,116,.30);
+
+    animation:
+        introRingRotate
+        14s
+        linear
+        infinite;
+}
+
+
+@keyframes introRingRotate {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+@keyframes introRingRotateReverse {
+
+    from {
+        transform:
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            rotate(0deg);
+    }
+}
+
+
+/* =====================================================
+   INTRO LIGHT SWEEP
+===================================================== */
+
+.intro-light-sweep {
+
+    position: absolute;
+
+    z-index: 8;
+
+    width: 70px;
+
+    height: 360px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.60),
+            rgba(255,215,120,.85),
+            transparent
+        );
+
+    filter:
+        blur(12px);
+
+    transform:
+        rotate(28deg)
+        translateX(-300px);
+
+    opacity: 0;
+
+    animation:
+        introLightSweep
+        1.6s
+        ease-out
+        1.7s
+        forwards;
+}
+
+
+@keyframes introLightSweep {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            rotate(28deg)
+            translateX(-300px);
+    }
+
+    20% {
+        opacity: .8;
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            rotate(28deg)
+            translateX(300px);
+    }
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 5 / 5
+===================================================== */
+
+
+/* =====================================================
+   INTRO TITLE
+===================================================== */
+
+.intro-title {
+
+    margin-top: 28px;
+
+    color:
+        #ffffff;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -1px;
+
+    text-shadow:
+
+        0 0 18px
+        rgba(255,255,255,.18),
+
+        0 0 35px
+        rgba(0,210,220,.18);
+
+    opacity: 0;
+
+    transform:
+        translateY(20px);
+
+    animation:
+        introTitleReveal
+        1s
+        ease
+        2s
+        forwards;
+}
+
+
+@keyframes introTitleReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO DIVIDER
+===================================================== */
+
+.intro-divider {
+
+    width: 0;
+
+    height: 1px;
+
+    margin-top: 14px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d9a83e,
+            #ffffff,
+            #d9a83e,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(255,200,80,.55);
+
+    animation:
+        introDividerReveal
+        1s
+        ease
+        2.3s
+        forwards;
+}
+
+
+@keyframes introDividerReveal {
+
+    from {
+
+        width: 0;
+
+        opacity: 0;
+    }
+
+    to {
+
+        width: 180px;
+
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   INTRO SCHOOL
+===================================================== */
+
+.intro-school {
+
+    margin-top: 12px;
+
+    color:
+        #e8c36a;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        1px;
+
+    text-shadow:
+        0 0 12px
+        rgba(225,180,65,.30);
+
+    opacity: 0;
+
+    transform:
+        translateY(12px);
+
+    animation:
+        introSchoolReveal
+        1s
+        ease
+        2.5s
+        forwards;
+}
+
+
+@keyframes introSchoolReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOADING
+===================================================== */
+
+.intro-loading {
+
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 30px;
+
+    opacity: 0;
+
+    animation:
+        introLoadingAppear
+        .8s
+        ease
+        2.8s
+        forwards;
+}
+
+
+.intro-loading span {
+
+    width: 5px;
+
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        #e9c467;
+
+    box-shadow:
+        0 0 8px
+        rgba(233,196,103,.8);
+
+    animation:
+        introDotPulse
+        1.2s
+        ease-in-out
+        infinite;
+}
+
+
+.intro-loading span:nth-child(2) {
+    animation-delay:
+        .15s;
+}
+
+
+.intro-loading span:nth-child(3) {
+    animation-delay:
+        .3s;
+}
+
+
+@keyframes introLoadingAppear {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes introDotPulse {
+
+    0%,
+    100% {
+
+        transform:
+            scale(.7);
+
+        opacity:
+            .35;
+    }
+
+    50% {
+
+        transform:
+            scale(1.4);
+
+        opacity:
+            1;
+    }
+}
+
+
+/* =====================================================
+   OLD / EXISTING PARENT INTRO
+   KEPT FOR COMPATIBILITY
+===================================================== */
+
+#parentIntro {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2147483647;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(37,99,235,.20),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            #111d35 0%,
+            #081225 42%,
+            #030812 75%,
+            #000 100%
+        );
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity .9s
+        cubic-bezier(.4,0,.2,1),
+
+        visibility .9s;
+}
+
+
+#parentIntro.hide {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+#parentIntroLogo {
+
+    max-width: 240px;
+
+    max-height: 240px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+
+    filter:
+        drop-shadow(
+            0 0 30px
+            rgba(59,130,246,.35)
+        );
+}
+
+
+/* =====================================================
+   RESPONSIVE - DESKTOP
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .cards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .map-info-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .header-top {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .class-badge {
+
+        align-self:
+            flex-start;
+    }
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .page {
+
+        padding:
+            12px;
+    }
+
+
+    .parent-panel {
+
+        padding:
+            8px
+            12px
+            25px;
+    }
+
+
+    .cards {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+
+    .location-section {
+
+        padding:
+            18px;
+    }
+
+
+    .location-section-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .radius-badge {
+
+        width: 100%;
+
+        text-align:
+            center;
+    }
+
+
+    .parent-map {
+
+        height:
+            360px;
+    }
+}
+
+
+/* =====================================================
    MOBILE
 ===================================================== */
 
 @media (max-width: 600px) {
 
+    body {
+
+        background:
+
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(8,167,181,.13),
+                transparent 32%
+            ),
+
+            linear-gradient(
+                160deg,
+                #f4fafb,
+                #f7f9fc
+            );
+
+        background-attachment:
+            fixed;
+    }
+
+
+    .page {
+
+        padding:
+            7px;
+    }
+
+
+    .login-screen {
+
+        min-height:
+            calc(100vh - 14px);
+
+        padding:
+            12px;
+    }
+
+
+    .login-box {
+
+        padding:
+            28px
+            19px
+            23px;
+
+        border-radius:
+            27px;
+    }
+
+
+    .login-icon {
+
+        width:
+            74px;
+
+        height:
+            74px;
+
+        margin-bottom:
+            18px;
+
+        border-radius:
+            23px;
+
+        font-size:
+            30px;
+    }
+
+
+    .title {
+
+        font-size:
+            25px;
+    }
+
+
+    .subtitle {
+
+        margin-bottom:
+            24px;
+
+        font-size:
+            12px;
+    }
+
+
+    input {
+
+        height:
+            54px;
+
+        border-radius:
+            16px;
+
+        font-size:
+            14px;
+    }
+
+
+    .login-button {
+
+        height:
+            56px;
+
+        border-radius:
+            17px;
+
+        font-size:
+            15px;
+    }
+
+
+    .parent-panel {
+
+        padding:
+            7px
+            7px
+            24px;
+    }
+
+
+    .header {
+
+        padding:
+            18px;
+
+        border-radius:
+            25px;
+    }
+
+
+    .header-top {
+
+        flex-direction:
+            row;
+
+        align-items:
+            center;
+    }
+
+
+    .welcome {
+
+        gap:
+            11px;
+
+        min-width:
+            0;
+    }
+
+
+    .avatar {
+
+        width:
+            53px;
+
+        height:
+            53px;
+
+        flex:
+            0 0 53px;
+
+        border-radius:
+            18px;
+
+        font-size:
+            24px;
+    }
+
+
+    .welcome h1 {
+
+        max-width:
+            145px;
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
+        white-space:
+            nowrap;
+
+        font-size:
+            18px;
+    }
+
+
+    .welcome small {
+
+        font-size:
+            10px;
+    }
+
+
+    .class-badge {
+
+        padding:
+            8px
+            10px;
+
+        border-radius:
+            13px;
+
+        font-size:
+            10px;
+    }
+
+
+    .dashboard {
+
+        margin-top:
+            11px;
+    }
+
+
+    .date-card {
+
+        min-height:
+            auto;
+
+        padding:
+            14px;
+
+        border-radius:
+            20px;
+    }
+
+
+    .info-icon {
+
+        width:
+            43px;
+
+        height:
+            43px;
+
+        flex:
+            0 0 43px;
+
+        border-radius:
+            14px;
+
+        font-size:
+            18px;
+    }
+
+
+    .date-info strong {
+
+        font-size:
+            12px;
+    }
+
+
+    .date-info span {
+
+        font-size:
+            10px;
+    }
+
+
+    .clock {
+
+        font-size:
+            22px;
+    }
+
+
+    .cards {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap:
+            7px;
+
+        margin-top:
+            10px;
+    }
+
+
+    .info-card {
+
+        min-height:
+            132px;
+
+        padding:
+            12px 7px;
+
+        border-radius:
+            18px;
+
+        text-align:
+            center;
+    }
+
+
+    .card-title {
+
+        flex-direction:
+            column;
+
+        justify-content:
+            center;
+
+        gap:
+            5px;
+
+        margin-bottom:
+            9px;
+
+        font-size:
+            9px;
+    }
+
+
+    .card-icon {
+
+        width:
+            34px;
+
+        height:
+            34px;
+
+        flex:
+            0 0 34px;
+
+        border-radius:
+            11px;
+
+        font-size:
+            15px;
+    }
+
+
+    .card-value {
+
+        font-size:
+            12px;
+    }
+
+
+    .card-muted {
+
+        margin-top:
+            5px;
+
+        font-size:
+            8px;
+
+        line-height:
+            1.6;
+    }
+
+
+    .status {
+
+        padding:
+            5px
+            7px;
+
+        gap:
+            5px;
+
+        border-radius:
+            10px;
+
+        font-size:
+            9px;
+    }
+
+
+    .status-dot {
+
+        width:
+            6px;
+
+        height:
+            6px;
+
+        flex-basis:
+            6px;
+    }
+
+
+    .location-section {
+
+        padding:
+            15px;
+
+        margin-top:
+            10px;
+
+        border-radius:
+            23px;
+    }
+
+
+    .location-section-header {
+
+        margin-bottom:
+            12px;
+    }
+
+
+    .location-section-header h2 {
+
+        font-size:
+            17px;
+    }
+
+
+    .location-section-header p {
+
+        font-size:
+            10px;
+    }
+
+
+    .radius-badge {
+
+        padding:
+            8px;
+
+        border-radius:
+            12px;
+
+        font-size:
+            10px;
+    }
+
+
+    .location-cards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap:
+            8px;
+
+        margin:
+            12px 0;
+    }
+
+
+    .location-card {
+
+        min-height:
+            116px;
+
+        flex-direction:
+            column;
+
+        justify-content:
+            center;
+
+        gap:
+            7px;
+
+        padding:
+            11px 7px;
+
+        border-radius:
+            17px;
+
+        text-align:
+            center;
+    }
+
+
+    .location-card-icon {
+
+        width:
+            41px;
+
+        height:
+            41px;
+
+        flex:
+            0 0 41px;
+
+        border-radius:
+            13px;
+
+        font-size:
+            19px;
+    }
+
+
+    .location-card-title {
+
+        margin-bottom:
+            3px;
+
+        font-size:
+            9px;
+    }
+
+
+    .location-card-value {
+
+        font-size:
+            21px;
+    }
+
+
+    #allowedRadiusValue,
+    #liveParentDistance {
+
+        font-size:
+            22px;
+    }
+
+
+    .location-card-unit {
+
+        font-size:
+            8px;
+    }
+
+
+    .location-card-description {
+
+        font-size:
+            7px;
+    }
+
+
+    .location-status {
+
+        min-height:
+            40px;
+
+        padding:
+            8px;
+
+        border-radius:
+            12px;
+
+        font-size:
+            9px;
+    }
+
+
+    .location-refresh-button {
+
+        min-height:
+            51px;
+
+        margin-top:
+            9px;
+
+        border-radius:
+            15px;
+
+        font-size:
+            12px;
+    }
+
+
+    .parent-map {
+
+        height:
+            310px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .map-info-grid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            8px;
+    }
+
+
+    .map-info-card {
+
+        min-height:
+            62px;
+
+        padding:
+            10px;
+    }
+
+
+    .map-info-icon {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        flex:
+            0 0 38px;
+
+        border-radius:
+            11px;
+    }
+
+
+    .map-info-card span {
+
+        font-size:
+            9px;
+    }
+
+
+    .map-info-card strong {
+
+        font-size:
+            11px;
+    }
+
+
+    .call-section {
+
+        margin-top:
+            10px;
+
+        padding:
+            23px
+            14px;
+
+        border-radius:
+            24px;
+    }
+
+
+    .call-section h2 {
+
+        font-size:
+            18px;
+    }
+
+
+    .call-section p {
+
+        margin-bottom:
+            18px;
+
+        font-size:
+            10px;
+    }
+
+
+    .call-button {
+
+        min-height:
+            64px;
+
+        border-radius:
+            18px;
+
+        font-size:
+            15px;
+    }
+
+
+    .change-password-card {
+
+        margin-top:
+            12px;
+
+        padding:
+            17px;
+
+        border-radius:
+            21px;
+    }
+
+
+    .change-password-title {
+
+        font-size:
+            16px;
+    }
+
+
+    .change-password-description {
+
+        font-size:
+            10px;
+    }
+
+
+    .change-password-form input,
+    #changeParentCodeButton {
+
+        height:
+            50px;
+
+        border-radius:
+            15px;
+    }
+
+
+    .parent-notification {
+
+        top:
+            10px;
+
+        right:
+            10px;
+
+        width:
+            calc(100% - 20px);
+
+        padding:
+            13px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .parent-notification-icon {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        min-width:
+            42px;
+
+        font-size:
+            22px;
+    }
+
+
+    .parent-notification-content strong {
+
+        font-size:
+            14px;
+    }
+
+
+    .parent-notification-content span {
+
+        font-size:
+            11px;
+    }
+
+
+    #parentCallNotification {
+
+        top:
+            10px;
+
+        width:
+            calc(100% - 20px);
+
+        padding:
+            13px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .parent-call-notification-icon {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        min-width:
+            42px;
+
+        font-size:
+            20px;
+    }
+
+
+    .parent-call-notification-title {
+
+        font-size:
+            14px;
+    }
+
+
+    .parent-call-notification-text {
+
+        font-size:
+            11px;
+    }
+
+
     .intro-logo-wrapper {
 
-        width: 250px;
+        width:
+            250px;
 
-        height: 250px;
+        height:
+            250px;
     }
+
 
     .intro-logo {
 
-        width: 190px;
+        width:
+            190px;
 
-        height: 190px;
+        height:
+            190px;
     }
+
 
     .intro-logo-glow {
 
-        width: 190px;
+        width:
+            190px;
 
-        height: 190px;
+        height:
+            190px;
     }
+
 
     .intro-ring-1 {
 
-        width: 225px;
+        width:
+            225px;
 
-        height: 225px;
+        height:
+            225px;
     }
+
 
     .intro-ring-2 {
 
-        width: 255px;
+        width:
+            255px;
 
-        height: 255px;
+        height:
+            255px;
     }
+
 
     .intro-ring-3 {
 
-        width: 285px;
+        width:
+            285px;
 
-        height: 285px;
+        height:
+            285px;
     }
+
 
     .intro-title {
 
-        font-size: 24px;
+        margin-top:
+            20px;
 
-        margin-top: 22px;
+        font-size:
+            23px;
     }
+
 
     .intro-school {
 
-        font-size: 17px;
+        font-size:
+            16px;
+    }
+
+
+    .intro-divider {
+
+        margin-top:
+            11px;
+    }
+
+
+    .intro-loading {
+
+        margin-top:
+            23px;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .parent-panel {
+
+        padding:
+            5px
+            5px
+            20px;
+    }
+
+
+    .header {
+
+        padding:
+            16px
+            13px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .avatar {
+
+        width:
+            48px;
+
+        height:
+            48px;
+
+        flex:
+            0 0 48px;
+
+        border-radius:
+            16px;
+    }
+
+
+    .welcome h1 {
+
+        max-width:
+            125px;
+
+        font-size:
+            16px;
+    }
+
+
+    .class-badge {
+
+        padding:
+            7px
+            8px;
+
+        font-size:
+            9px;
+    }
+
+
+    .date-card {
+
+        padding:
+            12px;
+    }
+
+
+    .clock {
+
+        font-size:
+            20px;
+    }
+
+
+    .cards {
+
+        gap:
+            5px;
+    }
+
+
+    .info-card {
+
+        min-height:
+            122px;
+
+        padding:
+            10px
+            4px;
+    }
+
+
+    .card-title {
+
+        font-size:
+            8px;
+    }
+
+
+    .card-icon {
+
+        width:
+            31px;
+
+        height:
+            31px;
+
+        flex-basis:
+            31px;
+
+        font-size:
+            13px;
+    }
+
+
+    .card-value {
+
+        font-size:
+            11px;
+    }
+
+
+    .location-section {
+
+        padding:
+            12px;
+    }
+
+
+    .location-card {
+
+        min-height:
+            108px;
+    }
+
+
+    .location-card-icon {
+
+        width:
+            37px;
+
+        height:
+            37px;
+
+        flex-basis:
+            37px;
+
+        font-size:
+            17px;
+    }
+
+
+    .location-card-value,
+    #allowedRadiusValue,
+    #liveParentDistance {
+
+        font-size:
+            19px;
+    }
+
+
+    .location-card-description {
+
+        font-size:
+            6.5px;
+    }
+
+
+    .parent-map {
+
+        height:
+            285px;
+    }
+
+
+    .call-section {
+
+        padding:
+            21px
+            12px;
+    }
+
+
+    .call-section h2 {
+
+        font-size:
+            17px;
+    }
+
+
+    .call-button {
+
+        min-height:
+            60px;
+
+        font-size:
+            14px;
+    }
+
+
+    .change-password-card {
+
+        padding:
+            14px;
+    }
+
+
+    .intro-title {
+
+        font-size:
+            21px;
+    }
+
+
+    .intro-school {
+
+        font-size:
+            15px;
     }
 }
