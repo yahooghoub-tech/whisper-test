@@ -3637,3 +3637,42 @@ window.parentPanelDebug = {
 
 };
 
+/* =====================================================
+   CINEMATIC INTRO
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const cinematicIntro =
+            document.getElementById("cinematicIntro");
+
+        if (!cinematicIntro) {
+            return;
+        }
+
+
+        setTimeout(
+            function () {
+
+                cinematicIntro.classList.add(
+                    "intro-hidden"
+                );
+
+            },
+            4800
+        );
+
+
+        setTimeout(
+            function () {
+
+                cinematicIntro.remove();
+
+            },
+            6500
+        );
+
+    }
+);
