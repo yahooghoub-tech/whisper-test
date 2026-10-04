@@ -3645,3 +3645,16 @@ window.parentPanelDebug = {
 console.log(
     "Parent panel initialized successfully."
 );
+/* =====================================================
+   CINEMATIC INTRO
+===================================================== */
+
+setTimeout(() => {
+
+    const intro = document.getElementById("teacherIntro");
+
+    if (intro) {
+        intro.classList.add("hide");
+    }
+
+}, 4800);
