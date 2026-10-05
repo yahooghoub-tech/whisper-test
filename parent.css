@@ -2312,13 +2312,13 @@ input:focus {
     border-radius: 20px;
 
     color:
-        #087987;
+        #231f18;
 
     background:
         linear-gradient(
             135deg,
-            #ffffff,
-            #edfafa
+            #171212,
+            #0c1414
         );
 
     font-size: 17px;

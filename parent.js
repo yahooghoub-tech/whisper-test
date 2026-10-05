@@ -828,7 +828,7 @@ function getCallSchedule(
     ) {
 
         return {
-            start: 14 * 60,
+            start: 8 * 60,
             end: 24 * 60,
             text: "14:00 تا 24:00"
         };
