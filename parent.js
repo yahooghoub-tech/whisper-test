@@ -172,6 +172,7 @@ function nameSimilarity(
         1 -
         distance / maxLength
     );
+
 }
 
 
@@ -669,16 +670,15 @@ const GPS_CONFIG = {
 
     timeout: 20000,
 
-    maximumAge: 10000,
+    maximumAge: 5000,
 
-    /*
-       فقط برای اطلاع‌رسانی.
-       در تصمیم نهایی فاصله همچنان معیار اصلی است.
-    */
+    fallbackTimeout: 25000,
+
+    fallbackMaximumAge: 10000,
 
     warningAccuracy: 150,
 
-    maxAttempts: 3
+    maxAttempts: 2
 
 };
 
@@ -777,7 +777,17 @@ function getIranTimeParts() {
 
     };
 
-    const hour = getPart("hour");
+    let hour =
+        getPart("hour");
+
+    /*
+       بعضی مرورگرها نیمه‌شب را 24 نمایش می‌دهند.
+    */
+
+    if (hour === 24) {
+        hour = 0;
+    }
+
     const minute = getPart("minute");
     const second = getPart("second");
 
@@ -1250,7 +1260,55 @@ function isGeolocationSupported() {
 
     return (
         typeof navigator !== "undefined" &&
-        "geolocation" in navigator
+        navigator.geolocation &&
+        typeof navigator.geolocation.getCurrentPosition ===
+            "function"
+    );
+
+}
+
+
+/* =====================================================
+   SECURE GPS CONTEXT
+===================================================== */
+
+function isGPSAllowedContext() {
+
+    if (
+        typeof window === "undefined"
+    ) {
+
+        return false;
+
+    }
+
+    /*
+       Chrome / Safari / Opera:
+       GPS روی HTTPS قابل استفاده است.
+       localhost نیز مجاز است.
+    */
+
+    if (
+        window.isSecureContext === true
+    ) {
+
+        return true;
+
+    }
+
+    const protocol =
+        window.location &&
+        window.location.protocol;
+
+    const hostname =
+        window.location &&
+        window.location.hostname;
+
+    return (
+        protocol === "https:" ||
+        hostname === "localhost" ||
+        hostname === "127.0.0.1" ||
+        hostname === "::1"
     );
 
 }
@@ -1269,12 +1327,14 @@ async function checkGPSPermission() {
     }
 
     /*
-       Safari قدیمی ممکن است Permissions API نداشته باشد.
+       Safari و بعضی مرورگرها ممکن است
+       Permissions API را نداشته باشند.
     */
 
     if (
         navigator.permissions &&
-        typeof navigator.permissions.query === "function"
+        typeof navigator.permissions.query ===
+            "function"
     ) {
 
         try {
@@ -1365,34 +1425,45 @@ function getGPSUserMessage(error) {
 
     }
 
+    if (
+        error.code === 0 &&
+        error.message
+    ) {
+
+        return error.message;
+
+    }
+
     switch (error.code) {
 
         case 1:
 
             return (
                 "دسترسی به موقعیت مکانی داده نشده است.\n\n" +
-                "لطفاً Location یا GPS را روشن کنید " +
-                "و اجازه دسترسی مرورگر به موقعیت مکانی را فعال کنید."
+                "لطفاً در تنظیمات Chrome یا مرورگر، " +
+                "Location این سایت را روی Allow قرار دهید."
             );
 
         case 2:
 
             return (
                 "موقعیت مکانی قابل تشخیص نیست.\n\n" +
-                "لطفاً GPS دستگاه را روشن کنید و " +
-                "چند لحظه صبر کنید."
+                "لطفاً GPS دستگاه را روشن کنید و چند لحظه " +
+                "در همان صفحه بمانید، سپس دوباره تلاش کنید."
             );
 
         case 3:
 
             return (
                 "دریافت موقعیت مکانی بیش از حد طول کشید.\n\n" +
-                "لطفاً چند لحظه صبر کرده و دوباره تلاش کنید."
+                "در حال حاضر دوباره تلاش کنید. در صورت نیاز " +
+                "GPS گوشی را خاموش و روشن کنید."
             );
 
         default:
 
             return (
+                error.message ||
                 "خطا در دریافت موقعیت مکانی.\n\n" +
                 "لطفاً دوباره تلاش کنید."
             );
@@ -1490,6 +1561,7 @@ function validateGPSPosition(position) {
 
 /* =====================================================
    CURRENT LOCATION
+   HIGH ACCURACY + FALLBACK
 ===================================================== */
 
 function getCurrentParentLocation(
@@ -1509,72 +1581,193 @@ function getCurrentParentLocation(
                 reject({
                     code: 0,
                     message:
-                        "Geolocation unavailable"
+                        "این مرورگر از موقعیت مکانی پشتیبانی نمی‌کند."
                 });
 
                 return;
 
             }
 
+
+            if (!isGPSAllowedContext()) {
+
+                reject({
+                    code: 0,
+                    message:
+                        "برای استفاده از GPS، سایت باید با HTTPS باز شود."
+                });
+
+                return;
+
+            }
+
+
             const gpsOptions = {
 
                 enableHighAccuracy:
-                    options.highAccuracy ??
-                    GPS_CONFIG.enableHighAccuracy,
+                    options.highAccuracy !== undefined
+                        ? options.highAccuracy
+                        : GPS_CONFIG.enableHighAccuracy,
 
                 timeout:
-                    options.timeout ??
-                    GPS_CONFIG.timeout,
+                    options.timeout !== undefined
+                        ? options.timeout
+                        : GPS_CONFIG.timeout,
 
                 maximumAge:
-                    options.maximumAge ??
-                    GPS_CONFIG.maximumAge
+                    options.maximumAge !== undefined
+                        ? options.maximumAge
+                        : GPS_CONFIG.maximumAge
 
             };
 
-            navigator.geolocation.getCurrentPosition(
 
-                position => {
+            let finished = false;
 
-                    const validation =
-                        validateGPSPosition(
-                            position
-                        );
 
-                    if (!validation.valid) {
+            function success(position) {
 
-                        reject({
-                            code: 2,
-                            message:
-                                validation.reason
-                        });
+                if (finished) {
+                    return;
+                }
 
-                        return;
-
-                    }
-
-                    resolve(
+                const validation =
+                    validateGPSPosition(
                         position
                     );
 
-                },
+                if (!validation.valid) {
 
-                error => {
+                    finished = true;
 
-                    console.error(
-                        "GPS getCurrentPosition error:",
+                    reject({
+                        code: 2,
+                        message:
+                            "مختصات GPS معتبر دریافت نشد."
+                    });
+
+                    return;
+
+                }
+
+                finished = true;
+
+                resolve(
+                    position
+                );
+
+            }
+
+
+            function finalError(error) {
+
+                if (finished) {
+                    return;
+                }
+
+                finished = true;
+
+                reject(
+                    error
+                );
+
+            }
+
+
+            function firstError(error) {
+
+                if (finished) {
+                    return;
+                }
+
+
+                /*
+                   اگر کاربر دسترسی را رد کرده،
+                   دوباره درخواست بی‌فایده است.
+                */
+
+                if (
+                    error &&
+                    error.code === 1
+                ) {
+
+                    finalError(
                         error
                     );
 
-                    reject(
-                        error
+                    return;
+
+                }
+
+
+                /*
+                   Chrome گاهی با enableHighAccuracy
+                   timeout می‌دهد.
+                   در این حالت با GPS معمولی دوباره
+                   امتحان می‌کنیم.
+                */
+
+                console.warn(
+                    "High accuracy GPS failed. Trying fallback:",
+                    error
+                );
+
+
+                try {
+
+                    navigator.geolocation.getCurrentPosition(
+
+                        success,
+
+                        finalError,
+
+                        {
+                            enableHighAccuracy: false,
+                            timeout:
+                                GPS_CONFIG.fallbackTimeout,
+                            maximumAge:
+                                GPS_CONFIG.fallbackMaximumAge
+                        }
+
                     );
 
-                },
+                }
 
-                gpsOptions
+                catch (fallbackError) {
 
-            );
+                    finalError(
+                        fallbackError
+                    );
+
+                }
+
+            }
+
+
+            try {
+
+                navigator.geolocation.getCurrentPosition(
+
+                    success,
+
+                    firstError,
+
+                    gpsOptions
+
+                );
+
+            }
+
+            catch (error) {
+
+                finalError({
+                    code: 0,
+                    message:
+                        error.message ||
+                        "خطا در اجرای سرویس GPS."
+                });
+
+            }
 
         }
     );
@@ -1591,45 +1784,38 @@ async function getAccurateParentLocation() {
     let lastPosition =
         null;
 
-    for (
-        let attempt = 1;
-        attempt <= GPS_CONFIG.maxAttempts;
-        attempt++
-    ) {
 
-        try {
+    /*
+       تلاش اول:
+       GPS دقیق
+    */
 
-            const position =
-                await getCurrentParentLocation({
+    try {
 
-                    highAccuracy: true,
+        const position =
+            await getCurrentParentLocation({
 
-                    maximumAge:
-                        attempt === 1
-                            ? 5000
-                            : 0,
+                highAccuracy: true,
 
-                    timeout:
-                        attempt === 1
-                            ? 15000
-                            : 20000
+                timeout: 15000,
 
-                });
+                maximumAge: 5000
 
-            const validation =
-                validateGPSPosition(
-                    position
-                );
+            });
 
-            if (!validation.valid) {
-                continue;
-            }
+        const validation =
+            validateGPSPosition(
+                position
+            );
+
+        if (validation.valid) {
 
             lastPosition =
                 position;
 
             /*
-               موقعیت با دقت خوب.
+               اگر دقت مناسب باشد،
+               همان موقعیت را برمی‌گردانیم.
             */
 
             if (
@@ -1641,39 +1827,90 @@ async function getAccurateParentLocation() {
 
             }
 
-            console.warn(
-                "GPS accuracy is weak:",
-                validation.accuracy,
-                "attempt:",
-                attempt
-            );
+        }
+
+    }
+
+    catch (error) {
+
+        /*
+           اگر Permission Denied باشد،
+           دیگر تلاش مجدد انجام نمی‌دهیم.
+        */
+
+        if (
+            error &&
+            error.code === 1
+        ) {
+
+            throw error;
 
         }
 
-        catch (error) {
+        console.warn(
+            "High accuracy attempt failed:",
+            error
+        );
 
-            if (
-                error &&
-                error.code === 1
-            ) {
+    }
 
-                throw error;
 
-            }
+    /*
+       تلاش دوم:
+       حالت معمولی برای Chrome
+    */
 
-            console.warn(
-                "GPS attempt failed:",
-                attempt,
-                error
+    try {
+
+        const fallbackPosition =
+            await getCurrentParentLocation({
+
+                highAccuracy: false,
+
+                timeout:
+                    GPS_CONFIG.fallbackTimeout,
+
+                maximumAge:
+                    GPS_CONFIG.fallbackMaximumAge
+
+            });
+
+        const validation =
+            validateGPSPosition(
+                fallbackPosition
             );
+
+        if (validation.valid) {
+
+            lastPosition =
+                fallbackPosition;
 
         }
 
     }
 
+    catch (error) {
+
+        if (
+            error &&
+            error.code === 1
+        ) {
+
+            throw error;
+
+        }
+
+        console.warn(
+            "Normal accuracy GPS failed:",
+            error
+        );
+
+    }
+
+
     /*
-       اگر GPS جواب داده ولی accuracy ضعیف است،
-       آخرین موقعیت را برمی‌گردانیم.
+       اگر موقعیت قبلی معتبر داشتیم،
+       همان را برمی‌گردانیم.
     */
 
     if (lastPosition) {
@@ -1682,10 +1919,11 @@ async function getAccurateParentLocation() {
 
     }
 
+
     throw {
         code: 2,
         message:
-            "Unable to determine location"
+            "موقعیت مکانی دستگاه قابل دریافت نیست."
     };
 
 }
@@ -1707,7 +1945,7 @@ function applyParentLocation(
     if (!validation.valid) {
 
         throw new Error(
-            "Invalid GPS position"
+            "موقعیت GPS معتبر نیست."
         );
 
     }
@@ -1724,6 +1962,7 @@ function applyParentLocation(
             latitude,
             longitude
         );
+
 
     lastParentPosition = {
 
@@ -1744,9 +1983,11 @@ function applyParentLocation(
 
     };
 
+
     updateLiveParentDistance(
         distance
     );
+
 
     if (locationStatus) {
 
@@ -1781,6 +2022,7 @@ function applyParentLocation(
 
     }
 
+
     console.log(
         "GPS POSITION:",
         {
@@ -1790,6 +2032,7 @@ function applyParentLocation(
             distance
         }
     );
+
 
     return {
 
@@ -1829,107 +2072,151 @@ function startLiveParentLocation() {
 
     }
 
+
+    if (!isGPSAllowedContext()) {
+
+        if (liveParentStatus) {
+
+            liveParentStatus.textContent =
+                "برای GPS باید سایت با HTTPS باز شود.";
+
+        }
+
+        return;
+
+    }
+
+
     /*
-       جلوگیری از watchPosition های همزمان
+       جلوگیری از watchPosition تکراری
     */
 
     stopLiveParentLocation();
 
+
     setLiveParentLoading();
 
-    parentLocationWatchId =
-        navigator.geolocation.watchPosition(
 
-            position => {
+    try {
 
-                try {
+        parentLocationWatchId =
+            navigator.geolocation.watchPosition(
 
-                    const result =
-                        applyParentLocation(
-                            position
-                        );
+                position => {
 
-                    if (
-                        Number.isFinite(
-                            result.accuracy
-                        ) &&
-                        result.accuracy >
-                        GPS_CONFIG.warningAccuracy
-                    ) {
+                    try {
 
-                        if (liveParentStatus) {
+                        const result =
+                            applyParentLocation(
+                                position
+                            );
 
-                            liveParentStatus.textContent =
-                                "دقت موقعیت پایین است؛ در حال دریافت موقعیت دقیق‌تر...";
+
+                        if (
+                            Number.isFinite(
+                                result.accuracy
+                            ) &&
+                            result.accuracy >
+                            GPS_CONFIG.warningAccuracy
+                        ) {
+
+                            if (liveParentStatus) {
+
+                                liveParentStatus.textContent =
+                                    "موقعیت دریافت شد؛ دقت GPS پایین است.";
+
+                            }
 
                         }
 
                     }
 
-                }
+                    catch (error) {
 
-                catch (error) {
+                        console.error(
+                            "GPS POSITION ERROR:",
+                            error
+                        );
+
+                    }
+
+                },
+
+
+                error => {
 
                     console.error(
-                        "GPS POSITION ERROR:",
+                        "LIVE GPS ERROR:",
                         error
                     );
 
+
+                    /*
+                       خطای Permission
+                    */
+
+                    if (
+                        error &&
+                        error.code === 1
+                    ) {
+
+                        if (liveParentStatus) {
+
+                            liveParentStatus.textContent =
+                                "دسترسی GPS توسط مرورگر مسدود است.";
+
+                        }
+
+                        if (locationStatus) {
+
+                            locationStatus.textContent =
+                                "دسترسی GPS توسط مرورگر مسدود است.";
+
+                            locationStatus.style.color =
+                                "#dc2626";
+
+                        }
+
+                        if (parentLocationIcon) {
+
+                            parentLocationIcon.textContent =
+                                "⚠️";
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (liveParentStatus) {
+
+                        liveParentStatus.textContent =
+                            "در حال تلاش برای دریافت موقعیت...";
+
+                    }
+
+                },
+
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 10000
                 }
 
-            },
+            );
 
-            error => {
+    }
 
-                console.error(
-                    "LIVE GPS ERROR:",
-                    error
-                );
+    catch (error) {
 
-                if (liveParentStatus) {
-
-                    liveParentStatus.textContent =
-                        getGPSUserMessage(
-                            error
-                        );
-
-                }
-
-                if (locationStatus) {
-
-                    locationStatus.textContent =
-                        getGPSUserMessage(
-                            error
-                        );
-
-                    locationStatus.style.color =
-                        "#dc2626";
-
-                }
-
-                if (parentLocationIcon) {
-
-                    parentLocationIcon.textContent =
-                        "⚠️";
-
-                }
-
-            },
-
-            {
-
-                enableHighAccuracy:
-                    true,
-
-                timeout:
-                    20000,
-
-                maximumAge:
-                    10000
-
-            }
-
+        console.error(
+            "watchPosition ERROR:",
+            error
         );
+
+    }
 
 }
 
@@ -1945,9 +2232,22 @@ function stopLiveParentLocation() {
         isGeolocationSupported()
     ) {
 
-        navigator.geolocation.clearWatch(
-            parentLocationWatchId
-        );
+        try {
+
+            navigator.geolocation.clearWatch(
+                parentLocationWatchId
+            );
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "clearWatch error:",
+                error
+            );
+
+        }
 
         parentLocationWatchId =
             null;
@@ -1965,6 +2265,10 @@ async function refreshParentLocation(
     showAlert = true
 ) {
 
+    /*
+       جلوگیری از چند کلیک همزمان
+    */
+
     if (
         locationRequestInProgress
     ) {
@@ -1973,10 +2277,13 @@ async function refreshParentLocation(
 
     }
 
+
     locationRequestInProgress =
         true;
 
+
     setLiveParentLoading();
+
 
     if (locationRefreshButton) {
 
@@ -1988,10 +2295,34 @@ async function refreshParentLocation(
 
     }
 
+
     try {
+
+        if (!isGeolocationSupported()) {
+
+            throw {
+                code: 0,
+                message:
+                    "این مرورگر از موقعیت مکانی پشتیبانی نمی‌کند."
+            };
+
+        }
+
+
+        if (!isGPSAllowedContext()) {
+
+            throw {
+                code: 0,
+                message:
+                    "برای استفاده از GPS باید سایت با HTTPS باز شود."
+            };
+
+        }
+
 
         const permission =
             await checkGPSPermission();
+
 
         if (
             permission ===
@@ -2001,18 +2332,34 @@ async function refreshParentLocation(
             throw {
                 code: 1,
                 message:
-                    "Geolocation permission denied"
+                    "دسترسی موقعیت مکانی توسط مرورگر مسدود شده است."
             };
 
         }
 
+
+        /*
+           اجازه Median در صورت وجود
+        */
+
+        await requestMedianLocationPermission();
+
+
+        /*
+           دریافت موقعیت:
+           ابتدا High Accuracy
+           سپس Fallback
+        */
+
         const position =
             await getAccurateParentLocation();
+
 
         const result =
             applyParentLocation(
                 position
             );
+
 
         if (
             Number.isFinite(
@@ -2025,11 +2372,19 @@ async function refreshParentLocation(
             if (liveParentStatus) {
 
                 liveParentStatus.textContent =
-                    "دقت GPS پایین است؛ در صورت امکان چند لحظه صبر کنید.";
+                    "موقعیت دریافت شد، اما دقت GPS پایین است.";
 
             }
 
         }
+
+
+        /*
+           بعد از موفقیت، Live GPS را فعال می‌کنیم.
+        */
+
+        startLiveParentLocation();
+
 
         if (locationRefreshButton) {
 
@@ -2040,6 +2395,7 @@ async function refreshParentLocation(
                 "📍 بروزرسانی موقعیت";
 
         }
+
 
         return result;
 
@@ -2052,10 +2408,12 @@ async function refreshParentLocation(
             error
         );
 
+
         const errorText =
             getGPSUserMessage(
                 error
             );
+
 
         if (locationStatus) {
 
@@ -2067,12 +2425,14 @@ async function refreshParentLocation(
 
         }
 
+
         if (liveParentStatus) {
 
             liveParentStatus.textContent =
                 errorText;
 
         }
+
 
         if (liveParentDistance) {
 
@@ -2081,12 +2441,14 @@ async function refreshParentLocation(
 
         }
 
+
         if (parentLocationIcon) {
 
             parentLocationIcon.textContent =
                 "⚠️";
 
         }
+
 
         if (locationRefreshButton) {
 
@@ -2098,6 +2460,7 @@ async function refreshParentLocation(
 
         }
 
+
         if (showAlert) {
 
             alert(
@@ -2105,6 +2468,7 @@ async function refreshParentLocation(
             );
 
         }
+
 
         return null;
 
@@ -2122,6 +2486,7 @@ async function refreshParentLocation(
 
 /* =====================================================
    LOCATION BUTTON
+   ONLY ONE LISTENER
 ===================================================== */
 
 if (locationRefreshButton) {
@@ -2129,6 +2494,19 @@ if (locationRefreshButton) {
     locationRefreshButton.addEventListener(
         "click",
         async () => {
+
+            /*
+               این کلیک مستقیم کاربر است.
+               برای Chrome بهترین حالت درخواست GPS است.
+            */
+
+            if (
+                locationRequestInProgress
+            ) {
+
+                return;
+
+            }
 
             await refreshParentLocation(
                 true
@@ -2141,7 +2519,7 @@ if (locationRefreshButton) {
 
 
 /* =====================================================
-   PAGE VISIBILITY
+   PAGE VISIBILITY - GPS
 ===================================================== */
 
 document.addEventListener(
@@ -2157,6 +2535,11 @@ document.addEventListener(
                 currentStudentName &&
                 currentClassName
             ) {
+
+                /*
+                   اگر کاربر از Chrome به صفحه
+                   برگشت، Live GPS دوباره فعال می‌شود.
+                */
 
                 startLiveParentLocation();
 
@@ -2183,6 +2566,37 @@ window.addEventListener(
     () => {
 
         stopLiveParentLocation();
+
+    }
+);
+
+
+/* =====================================================
+   PAGE HIDE / SHOW
+===================================================== */
+
+window.addEventListener(
+    "pagehide",
+    () => {
+
+        stopLiveParentLocation();
+
+    }
+);
+
+
+window.addEventListener(
+    "pageshow",
+    () => {
+
+        if (
+            currentStudentName &&
+            currentClassName
+        ) {
+
+            startLiveParentLocation();
+
+        }
 
     }
 );
@@ -3035,11 +3449,6 @@ if (callButton) {
 
             finally {
 
-                /*
-                   فقط در صورتی آزاد می‌کنیم
-                   که فراخوان نهایی نشده باشد.
-                */
-
                 if (
                     callButton.dataset.locked !==
                     "true"
@@ -3065,6 +3474,8 @@ if (callButton) {
     );
 
 }
+
+
 /* =====================================================
    REMEMBER LOGIN
 ===================================================== */
@@ -3157,8 +3568,6 @@ function loadSavedLoginCredentials() {
 
 
 loadSavedLoginCredentials();
-
-
 /* =====================================================
    LOGIN
 ===================================================== */
@@ -3364,9 +3773,12 @@ if (loginButton) {
 
                         startParentAutoRefresh();
 
+
                         /*
-                           GPS فقط بعد از ورود
-                           فعال می‌شود.
+                           GPS بعد از ورود فعال می‌شود.
+                           اگر Chrome برای permission نیاز به
+                           کلیک کاربر داشته باشد، دکمه
+                           «بروزرسانی موقعیت» درخواست را انجام می‌دهد.
                         */
 
                         startLiveParentLocation();
@@ -3653,11 +4065,6 @@ document.addEventListener(
                 await loadExistingCall();
 
                 updateCallScheduleUI();
-
-                /*
-                   GPS توسط listener بخش ۲
-                   دوباره شروع می‌شود.
-                */
 
             }
 
