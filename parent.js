@@ -654,7 +654,7 @@ const SCHOOL_LNG =
     51.32257158390593;
 
 const ALLOWED_RADIUS =
-    150;
+    5000;
 
 const EARTH_RADIUS =
     6371000;
