@@ -2465,7 +2465,63 @@ function startParentRealtime() {
             );
 
 }
+/* =====================================================
+   REMEMBER LOGIN
+===================================================== */
 
+const SAVED_LOGIN_KEY = "student_panel_login";
+
+function saveLoginCredentials(name, code) {
+    try {
+        localStorage.setItem(
+            SAVED_LOGIN_KEY,
+            JSON.stringify({
+                name: name,
+                code: code
+            })
+        );
+    } catch (error) {
+        console.error("SAVE LOGIN ERROR:", error);
+    }
+}
+
+function loadSavedLoginCredentials() {
+    try {
+        const saved =
+            localStorage.getItem(
+                SAVED_LOGIN_KEY
+            );
+
+        if (!saved) {
+            return;
+        }
+
+        const credentials =
+            JSON.parse(saved);
+
+        if (
+            credentials &&
+            credentials.name &&
+            /^\d{4}$/.test(
+                credentials.code
+            )
+        ) {
+            studentNameInput.value =
+                credentials.name;
+
+            parentCodeInput.value =
+                credentials.code;
+        }
+
+    } catch (error) {
+        console.error(
+            "LOAD LOGIN ERROR:",
+            error
+        );
+    }
+}
+
+loadSavedLoginCredentials();
 
 /* =====================================================
    LOGIN
@@ -2612,6 +2668,19 @@ loginButton.addEventListener(
 
             currentClassName =
                 matchedAccount.class_name;
+
+
+// ذخیره اطلاعات ورود برای دفعات بعد
+saveLoginCredentials(
+    matchedAccount.student_name,
+    code
+);
+
+
+
+
+
+
 
             panelStudentName.textContent =
                 matchedAccount.student_name;
