@@ -50,7 +50,6 @@ function normalizePersianName(value) {
     text = text.toLowerCase();
 
     return text;
-
 }
 
 
@@ -70,10 +69,7 @@ function compactName(value) {
    LEVENSHTEIN
 ===================================================== */
 
-function levenshteinDistance(
-    a,
-    b
-) {
+function levenshteinDistance(a, b) {
 
     a = compactName(a);
     b = compactName(b);
@@ -92,37 +88,17 @@ function levenshteinDistance(
 
     const matrix = [];
 
-    for (
-        let i = 0;
-        i <= b.length;
-        i++
-    ) {
-
+    for (let i = 0; i <= b.length; i++) {
         matrix[i] = [i];
-
     }
 
-    for (
-        let j = 0;
-        j <= a.length;
-        j++
-    ) {
-
+    for (let j = 0; j <= a.length; j++) {
         matrix[0][j] = j;
-
     }
 
-    for (
-        let i = 1;
-        i <= b.length;
-        i++
-    ) {
+    for (let i = 1; i <= b.length; i++) {
 
-        for (
-            let j = 1;
-            j <= a.length;
-            j++
-        ) {
+        for (let j = 1; j <= a.length; j++) {
 
             if (
                 b.charAt(i - 1) ===
@@ -138,13 +114,9 @@ function levenshteinDistance(
 
                 matrix[i][j] =
                     Math.min(
-
                         matrix[i - 1][j] + 1,
-
                         matrix[i][j - 1] + 1,
-
                         matrix[i - 1][j - 1] + 1
-
                     );
 
             }
@@ -154,7 +126,6 @@ function levenshteinDistance(
     }
 
     return matrix[b.length][a.length];
-
 }
 
 
@@ -168,30 +139,17 @@ function nameSimilarity(
 ) {
 
     const a =
-        compactName(
-            enteredName
-        );
+        compactName(enteredName);
 
     const b =
-        compactName(
-            databaseName
-        );
+        compactName(databaseName);
 
-    if (
-        !a ||
-        !b
-    ) {
-
+    if (!a || !b) {
         return 0;
-
     }
 
-    if (
-        a === b
-    ) {
-
+    if (a === b) {
         return 1;
-
     }
 
     const distance =
@@ -206,19 +164,14 @@ function nameSimilarity(
             b.length
         );
 
-    if (
-        maxLength === 0
-    ) {
-
+    if (maxLength === 0) {
         return 1;
-
     }
 
     return (
         1 -
         distance / maxLength
     );
-
 }
 
 
@@ -375,14 +328,8 @@ const changeParentCodeMessage =
 
                 input.value =
                     input.value
-                        .replace(
-                            /\D/g,
-                            ""
-                        )
-                        .slice(
-                            0,
-                            4
-                        );
+                        .replace(/\D/g, "")
+                        .slice(0, 4);
 
             }
         );
@@ -392,7 +339,7 @@ const changeParentCodeMessage =
 
 
 /* =====================================================
-   CHANGE PASSWORD VALIDATION
+   CHANGE PASSWORD MESSAGE
 ===================================================== */
 
 function showChangeParentCodeMessage(
@@ -423,11 +370,6 @@ if (changeParentCodeButton) {
         "click",
         async () => {
 
-            console.log(
-                "CHANGE PASSWORD BUTTON CLICKED"
-            );
-
-
             const currentCode =
                 currentParentCodeInput.value.trim();
 
@@ -437,11 +379,7 @@ if (changeParentCodeButton) {
             const confirmCode =
                 confirmParentCodeInput.value.trim();
 
-
-            showChangeParentCodeMessage(
-                ""
-            );
-
+            showChangeParentCodeMessage("");
 
             if (
                 !currentCode ||
@@ -454,284 +392,200 @@ if (changeParentCodeButton) {
                 );
 
                 return;
-
             }
 
-
-            if (
-                !/^\d{4}$/.test(
-                    currentCode
-                )
-            ) {
+            if (!/^\d{4}$/.test(currentCode)) {
 
                 showChangeParentCodeMessage(
                     "رمز فعلی باید دقیقاً ۴ رقم باشد."
                 );
 
                 return;
-
             }
 
-
-            if (
-                !/^\d{4}$/.test(
-                    newCode
-                )
-            ) {
+            if (!/^\d{4}$/.test(newCode)) {
 
                 showChangeParentCodeMessage(
                     "رمز جدید باید دقیقاً ۴ رقم باشد."
                 );
 
                 return;
-
             }
 
-
-            if (
-                !/^\d{4}$/.test(
-                    confirmCode
-                )
-            ) {
+            if (!/^\d{4}$/.test(confirmCode)) {
 
                 showChangeParentCodeMessage(
                     "تکرار رمز جدید باید دقیقاً ۴ رقم باشد."
                 );
 
                 return;
-
             }
 
-
-            if (
-                newCode !== confirmCode
-            ) {
+            if (newCode !== confirmCode) {
 
                 showChangeParentCodeMessage(
                     "رمز جدید و تکرار آن یکسان نیستند."
                 );
 
                 return;
-
             }
 
-
-            if (
-                currentCode === newCode
-            ) {
+            if (currentCode === newCode) {
 
                 showChangeParentCodeMessage(
                     "رمز جدید باید با رمز فعلی متفاوت باشد."
                 );
 
                 return;
-
             }
 
-
-            showChangeParentCodeMessage(
-                "اطلاعات صحیح است. در حال بررسی...",
-                "#2563eb"
-            );
-
-
-            if (
-                !currentParentAccountId
-            ) {
+            if (!currentParentAccountId) {
 
                 showChangeParentCodeMessage(
                     "اطلاعات حساب والد پیدا نشد."
                 );
 
                 return;
-
             }
-
-
-            const {
-                data: accountData,
-                error: accountError
-            } =
-                await supabaseClient
-                    .from(
-                        "parent_accounts"
-                    )
-                    .select(
-                        "id, student_name, class_name, parent_code"
-                    )
-                    .eq(
-                        "id",
-                        currentParentAccountId
-                    )
-                    .maybeSingle();
-
-
-            if (
-                accountError
-            ) {
-
-                console.error(
-                    "CHECK PARENT ACCOUNT ERROR:",
-                    accountError
-                );
-
-                showChangeParentCodeMessage(
-                    "خطا در بررسی حساب والد. دوباره تلاش کنید."
-                );
-
-                return;
-
-            }
-
-
-            if (
-                !accountData
-            ) {
-
-                showChangeParentCodeMessage(
-                    "حساب والد پیدا نشد."
-                );
-
-                return;
-
-            }
-
-
-            /* =====================================================
-               CHECK CURRENT PASSWORD
-            ===================================================== */
-
-            if (
-                String(
-                    accountData.parent_code
-                ).trim() !==
-                String(
-                    currentCode
-                ).trim()
-            ) {
-
-                showChangeParentCodeMessage(
-                    "رمز فعلی صحیح نیست."
-                );
-
-                return;
-
-            }
-
 
             showChangeParentCodeMessage(
-                "رمز فعلی صحیح است. در حال تغییر رمز...",
+                "در حال بررسی...",
                 "#2563eb"
             );
 
+            try {
 
-            /* =====================================================
-               UPDATE PASSWORD
-            ===================================================== */
+                const {
+                    data: accountData,
+                    error: accountError
+                } =
+                    await supabaseClient
+                        .from("parent_accounts")
+                        .select(
+                            "id, student_name, class_name, parent_code"
+                        )
+                        .eq(
+                            "id",
+                            currentParentAccountId
+                        )
+                        .maybeSingle();
 
-            const {
-                data: updatedAccount,
-                error: updateError
-            } =
-                await supabaseClient
-                    .from(
-                        "parent_accounts"
-                    )
-                    .update({
-                        parent_code:
-                            newCode
-                    })
-                    .eq(
-                        "id",
-                        currentParentAccountId
-                    )
-                    .select(
-                        "id, parent_code"
-                    )
-                    .maybeSingle();
+                if (accountError) {
 
+                    console.error(
+                        "CHECK PARENT ACCOUNT ERROR:",
+                        accountError
+                    );
 
-            if (
-                updateError
-            ) {
+                    showChangeParentCodeMessage(
+                        "خطا در بررسی حساب والد."
+                    );
 
-                console.error(
-                    "CHANGE PASSWORD ERROR:",
-                    updateError
-                );
+                    return;
+                }
+
+                if (!accountData) {
+
+                    showChangeParentCodeMessage(
+                        "حساب والد پیدا نشد."
+                    );
+
+                    return;
+                }
+
+                if (
+                    String(accountData.parent_code).trim() !==
+                    String(currentCode).trim()
+                ) {
+
+                    showChangeParentCodeMessage(
+                        "رمز فعلی صحیح نیست."
+                    );
+
+                    return;
+                }
 
                 showChangeParentCodeMessage(
-                    "خطا در تغییر رمز. دوباره تلاش کنید."
+                    "رمز فعلی صحیح است. در حال تغییر رمز...",
+                    "#2563eb"
                 );
 
-                return;
+                const {
+                    data: updatedAccount,
+                    error: updateError
+                } =
+                    await supabaseClient
+                        .from("parent_accounts")
+                        .update({
+                            parent_code: newCode
+                        })
+                        .eq(
+                            "id",
+                            currentParentAccountId
+                        )
+                        .select(
+                            "id, parent_code"
+                        )
+                        .maybeSingle();
+
+                if (updateError) {
+
+                    console.error(
+                        "CHANGE PASSWORD ERROR:",
+                        updateError
+                    );
+
+                    showChangeParentCodeMessage(
+                        "خطا در تغییر رمز."
+                    );
+
+                    return;
+                }
+
+                if (!updatedAccount) {
+
+                    showChangeParentCodeMessage(
+                        "رمز در پایگاه داده تغییر نکرد."
+                    );
+
+                    return;
+                }
+
+                if (
+                    String(updatedAccount.parent_code).trim() !==
+                    String(newCode).trim()
+                ) {
+
+                    showChangeParentCodeMessage(
+                        "تأیید تغییر رمز ناموفق بود."
+                    );
+
+                    return;
+                }
+
+                showChangeParentCodeMessage(
+                    "رمز ورود با موفقیت تغییر کرد. ✅",
+                    "#16a34a"
+                );
+
+                currentParentCodeInput.value = "";
+                newParentCodeInput.value = "";
+                confirmParentCodeInput.value = "";
 
             }
 
-
-            if (
-                !updatedAccount
-            ) {
+            catch (error) {
 
                 console.error(
-                    "PASSWORD UPDATE RETURNED NO ROW"
+                    "CHANGE PASSWORD EXCEPTION:",
+                    error
                 );
 
                 showChangeParentCodeMessage(
-                    "رمز در پایگاه داده تغییر نکرد. دسترسی تغییر حساب را بررسی کنید."
+                    "خطایی هنگام تغییر رمز رخ داد."
                 );
-
-                return;
 
             }
-
-
-            /* =====================================================
-               VERIFY PASSWORD CHANGE
-            ===================================================== */
-
-            if (
-                String(
-                    updatedAccount.parent_code
-                ).trim() !==
-                String(
-                    newCode
-                ).trim()
-            ) {
-
-                console.error(
-                    "PASSWORD UPDATE VERIFICATION FAILED:",
-                    updatedAccount
-                );
-
-                showChangeParentCodeMessage(
-                    "رمز در پایگاه داده تغییر نکرده است."
-                );
-
-                return;
-
-            }
-
-
-            /* =====================================================
-               PASSWORD CHANGE CONFIRMED
-            ===================================================== */
-
-            showChangeParentCodeMessage(
-                "رمز ورود با موفقیت تغییر کرد. ✅",
-                "#16a34a"
-            );
-
-
-            currentParentCodeInput.value =
-                "";
-
-            newParentCodeInput.value =
-                "";
-
-            confirmParentCodeInput.value =
-                "";
-
 
         }
     );
@@ -739,9 +593,9 @@ if (changeParentCodeButton) {
 }
 
 
-/*
-   کارت‌های موقعیت
-*/
+/* =====================================================
+   LOCATION CARDS
+===================================================== */
 
 const allowedRadiusValue =
     document.getElementById(
@@ -785,6 +639,8 @@ let locationRequestInProgress = false;
 
 let parentLocationWatchId = null;
 
+let callRequestInProgress = false;
+
 
 /* =====================================================
    SCHOOL LOCATION
@@ -796,27 +652,42 @@ const SCHOOL_LAT =
 const SCHOOL_LNG =
     51.32257158390593;
 
-
-/*
-   حداکثر فاصله مجاز:
-   150 متر
-*/
-
 const ALLOWED_RADIUS =
     150;
-
 
 const EARTH_RADIUS =
     6371000;
 
 
 /* =====================================================
+   GPS CONFIGURATION
+===================================================== */
+
+const GPS_CONFIG = {
+
+    enableHighAccuracy: true,
+
+    timeout: 20000,
+
+    maximumAge: 10000,
+
+    /*
+       فقط برای اطلاع‌رسانی.
+       در تصمیم نهایی فاصله همچنان معیار اصلی است.
+    */
+
+    warningAccuracy: 150,
+
+    maxAttempts: 3
+
+};
+
+
+/* =====================================================
    CALL SCHEDULE
 ===================================================== */
 
-function getCallSchedule(
-    className
-) {
+function getCallSchedule(className) {
 
     const normalizedClass =
         normalizePersianName(
@@ -892,36 +763,35 @@ function getIranTimeParts() {
             new Date()
         );
 
-    const hour =
-        Number(
-            parts.find(
-                item =>
-                    item.type === "hour"
-            ).value
-        );
+    const getPart = type => {
 
-    const minute =
-        Number(
+        const item =
             parts.find(
-                item =>
-                    item.type === "minute"
-            ).value
-        );
+                part =>
+                    part.type === type
+            );
 
-    const second =
-        Number(
-            parts.find(
-                item =>
-                    item.type === "second"
-            ).value
-        );
+        return item
+            ? Number(item.value)
+            : 0;
+
+    };
+
+    const hour = getPart("hour");
+    const minute = getPart("minute");
+    const second = getPart("second");
 
     return {
+
         hour,
+
         minute,
+
         second,
+
         totalMinutes:
             hour * 60 + minute
+
     };
 
 }
@@ -954,26 +824,11 @@ function getIranTime() {
         getIranTimeParts();
 
     return (
-        String(
-            iran.hour
-        ).padStart(
-            2,
-            "0"
-        ) +
+        String(iran.hour).padStart(2, "0") +
         ":" +
-        String(
-            iran.minute
-        ).padStart(
-            2,
-            "0"
-        ) +
+        String(iran.minute).padStart(2, "0") +
         ":" +
-        String(
-            iran.second
-        ).padStart(
-            2,
-            "0"
-        )
+        String(iran.second).padStart(2, "0")
     );
 
 }
@@ -1021,17 +876,11 @@ function updateDateTime() {
             );
 
         currentTime.textContent =
-            formatter.format(
-                iran.hour
-            ) +
+            formatter.format(iran.hour) +
             ":" +
-            formatter.format(
-                iran.minute
-            ) +
+            formatter.format(iran.minute) +
             ":" +
-            formatter.format(
-                iran.second
-            );
+            formatter.format(iran.second);
 
     }
 
@@ -1039,7 +888,6 @@ function updateDateTime() {
 
 
 updateDateTime();
-
 
 setInterval(
     updateDateTime,
@@ -1053,12 +901,8 @@ setInterval(
 
 function isCallTimeActive() {
 
-    if (
-        !currentClassName
-    ) {
-
+    if (!currentClassName) {
         return false;
-
     }
 
     const schedule =
@@ -1070,11 +914,8 @@ function isCallTimeActive() {
         getIranTimeParts();
 
     return (
-        iran.totalMinutes >=
-        schedule.start
-        &&
-        iran.totalMinutes <
-        schedule.end
+        iran.totalMinutes >= schedule.start &&
+        iran.totalMinutes < schedule.end
     );
 
 }
@@ -1086,12 +927,8 @@ function isCallTimeActive() {
 
 function updateCallScheduleUI() {
 
-    if (
-        !currentClassName
-    ) {
-
+    if (!currentClassName) {
         return;
-
     }
 
     const schedule =
@@ -1116,22 +953,24 @@ function updateCallScheduleUI() {
 
     }
 
-    const active =
-        isCallTimeActive();
-
     if (
-        callButton.dataset.locked ===
-        "true"
+        callButton &&
+        callButton.dataset.locked === "true"
     ) {
 
         return;
+    }
 
+    const active =
+        isCallTimeActive();
+
+    if (!callButton) {
+        return;
     }
 
     if (active) {
 
-        callButton.disabled =
-            false;
+        callButton.disabled = false;
 
         callButton.dataset.timeBlocked =
             "false";
@@ -1149,8 +988,7 @@ function updateCallScheduleUI() {
 
     else {
 
-        callButton.disabled =
-            true;
+        callButton.disabled = true;
 
         callButton.dataset.timeBlocked =
             "true";
@@ -1216,15 +1054,10 @@ function calculateDistance(
         180;
 
     const a =
-        Math.sin(
-            dLat / 2
-        ) ** 2
-        +
+        Math.sin(dLat / 2) ** 2 +
         Math.cos(lat1) *
         Math.cos(lat2) *
-        Math.sin(
-            dLng / 2
-        ) ** 2;
+        Math.sin(dLng / 2) ** 2;
 
     const c =
         2 *
@@ -1244,21 +1077,15 @@ function calculateDistance(
    DISTANCE FORMAT
 ===================================================== */
 
-function formatDistance(
-    distance
-) {
+function formatDistance(distance) {
 
-    if (
-        distance < 1000
-    ) {
+    if (distance < 1000) {
 
         return (
             new Intl.NumberFormat(
                 "fa-IR"
             ).format(
-                Math.round(
-                    distance
-                )
+                Math.round(distance)
             ) +
             " متر"
         );
@@ -1281,7 +1108,7 @@ function formatDistance(
 
 
 /* =====================================================
-   LOCATION CARDS
+   LOCATION UI
 ===================================================== */
 
 function updateAllowedRadiusUI() {
@@ -1349,9 +1176,7 @@ function updateLiveParentDistance(
             new Intl.NumberFormat(
                 "fa-IR"
             ).format(
-                Math.round(
-                    distance
-                )
+                Math.round(distance)
             );
 
     }
@@ -1417,17 +1242,77 @@ function updateLiveParentDistance(
 
 
 updateAllowedRadiusUI();
+/* =====================================================
+   GPS SUPPORT
+===================================================== */
+
+function isGeolocationSupported() {
+
+    return (
+        typeof navigator !== "undefined" &&
+        "geolocation" in navigator
+    );
+
+}
 
 
 /* =====================================================
-   LOCATION PERMISSION
+   GPS PERMISSION
+===================================================== */
+
+async function checkGPSPermission() {
+
+    if (!isGeolocationSupported()) {
+
+        return "unsupported";
+
+    }
+
+    /*
+       Safari قدیمی ممکن است Permissions API نداشته باشد.
+    */
+
+    if (
+        navigator.permissions &&
+        typeof navigator.permissions.query === "function"
+    ) {
+
+        try {
+
+            const permission =
+                await navigator.permissions.query({
+                    name: "geolocation"
+                });
+
+            return permission.state;
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "GPS permission API unavailable:",
+                error
+            );
+
+        }
+
+    }
+
+    return "unknown";
+
+}
+
+
+/* =====================================================
+   MEDIAN GPS PERMISSION
 ===================================================== */
 
 async function requestMedianLocationPermission() {
 
     if (
-        typeof window.median ===
-        "undefined"
+        typeof window === "undefined" ||
+        typeof window.median === "undefined"
     ) {
 
         return true;
@@ -1450,20 +1335,155 @@ async function requestMedianLocationPermission() {
 
         }
 
-        return true;
-
     }
 
     catch (error) {
 
-        console.error(
-            "Median location error:",
+        console.warn(
+            "Median GPS permission error:",
             error
         );
 
-        return true;
+    }
+
+    return true;
+
+}
+
+
+/* =====================================================
+   GPS ERROR MESSAGE
+===================================================== */
+
+function getGPSUserMessage(error) {
+
+    if (!error) {
+
+        return (
+            "خطا در دریافت موقعیت مکانی."
+        );
 
     }
+
+    switch (error.code) {
+
+        case 1:
+
+            return (
+                "دسترسی به موقعیت مکانی داده نشده است.\n\n" +
+                "لطفاً Location یا GPS را روشن کنید " +
+                "و اجازه دسترسی مرورگر به موقعیت مکانی را فعال کنید."
+            );
+
+        case 2:
+
+            return (
+                "موقعیت مکانی قابل تشخیص نیست.\n\n" +
+                "لطفاً GPS دستگاه را روشن کنید و " +
+                "چند لحظه صبر کنید."
+            );
+
+        case 3:
+
+            return (
+                "دریافت موقعیت مکانی بیش از حد طول کشید.\n\n" +
+                "لطفاً چند لحظه صبر کرده و دوباره تلاش کنید."
+            );
+
+        default:
+
+            return (
+                "خطا در دریافت موقعیت مکانی.\n\n" +
+                "لطفاً دوباره تلاش کنید."
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   GPS POSITION VALIDATION
+===================================================== */
+
+function validateGPSPosition(position) {
+
+    if (!position) {
+
+        return {
+            valid: false,
+            reason: "position_missing"
+        };
+
+    }
+
+    const coords =
+        position.coords;
+
+    if (!coords) {
+
+        return {
+            valid: false,
+            reason: "coordinates_missing"
+        };
+
+    }
+
+    const latitude =
+        Number(
+            coords.latitude
+        );
+
+    const longitude =
+        Number(
+            coords.longitude
+        );
+
+    const accuracy =
+        Number(
+            coords.accuracy
+        );
+
+    if (
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+    ) {
+
+        return {
+            valid: false,
+            reason: "invalid_coordinates"
+        };
+
+    }
+
+    if (
+        latitude < -90 ||
+        latitude > 90 ||
+        longitude < -180 ||
+        longitude > 180
+    ) {
+
+        return {
+            valid: false,
+            reason: "coordinates_out_of_range"
+        };
+
+    }
+
+    return {
+
+        valid: true,
+
+        latitude,
+
+        longitude,
+
+        accuracy:
+            Number.isFinite(accuracy)
+                ? accuracy
+                : Infinity
+
+    };
 
 }
 
@@ -1472,7 +1492,9 @@ async function requestMedianLocationPermission() {
    CURRENT LOCATION
 ===================================================== */
 
-function getCurrentParentLocation() {
+function getCurrentParentLocation(
+    options = {}
+) {
 
     return new Promise(
         async (
@@ -1482,9 +1504,7 @@ function getCurrentParentLocation() {
 
             await requestMedianLocationPermission();
 
-            if (
-                !navigator.geolocation
-            ) {
+            if (!isGeolocationSupported()) {
 
                 reject({
                     code: 0,
@@ -1496,9 +1516,42 @@ function getCurrentParentLocation() {
 
             }
 
+            const gpsOptions = {
+
+                enableHighAccuracy:
+                    options.highAccuracy ??
+                    GPS_CONFIG.enableHighAccuracy,
+
+                timeout:
+                    options.timeout ??
+                    GPS_CONFIG.timeout,
+
+                maximumAge:
+                    options.maximumAge ??
+                    GPS_CONFIG.maximumAge
+
+            };
+
             navigator.geolocation.getCurrentPosition(
 
                 position => {
+
+                    const validation =
+                        validateGPSPosition(
+                            position
+                        );
+
+                    if (!validation.valid) {
+
+                        reject({
+                            code: 2,
+                            message:
+                                validation.reason
+                        });
+
+                        return;
+
+                    }
 
                     resolve(
                         position
@@ -1508,22 +1561,18 @@ function getCurrentParentLocation() {
 
                 error => {
 
+                    console.error(
+                        "GPS getCurrentPosition error:",
+                        error
+                    );
+
                     reject(
                         error
                     );
 
                 },
 
-                {
-                    enableHighAccuracy:
-                        true,
-
-                    timeout:
-                        15000,
-
-                    maximumAge:
-                        0
-                }
+                gpsOptions
 
             );
 
@@ -1531,20 +1580,248 @@ function getCurrentParentLocation() {
     );
 
 }
+
+
+/* =====================================================
+   ACCURATE GPS
+===================================================== */
+
+async function getAccurateParentLocation() {
+
+    let lastPosition =
+        null;
+
+    for (
+        let attempt = 1;
+        attempt <= GPS_CONFIG.maxAttempts;
+        attempt++
+    ) {
+
+        try {
+
+            const position =
+                await getCurrentParentLocation({
+
+                    highAccuracy: true,
+
+                    maximumAge:
+                        attempt === 1
+                            ? 5000
+                            : 0,
+
+                    timeout:
+                        attempt === 1
+                            ? 15000
+                            : 20000
+
+                });
+
+            const validation =
+                validateGPSPosition(
+                    position
+                );
+
+            if (!validation.valid) {
+                continue;
+            }
+
+            lastPosition =
+                position;
+
+            /*
+               موقعیت با دقت خوب.
+            */
+
+            if (
+                validation.accuracy <=
+                GPS_CONFIG.warningAccuracy
+            ) {
+
+                return position;
+
+            }
+
+            console.warn(
+                "GPS accuracy is weak:",
+                validation.accuracy,
+                "attempt:",
+                attempt
+            );
+
+        }
+
+        catch (error) {
+
+            if (
+                error &&
+                error.code === 1
+            ) {
+
+                throw error;
+
+            }
+
+            console.warn(
+                "GPS attempt failed:",
+                attempt,
+                error
+            );
+
+        }
+
+    }
+
+    /*
+       اگر GPS جواب داده ولی accuracy ضعیف است،
+       آخرین موقعیت را برمی‌گردانیم.
+    */
+
+    if (lastPosition) {
+
+        return lastPosition;
+
+    }
+
+    throw {
+        code: 2,
+        message:
+            "Unable to determine location"
+    };
+
+}
+
+
+/* =====================================================
+   APPLY GPS POSITION
+===================================================== */
+
+function applyParentLocation(
+    position
+) {
+
+    const validation =
+        validateGPSPosition(
+            position
+        );
+
+    if (!validation.valid) {
+
+        throw new Error(
+            "Invalid GPS position"
+        );
+
+    }
+
+    const {
+        latitude,
+        longitude,
+        accuracy
+    } =
+        validation;
+
+    const distance =
+        calculateDistance(
+            latitude,
+            longitude
+        );
+
+    lastParentPosition = {
+
+        latitude,
+
+        longitude,
+
+        accuracy,
+
+        distance,
+
+        timestamp:
+            Date.now(),
+
+        inside:
+            distance <=
+            ALLOWED_RADIUS
+
+    };
+
+    updateLiveParentDistance(
+        distance
+    );
+
+    if (locationStatus) {
+
+        if (
+            distance <=
+            ALLOWED_RADIUS
+        ) {
+
+            locationStatus.textContent =
+                "داخل محدوده مجاز — " +
+                formatDistance(
+                    distance
+                );
+
+            locationStatus.style.color =
+                "#16a34a";
+
+        }
+
+        else {
+
+            locationStatus.textContent =
+                "خارج از محدوده مجاز — " +
+                formatDistance(
+                    distance
+                );
+
+            locationStatus.style.color =
+                "#dc2626";
+
+        }
+
+    }
+
+    console.log(
+        "GPS POSITION:",
+        {
+            latitude,
+            longitude,
+            accuracy,
+            distance
+        }
+    );
+
+    return {
+
+        latitude,
+
+        longitude,
+
+        accuracy,
+
+        distance,
+
+        inside:
+            distance <=
+            ALLOWED_RADIUS
+
+    };
+
+}
+
+
 /* =====================================================
    LIVE GPS
 ===================================================== */
 
 function startLiveParentLocation() {
 
-    if (
-        !navigator.geolocation
-    ) {
+    if (!isGeolocationSupported()) {
 
         if (liveParentStatus) {
 
             liveParentStatus.textContent =
-                "مرورگر از موقعیت مکانی پشتیبانی نمی‌کند.";
+                "این مرورگر از موقعیت مکانی پشتیبانی نمی‌کند.";
 
         }
 
@@ -1552,15 +1829,11 @@ function startLiveParentLocation() {
 
     }
 
-    if (
-        parentLocationWatchId !== null
-    ) {
+    /*
+       جلوگیری از watchPosition های همزمان
+    */
 
-        navigator.geolocation.clearWatch(
-            parentLocationWatchId
-        );
-
-    }
+    stopLiveParentLocation();
 
     setLiveParentLoading();
 
@@ -1569,62 +1842,38 @@ function startLiveParentLocation() {
 
             position => {
 
-                const latitude =
-                    position.coords.latitude;
+                try {
 
-                const longitude =
-                    position.coords.longitude;
-
-                const accuracy =
-                    position.coords.accuracy;
-
-                const distance =
-                    calculateDistance(
-                        latitude,
-                        longitude
-                    );
-
-                lastParentPosition = {
-                    latitude,
-                    longitude,
-                    accuracy,
-                    distance
-                };
-
-                updateLiveParentDistance(
-                    distance
-                );
-
-                if (locationStatus) {
+                    const result =
+                        applyParentLocation(
+                            position
+                        );
 
                     if (
-                        distance <=
-                        ALLOWED_RADIUS
+                        Number.isFinite(
+                            result.accuracy
+                        ) &&
+                        result.accuracy >
+                        GPS_CONFIG.warningAccuracy
                     ) {
 
-                        locationStatus.textContent =
-                            "داخل محدوده مجاز — " +
-                            formatDistance(
-                                distance
-                            );
+                        if (liveParentStatus) {
 
-                        locationStatus.style.color =
-                            "#16a34a";
+                            liveParentStatus.textContent =
+                                "دقت موقعیت پایین است؛ در حال دریافت موقعیت دقیق‌تر...";
+
+                        }
 
                     }
 
-                    else {
+                }
 
-                        locationStatus.textContent =
-                            "خارج از محدوده مجاز — " +
-                            formatDistance(
-                                distance
-                            );
+                catch (error) {
 
-                        locationStatus.style.color =
-                            "#dc2626";
-
-                    }
+                    console.error(
+                        "GPS POSITION ERROR:",
+                        error
+                    );
 
                 }
 
@@ -1639,53 +1888,45 @@ function startLiveParentLocation() {
 
                 if (liveParentStatus) {
 
-                    if (
-                        error.code === 1
-                    ) {
+                    liveParentStatus.textContent =
+                        getGPSUserMessage(
+                            error
+                        );
 
-                        liveParentStatus.textContent =
-                            "دسترسی به موقعیت داده نشده است.";
+                }
 
-                    }
+                if (locationStatus) {
 
-                    else if (
-                        error.code === 2
-                    ) {
+                    locationStatus.textContent =
+                        getGPSUserMessage(
+                            error
+                        );
 
-                        liveParentStatus.textContent =
-                            "موقعیت قابل تشخیص نیست.";
+                    locationStatus.style.color =
+                        "#dc2626";
 
-                    }
+                }
 
-                    else if (
-                        error.code === 3
-                    ) {
+                if (parentLocationIcon) {
 
-                        liveParentStatus.textContent =
-                            "زمان دریافت موقعیت تمام شد.";
-
-                    }
-
-                    else {
-
-                        liveParentStatus.textContent =
-                            "خطا در دریافت موقعیت.";
-
-                    }
+                    parentLocationIcon.textContent =
+                        "⚠️";
 
                 }
 
             },
 
             {
+
                 enableHighAccuracy:
                     true,
 
                 timeout:
-                    10000,
+                    20000,
 
                 maximumAge:
-                    0
+                    10000
+
             }
 
         );
@@ -1700,7 +1941,8 @@ function startLiveParentLocation() {
 function stopLiveParentLocation() {
 
     if (
-        parentLocationWatchId !== null
+        parentLocationWatchId !== null &&
+        isGeolocationSupported()
     ) {
 
         navigator.geolocation.clearWatch(
@@ -1748,54 +1990,44 @@ async function refreshParentLocation(
 
     try {
 
+        const permission =
+            await checkGPSPermission();
+
+        if (
+            permission ===
+            "denied"
+        ) {
+
+            throw {
+                code: 1,
+                message:
+                    "Geolocation permission denied"
+            };
+
+        }
+
         const position =
-            await getCurrentParentLocation();
+            await getAccurateParentLocation();
 
-        const latitude =
-            position.coords.latitude;
-
-        const longitude =
-            position.coords.longitude;
-
-        const accuracy =
-            position.coords.accuracy;
-
-        const distance =
-            calculateDistance(
-                latitude,
-                longitude
+        const result =
+            applyParentLocation(
+                position
             );
 
-        lastParentPosition = {
-            latitude,
-            longitude,
-            accuracy,
-            distance
-        };
+        if (
+            Number.isFinite(
+                result.accuracy
+            ) &&
+            result.accuracy >
+            GPS_CONFIG.warningAccuracy
+        ) {
 
-        updateLiveParentDistance(
-            distance
-        );
+            if (liveParentStatus) {
 
-        if (locationStatus) {
+                liveParentStatus.textContent =
+                    "دقت GPS پایین است؛ در صورت امکان چند لحظه صبر کنید.";
 
-            locationStatus.textContent =
-                (
-                    distance <=
-                    ALLOWED_RADIUS
-                )
-                    ? "داخل محدوده مجاز — " +
-                      formatDistance(distance)
-                    : "خارج از محدوده مجاز — " +
-                      formatDistance(distance);
-
-            locationStatus.style.color =
-                (
-                    distance <=
-                    ALLOWED_RADIUS
-                )
-                    ? "#16a34a"
-                    : "#dc2626";
+            }
 
         }
 
@@ -1809,15 +2041,7 @@ async function refreshParentLocation(
 
         }
 
-        return {
-            latitude,
-            longitude,
-            accuracy,
-            distance,
-            inside:
-                distance <=
-                ALLOWED_RADIUS
-        };
+        return result;
 
     }
 
@@ -1828,38 +2052,10 @@ async function refreshParentLocation(
             error
         );
 
-        let errorText =
-            "خطا در دریافت موقعیت";
-
-        if (
-            error &&
-            error.code === 1
-        ) {
-
-            errorText =
-                "دسترسی به موقعیت مکانی داده نشد.";
-
-        }
-
-        else if (
-            error &&
-            error.code === 2
-        ) {
-
-            errorText =
-                "موقعیت مکانی قابل تشخیص نیست.";
-
-        }
-
-        else if (
-            error &&
-            error.code === 3
-        ) {
-
-            errorText =
-                "زمان دریافت موقعیت تمام شد.";
-
-        }
+        const errorText =
+            getGPSUserMessage(
+                error
+            );
 
         if (locationStatus) {
 
@@ -1928,15 +2124,13 @@ async function refreshParentLocation(
    LOCATION BUTTON
 ===================================================== */
 
-if (
-    locationRefreshButton
-) {
+if (locationRefreshButton) {
 
     locationRefreshButton.addEventListener(
         "click",
-        () => {
+        async () => {
 
-            refreshParentLocation(
+            await refreshParentLocation(
                 true
             );
 
@@ -1946,6 +2140,52 @@ if (
 }
 
 
+/* =====================================================
+   PAGE VISIBILITY
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            if (
+                currentStudentName &&
+                currentClassName
+            ) {
+
+                startLiveParentLocation();
+
+            }
+
+        }
+
+        else {
+
+            stopLiveParentLocation();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   BEFORE UNLOAD
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        stopLiveParentLocation();
+
+    }
+);
 /* =====================================================
    PARENT NOTIFICATION
 ===================================================== */
@@ -1958,7 +2198,9 @@ function showParentCallNotification() {
         );
 
     if (existingNotification) {
+
         existingNotification.remove();
+
     }
 
     const notification =
@@ -1995,13 +2237,15 @@ function showParentCallNotification() {
         notification
     );
 
-    requestAnimationFrame(() => {
+    requestAnimationFrame(
+        () => {
 
-        notification.classList.add(
-            "show"
-        );
+            notification.classList.add(
+                "show"
+            );
 
-    });
+        }
+    );
 
     const closeButton =
         notification.querySelector(
@@ -2018,44 +2262,60 @@ function showParentCallNotification() {
                     "show"
                 );
 
-                setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                    notification.remove();
+                        if (
+                            notification &&
+                            notification.parentNode
+                        ) {
 
-                }, 350);
+                            notification.remove();
+
+                        }
+
+                    },
+                    350
+                );
 
             }
         );
 
     }
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        if (
-            notification &&
-            notification.parentNode
-        ) {
+            if (
+                notification &&
+                notification.parentNode
+            ) {
 
-            notification.classList.remove(
-                "show"
-            );
+                notification.classList.remove(
+                    "show"
+                );
 
-            setTimeout(() => {
+                setTimeout(
+                    () => {
 
-                if (
-                    notification &&
-                    notification.parentNode
-                ) {
+                        if (
+                            notification &&
+                            notification.parentNode
+                        ) {
 
-                    notification.remove();
+                            notification.remove();
 
-                }
+                        }
 
-            }, 350);
+                    },
+                    350
+                );
 
-        }
+            }
 
-    }, 7000);
+        },
+        7000
+    );
 
 }
 
@@ -2064,9 +2324,7 @@ function showParentCallNotification() {
    CALL STATUS
 ===================================================== */
 
-function updateParentCallStatus(
-    call
-) {
+function updateParentCallStatus(call) {
 
     if (!call) {
         return;
@@ -2086,7 +2344,9 @@ function updateParentCallStatus(
         !statusElement ||
         !statusDot
     ) {
+
         return;
+
     }
 
     if (
@@ -2135,15 +2395,15 @@ function updateParentCallStatus(
    UPDATE PARENT CALL BUTTON
 ===================================================== */
 
-function updateParentCallButton(
-    call
-) {
+function updateParentCallButton(call) {
 
     if (
         !callButton ||
         !call
     ) {
+
         return;
+
     }
 
     callButton.dataset.locked =
@@ -2296,8 +2556,12 @@ async function loadExistingCall() {
 
     if (!data) {
 
-        callButton.dataset.locked =
-            "false";
+        if (callButton) {
+
+            callButton.dataset.locked =
+                "false";
+
+        }
 
         updateCallScheduleUI();
 
@@ -2312,12 +2576,6 @@ async function loadExistingCall() {
     updateParentCallButton(
         data
     );
-
-    callButton.dataset.locked =
-        "true";
-
-    callButton.disabled =
-        true;
 
 }
 
@@ -2384,6 +2642,9 @@ function startParentRealtime() {
         supabaseClient.removeChannel(
             parentCallChannel
         );
+
+        parentCallChannel =
+            null;
 
     }
 
@@ -2465,14 +2726,360 @@ function startParentRealtime() {
             );
 
 }
+
+
+/* =====================================================
+   CALL BUTTON
+   ONLY ONE EVENT LISTENER
+===================================================== */
+
+if (callButton) {
+
+    callButton.addEventListener(
+        "click",
+        async () => {
+
+            /*
+               جلوگیری از دوبار کلیک
+            */
+
+            if (callRequestInProgress) {
+
+                return;
+
+            }
+
+            if (
+                !currentStudentName ||
+                !currentClassName
+            ) {
+
+                alert(
+                    "اطلاعات دانش‌آموز یافت نشد."
+                );
+
+                return;
+
+            }
+
+            if (!isCallTimeActive()) {
+
+                const schedule =
+                    getCallSchedule(
+                        currentClassName
+                    );
+
+                alert(
+                    "فراخوانی این کلاس فقط از ساعت " +
+                    schedule.text +
+                    " فعال است."
+                );
+
+                updateCallScheduleUI();
+
+                return;
+
+            }
+
+            if (
+                callButton.dataset.locked ===
+                "true"
+            ) {
+
+                return;
+
+            }
+
+            callRequestInProgress =
+                true;
+
+            callButton.disabled =
+                true;
+
+            callButton.textContent =
+                "📍 در حال بررسی موقعیت...";
+
+
+            try {
+
+                /* =================================================
+                   GPS
+                ================================================= */
+
+                const locationResult =
+                    await refreshParentLocation(
+                        true
+                    );
+
+                if (!locationResult) {
+
+                    updateCallScheduleUI();
+
+                    return;
+
+                }
+
+
+                const distance =
+                    locationResult.distance;
+
+
+                /* =================================================
+                   CHECK DISTANCE
+                ================================================= */
+
+                if (
+                    distance >
+                    ALLOWED_RADIUS
+                ) {
+
+                    updateCallScheduleUI();
+
+                    alert(
+                        "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
+                        "فاصله شما: " +
+                        formatDistance(distance) +
+                        "\n" +
+                        "محدوده مجاز: " +
+                        formatDistance(ALLOWED_RADIUS)
+                    );
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   CHECK PREVIOUS CALL
+                ================================================= */
+
+                callButton.textContent =
+                    "📢 در حال بررسی فراخوان قبلی...";
+
+                const today =
+                    getIranDate();
+
+                const {
+                    data: activeCall,
+                    error: activeError
+                } =
+                    await supabaseClient
+                        .from("calls")
+                        .select("*")
+                        .eq(
+                            "student_name",
+                            currentStudentName
+                        )
+                        .eq(
+                            "class_name",
+                            currentClassName
+                        )
+                        .eq(
+                            "called_date",
+                            today
+                        )
+                        .in(
+                            "status",
+                            [
+                                "فراخوان شد",
+                                "دریافت فراخوان"
+                            ]
+                        )
+                        .order(
+                            "id",
+                            {
+                                ascending: false
+                            }
+                        )
+                        .limit(1)
+                        .maybeSingle();
+
+                if (activeError) {
+
+                    console.error(
+                        "ACTIVE CALL ERROR:",
+                        activeError
+                    );
+
+                    alert(
+                        "خطا در بررسی فراخوان قبلی."
+                    );
+
+                    return;
+
+                }
+
+                if (activeCall) {
+
+                    updateParentCallStatus(
+                        activeCall
+                    );
+
+                    updateParentCallButton(
+                        activeCall
+                    );
+
+                    alert(
+                        "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
+                    );
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   INSERT CALL
+                ================================================= */
+
+                callButton.textContent =
+                    "📢 در حال ارسال فراخوان...";
+
+                const calledDate =
+                    getIranDate();
+
+                const calledTime =
+                    getIranTime();
+
+                const {
+                    data: newCall,
+                    error: insertError
+                } =
+                    await supabaseClient
+                        .from("calls")
+                        .insert([
+                            {
+                                student_name:
+                                    currentStudentName,
+
+                                class_name:
+                                    currentClassName,
+
+                                status:
+                                    "فراخوان شد",
+
+                                called_date:
+                                    calledDate,
+
+                                called_time:
+                                    calledTime
+                            }
+                        ])
+                        .select()
+                        .single();
+
+                if (insertError) {
+
+                    console.error(
+                        "CALL INSERT ERROR:",
+                        insertError
+                    );
+
+                    alert(
+                        "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
+                    );
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   SUCCESS
+                ================================================= */
+
+                callButton.dataset.locked =
+                    "true";
+
+                callButton.disabled =
+                    true;
+
+                callButton.textContent =
+                    "✅ فراخوان ارسال شد";
+
+                callButton.style.background =
+                    "linear-gradient(135deg, #f97316, #fb923c)";
+
+                callButton.style.boxShadow =
+                    "0 15px 30px rgba(249, 115, 22, 0.30)";
+
+                updateParentCallStatus(
+                    newCall
+                );
+
+                alert(
+                    "فراخوان با موفقیت ارسال شد.\n\n" +
+                    "فاصله شما تا مدرسه: " +
+                    formatDistance(distance) +
+                    "\n" +
+                    "زمان ارسال: " +
+                    calledTime
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "CALL ERROR:",
+                    error
+                );
+
+                alert(
+                    "خطایی هنگام ارسال فراخوان رخ داد.\nلطفاً دوباره تلاش کنید."
+                );
+
+                updateCallScheduleUI();
+
+            }
+
+            finally {
+
+                /*
+                   فقط در صورتی آزاد می‌کنیم
+                   که فراخوان نهایی نشده باشد.
+                */
+
+                if (
+                    callButton.dataset.locked !==
+                    "true"
+                ) {
+
+                    callRequestInProgress =
+                        false;
+
+                    updateCallScheduleUI();
+
+                }
+
+                else {
+
+                    callRequestInProgress =
+                        false;
+
+                }
+
+            }
+
+        }
+    );
+
+}
 /* =====================================================
    REMEMBER LOGIN
 ===================================================== */
 
-const SAVED_LOGIN_KEY = "student_panel_login";
+const SAVED_LOGIN_KEY =
+    "student_panel_login";
 
-function saveLoginCredentials(name, code) {
+
+function saveLoginCredentials(
+    name,
+    code
+) {
+
     try {
+
         localStorage.setItem(
             SAVED_LOGIN_KEY,
             JSON.stringify({
@@ -2480,13 +3087,25 @@ function saveLoginCredentials(name, code) {
                 code: code
             })
         );
-    } catch (error) {
-        console.error("SAVE LOGIN ERROR:", error);
+
     }
+
+    catch (error) {
+
+        console.error(
+            "SAVE LOGIN ERROR:",
+            error
+        );
+
+    }
+
 }
 
+
 function loadSavedLoginCredentials() {
+
     try {
+
         const saved =
             localStorage.getItem(
                 SAVED_LOGIN_KEY
@@ -2506,648 +3125,369 @@ function loadSavedLoginCredentials() {
                 credentials.code
             )
         ) {
-            studentNameInput.value =
-                credentials.name;
 
-            parentCodeInput.value =
-                credentials.code;
+            if (studentNameInput) {
+
+                studentNameInput.value =
+                    credentials.name;
+
+            }
+
+            if (parentCodeInput) {
+
+                parentCodeInput.value =
+                    credentials.code;
+
+            }
+
         }
 
-    } catch (error) {
+    }
+
+    catch (error) {
+
         console.error(
             "LOAD LOGIN ERROR:",
             error
         );
+
     }
+
 }
 
+
 loadSavedLoginCredentials();
+
 
 /* =====================================================
    LOGIN
 ===================================================== */
 
-loginButton.addEventListener(
-    "click",
-    async () => {
+if (loginButton) {
 
-        const name =
-            studentNameInput.value.trim();
+    loginButton.addEventListener(
+        "click",
+        async () => {
 
-        const code =
-            parentCodeInput.value.trim();
+            const name =
+                studentNameInput.value.trim();
 
-        message.textContent =
-            "";
-
-        if (
-            !name ||
-            !code
-        ) {
+            const code =
+                parentCodeInput.value.trim();
 
             message.textContent =
-                "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
+                "";
 
-            message.style.color =
-                "#dc2626";
+            if (!name || !code) {
 
-            return;
+                message.textContent =
+                    "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
 
-        }
+                message.style.color =
+                    "#dc2626";
 
-        if (
-            !/^\d{4}$/.test(code)
-        ) {
+                return;
 
-            message.textContent =
-                "کد ورود باید دقیقاً ۴ رقم باشد.";
+            }
 
-            message.style.color =
-                "#dc2626";
+            if (!/^\d{4}$/.test(code)) {
 
-            return;
+                message.textContent =
+                    "کد ورود باید دقیقاً ۴ رقم باشد.";
 
-        }
+                message.style.color =
+                    "#dc2626";
 
-        loginButton.disabled =
-            true;
+                return;
 
-        loginButton.textContent =
-            "در حال بررسی...";
+            }
 
-        try {
+            loginButton.disabled =
+                true;
 
-            const {
-                data: accounts,
-                error
-            } =
-                await supabaseClient
-                    .from("parent_accounts")
-                    .select(
-                        "id, student_name, class_name, parent_code"
-                    )
-                    .eq(
-                        "parent_code",
-                        code
+            loginButton.textContent =
+                "در حال بررسی...";
+
+            try {
+
+                const {
+                    data: accounts,
+                    error
+                } =
+                    await supabaseClient
+                        .from("parent_accounts")
+                        .select(
+                            "id, student_name, class_name, parent_code"
+                        )
+                        .eq(
+                            "parent_code",
+                            code
+                        );
+
+                if (error) {
+
+                    console.error(
+                        "LOGIN ERROR:",
+                        error
                     );
 
-            if (error) {
+                    message.textContent =
+                        "خطا در ارتباط با سامانه.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                    return;
+
+                }
+
+                let matchedAccount =
+                    null;
+
+                let bestSimilarity =
+                    0;
+
+                for (
+                    const account of
+                    accounts || []
+                ) {
+
+                    const similarity =
+                        nameSimilarity(
+                            name,
+                            account.student_name
+                        );
+
+                    if (
+                        similarity >
+                        bestSimilarity
+                    ) {
+
+                        bestSimilarity =
+                            similarity;
+
+                        matchedAccount =
+                            account;
+
+                    }
+
+                }
+
+                if (
+                    !matchedAccount ||
+                    bestSimilarity < 0.85
+                ) {
+
+                    message.textContent =
+                        "نام دانش‌آموز یا کد ورود صحیح نیست.";
+
+                    message.style.color =
+                        "#dc2626";
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                   LOGIN SUCCESS
+                ================================================= */
+
+                currentStudentName =
+                    matchedAccount.student_name;
+
+                currentParentAccountId =
+                    matchedAccount.id;
+
+                currentClassName =
+                    matchedAccount.class_name;
+
+
+                saveLoginCredentials(
+                    matchedAccount.student_name,
+                    code
+                );
+
+
+                if (panelStudentName) {
+
+                    panelStudentName.textContent =
+                        matchedAccount.student_name;
+
+                }
+
+                if (panelClassName) {
+
+                    panelClassName.textContent =
+                        "کلاس " +
+                        matchedAccount.class_name;
+
+                }
+
+                message.textContent =
+                    "ورود موفق بود ✅";
+
+                message.style.color =
+                    "#16a34a";
+
+                updateAllowedRadiusUI();
+
+                updateCallScheduleUI();
+
+
+                setTimeout(
+                    async () => {
+
+                        if (loginScreen) {
+
+                            loginScreen.style.display =
+                                "none";
+
+                        }
+
+                        if (parentPanel) {
+
+                            parentPanel.style.display =
+                                "block";
+
+                        }
+
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+
+
+                        await loadExistingCall();
+
+                        startParentRealtime();
+
+                        startParentAutoRefresh();
+
+                        /*
+                           GPS فقط بعد از ورود
+                           فعال می‌شود.
+                        */
+
+                        startLiveParentLocation();
+
+                    },
+                    400
+                );
+
+            }
+
+            catch (error) {
 
                 console.error(
-                    "LOGIN ERROR:",
+                    "LOGIN EXCEPTION:",
                     error
                 );
 
                 message.textContent =
-                    "خطا در ارتباط با سامانه.";
+                    "خطایی هنگام ورود رخ داد.";
 
                 message.style.color =
                     "#dc2626";
 
-                return;
+            }
+
+            finally {
+
+                loginButton.disabled =
+                    false;
+
+                loginButton.textContent =
+                    "ورود به پنل";
 
             }
 
-            let matchedAccount =
-                null;
-
-            let bestSimilarity =
-                0;
-
-            for (
-                const account of
-                accounts || []
-            ) {
-
-                const similarity =
-                    nameSimilarity(
-                        name,
-                        account.student_name
-                    );
-
-                if (
-                    similarity >
-                    bestSimilarity
-                ) {
-
-                    bestSimilarity =
-                        similarity;
-
-                    matchedAccount =
-                        account;
-
-                }
-
-            }
-
-            if (
-                !matchedAccount ||
-                bestSimilarity < 0.85
-            ) {
-
-                message.textContent =
-                    "نام دانش‌آموز یا کد ورود صحیح نیست.";
-
-                message.style.color =
-                    "#dc2626";
-
-                return;
-
-            }
-
-
-            /* =================================================
-               LOGIN SUCCESS
-            ================================================= */
-
-            currentStudentName =
-                matchedAccount.student_name;
-
-            currentParentAccountId =
-                matchedAccount.id;
-
-            currentClassName =
-                matchedAccount.class_name;
-
-
-// ذخیره اطلاعات ورود برای دفعات بعد
-saveLoginCredentials(
-    matchedAccount.student_name,
-    code
-);
-
-
-
-
-
-
-
-            panelStudentName.textContent =
-                matchedAccount.student_name;
-
-            panelClassName.textContent =
-                "کلاس " +
-                matchedAccount.class_name;
-
-            message.textContent =
-                "ورود موفق بود ✅";
-
-            message.style.color =
-                "#16a34a";
-
-            updateAllowedRadiusUI();
-
-            updateCallScheduleUI();
-
-
-            setTimeout(
-                async () => {
-
-                    loginScreen.style.display =
-                        "none";
-
-                    parentPanel.style.display =
-                        "block";
-
-                    window.scrollTo(
-                        {
-                            top: 0,
-                            behavior: "smooth"
-                        }
-                    );
-
-                    await loadExistingCall();
-
-                    startParentRealtime();
-
-                    startParentAutoRefresh();
-
-                    startLiveParentLocation();
-
-                },
-                400
-            );
-
         }
+    );
 
-        catch (error) {
-
-            console.error(
-                "LOGIN EXCEPTION:",
-                error
-            );
-
-            message.textContent =
-                "خطایی هنگام ورود رخ داد.";
-
-            message.style.color =
-                "#dc2626";
-
-        }
-
-        finally {
-
-            loginButton.disabled =
-                false;
-
-            loginButton.textContent =
-                "ورود به پنل";
-
-        }
-
-    }
-);
+}
 
 
 /* =====================================================
    ENTER KEY
 ===================================================== */
 
-studentNameInput.addEventListener(
-    "keydown",
-    event => {
+if (studentNameInput) {
 
-        if (
-            event.key ===
-            "Enter"
-        ) {
+    studentNameInput.addEventListener(
+        "keydown",
+        event => {
 
-            loginButton.click();
+            if (
+                event.key ===
+                "Enter"
+            ) {
 
-        }
+                if (loginButton) {
 
-    }
-);
+                    loginButton.click();
 
+                }
 
-parentCodeInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key ===
-            "Enter"
-        ) {
-
-            loginButton.click();
+            }
 
         }
+    );
 
-    }
-);
+}
+
+
+if (parentCodeInput) {
+
+    parentCodeInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                if (loginButton) {
+
+                    loginButton.click();
+
+                }
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =====================================================
    PARENT CODE - ONLY 4 DIGITS
 ===================================================== */
 
-parentCodeInput.addEventListener(
-    "input",
-    () => {
+if (parentCodeInput) {
 
-        parentCodeInput.value =
-            parentCodeInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    4
-                );
+    parentCodeInput.addEventListener(
+        "input",
+        () => {
 
-    }
-);
-/* =====================================================
-   CALL BUTTON
-===================================================== */
-
-callButton.addEventListener(
-    "click",
-    async () => {
-
-        if (
-            !currentStudentName ||
-            !currentClassName
-        ) {
-
-            alert(
-                "اطلاعات دانش‌آموز یافت نشد."
-            );
-
-            return;
+            parentCodeInput.value =
+                parentCodeInput.value
+                    .replace(/\D/g, "")
+                    .slice(0, 4);
 
         }
+    );
 
-        if (
-            !isCallTimeActive()
-        ) {
-
-            const schedule =
-                getCallSchedule(
-                    currentClassName
-                );
-
-            alert(
-                "فراخوانی این کلاس فقط از ساعت " +
-                schedule.text +
-                " فعال است."
-            );
-
-            updateCallScheduleUI();
-
-            return;
-
-        }
-
-        if (
-            callButton.dataset.locked ===
-            "true"
-        ) {
-
-            return;
-
-        }
-
-        callButton.disabled =
-            true;
-
-        callButton.textContent =
-            "📍 در حال بررسی موقعیت...";
-
-        const locationResult =
-            await refreshParentLocation(
-                true
-            );
-
-        if (!locationResult) {
-
-            updateCallScheduleUI();
-
-            return;
-
-        }
-
-        const distance =
-            locationResult.distance;
-
-        if (
-            distance >
-            ALLOWED_RADIUS
-        ) {
-
-            updateCallScheduleUI();
-
-            alert(
-                "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
-                "فاصله شما: " +
-                formatDistance(
-                    distance
-                ) +
-                "\n" +
-                "محدوده مجاز: " +
-                formatDistance(
-                    ALLOWED_RADIUS
-                )
-            );
-
-            return;
-
-        }
-
-        callButton.textContent =
-            "📢 در حال بررسی فراخوان قبلی...";
-
-        const today =
-            getIranDate();
-
-        const {
-            data: activeCall,
-            error: activeError
-        } =
-            await supabaseClient
-                .from("calls")
-                .select("*")
-                .eq(
-                    "student_name",
-                    currentStudentName
-                )
-                .eq(
-                    "class_name",
-                    currentClassName
-                )
-                .eq(
-                    "called_date",
-                    today
-                )
-                .in(
-                    "status",
-                    [
-                        "فراخوان شد",
-                        "دریافت فراخوان"
-                    ]
-                )
-                .order(
-                    "id",
-                    {
-                        ascending: false
-                    }
-                )
-                .limit(1)
-                .maybeSingle();
-
-        if (activeError) {
-
-            console.error(
-                activeError
-            );
-
-            updateCallScheduleUI();
-
-            alert(
-                "خطا در بررسی فراخوان قبلی."
-            );
-
-            return;
-
-        }
-
-        if (activeCall) {
-
-            updateParentCallStatus(
-                activeCall
-            );
-
-            callButton.dataset.locked =
-                "true";
-
-            callButton.disabled =
-                true;
-
-            callButton.textContent =
-                "📢 فراخوان قبلاً ارسال شده";
-
-            alert(
-                "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           INSERT CALL
-        ================================================= */
-
-        callButton.textContent =
-            "📢 در حال ارسال فراخوان...";
-
-        const calledDate =
-            getIranDate();
-
-        const calledTime =
-            getIranTime();
-
-        const {
-            data: newCall,
-            error: insertError
-        } =
-            await supabaseClient
-                .from("calls")
-                .insert([
-                    {
-                        student_name:
-                            currentStudentName,
-
-                        class_name:
-                            currentClassName,
-
-                        status:
-                            "فراخوان شد",
-
-                        called_date:
-                            calledDate,
-
-                        called_time:
-                            calledTime
-
-                    }
-                ])
-                .select()
-                .single();
-
-        if (insertError) {
-
-            console.error(
-                "CALL INSERT ERROR:",
-                insertError
-            );
-
-            updateCallScheduleUI();
-
-            alert(
-                "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           SUCCESS
-        ================================================= */
-
-        callButton.dataset.locked =
-            "true";
-
-        callButton.disabled =
-            true;
-
-        callButton.textContent =
-            "✅ فراخوان ارسال شد";
-
-
-        callButton.style.background =
-            "linear-gradient(135deg, #f97316, #fb923c)";
-
-
-        callButton.style.boxShadow =
-            "0 15px 30px rgba(249, 115, 22, 0.30)";
-
-
-        updateParentCallStatus(
-            newCall
-        );
-
-
-        alert(
-            "فراخوان با موفقیت ارسال شد.\n\n" +
-            "فاصله شما تا مدرسه: " +
-            formatDistance(
-                distance
-            ) +
-            "\n" +
-            "زمان ارسال: " +
-            calledTime
-        );
-
-    }
-);
-
-
-/* =====================================================
-   BEFORE UNLOAD
-===================================================== */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        stopLiveParentLocation();
-
-    }
-);
-
-
-/* =====================================================
-   PAGE VISIBILITY
-===================================================== */
-
-document.addEventListener(
-    "visibilitychange",
-    async () => {
-
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-
-            if (
-                currentStudentName &&
-                currentClassName
-            ) {
-
-                await loadExistingCall();
-
-                updateCallScheduleUI();
-
-            }
-
-        }
-
-    }
-);
+}
 
 
 /* =====================================================
    INITIAL UI
 ===================================================== */
 
-if (
-    callButton
-) {
+if (callButton) {
 
     callButton.dataset.locked =
         "false";
@@ -3159,7 +3499,7 @@ if (
 
 
 /* =====================================================
-   LOGOUT / RESET
+   RESET PARENT SESSION
 ===================================================== */
 
 function resetParentSession() {
@@ -3176,9 +3516,14 @@ function resetParentSession() {
     lastParentPosition =
         null;
 
-    if (
-        parentCallChannel
-    ) {
+    callRequestInProgress =
+        false;
+
+    locationRequestInProgress =
+        false;
+
+
+    if (parentCallChannel) {
 
         supabaseClient.removeChannel(
             parentCallChannel
@@ -3189,9 +3534,8 @@ function resetParentSession() {
 
     }
 
-    if (
-        parentRefreshInterval
-    ) {
+
+    if (parentRefreshInterval) {
 
         clearInterval(
             parentRefreshInterval
@@ -3202,7 +3546,19 @@ function resetParentSession() {
 
     }
 
+
     stopLiveParentLocation();
+
+
+    if (callButton) {
+
+        callButton.dataset.locked =
+            "false";
+
+        callButton.dataset.timeBlocked =
+            "true";
+
+    }
 
 }
 
@@ -3213,9 +3569,7 @@ function resetParentSession() {
 
 function getParentRealtimeStatus() {
 
-    if (
-        !parentCallChannel
-    ) {
+    if (!parentCallChannel) {
 
         return "DISCONNECTED";
 
@@ -3238,11 +3592,13 @@ window.parentPanelDebug = {
 
     },
 
+
     getClassName: () => {
 
         return currentClassName;
 
     },
+
 
     getRealtimeStatus: () => {
 
@@ -3250,9 +3606,26 @@ window.parentPanelDebug = {
 
     },
 
+
     getLastPosition: () => {
 
         return lastParentPosition;
+
+    },
+
+
+    getGPSPermission: async () => {
+
+        return await checkGPSPermission();
+
+    },
+
+
+    refreshGPS: async () => {
+
+        return await refreshParentLocation(
+            false
+        );
 
     }
 
@@ -3260,307 +3633,7 @@ window.parentPanelDebug = {
 
 
 /* =====================================================
-   READY
-===================================================== */
-
-console.log(
-    "Parent panel initialized successfully."
-);
-/* =====================================================
-   CALL BUTTON
-===================================================== */
-
-callButton.addEventListener(
-    "click",
-    async () => {
-
-        if (
-            !currentStudentName ||
-            !currentClassName
-        ) {
-
-            alert(
-                "اطلاعات دانش‌آموز یافت نشد."
-            );
-
-            return;
-
-        }
-
-        if (
-            !isCallTimeActive()
-        ) {
-
-            const schedule =
-                getCallSchedule(
-                    currentClassName
-                );
-
-            alert(
-                "فراخوانی این کلاس فقط از ساعت " +
-                schedule.text +
-                " فعال است."
-            );
-
-            updateCallScheduleUI();
-
-            return;
-
-        }
-
-        if (
-            callButton.dataset.locked ===
-            "true"
-        ) {
-
-            return;
-
-        }
-
-        callButton.disabled =
-            true;
-
-        callButton.textContent =
-            "📍 در حال بررسی موقعیت...";
-
-        const locationResult =
-            await refreshParentLocation(
-                true
-            );
-
-        if (!locationResult) {
-
-            updateCallScheduleUI();
-
-            return;
-
-        }
-
-        const distance =
-            locationResult.distance;
-
-        if (
-            distance >
-            ALLOWED_RADIUS
-        ) {
-
-            updateCallScheduleUI();
-
-            alert(
-                "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
-                "فاصله شما: " +
-                formatDistance(
-                    distance
-                ) +
-                "\n" +
-                "محدوده مجاز: " +
-                formatDistance(
-                    ALLOWED_RADIUS
-                )
-            );
-
-            return;
-
-        }
-
-        callButton.textContent =
-            "📢 در حال بررسی فراخوان قبلی...";
-
-        const today =
-            getIranDate();
-
-        const {
-            data: activeCall,
-            error: activeError
-        } =
-            await supabaseClient
-                .from("calls")
-                .select("*")
-                .eq(
-                    "student_name",
-                    currentStudentName
-                )
-                .eq(
-                    "class_name",
-                    currentClassName
-                )
-                .eq(
-                    "called_date",
-                    today
-                )
-                .in(
-                    "status",
-                    [
-                        "فراخوان شد",
-                        "دریافت فراخوان"
-                    ]
-                )
-                .order(
-                    "id",
-                    {
-                        ascending: false
-                    }
-                )
-                .limit(1)
-                .maybeSingle();
-
-        if (activeError) {
-
-            console.error(
-                activeError
-            );
-
-            updateCallScheduleUI();
-
-            alert(
-                "خطا در بررسی فراخوان قبلی."
-            );
-
-            return;
-
-        }
-
-        if (activeCall) {
-
-            updateParentCallStatus(
-                activeCall
-            );
-
-            callButton.dataset.locked =
-                "true";
-
-            callButton.disabled =
-                true;
-
-            callButton.textContent =
-                "📢 فراخوان قبلاً ارسال شده";
-
-            alert(
-                "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           INSERT CALL
-        ================================================= */
-
-        callButton.textContent =
-            "📢 در حال ارسال فراخوان...";
-
-        const calledDate =
-            getIranDate();
-
-        const calledTime =
-            getIranTime();
-
-        const {
-            data: newCall,
-            error: insertError
-        } =
-            await supabaseClient
-                .from("calls")
-                .insert([
-                    {
-                        student_name:
-                            currentStudentName,
-
-                        class_name:
-                            currentClassName,
-
-                        status:
-                            "فراخوان شد",
-
-                        called_date:
-                            calledDate,
-
-                        called_time:
-                            calledTime
-
-                    }
-                ])
-                .select()
-                .single();
-
-        if (insertError) {
-
-            console.error(
-                "CALL INSERT ERROR:",
-                insertError
-            );
-
-            updateCallScheduleUI();
-
-            alert(
-                "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
-            );
-
-            return;
-
-        }
-
-
-        /* =================================================
-           SUCCESS
-        ================================================= */
-
-        callButton.dataset.locked =
-            "true";
-
-        callButton.disabled =
-            true;
-
-        callButton.textContent =
-            "✅ فراخوان ارسال شد";
-
-
-        callButton.style.background =
-            "linear-gradient(135deg, #f97316, #fb923c)";
-
-
-        callButton.style.boxShadow =
-            "0 15px 30px rgba(249, 115, 22, 0.30)";
-
-
-        updateParentCallStatus(
-            newCall
-        );
-
-
-        alert(
-            "فراخوان با موفقیت ارسال شد.\n\n" +
-            "فاصله شما تا مدرسه: " +
-            formatDistance(
-                distance
-            ) +
-            "\n" +
-            "زمان ارسال: " +
-            calledTime
-        );
-
-    }
-);
-
-
-/* =====================================================
-   BEFORE UNLOAD
-===================================================== */
-
-window.addEventListener(
-    "beforeunload",
-    () => {
-
-        stopLiveParentLocation();
-
-    }
-);
-
-
-/* =====================================================
-   PAGE VISIBILITY
+   PAGE VISIBILITY - CALL DATA
 ===================================================== */
 
 document.addEventListener(
@@ -3581,6 +3654,11 @@ document.addEventListener(
 
                 updateCallScheduleUI();
 
+                /*
+                   GPS توسط listener بخش ۲
+                   دوباره شروع می‌شود.
+                */
+
             }
 
         }
@@ -3588,123 +3666,6 @@ document.addEventListener(
     }
 );
 
-
-/* =====================================================
-   INITIAL UI
-===================================================== */
-
-if (
-    callButton
-) {
-
-    callButton.dataset.locked =
-        "false";
-
-    callButton.dataset.timeBlocked =
-        "true";
-
-}
-
-
-/* =====================================================
-   LOGOUT / RESET
-===================================================== */
-
-function resetParentSession() {
-
-    currentStudentName =
-        "";
-
-    currentClassName =
-        "";
-
-    currentParentAccountId =
-        null;
-
-    lastParentPosition =
-        null;
-
-    if (
-        parentCallChannel
-    ) {
-
-        supabaseClient.removeChannel(
-            parentCallChannel
-        );
-
-        parentCallChannel =
-            null;
-
-    }
-
-    if (
-        parentRefreshInterval
-    ) {
-
-        clearInterval(
-            parentRefreshInterval
-        );
-
-        parentRefreshInterval =
-            null;
-
-    }
-
-    stopLiveParentLocation();
-
-}
-
-
-/* =====================================================
-   REALTIME CONNECTION WATCH
-===================================================== */
-
-function getParentRealtimeStatus() {
-
-    if (
-        !parentCallChannel
-    ) {
-
-        return "DISCONNECTED";
-
-    }
-
-    return "CONNECTED";
-
-}
-
-
-/* =====================================================
-   DEBUG
-===================================================== */
-
-window.parentPanelDebug = {
-
-    getStudentName: () => {
-
-        return currentStudentName;
-
-    },
-
-    getClassName: () => {
-
-        return currentClassName;
-
-    },
-
-    getRealtimeStatus: () => {
-
-        return getParentRealtimeStatus();
-
-    },
-
-    getLastPosition: () => {
-
-        return lastParentPosition;
-
-    }
-
-};
 
 /* =====================================================
    CINEMATIC INTRO
@@ -3715,12 +3676,13 @@ document.addEventListener(
     function () {
 
         const cinematicIntro =
-            document.getElementById("cinematicIntro");
+            document.getElementById(
+                "cinematicIntro"
+            );
 
         if (!cinematicIntro) {
             return;
         }
-
 
         setTimeout(
             function () {
@@ -3733,7 +3695,6 @@ document.addEventListener(
             4800
         );
 
-
         setTimeout(
             function () {
 
@@ -3744,4 +3705,13 @@ document.addEventListener(
         );
 
     }
+);
+
+
+/* =====================================================
+   READY
+===================================================== */
+
+console.log(
+    "Parent panel initialized successfully."
 );
