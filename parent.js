@@ -2585,13 +2585,23 @@ window.addEventListener(
 );
 
 
+/* =====================================================
+   PAGE SHOW - GPS
+===================================================== */
+
 window.addEventListener(
     "pageshow",
     () => {
 
+        /*
+           فقط اگر قبلاً موقعیت موفق داشته‌ایم
+           GPS زنده دوباره شروع می‌شود.
+        */
+
         if (
             currentStudentName &&
-            currentClassName
+            currentClassName &&
+            lastParentPosition
         ) {
 
             startLiveParentLocation();
@@ -3781,7 +3791,7 @@ if (loginButton) {
                            «بروزرسانی موقعیت» درخواست را انجام می‌دهد.
                         */
 
-                        startLiveParentLocation();
+                       
 
                     },
                     400
@@ -4048,25 +4058,40 @@ window.parentPanelDebug = {
    PAGE VISIBILITY - CALL DATA
 ===================================================== */
 
+/* =====================================================
+   PAGE VISIBILITY - GPS
+   GPS فقط بعد از اولین دریافت موفق فعال می‌شود
+===================================================== */
+
 document.addEventListener(
     "visibilitychange",
-    async () => {
+    () => {
 
         if (
             document.visibilityState ===
             "visible"
         ) {
 
+            /*
+               اگر قبلاً موقعیت موفق دریافت شده باشد،
+               GPS زنده دوباره فعال می‌شود.
+            */
+
             if (
                 currentStudentName &&
-                currentClassName
+                currentClassName &&
+                lastParentPosition
             ) {
 
-                await loadExistingCall();
-
-                updateCallScheduleUI();
+                startLiveParentLocation();
 
             }
+
+        }
+
+        else {
+
+            stopLiveParentLocation();
 
         }
 
