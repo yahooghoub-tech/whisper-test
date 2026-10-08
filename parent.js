@@ -3779,17 +3779,34 @@ if (loginButton) {
 
                         await loadExistingCall();
 
-                        startParentRealtime();
+startParentRealtime();
 
-                        startParentAutoRefresh();
+startParentAutoRefresh();
 
 
-                        /*
-                           GPS بعد از ورود فعال می‌شود.
-                           اگر Chrome برای permission نیاز به
-                           کلیک کاربر داشته باشد، دکمه
-                           «بروزرسانی موقعیت» درخواست را انجام می‌دهد.
-                        */
+/* =====================================================
+   START GPS IMMEDIATELY AFTER LOGIN
+===================================================== */
+
+setLiveParentLoading();
+
+try {
+
+    await refreshParentLocation(false);
+
+    console.log(
+        "GPS بعد از ورود با موفقیت فعال شد."
+    );
+
+}
+catch (gpsError) {
+
+    console.warn(
+        "GPS بعد از ورود فعال نشد:",
+        gpsError
+    );
+
+}
 
                        
 
