@@ -3229,21 +3229,34 @@ if (callButton) {
                 /* =================================================
                    GPS
                 ================================================= */
+                let locationResult = null;
 
-                const locationResult =
-                    await refreshParentLocation(
-                        true
-                    );
-
-                if (!locationResult) {
-
-                    updateCallScheduleUI();
-
-                    return;
-
+                const gpsIsFresh =
+                    lastParentPosition &&
+                    Date.now() - lastParentPosition.timestamp < 60000;
+                
+                if (gpsIsFresh) {
+                
+                    console.log("استفاده از GPS به‌روز موجود");
+                
+                    locationResult = lastParentPosition;
+                
+                } else {
+                
+                    console.log("GPS قدیمی است؛ دریافت موقعیت جدید...");
+                
+                    callButton.textContent =
+                        "📍 در حال به‌روزرسانی موقعیت...";
+                
+                    locationResult =
+                        await refreshParentLocation(true);
+                
+                    if (!locationResult) {
+                        updateCallScheduleUI();
+                        return;
+                    }
                 }
-
-
+                
                 const distance =
                     locationResult.distance;
 
