@@ -2851,17 +2851,22 @@ function updateParentCallButton(call) {
             callTime;
 
            
-            callButton.style.background =
-                "linear-gradient(135deg, rgba(74,222,128,0.38), rgba(22,163,74,0.18))";
+           
+            callButton.style.background = "linear-gradient(135deg, #16a34a, #15803d)";
             
-            callButton.style.backdropFilter = "blur(18px)";
-            callButton.style.webkitBackdropFilter = "blur(18px)";
+            callButton.style.backdropFilter = "none";
+            callButton.style.webkitBackdropFilter = "none";
             
-            callButton.style.border =
-                "1px solid rgba(187,247,208,0.65)";
+            callButton.style.border = "1px solid #15803d";
             
-            callButton.style.boxShadow =
-                "0 15px 30px rgba(34,197,94,0.25), inset 0 1px 0 rgba(255,255,255,0.4)";
+            callButton.style.boxShadow = "0 5px 14px rgba(22, 163, 74, 0.25)";
+            
+            callButton.style.color = "#ffffff";
+            callButton.style.fontWeight = "700";
+            callButton.style.borderRadius = "12px";
+            callButton.style.transition = "all 0.25s ease";
+          
+            
           
             
 
