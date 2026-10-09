@@ -2181,14 +2181,14 @@ input:focus {
 
         radial-gradient(
             circle at 0% 100%,
-            rgba(0,220,220,.10),
+            rgba(17, 51, 244, 0.362),
             transparent 32%
         ),
 
         linear-gradient(
             145deg,
-            #073d47,
-            #078795
+            #061ba7,
+            #073abd
         );
 
     box-shadow:
