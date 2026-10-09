@@ -2916,8 +2916,7 @@ function updateParentCallButton(call) {
             "📤 ارسال دانش‌آموز: " +
             sentTime;
 
-        callButton.style.background =
-            "linear-gradient(135deg, #7c3aed, #a855f7)";
+            callButton.style.background = "linear-gradient(135deg, #dc2626, #991b1b)";
 
         callButton.style.boxShadow =
             "0 15px 30px rgba(124, 58, 237, 0.25)";
