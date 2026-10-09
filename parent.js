@@ -2850,13 +2850,19 @@ function updateParentCallButton(call) {
             "📢 فراخوان برای معلم ارسال شد — " +
             callTime;
 
-         
-            callButton.style.background = "linear-gradient(135deg, rgba(168,85,247,0.38), rgba(109,40,217,0.18))";
-             callButton.style.backdropFilter = "blur(18px)"; 
-             callButton.style.webkitBackdropFilter = "blur(18px)"; 
-             callButton.style.border = "1px solid rgba(216,180,254,0.65)"; 
-             callButton.style.boxShadow = "0 15px 30px rgba(139,92,246,0.25), inset 0 1px 0 rgba(255,255,255,0.4)";
+           
+            callButton.style.background =
+                "linear-gradient(135deg, rgba(74,222,128,0.38), rgba(22,163,74,0.18))";
             
+            callButton.style.backdropFilter = "blur(18px)";
+            callButton.style.webkitBackdropFilter = "blur(18px)";
+            
+            callButton.style.border =
+                "1px solid rgba(187,247,208,0.65)";
+            
+            callButton.style.boxShadow =
+                "0 15px 30px rgba(34,197,94,0.25), inset 0 1px 0 rgba(255,255,255,0.4)";
+          
             
 
     }
