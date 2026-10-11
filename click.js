@@ -318,7 +318,7 @@ const students=[
     
     {name:"محمدمهدی ابیض",className:"پنجم-1"},
     {name:"ماهان اجتهادی",className:"پنجم-1"},
-    {name:"سامیار اسکندری",className:"پنجم-1"},
+    
     {name:"آرشا افتخاری",className:"پنجم-1"},
     {name:"کارن آتش بهار",className:"پنجم-1"},
     {name:"شهراد چم",className:"پنجم-1"},
