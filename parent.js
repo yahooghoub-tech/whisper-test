@@ -653,8 +653,8 @@ const SCHOOL_LAT =
 const SCHOOL_LNG =
     51.32257158390593;
 
-const ALLOWED_RADIUS =
-    50000;
+    const ALLOWED_RADIUS = 150;
+    const GPS_ERROR_TOLERANCE = 50000;
 
 const EARTH_RADIUS =
     6371000;
@@ -3265,25 +3265,23 @@ if (callButton) {
                    CHECK DISTANCE
                 ================================================= */
 
-                if (
-                    distance >
-                    ALLOWED_RADIUS
-                ) {
+                
+if (
+    distance > GPS_ERROR_TOLERANCE
+) {
+    updateCallScheduleUI();
 
-                    updateCallScheduleUI();
+    alert(
+        "فاصله شما بیشتر از حد قابل قبول است.\n\n" +
+        "فاصله شما: " +
+        formatDistance(distance) +
+        "\n" +
+        "حداکثر فاصله قابل قبول: " +
+        formatDistance(GPS_ERROR_TOLERANCE)
+    );
 
-                    alert(
-                        "شما خارج از محدوده مجاز مدرسه هستید.\n\n" +
-                        "فاصله شما: " +
-                        formatDistance(distance) +
-                        "\n" +
-                        "محدوده مجاز: " +
-                        formatDistance(ALLOWED_RADIUS)
-                    );
-
-                    return;
-
-                }
+    return;
+}
 
 
                 /* =================================================
