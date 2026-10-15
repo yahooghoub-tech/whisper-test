@@ -4259,19 +4259,25 @@ function formatArrivalTime(value) {
 
 /* نمایش وضعیت دکمه */
 
+
 function updateClassArrivalButton(arrival) {
     if (!parentArrivalButton || !parentArrivalTime) return;
 
-    if (!arrival) {
+    // اگر حضور ثبت نشده یا لغو شده باشد
+    if (!arrival || arrival.status === "cancelled") {
         parentArrivalButton.classList.remove("arrived");
         parentArrivalButton.textContent = "دانش‌آموز";
+
         parentArrivalTime.textContent =
             "هنوز حضور دانش‌آموز در کلاس ثبت نشده است.";
-        lastClassArrivalId = null;
+
+        lastClassArrivalId = arrival ? arrival.id : null;
         return;
     }
 
+    // اگر حضور دانش‌آموز فعال باشد
     parentArrivalButton.classList.add("arrived");
+
     parentArrivalButton.textContent =
         "✅ دانش‌آموز در کلاس حاضر است";
 
@@ -4280,6 +4286,7 @@ function updateClassArrivalButton(arrival) {
 
     lastClassArrivalId = arrival.id;
 }
+
 
 
 /* اعلان داخل پنل والد */
@@ -4354,7 +4361,7 @@ async function loadTodayClassArrival() {
 
     const { data, error } = await supabaseClient
         .from("class_arrivals")
-        .select("id, student_name, class_name, arrival_date, arrived_at, created_at")
+        .select("id, student_name, class_name, arrival_date, arrived_at, created_at, status")
         .eq("student_name", currentStudentName)
         .eq("class_name", currentClassName)
         .eq("arrival_date", getIranGregorianDateForArrival())

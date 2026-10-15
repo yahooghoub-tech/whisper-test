@@ -317,7 +317,8 @@ async function loadTodayArrivals(){
 
     const {data,error} = await supabaseClient
         .from("class_arrivals")
-        .select("id,student_name,class_name,arrival_date,arrived_at")
+        .select("id,student_name,class_name,arrival_date,arrived_at,status")
+.order("id", { ascending: true })
         .eq("class_name",CLASS_NAME)
         .eq("arrival_date",today);
 
@@ -365,6 +366,7 @@ function renderStudents(){
     filtered.forEach(student=>{
         const key = studentKey(student.name);
         const arrival = registeredArrivals.get(key);
+        const isArrived = arrival && arrival.status === "arrived";
         const isSaving = savingStudents.has(key);
 
         const button = document.createElement("button");
@@ -406,75 +408,63 @@ function renderStudents(){
     });
 }
 
-async function registerArrival(student){
+
+async function registerArrival(student) {
     const key = studentKey(student.name);
 
-    if(registeredArrivals.has(key) || savingStudents.has(key)){
-        return;
-    }
+    if (savingStudents.has(key)) return;
 
     savingStudents.add(key);
     renderStudents();
     hideMessage();
 
-    try{
-        const today = getDatabaseToday();
+    try {
+        const current = registeredArrivals.get(key);
+        const newStatus =
+            current && current.status === "arrived"
+                ? "cancelled"
+                : "arrived";
 
-        const {data:existing,error:checkError} = await supabaseClient
+        const { data, error } = await supabaseClient
             .from("class_arrivals")
-            .select("id,student_name,class_name,arrival_date,arrived_at")
-            .eq("student_name",student.name)
-            .eq("class_name",CLASS_NAME)
-            .eq("arrival_date",today)
-            .limit(1);
+            .insert({
+                student_name: student.name,
+                class_name: CLASS_NAME,
+                arrival_date: getDatabaseToday(),
+                arrived_at: new Date().toISOString(),
+                status: newStatus
+            })
+            .select("id,student_name,class_name,arrival_date,arrived_at,status")
+            .single();
 
-        if(checkError) throw checkError;
+        if (error) throw error;
 
-        if(existing && existing.length){
-            registeredArrivals.set(key,existing[0]);
-            showMessage("ورود این دانش‌آموز قبلاً امروز ثبت شده است.","success");
-        }else{
-            const arrivalTime = new Date().toISOString();
-
-const {error:insertError} = await supabaseClient
-    .from("class_arrivals")
-    .insert({
-        student_name: student.name,
-        class_name: CLASS_NAME,
-        arrival_date: today,
-        arrived_at: arrivalTime
-    });
-
-if(insertError) throw insertError;
-
-registeredArrivals.set(key, {
-    student_name: student.name,
-    class_name: CLASS_NAME,
-    arrival_date: today,
-    arrived_at: arrivalTime
-});
-
-            showMessage(
-                "ورود " + student.name + " به کلاس پیش‌۱ ثبت شد.",
-                "success"
-            );
-        }
+        registeredArrivals.set(key, data);
 
         $("registeredCount").textContent =
-            "ورودهای امروز: " + registeredArrivals.size;
+            "ورودهای فعال امروز: " +
+            Array.from(registeredArrivals.values())
+                .filter(item => item.status === "arrived").length;
 
-        }catch(error){
-    console.error("خطا در ثبت ورود:", error);
+        showMessage(
+            newStatus === "arrived"
+                ? "ورود " + student.name + " ثبت شد."
+                : "حضور " + student.name + " لغو شد؛ تاریخچه حفظ شد.",
+            "success"
+        );
 
-    showMessage(
-        "ثبت ورود ناموفق بود: " + (error.message || "خطای نامشخص"),
-        "error"
-    );
-    }finally{
+    } catch (error) {
+        console.error("خطا در تغییر وضعیت حضور:", error);
+        showMessage(
+            "تغییر وضعیت ناموفق بود: " + (error.message || "خطای نامشخص"),
+            "error"
+        );
+    } finally {
         savingStudents.delete(key);
         renderStudents();
     }
 }
+
 
 $("searchInput").addEventListener("input",renderStudents);
 
