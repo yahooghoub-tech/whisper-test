@@ -434,20 +434,25 @@ async function registerArrival(student){
             registeredArrivals.set(key,existing[0]);
             showMessage("ورود این دانش‌آموز قبلاً امروز ثبت شده است.","success");
         }else{
-            const {data:inserted,error:insertError} = await supabaseClient
-                .from("class_arrivals")
-                .insert({
-                    student_name:student.name,
-                    class_name:CLASS_NAME,
-                    arrival_date:today,
-                    arrived_at: new Date().toISOString()
-                })
-                .select("id,student_name,class_name,arrival_date,arrived_at")
-                .single();
+            const arrivalTime = new Date().toISOString();
 
-            if(insertError) throw insertError;
+const {error:insertError} = await supabaseClient
+    .from("class_arrivals")
+    .insert({
+        student_name: student.name,
+        class_name: CLASS_NAME,
+        arrival_date: today,
+        arrived_at: arrivalTime
+    });
 
-            registeredArrivals.set(key,inserted);
+if(insertError) throw insertError;
+
+registeredArrivals.set(key, {
+    student_name: student.name,
+    class_name: CLASS_NAME,
+    arrival_date: today,
+    arrived_at: arrivalTime
+});
 
             showMessage(
                 "ورود " + student.name + " به کلاس پیش‌۱ ثبت شد.",
