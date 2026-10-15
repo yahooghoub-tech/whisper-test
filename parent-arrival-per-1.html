@@ -373,37 +373,42 @@ function renderStudents(){
         button.type = "button";
         button.className = "student-button";
 
-        if(arrival){
-            button.classList.add("registered");
-        }
+        
+if (isArrived) {
+    button.classList.add("registered");
+}
 
-        button.disabled = Boolean(arrival || isSaving);
+button.disabled = Boolean(isArrived || isSaving);
+
 
         const name = document.createElement("span");
         name.textContent = student.name;
 
         const status = document.createElement("span");
         status.className = "student-status";
-        status.textContent = arrival
-            ? "✅ ورود ثبت شد"
-            : isSaving
-                ? "⏳ در حال ثبت..."
-                : "＋ ثبت ورود به کلاس";
+        
+status.textContent = isSaving
+    ? "⏳ در حال ثبت..."
+    : isArrived
+        ? "✅ ورود ثبت شد"
+        : arrival && arrival.status === "cancelled"
+            ? "↩️ ثبت مجدد ورود"
+            : "＋ ثبت ورود به کلاس";
+
 
         const time = document.createElement("span");
         time.className = "student-time";
-        time.textContent = arrival && arrival.arrived_at
-            ? "ساعت ورود: " + arrival.arrived_at
-            : "";
+        time.textContent = isArrived && arrival.arrived_at
+    ? "ساعت ورود: " + new Date(arrival.arrived_at).toLocaleTimeString("fa-IR")
+    : "";
 
         button.append(name,status,time);
 
-        if(!arrival && !isSaving){
-            button.addEventListener("click",()=>{
-                registerArrival(student);
-            });
-        }
-
+        if (!isArrived && !isSaving) {
+    button.addEventListener("click", () => {
+        registerArrival(student);
+    });
+}
         container.appendChild(button);
     });
 }
