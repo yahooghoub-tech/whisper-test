@@ -3601,6 +3601,8 @@ if (loginButton) {
         "click",
         async () => {
 
+
+            requestClassArrivalNotificationPermission();
             const name =
                 studentNameInput.value.trim();
 
@@ -3795,6 +3797,9 @@ if (loginButton) {
 startParentRealtime();
 
 startParentAutoRefresh();
+
+await loadTodayClassArrival();
+startClassArrivalRealtime();
 
 
 /* =====================================================
@@ -4177,3 +4182,272 @@ document.addEventListener(
 console.log(
     "Parent panel initialized successfully."
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STUDENT CLASS ARRIVAL - PARENT PANEL
+===================================================== */
+
+const parentArrivalButton =
+    document.getElementById("parentArrivalButton");
+
+const parentArrivalTime =
+    document.getElementById("parentArrivalTime");
+
+const classArrivalNotification =
+    document.getElementById("classArrivalNotification");
+
+const classArrivalNotificationText =
+    document.getElementById("classArrivalNotificationText");
+
+const closeClassArrivalNotification =
+    document.getElementById("closeClassArrivalNotification");
+
+let classArrivalChannel = null;
+let lastClassArrivalId = null;
+let arrivalNotificationTimer = null;
+
+
+/* تاریخ میلادی امروز بر اساس ساعت تهران */
+
+function getIranGregorianDateForArrival() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tehran",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+
+    const part = type =>
+        parts.find(item => item.type === type)?.value || "";
+
+    return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+
+/* نمایش ساعت حضور */
+
+function formatArrivalTime(value) {
+    if (!value) return "---";
+
+    const time = String(value).slice(0, 8);
+    const parts = time.split(":");
+
+    if (parts.length < 2) return time;
+
+    return parts.slice(0, 3).join(":").replace(
+        /\d/g,
+        digit => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]
+    );
+}
+
+
+/* نمایش وضعیت دکمه */
+
+function updateClassArrivalButton(arrival) {
+    if (!parentArrivalButton || !parentArrivalTime) return;
+
+    if (!arrival) {
+        parentArrivalButton.classList.remove("arrived");
+        parentArrivalButton.textContent = "دانش‌آموز";
+        parentArrivalTime.textContent =
+            "هنوز حضور دانش‌آموز در کلاس ثبت نشده است.";
+        lastClassArrivalId = null;
+        return;
+    }
+
+    parentArrivalButton.classList.add("arrived");
+    parentArrivalButton.textContent =
+        "✅ دانش‌آموز در کلاس حاضر است";
+
+    parentArrivalTime.textContent =
+        "ساعت حضور: " + formatArrivalTime(arrival.arrived_at);
+
+    lastClassArrivalId = arrival.id;
+}
+
+
+/* اعلان داخل پنل والد */
+
+function showClassArrivalAlert(arrival) {
+    if (!classArrivalNotification) return;
+
+    if (classArrivalNotificationText) {
+        classArrivalNotificationText.textContent =
+            `${currentStudentName} در کلاس حاضر است. ساعت حضور: ${
+                formatArrivalTime(arrival.arrived_at)
+            }`;
+    }
+
+    classArrivalNotification.classList.add("show");
+
+    if (arrivalNotificationTimer) {
+        clearTimeout(arrivalNotificationTimer);
+    }
+
+    arrivalNotificationTimer = setTimeout(() => {
+        classArrivalNotification.classList.remove("show");
+    }, 10000);
+
+    /* اعلان سیستمی مرورگر، در صورت داشتن مجوز */
+
+    if (
+        "Notification" in window &&
+        Notification.permission === "granted"
+    ) {
+        try {
+            const notification = new Notification(
+                "حضور دانش‌آموز در کلاس",
+                {
+                    body:
+                        `${currentStudentName} در کلاس حاضر است. ساعت حضور: ${
+                            formatArrivalTime(arrival.arrived_at)
+                        }`,
+                    icon: "icon-192.png",
+                    tag: "class-arrival-" + arrival.id
+                }
+            );
+
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+        } catch (error) {
+            console.warn("اعلان سیستمی در دسترس نیست:", error);
+        }
+    }
+}
+
+
+/* بستن اعلان داخل پنل */
+
+if (closeClassArrivalNotification) {
+    closeClassArrivalNotification.addEventListener("click", () => {
+        classArrivalNotification.classList.remove("show");
+
+        if (arrivalNotificationTimer) {
+            clearTimeout(arrivalNotificationTimer);
+        }
+    });
+}
+
+
+/* خواندن حضور ثبت‌شده امروز */
+
+async function loadTodayClassArrival() {
+    if (!currentStudentName || !currentClassName) return;
+
+    const { data, error } = await supabaseClient
+        .from("class_arrivals")
+        .select("id, student_name, class_name, arrival_date, arrived_at, created_at")
+        .eq("student_name", currentStudentName)
+        .eq("class_name", currentClassName)
+        .eq("arrival_date", getIranGregorianDateForArrival())
+        .order("id", { ascending: false })
+        .limit(1);
+
+    if (error) {
+        console.error("خطای دریافت حضور دانش‌آموز:", error);
+        if (parentArrivalTime) {
+            parentArrivalTime.textContent =
+                "دریافت وضعیت حضور ممکن نشد.";
+        }
+        return;
+    }
+
+    updateClassArrivalButton(data && data.length ? data[0] : null);
+}
+
+
+/* دریافت لحظه‌ای تغییرات جدول class_arrivals */
+
+function startClassArrivalRealtime() {
+    if (!currentStudentName || !currentClassName) return;
+
+    if (classArrivalChannel) {
+        supabaseClient.removeChannel(classArrivalChannel);
+        classArrivalChannel = null;
+    }
+
+    classArrivalChannel = supabaseClient
+        .channel("parent-class-arrival-" + Date.now())
+        .on(
+            "postgres_changes",
+            {
+                event: "*",
+                schema: "public",
+                table: "class_arrivals",
+                filter: "class_name=eq." + currentClassName
+            },
+            payload => {
+                const arrival = payload.new;
+
+                if (!arrival || !arrival.id) return;
+
+                if (
+                    normalizePersianName(arrival.student_name) !==
+                    normalizePersianName(currentStudentName)
+                ) {
+                    return;
+                }
+
+                if (
+                    arrival.arrival_date !==
+                    getIranGregorianDateForArrival()
+                ) {
+                    return;
+                }
+
+                const isNewArrival =
+                    String(arrival.id) !== String(lastClassArrivalId);
+
+                updateClassArrivalButton(arrival);
+
+                if (isNewArrival && payload.eventType === "INSERT") {
+                    showClassArrivalAlert(arrival);
+                }
+            }
+        )
+        .subscribe(status => {
+            console.log("Class arrival realtime:", status);
+        });
+}
+
+
+/* درخواست اجازه اعلان از مرورگر */
+
+function requestClassArrivalNotificationPermission() {
+    if (
+        "Notification" in window &&
+        Notification.permission === "default"
+    ) {
+        Notification.requestPermission().then(permission => {
+            console.log("اجازه اعلان:", permission);
+        }).catch(error => {
+            console.warn("دریافت مجوز اعلان ممکن نشد:", error);
+        });
+    }
+}
+
+
+/* اجرای اولیه: وضعیت پیش‌فرض زرد */
+
+if (parentArrivalButton) {
+    parentArrivalButton.classList.remove("arrived");
+    parentArrivalButton.textContent = "دانش‌آموز";
+}

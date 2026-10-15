@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثبت ورود دانش‌آموزان پیش‌۱ | دبستان علوی</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Estedad:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Estedad,sans-serif;
+background:linear-gradient(135deg,#eaf3ff,#f5f3ff);
+color:#172554;
+min-height:100vh;
+}
+
+.container{
+width:min(1100px,95%);
+margin:22px auto;
+}
+
+.header{
+background:linear-gradient(135deg,#123b78,#2563eb);
+color:white;
+padding:24px;
+border-radius:20px;
+box-shadow:0 8px 25px #1e40af22;
+}
+
+.header h1{
+margin:0 0 10px;
+font-size:clamp(21px,4vw,30px);
+}
+
+.header p{
+margin:0;
+font-size:14px;
+opacity:.9;
+}
+
+.info{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:18px;
+}
+
+.info span{
+background:#ffffff20;
+border:1px solid #ffffff35;
+border-radius:10px;
+padding:8px 12px;
+font-size:13px;
+}
+
+.toolbar{
+background:white;
+padding:16px;
+margin-top:18px;
+border-radius:16px;
+box-shadow:0 4px 18px #1725540d;
+}
+
+.toolbar input{
+width:100%;
+padding:12px;
+border:1px solid #dbe4f0;
+border-radius:10px;
+font-family:inherit;
+font-size:14px;
+}
+
+.message{
+display:none;
+margin-top:15px;
+padding:13px;
+border-radius:12px;
+font-size:14px;
+}
+
+.message.show{display:block}
+.message.error{background:#fee2e2;color:#991b1b}
+.message.success{background:#dcfce7;color:#166534}
+
+.section-title{
+display:flex;
+justify-content:space-between;
+gap:10px;
+margin:22px 4px 12px;
+font-weight:800;
+}
+
+.students-container{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(185px,1fr));
+gap:12px;
+}
+
+.student-button{
+min-height:112px;
+border:1px solid #dbeafe;
+border-radius:15px;
+background:white;
+color:#1e3a8a;
+padding:14px 10px;
+font-family:inherit;
+font-size:14px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 3px 10px #1725540b;
+transition:transform .15s,background .15s;
+overflow-wrap:anywhere;
+}
+
+.student-button:hover:not(:disabled){
+transform:translateY(-2px);
+border-color:#60a5fa;
+}
+
+.student-button.registered{
+background:#dcfce7;
+border-color:#86efac;
+color:#166534;
+cursor:default;
+}
+
+.student-status{
+display:block;
+margin-top:12px;
+font-size:13px;
+font-weight:600;
+}
+
+.student-time{
+display:block;
+margin-top:5px;
+font-size:12px;
+font-weight:500;
+}
+
+.empty{
+grid-column:1/-1;
+background:white;
+padding:25px;
+border-radius:14px;
+text-align:center;
+color:#64748b;
+}
+
+.footer{
+text-align:center;
+padding:24px 10px;
+color:#64748b;
+font-size:12px;
+}
+
+@media(max-width:520px){
+.container{width:94%;margin:12px auto}
+.header{padding:19px}
+.students-container{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.student-button{font-size:13px;padding:10px 6px;min-height:105px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header class="header">
+<h1>🏫 پنل ورود دانش‌آموزان پیش‌۱</h1>
+<p>دبستان علوی سردار جنگل | ثبت ورود به کلاس</p>
+
+<div class="info">
+<span>کلاس: پیش-1</span>
+<span id="totalCount">تعداد دانش‌آموزان: ...</span>
+<span id="registeredCount">ورودهای امروز: ...</span>
+<span id="todayLabel">تاریخ: ...</span>
+</div>
+</header>
+
+<div class="toolbar">
+<input id="searchInput" type="search" placeholder="🔎 جست‌وجوی نام دانش‌آموز پیش‌۱...">
+</div>
+
+<div id="message" class="message"></div>
+
+<div class="section-title">
+<span>فهرست دانش‌آموزان کلاس پیش‌۱</span>
+<span id="visibleCount"></span>
+</div>
+
+<div id="studentsContainer" class="students-container">
+<div class="empty">در حال دریافت فهرست دانش‌آموزان...</div>
+</div>
+
+<footer class="footer">سامانه دبستان علوی</footer>
+
+</div>
+
+<script>
+const SUPABASE_URL =
+"https://ghnpiijihybuhfetnxjp.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const CLASS_NAME = "پیش-1";
+
+const $ = id => document.getElementById(id);
+
+let students = [];
+let registeredArrivals = new Map();
+let savingStudents = new Set();
+
+function getDatabaseToday(){
+    const d = new Date();
+
+    return [
+        d.getFullYear(),
+        String(d.getMonth()+1).padStart(2,"0"),
+        String(d.getDate()).padStart(2,"0")
+    ].join("-");
+}
+
+function getCurrentTime(){
+    const d = new Date();
+
+    return [
+        String(d.getHours()).padStart(2,"0"),
+        String(d.getMinutes()).padStart(2,"0"),
+        String(d.getSeconds()).padStart(2,"0")
+    ].join(":");
+}
+
+function normalizeName(name){
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF]/g,"")
+        .replace(/\u200C/g,"")
+        .replace(/ي/g,"ی")
+        .replace(/ى/g,"ی")
+        .replace(/ك/g,"ک")
+        .replace(/\s+/g," ")
+        .trim();
+}
+
+function studentKey(name){
+    return normalizeName(name);
+}
+
+function showMessage(text,type){
+    const box = $("message");
+    box.textContent = text;
+    box.className = "message show " + (type || "");
+}
+
+function hideMessage(){
+    $("message").className = "message";
+}
+
+async function loadStudents(){
+    $("studentsContainer").innerHTML =
+        '<div class="empty">در حال دریافت اطلاعات دانش‌آموزان...</div>';
+
+    const {data,error} = await supabaseClient
+        .from("students")
+        .select("name,class_name")
+        .eq("class_name",CLASS_NAME)
+        .order("name");
+
+    if(error){
+        console.error("خطا در دریافت دانش‌آموزان:",error);
+        showMessage("فهرست دانش‌آموزان دریافت نشد. دسترسی جدول students را بررسی کنید.","error");
+        $("studentsContainer").innerHTML =
+            '<div class="empty">خطا در دریافت فهرست دانش‌آموزان.</div>';
+        return;
+    }
+
+    const uniqueStudents = new Map();
+
+(data || []).forEach(student => {
+    if (!student.name || !student.class_name) return;
+
+    const key = normalizeName(student.name);
+
+    if (!uniqueStudents.has(key)) {
+        uniqueStudents.set(key, student);
+    }
+});
+
+students = Array.from(uniqueStudents.values());
+
+    $("totalCount").textContent =
+        "تعداد دانش‌آموزان: " + students.length;
+
+    await loadTodayArrivals();
+}
+
+async function loadTodayArrivals(){
+    const today = getDatabaseToday();
+
+    $("todayLabel").textContent =
+        "تاریخ: " + new Intl.DateTimeFormat("fa-IR").format(new Date());
+
+    const {data,error} = await supabaseClient
+        .from("class_arrivals")
+        .select("id,student_name,class_name,arrival_date,arrived_at")
+        .eq("class_name",CLASS_NAME)
+        .eq("arrival_date",today);
+
+    if(error){
+        console.error("خطا در دریافت ورودهای امروز:",error);
+        showMessage("ورودهای امروز دریافت نشدند. دسترسی جدول class_arrivals را بررسی کنید.","error");
+        registeredArrivals = new Map();
+    }else{
+        registeredArrivals = new Map();
+
+        (data || []).forEach(item=>{
+            registeredArrivals.set(
+                studentKey(item.student_name),
+                item
+            );
+        });
+
+        hideMessage();
+    }
+
+    $("registeredCount").textContent =
+        "ورودهای امروز: " + registeredArrivals.size;
+
+    renderStudents();
+}
+
+function renderStudents(){
+    const search = normalizeName($("searchInput").value);
+
+    const filtered = students.filter(student =>
+        normalizeName(student.name).includes(search)
+    );
+
+    const container = $("studentsContainer");
+    container.innerHTML = "";
+
+    $("visibleCount").textContent = filtered.length + " نفر";
+
+    if(!filtered.length){
+        container.innerHTML =
+            '<div class="empty">دانش‌آموزی پیدا نشد.</div>';
+        return;
+    }
+
+    filtered.forEach(student=>{
+        const key = studentKey(student.name);
+        const arrival = registeredArrivals.get(key);
+        const isSaving = savingStudents.has(key);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "student-button";
+
+        if(arrival){
+            button.classList.add("registered");
+        }
+
+        button.disabled = Boolean(arrival || isSaving);
+
+        const name = document.createElement("span");
+        name.textContent = student.name;
+
+        const status = document.createElement("span");
+        status.className = "student-status";
+        status.textContent = arrival
+            ? "✅ ورود ثبت شد"
+            : isSaving
+                ? "⏳ در حال ثبت..."
+                : "＋ ثبت ورود به کلاس";
+
+        const time = document.createElement("span");
+        time.className = "student-time";
+        time.textContent = arrival && arrival.arrived_at
+            ? "ساعت ورود: " + arrival.arrived_at
+            : "";
+
+        button.append(name,status,time);
+
+        if(!arrival && !isSaving){
+            button.addEventListener("click",()=>{
+                registerArrival(student);
+            });
+        }
+
+        container.appendChild(button);
+    });
+}
+
+async function registerArrival(student){
+    const key = studentKey(student.name);
+
+    if(registeredArrivals.has(key) || savingStudents.has(key)){
+        return;
+    }
+
+    savingStudents.add(key);
+    renderStudents();
+    hideMessage();
+
+    try{
+        const today = getDatabaseToday();
+
+        const {data:existing,error:checkError} = await supabaseClient
+            .from("class_arrivals")
+            .select("id,student_name,class_name,arrival_date,arrived_at")
+            .eq("student_name",student.name)
+            .eq("class_name",CLASS_NAME)
+            .eq("arrival_date",today)
+            .limit(1);
+
+        if(checkError) throw checkError;
+
+        if(existing && existing.length){
+            registeredArrivals.set(key,existing[0]);
+            showMessage("ورود این دانش‌آموز قبلاً امروز ثبت شده است.","success");
+        }else{
+            const {data:inserted,error:insertError} = await supabaseClient
+                .from("class_arrivals")
+                .insert({
+                    student_name:student.name,
+                    class_name:CLASS_NAME,
+                    arrival_date:today,
+                    arrived_at:getCurrentTime()
+                })
+                .select("id,student_name,class_name,arrival_date,arrived_at")
+                .single();
+
+            if(insertError) throw insertError;
+
+            registeredArrivals.set(key,inserted);
+
+            showMessage(
+                "ورود " + student.name + " به کلاس پیش‌۱ ثبت شد.",
+                "success"
+            );
+        }
+
+        $("registeredCount").textContent =
+            "ورودهای امروز: " + registeredArrivals.size;
+
+    }catch(error){
+        console.error("خطا در ثبت ورود:",error);
+
+        showMessage(
+            "ثبت ورود ناموفق بود. تنظیمات دسترسی Supabase و ستون arrived_at را بررسی کنید.",
+            "error"
+        );
+    }finally{
+        savingStudents.delete(key);
+        renderStudents();
+    }
+}
+
+$("searchInput").addEventListener("input",renderStudents);
+
+loadStudents();
+</script>
+</body>
+</html>

@@ -5287,3 +5287,96 @@ input:focus-visible {
             15px;
     }
 }
+
+
+
+
+/* حضور دانش‌آموز در کلاس */
+
+.class-arrival-section {
+    margin: 22px 0;
+    padding: 22px;
+    border-radius: 18px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+.class-arrival-section h2 {
+    margin: 0 0 18px;
+    font-size: 20px;
+}
+
+.parent-arrival-button {
+    width: 100%;
+    max-width: 420px;
+    min-height: 62px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 14px;
+    background: #facc15;
+    color: #422006;
+    font-family: inherit;
+    font-size: 19px;
+    font-weight: 800;
+    cursor: default;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.parent-arrival-button.arrived {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.parent-arrival-time {
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.class-arrival-notification {
+    position: fixed;
+    z-index: 99999;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    max-width: 440px;
+    margin: auto;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    color: #14532d;
+    border: 1px solid #86efac;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: 0.3s ease;
+}
+
+.class-arrival-notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.class-arrival-notification-icon {
+    font-size: 30px;
+}
+
+.class-arrival-notification p {
+    margin: 6px 0 0;
+    font-size: 14px;
+}
+
+#closeClassArrivalNotification {
+    margin-right: auto;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 26px;
+    cursor: pointer;
+}
