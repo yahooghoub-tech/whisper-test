@@ -340,7 +340,9 @@ async function loadTodayArrivals(){
     }
 
     $("registeredCount").textContent =
-        "ورودهای امروز: " + registeredArrivals.size;
+    "ورودهای فعال امروز: " +
+    Array.from(registeredArrivals.values())
+        .filter(item => item.status === "arrived").length;
 
     renderStudents();
 }
@@ -378,7 +380,7 @@ if (isArrived) {
     button.classList.add("registered");
 }
 
-button.disabled = Boolean(isArrived || isSaving);
+button.disabled = Boolean(isSaving);
 
 
         const name = document.createElement("span");
@@ -404,7 +406,7 @@ status.textContent = isSaving
 
         button.append(name,status,time);
 
-        if (!isArrived && !isSaving) {
+        if (!isSaving) {
     button.addEventListener("click", () => {
         registerArrival(student);
     });
