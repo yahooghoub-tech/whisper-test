@@ -4281,8 +4281,21 @@ function updateClassArrivalButton(arrival) {
     parentArrivalButton.textContent =
         "✅ دانش‌آموز در کلاس حاضر است";
 
-    parentArrivalTime.textContent =
-        "ساعت حضور: " + formatArrivalTime(arrival.arrived_at);
+        parentArrivalTime.textContent =
+        "تاریخ حضور: " +
+        new Date(arrival.arrived_at).toLocaleDateString("fa-IR", {
+            timeZone: "Asia/Tehran",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }) +
+        " | ساعت حضور: " +
+        new Date(arrival.arrived_at).toLocaleTimeString("fa-IR", {
+            timeZone: "Asia/Tehran",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
 
     lastClassArrivalId = arrival.id;
 }
