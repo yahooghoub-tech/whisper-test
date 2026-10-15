@@ -4223,6 +4223,69 @@ let lastClassArrivalId = null;
 let arrivalNotificationTimer = null;
 
 
+/* =====================================================
+   NOTIFICATION SOUND + PHONE VIBRATION
+===================================================== */
+
+const classArrivalSound = new Audio("./notification.mp3");
+classArrivalSound.preload = "auto";
+classArrivalSound.volume = 1;
+
+let notificationSoundUnlocked = false;
+
+/* فعال‌سازی صدا با اولین تعامل کاربر */
+
+function unlockClassArrivalSound() {
+    if (notificationSoundUnlocked) return;
+
+    classArrivalSound.play()
+        .then(() => {
+            classArrivalSound.pause();
+            classArrivalSound.currentTime = 0;
+            notificationSoundUnlocked = true;
+        })
+        .catch(error => {
+            console.log("صدا هنوز فعال نشده است:", error);
+        });
+}
+
+document.addEventListener(
+    "click",
+    unlockClassArrivalSound,
+    { once: true }
+);
+
+document.addEventListener(
+    "touchstart",
+    unlockClassArrivalSound,
+    { once: true, passive: true }
+);
+
+/* پخش صدا و لرزش هنگام اعلان ورود */
+
+function playClassArrivalNotification() {
+
+    /* لرزش گوشی اندروید */
+
+    if ("vibrate" in navigator) {
+        navigator.vibrate([300, 150, 300, 150, 500]);
+    }
+
+    /* پخش صدای اعلان */
+
+    try {
+        classArrivalSound.pause();
+        classArrivalSound.currentTime = 0;
+
+        classArrivalSound.play().catch(error => {
+            console.warn("پخش صدای اعلان ناموفق بود:", error);
+        });
+
+    } catch (error) {
+        console.warn("خطا در صدای اعلان:", error);
+    }
+}
+
 /* تاریخ میلادی امروز بر اساس ساعت تهران */
 
 function getIranGregorianDateForArrival() {
@@ -4313,7 +4376,7 @@ function showClassArrivalAlert(arrival) {
     if (!arrival || arrival.status === "cancelled") {
         return;
     }
-
+    playClassArrivalNotification();
     // متن دقیق اعلان
     if (classArrivalNotificationText) {
         classArrivalNotificationText.textContent =
