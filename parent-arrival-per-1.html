@@ -440,7 +440,7 @@ async function registerArrival(student){
                     student_name:student.name,
                     class_name:CLASS_NAME,
                     arrival_date:today,
-                    arrived_at:getCurrentTime()
+                    arrived_at: new Date().toISOString()
                 })
                 .select("id,student_name,class_name,arrival_date,arrived_at")
                 .single();
@@ -458,13 +458,13 @@ async function registerArrival(student){
         $("registeredCount").textContent =
             "ورودهای امروز: " + registeredArrivals.size;
 
-    }catch(error){
-        console.error("خطا در ثبت ورود:",error);
+        }catch(error){
+    console.error("خطا در ثبت ورود:", error);
 
-        showMessage(
-            "ثبت ورود ناموفق بود. تنظیمات دسترسی Supabase و ستون arrived_at را بررسی کنید.",
-            "error"
-        );
+    showMessage(
+        "ثبت ورود ناموفق بود: " + (error.message || "خطای نامشخص"),
+        "error"
+    );
     }finally{
         savingStudents.delete(key);
         renderStudents();
