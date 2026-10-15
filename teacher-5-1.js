@@ -86,8 +86,6 @@ const students=[
 
     {name:"مهراد جعفری",className:"پنجم-1"},
 
-    
-
     {name:"آرشا افتخاری",className:"پنجم-1"},
 
     {name:"کارن آتش بهار",className:"پنجم-1"},

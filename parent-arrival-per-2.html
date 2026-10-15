@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ثبت ورود دانش‌آموزان پیش‌۲ | دبستان علوی</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Estedad:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+:root{
+    --autumn-red:#b42318;
+    --autumn-red-dark:#7f1d1d;
+    --autumn-orange:#ea580c;
+    --autumn-gold:#fbbf24;
+    --autumn-brown:#78350f;
+    --cream:#fff7ed;
+    --text:#431407;
+}
+body{
+    margin:0;
+    font-family:Estedad,sans-serif;
+    color:var(--text);
+    min-height:100vh;
+    background:
+        radial-gradient(ellipse at 10% 10%,#fed7aa 0%,transparent 35%),
+        radial-gradient(ellipse at 90% 25%,#fdba74 0%,transparent 32%),
+        radial-gradient(ellipse at 50% 100%,#fef3c7 0%,transparent 45%),
+        linear-gradient(135deg,#fff7ed,#ffedd5 45%,#fef3c7);
+    background-attachment:fixed;
+    overflow-x:hidden;
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:-1;
+    opacity:.35;
+    background-image:
+        radial-gradient(ellipse at 20% 30%,#ea580c 0 2px,transparent 3px),
+        radial-gradient(ellipse at 80% 60%,#b45309 0 3px,transparent 4px),
+        radial-gradient(ellipse at 40% 80%,#dc2626 0 2px,transparent 3px);
+    background-size:95px 110px,140px 160px,180px 130px;
+}
+.container{width:min(1100px,95%);margin:28px auto;position:relative}
+.header{
+    position:relative;overflow:hidden;color:#fff;padding:30px;
+    border:1px solid #ffffff55;border-radius:28px;
+    background:
+        radial-gradient(ellipse at 90% 0%,#fb923c88,transparent 45%),
+        linear-gradient(135deg,#7f1d1d,#b91c1c 45%,#c2410c);
+    box-shadow:0 18px 0 #78350f,0 24px 40px #7c2d1240,inset 0 1px 0 #ffffff55;
+    transform:translateY(-3px);
+}
+.header::before{
+    content:"🍂";position:absolute;left:25px;top:12px;font-size:76px;
+    opacity:.20;transform:rotate(-25deg);pointer-events:none;
+}
+.header::after{
+    content:"";position:absolute;width:230px;height:230px;left:-100px;bottom:-150px;
+    border-radius:50%;background:#fb923c55;filter:blur(8px);pointer-events:none;
+}
+.header h1{
+    position:relative;z-index:1;margin:0 0 10px;
+    font-size:clamp(21px,4vw,31px);font-weight:800;text-shadow:0 3px 8px #43140770;
+}
+.header p{position:relative;z-index:1;margin:0;font-size:14px;color:#ffedd5}
+.info{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.info span{
+    background:#ffffff18;border:1px solid #ffffff55;border-radius:13px;
+    padding:10px 14px;font-size:13px;color:#fff7ed;backdrop-filter:blur(12px);
+    box-shadow:inset 0 1px 0 #ffffff22;
+}
+.toolbar{
+    position:relative;background:#ffffffc9;padding:18px;margin-top:25px;
+    border:1px solid #fdba7480;border-radius:22px;
+    box-shadow:0 8px 0 #fed7aa,0 14px 28px #9a34121c,inset 0 1px 0 #ffffff;
+    backdrop-filter:blur(14px);
+}
+.toolbar input{
+    width:100%;padding:15px 17px;border:2px solid #fed7aa;border-radius:14px;
+    outline:none;background:#fffaf5;color:#431407;font-family:inherit;font-size:14px;
+    transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.toolbar input:focus{border-color:#ea580c;background:white;box-shadow:0 0 0 4px #fb923c30}
+.toolbar input::placeholder{color:#a16207}
+.message{display:none;margin-top:18px;padding:15px 18px;border-radius:16px;font-size:14px;box-shadow:0 5px 15px #43140712}
+.message.show{display:block;animation:autumnAppear .25s ease-out}
+.message.error{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.message.success{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.section-title{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    margin:30px 5px 16px;color:#7f1d1d;font-weight:800;font-size:16px;
+}
+#visibleCount{
+    color:#9a3412;background:#ffedd5;border:1px solid #fdba74;
+    border-radius:20px;padding:6px 12px;font-size:12px;
+}
+.students-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px}
+.student-button{
+    position:relative;isolation:isolate;min-height:120px;overflow:hidden;overflow-wrap:anywhere;
+    border:1px solid #fecaca;border-radius:19px;
+    background:linear-gradient(145deg,#ef4444,#b91c1c 65%,#991b1b);color:#fff;
+    padding:16px 12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
+    box-shadow:0 7px 0 #7f1d1d,0 12px 20px #991b1b25,inset 0 1px 0 #ffffff65;
+    transition:transform .2s ease,box-shadow .2s ease,background .2s ease,filter .2s ease;
+    animation:autumnAppear .35s ease both;
+}
+.student-button::before{
+    content:"";position:absolute;z-index:-1;width:100px;height:100px;top:-55px;left:-30px;
+    border-radius:50%;background:#ffffff20;box-shadow:0 0 35px #ffffff15;
+}
+.student-button::after{
+    content:"";position:absolute;z-index:-1;inset:0;border-radius:inherit;
+    background:linear-gradient(125deg,#ffffff15,transparent 50%);pointer-events:none;
+}
+.student-button:hover:not(:disabled){
+    transform:translateY(-4px);filter:brightness(1.08);
+    box-shadow:0 10px 0 #7f1d1d,0 18px 28px #991b1b35,inset 0 1px 0 #ffffff70;
+}
+.student-button:active:not(:disabled){transform:translateY(3px);box-shadow:0 3px 0 #7f1d1d,0 5px 12px #991b1b20}
+.student-button:focus-visible{outline:3px solid #fbbf24;outline-offset:4px}
+.student-button:disabled{cursor:wait;opacity:.8}
+.student-button.registered{
+    background:linear-gradient(145deg,#22c55e,#15803d 70%,#166534);
+    border-color:#86efac;color:#fff;cursor:default;
+    box-shadow:0 7px 0 #14532d,0 12px 20px #16653425,inset 0 1px 0 #ffffff65;
+}
+.student-button.registered:hover:not(:disabled){filter:none;transform:none}
+.student-status{display:block;margin-top:13px;font-size:13px;font-weight:700;color:inherit}
+.student-time{display:block;margin-top:6px;font-size:12px;font-weight:500;color:inherit;opacity:.9}
+.empty{
+    grid-column:1/-1;background:#ffffffd9;padding:30px 20px;border:1px dashed #fdba74;
+    border-radius:20px;text-align:center;color:#9a3412;box-shadow:0 8px 20px #9a34120d;
+}
+.footer{text-align:center;padding:30px 10px;color:#9a3412;font-size:12px}
+@keyframes autumnAppear{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+.back-panel-container{display:flex;justify-content:center;margin:30px auto 10px;padding:0 5px}
+.back-panel-button{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:min(100%,360px);
+    min-height:58px;padding:14px 22px;border:1px solid #86efac;border-radius:17px;
+    background:linear-gradient(145deg,#22c55e,#15803d 75%,#166534);color:#fff;
+    font-family:Estedad,sans-serif;font-size:15px;font-weight:800;text-decoration:none;text-align:center;
+    box-shadow:0 7px 0 #14532d,0 12px 24px #16653430,inset 0 1px 0 #ffffff70;
+    transition:transform .2s,box-shadow .2s,filter .2s;
+}
+.back-panel-button span{font-size:24px;line-height:1}
+.back-panel-button:hover{transform:translateY(-3px);filter:brightness(1.08);box-shadow:0 10px 0 #14532d,0 17px 28px #16653435,inset 0 1px 0 #ffffff70}
+.back-panel-button:active{transform:translateY(3px);box-shadow:0 3px 0 #14532d}
+.back-panel-button:focus-visible{outline:3px solid #fbbf24;outline-offset:4px}
+@media(max-width:520px){
+    .container{width:94%;margin:16px auto}
+    .header{padding:23px 18px;border-radius:22px;box-shadow:0 12px 0 #78350f,0 18px 30px #7c2d1230}
+    .header::before{left:10px;top:10px;font-size:55px}
+    .info{gap:8px;margin-top:18px}
+    .info span{padding:8px 10px;font-size:12px}
+    .toolbar{padding:13px;margin-top:20px;border-radius:18px}
+    .students-container{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .student-button{min-height:112px;padding:12px 7px;border-radius:15px;font-size:13px;box-shadow:0 5px 0 #7f1d1d,0 9px 15px #991b1b20}
+    .student-button.registered{box-shadow:0 5px 0 #14532d,0 9px 15px #16653420}
+    .section-title{font-size:14px;margin-top:26px}
+    .back-panel-button{width:100%;font-size:14px;min-height:54px}
+}
+@media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <header class="header">
+        <h1>🏫 پنل ورود دانش‌آموزان پیش‌۲</h1>
+        <div class="info">
+            <span>کلاس: پیش-2</span>
+            <span id="totalCount">تعداد دانش‌آموزان: ...</span>
+            <span id="registeredCount">ورودهای امروز: ...</span>
+            <span id="todayLabel">تاریخ: ...</span>
+        </div>
+    </header>
+
+    <div id="message" class="message"></div>
+
+    <div class="section-title">
+        <span>فهرست دانش‌آموزان</span>
+        <span id="visibleCount"></span>
+    </div>
+
+    <div id="studentsContainer" class="students-container">
+        <div class="empty">در حال دریافت فهرست دانش‌آموزان...</div>
+    </div>
+
+    <div class="back-panel-container">
+        <a href="https://ali-nik.vercel.app/attendance-pre-2.html" class="back-panel-button">
+            <span>↩</span>
+            بازگشت به پنل اصلی
+        </a>
+    </div>
+
+    <footer class="footer">سامانه دبستان علوی</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://ghnpiijihybuhfetnxjp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const CLASS_NAME = "پیش-2";
+const $ = id => document.getElementById(id);
+
+let students = [];
+let registeredArrivals = new Map();
+let savingStudents = new Set();
+let currentArrivalDay = getDatabaseToday();
+
+function getDatabaseToday(){
+    const d = new Date();
+    return [
+        d.getFullYear(),
+        String(d.getMonth()+1).padStart(2,"0"),
+        String(d.getDate()).padStart(2,"0")
+    ].join("-");
+}
+
+function normalizeName(name){
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF]/g,"")
+        .replace(/\u200C/g,"")
+        .replace(/ي/g,"ی")
+        .replace(/ى/g,"ی")
+        .replace(/ك/g,"ک")
+        .replace(/\s+/g," ")
+        .trim();
+}
+
+function studentKey(name){
+    return normalizeName(name);
+}
+
+function showMessage(text,type){
+    const box = $("message");
+    box.textContent = text;
+    box.className = "message show " + (type || "");
+}
+
+function hideMessage(){
+    $("message").className = "message";
+}
+
+function formatPersianDate(date){
+    return new Intl.DateTimeFormat("fa-IR", {
+        year:"numeric", month:"long", day:"numeric"
+    }).format(date);
+}
+
+function formatPersianTime(dateValue){
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString("fa-IR", {
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+    });
+}
+
+async function loadStudents(){
+    $("studentsContainer").innerHTML =
+        '<div class="empty">در حال دریافت اطلاعات دانش‌آموزان...</div>';
+
+    const {data,error} = await supabaseClient
+        .from("students")
+        .select("name,class_name")
+        .eq("class_name",CLASS_NAME)
+        .order("name");
+
+    if(error){
+        console.error("خطا در دریافت دانش‌آموزان:",error);
+        showMessage("فهرست دانش‌آموزان دریافت نشد. دسترسی جدول students را بررسی کنید.","error");
+        $("studentsContainer").innerHTML =
+            '<div class="empty">خطا در دریافت فهرست دانش‌آموزان.</div>';
+        return;
+    }
+
+    const uniqueStudents = new Map();
+    (data || []).forEach(student => {
+        if (!student.name || !student.class_name) return;
+        const key = normalizeName(student.name);
+        if (!uniqueStudents.has(key)) uniqueStudents.set(key,student);
+    });
+
+    students = Array.from(uniqueStudents.values());
+    $("totalCount").textContent = "تعداد دانش‌آموزان: " + students.length;
+
+    await loadTodayArrivals();
+}
+
+async function loadTodayArrivals(){
+    const today = getDatabaseToday();
+    currentArrivalDay = today;
+    $("todayLabel").textContent = "تاریخ: " + formatPersianDate(new Date());
+
+    const {data,error} = await supabaseClient
+        .from("class_arrivals")
+        .select("id,student_name,class_name,arrival_date,arrived_at,status")
+        .eq("class_name",CLASS_NAME)
+        .eq("arrival_date",today)
+        .order("id",{ascending:true});
+
+    if(error){
+        console.error("خطا در دریافت ورودهای امروز:",error);
+        showMessage("ورودهای امروز دریافت نشدند. دسترسی جدول class_arrivals را بررسی کنید.","error");
+        registeredArrivals = new Map();
+    }else{
+        registeredArrivals = new Map();
+        (data || []).forEach(item => {
+            registeredArrivals.set(studentKey(item.student_name),item);
+        });
+        hideMessage();
+    }
+
+    updateRegisteredCount();
+    renderStudents();
+}
+
+function updateRegisteredCount(){
+    $("registeredCount").textContent =
+        "ورودهای فعال امروز: " +
+        Array.from(registeredArrivals.values())
+            .filter(item => item.status === "arrived").length;
+}
+
+function renderStudents(){
+    const container = $("studentsContainer");
+    container.innerHTML = "";
+    $("visibleCount").textContent = students.length + " نفر";
+
+    if(!students.length){
+        container.innerHTML = '<div class="empty">دانش‌آموزی برای این کلاس پیدا نشد.</div>';
+        return;
+    }
+
+    students.forEach(student => {
+        const key = studentKey(student.name);
+        const arrival = registeredArrivals.get(key);
+        const isArrived = Boolean(arrival && arrival.status === "arrived");
+        const isSaving = savingStudents.has(key);
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "student-button";
+        if(isArrived) button.classList.add("registered");
+        button.disabled = Boolean(isSaving);
+
+        const name = document.createElement("span");
+        name.textContent = student.name;
+
+        const status = document.createElement("span");
+        status.className = "student-status";
+        status.textContent = isSaving
+            ? "⏳ در حال ثبت..."
+            : isArrived
+                ? "✅ ورود ثبت شد"
+                : "＋ ثبت ورود به کلاس";
+
+        const time = document.createElement("span");
+        time.className = "student-time";
+        time.textContent = isArrived && arrival.arrived_at
+            ? "ساعت ورود: " + formatPersianTime(arrival.arrived_at)
+            : "";
+
+        button.append(name,status,time);
+        if(!isSaving){
+            button.addEventListener("click",() => registerArrival(student));
+        }
+        container.appendChild(button);
+    });
+}
+
+async function registerArrival(student){
+    const key = studentKey(student.name);
+    if(savingStudents.has(key)) return;
+
+    savingStudents.add(key);
+    renderStudents();
+    hideMessage();
+
+    try{
+        const current = registeredArrivals.get(key);
+        const newStatus = current && current.status === "arrived"
+            ? "cancelled"
+            : "arrived";
+
+        const {data,error} = await supabaseClient
+            .from("class_arrivals")
+            .insert({
+                student_name:student.name,
+                class_name:CLASS_NAME,
+                arrival_date:getDatabaseToday(),
+                arrived_at:new Date().toISOString(),
+                status:newStatus
+            })
+            .select("id,student_name,class_name,arrival_date,arrived_at,status")
+            .single();
+
+        if(error) throw error;
+
+        registeredArrivals.set(key,data);
+        updateRegisteredCount();
+
+        showMessage(
+            newStatus === "arrived"
+                ? "ورود " + student.name + " ثبت شد."
+                : "حضور " + student.name + " لغو شد؛ تاریخچه حفظ شد.",
+            "success"
+        );
+    }catch(error){
+        console.error("خطا در تغییر وضعیت حضور:",error);
+        showMessage("تغییر وضعیت ناموفق بود: " + (error.message || "خطای نامشخص"),"error");
+    }finally{
+        savingStudents.delete(key);
+        renderStudents();
+    }
+}
+
+function checkArrivalDayChange(){
+    const newDay = getDatabaseToday();
+    if(newDay === currentArrivalDay) return;
+
+    currentArrivalDay = newDay;
+    registeredArrivals.clear();
+    savingStudents.clear();
+
+    $("todayLabel").textContent = "تاریخ: " + formatPersianDate(new Date());
+    updateRegisteredCount();
+    renderStudents();
+    loadTodayArrivals();
+}
+
+loadStudents();
+setInterval(checkArrivalDayChange,30000);
+</script>
+</body>
+</html>
