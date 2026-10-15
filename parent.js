@@ -4302,18 +4302,25 @@ function updateClassArrivalButton(arrival) {
 
 
 
-/* اعلان داخل پنل والد */
+
+/* اعلان ورود دانش‌آموز به کلاس */
 
 function showClassArrivalAlert(arrival) {
+
     if (!classArrivalNotification) return;
 
-    if (classArrivalNotificationText) {
-        classArrivalNotificationText.textContent =
-            `${currentStudentName} در کلاس حاضر است. ساعت حضور: ${
-                formatArrivalTime(arrival.arrived_at)
-            }`;
+    // فقط برای حضور فعال اعلان نمایش داده شود
+    if (!arrival || arrival.status === "cancelled") {
+        return;
     }
 
+    // متن دقیق اعلان
+    if (classArrivalNotificationText) {
+        classArrivalNotificationText.textContent =
+            "دانش‌آموز وارد کلاس شد";
+    }
+
+    // نمایش اعلان داخل پنل والدین
     classArrivalNotification.classList.add("show");
 
     if (arrivalNotificationTimer) {
@@ -4324,20 +4331,16 @@ function showClassArrivalAlert(arrival) {
         classArrivalNotification.classList.remove("show");
     }, 10000);
 
-    /* اعلان سیستمی مرورگر، در صورت داشتن مجوز */
-
+    // اعلان سیستمی مرورگر
     if (
         "Notification" in window &&
         Notification.permission === "granted"
     ) {
         try {
             const notification = new Notification(
-                "حضور دانش‌آموز در کلاس",
+                "دانش‌آموز وارد کلاس شد",
                 {
-                    body:
-                        `${currentStudentName} در کلاس حاضر است. ساعت حضور: ${
-                            formatArrivalTime(arrival.arrived_at)
-                        }`,
+                    body: "دانش‌آموز وارد کلاس شد",
                     icon: "icon-192.png",
                     tag: "class-arrival-" + arrival.id
                 }
@@ -4347,11 +4350,13 @@ function showClassArrivalAlert(arrival) {
                 window.focus();
                 notification.close();
             };
+
         } catch (error) {
             console.warn("اعلان سیستمی در دسترس نیست:", error);
         }
     }
 }
+
 
 
 /* بستن اعلان داخل پنل */
@@ -4433,14 +4438,28 @@ function startClassArrivalRealtime() {
                     return;
                 }
 
-                const isNewArrival =
-                    String(arrival.id) !== String(lastClassArrivalId);
+            
+// وضعیت قبلی دکمه را قبل از به‌روزرسانی ذخیره می‌کنیم
+const wasGreen =
+    parentArrivalButton &&
+    parentArrivalButton.classList.contains("arrived");
 
-                updateClassArrivalButton(arrival);
+// به‌روزرسانی وضعیت دکمه
+updateClassArrivalButton(arrival);
 
-                if (isNewArrival && payload.eventType === "INSERT") {
-                    showClassArrivalAlert(arrival);
-                }
+// بررسی وضعیت جدید دکمه
+const isGreen =
+    parentArrivalButton &&
+    parentArrivalButton.classList.contains("arrived");
+
+// اعلان فقط هنگام تغییر از حالت عادی به سبز
+if (
+    !wasGreen &&
+    isGreen &&
+    payload.eventType === "INSERT"
+) {
+    showClassArrivalAlert(arrival);
+}
             }
         )
         .subscribe(status => {
