@@ -458,14 +458,12 @@ body::before{
 </div>
 </header>
 
-<div class="toolbar">
-<input id="searchInput" type="search" placeholder="🔎 جست‌وجوی نام دانش‌آموز پیش‌۱...">
-</div>
+
 
 <div id="message" class="message"></div>
 
 <div class="section-title">
-<span>فهرست دانش‌آموزان کلاس پیش‌۱</span>
+
 <span id="visibleCount"></span>
 </div>
 
@@ -620,11 +618,7 @@ async function loadTodayArrivals(){
 }
 
 function renderStudents(){
-    const search = normalizeName($("searchInput").value);
-
-    const filtered = students.filter(student =>
-        normalizeName(student.name).includes(search)
-    );
+    const filtered = students;
 
     const container = $("studentsContainer");
     container.innerHTML = "";
@@ -744,8 +738,6 @@ async function registerArrival(student) {
     }
 }
 
-
-$("searchInput").addEventListener("input",renderStudents);
 
 loadStudents();
 </script>
