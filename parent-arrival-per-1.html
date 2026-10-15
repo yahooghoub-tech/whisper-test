@@ -439,7 +439,68 @@ body::before{
         scroll-behavior:auto !important;
     }
 }
+.back-panel-container{
+    display:flex;
+    justify-content:center;
+    margin:30px auto 10px;
+    padding:0 5px;
+}
 
+.back-panel-button{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:min(100%,360px);
+    min-height:58px;
+    padding:14px 22px;
+    border:1px solid #86efac;
+    border-radius:17px;
+    background:linear-gradient(145deg,#22c55e,#15803d 75%,#166534);
+    color:#fff;
+    font-family:Estedad,sans-serif;
+    font-size:15px;
+    font-weight:800;
+    text-decoration:none;
+    text-align:center;
+    box-shadow:
+        0 7px 0 #14532d,
+        0 12px 24px #16653430,
+        inset 0 1px 0 #ffffff70;
+    transition:transform .2s,box-shadow .2s,filter .2s;
+}
+
+.back-panel-button span{
+    font-size:24px;
+    line-height:1;
+}
+
+.back-panel-button:hover{
+    transform:translateY(-3px);
+    filter:brightness(1.08);
+    box-shadow:
+        0 10px 0 #14532d,
+        0 17px 28px #16653435,
+        inset 0 1px 0 #ffffff70;
+}
+
+.back-panel-button:active{
+    transform:translateY(3px);
+    box-shadow:0 3px 0 #14532d;
+}
+
+.back-panel-button:focus-visible{
+    outline:3px solid #fbbf24;
+    outline-offset:4px;
+}
+
+@media(max-width:520px){
+    .back-panel-button{
+        width:100%;
+        font-size:14px;
+        min-height:54px;
+    }
+}
 </style>
 </head>
 
@@ -448,7 +509,6 @@ body::before{
 
 <header class="header">
 <h1>🏫 پنل ورود دانش‌آموزان پیش‌۱</h1>
-<p>دبستان علوی سردار جنگل | ثبت ورود به کلاس</p>
 
 <div class="info">
 <span>کلاس: پیش-1</span>
@@ -469,6 +529,14 @@ body::before{
 
 <div id="studentsContainer" class="students-container">
 <div class="empty">در حال دریافت فهرست دانش‌آموزان...</div>
+</div>
+
+<div class="back-panel-container">
+    <a href="https://ali-nik.vercel.app/attendance-pre-1.html"
+       class="back-panel-button">
+        <span>↩</span>
+        بازگشت به پنل اصلی
+    </a>
 </div>
 
 <footer class="footer">سامانه دبستان علوی</footer>
