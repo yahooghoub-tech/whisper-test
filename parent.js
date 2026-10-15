@@ -4279,7 +4279,7 @@ function updateClassArrivalButton(arrival) {
     parentArrivalButton.classList.add("arrived");
 
     parentArrivalButton.textContent =
-        "✅ دانش‌آموز در کلاس حاضر است";
+        "✅ دانش‌آموز وارد کلاس شد   ";
 
         parentArrivalTime.textContent =
         "تاریخ حضور: " +
