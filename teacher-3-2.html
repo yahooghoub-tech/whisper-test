@@ -60,15 +60,26 @@
     <div class="call-popup-text">لطفاً اندرویدباکس را از برق بکشید  </div>
 </div>
 <div class="attendance-button-container">
+
     <button id="attendanceButton" type="button" onclick="goToAttendance()">
         📝
         <span>ورود به پنل حضور و غیاب</span>
     </button>
+
+    <button id="registrationButton" type="button" onclick="goToRegistration()">
+        📝
+        <span>ورود به پنل ثبت ورود</span>
+    </button>
+
 </div>
 
 <script>
 function goToAttendance() {
-    window.location.href = "attendance-3-2.html";
+    window.location.href = "teacher-3-2.html";
+}
+
+function goToRegistration() {
+    window.location.href = "parent-arrival-3-2.html";
 }
 </script>
 </body>

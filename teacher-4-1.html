@@ -52,15 +52,26 @@
 </div>
 
 <div class="attendance-button-container">
-<button id="attendanceButton" type="button" onclick="goToAttendance()">
-📝
-<span>ورود به پنل حضور و غیاب</span>
-</button>
+
+    <button id="attendanceButton" type="button" onclick="goToAttendance()">
+        📝
+        <span>ورود به پنل حضور و غیاب</span>
+    </button>
+
+    <button id="registrationButton" type="button" onclick="goToRegistration()">
+        📝
+        <span>ورود به پنل ثبت ورود</span>
+    </button>
+
 </div>
 
 <script>
-function goToAttendance(){
-window.location.href="attendance-4-1.html";
+function goToAttendance() {
+    window.location.href = "teacher-4-1.html";
+}
+
+function goToRegistration() {
+    window.location.href = "parent-arrival-4-1.html";
 }
 </script>
 
