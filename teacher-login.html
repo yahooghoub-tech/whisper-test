@@ -553,6 +553,29 @@ opacity:1;
 transform:none
 }
 }
+
+.remember-login {
+    margin-top: 15px;
+    margin-bottom: 8px;
+    text-align: right;
+}
+
+.remember-login label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+}
+
+.remember-login input {
+    width: 17px;
+    height: 17px;
+    accent-color: #34d399;
+    cursor: pointer;
+}
+
 </style>
 </head>
 
@@ -652,6 +675,13 @@ aria-label="نمایش رمز عبور"
 نام کاربری یا رمز عبور اشتباه است.
 </div>
 
+<div class="remember-login">
+    <label>
+        <input type="checkbox" id="rememberLogin">
+        <span>مرا به خاطر بسپار</span>
+    </label>
+</div>
+
 <button type="submit" class="login-btn">
 ورود به پنل
 </button>
@@ -705,36 +735,63 @@ togglePassword.textContent="👁";
 }
 });
 
-loginForm.addEventListener("submit",e=>{
-e.preventDefault();
 
-const user=username.value.trim();
-const pass=password.value.trim();
+const rememberLogin = document.getElementById("rememberLogin");
 
-if(user===TEACHER_USERNAME&&TEACHERS[pass]){
+// بازیابی اطلاعات ذخیره‌شده
+try {
+    const savedUsername = localStorage.getItem("teacherSavedUsername");
+    const savedPassword = localStorage.getItem("teacherSavedPassword");
 
-const teacher=TEACHERS[pass];
-
-sessionStorage.setItem("teacherLoggedIn","true");
-sessionStorage.setItem("teacherClass",teacher.className);
-sessionStorage.setItem("teacherPassword",pass);
-sessionStorage.setItem("teacherPanel",teacher.panel);
-sessionStorage.setItem("teacherLoginTime",Date.now().toString());
-
-loginError.classList.remove("show");
-
-setTimeout(()=>{
-window.location.href=teacher.panel;
-},300);
-
-}else{
-
-loginError.classList.add("show");
-
-password.value="";
-
-password.focus();
+    if (savedUsername && savedPassword) {
+        username.value = savedUsername;
+        password.value = savedPassword;
+        rememberLogin.checked = true;
+    }
+} catch (error) {
+    console.warn("بازیابی اطلاعات ورود ناموفق بود.");
 }
+
+loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const user = username.value.trim();
+    const pass = password.value.trim();
+
+    if (user === TEACHER_USERNAME && TEACHERS[pass]) {
+
+        const teacher = TEACHERS[pass];
+
+        // ذخیره اطلاعات در صورت فعال بودن گزینه
+        try {
+            if (rememberLogin.checked) {
+                localStorage.setItem("teacherSavedUsername", user);
+                localStorage.setItem("teacherSavedPassword", pass);
+            } else {
+                localStorage.removeItem("teacherSavedUsername");
+                localStorage.removeItem("teacherSavedPassword");
+            }
+        } catch (error) {
+            console.warn("ذخیره اطلاعات ورود ناموفق بود.");
+        }
+
+        sessionStorage.setItem("teacherLoggedIn", "true");
+        sessionStorage.setItem("teacherClass", teacher.className);
+        sessionStorage.setItem("teacherPassword", pass);
+        sessionStorage.setItem("teacherPanel", teacher.panel);
+        sessionStorage.setItem("teacherLoginTime", Date.now().toString());
+
+        loginError.classList.remove("show");
+
+        setTimeout(() => {
+            window.location.href = teacher.panel;
+        }, 300);
+
+    } else {
+        loginError.classList.add("show");
+        password.value = "";
+        password.focus();
+    }
 });
 
 /* نمایش Intro */
