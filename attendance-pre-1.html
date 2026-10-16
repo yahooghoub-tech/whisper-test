@@ -67,18 +67,31 @@
 
 <script src="attendance-pre-1.js"></script>
 
+
 <div class="call-panel-button-container">
+
     <button id="callPanelButton" type="button" onclick="goToCallPanel()">
         📢
         <span>ورود به پنل فراخوان</span>
     </button>
+
+    <button id="callPanelButton" type="button" onclick="goToAttendancePanel()">
+        📋
+        <span>ورود به پنل ثبت ورود</span>
+    </button>
+
 </div>
 
 <script>
 function goToCallPanel() {
     window.location.href = "teacher-pre-1.html";
 }
+
+function goToAttendancePanel() {
+    window.location.href = "parent-arrival-per-1.html";
+}
 </script>
+
 
 </body>
 </html>

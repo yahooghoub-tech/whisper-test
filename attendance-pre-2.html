@@ -141,17 +141,26 @@ src="attendance-pre-2.js">
 
 <div class="attendance-button-container" style="display:flex; justify-content:center; width:100%; margin-top:20px;">
     <button id="callPanelButton" type="button" onclick="goToCallPanel()">
-    📢
-    <span>ورود به پنل فراخوان</span>
+        📢
+        <span>ورود به پنل فراخوان</span>
     </button>
-    </div>
-    
-    <script>
-    function goToCallPanel(){
-    window.location.href="teacher-pre-2.html";
-    }
-    </script>
-    
+
+    <button id="callPanelButton" type="button" onclick="goToAttendancePanel()">
+        📋
+        <span>ورود به پنل ثبت ورود</span>
+    </button>
+
+</div>
+
+<script>
+function goToCallPanel() {
+    window.location.href = "teacher-pre-2.html";
+}
+
+function goToAttendancePanel() {
+    window.location.href = "parent-arrival-per-2.html";
+}
+</script>
 </body>
 
 </html>
