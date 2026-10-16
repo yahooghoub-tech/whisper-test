@@ -559,3 +559,128 @@ html,
 body{
     font-family:"Estedad",Tahoma,sans-serif !important;
 }
+
+
+
+/* دکمه‌های پایین پنل معلم */
+
+.attendance-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+    margin: 35px auto 25px;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+.attendance-button-container button {
+    flex: 1;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 18px;
+    color: #ffffff;
+    font-family: 'Estedad', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 7px 0 rgba(0, 0, 0, 0.15),
+        0 12px 24px rgba(0, 0, 0, 0.15);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+/* دکمه حضور و غیاب */
+
+#attendanceButton {
+    background: linear-gradient(135deg, #1677ff, #0751c9);
+    box-shadow:
+        0 7px 0 #063d98,
+        0 12px 24px rgba(7, 81, 201, 0.25);
+}
+
+/* دکمه ثبت ورود */
+
+#registrationButton {
+    background: linear-gradient(135deg, #20c878, #078747);
+    box-shadow:
+        0 7px 0 #056638,
+        0 12px 24px rgba(7, 135, 71, 0.25);
+}
+
+/* آیکون دکمه‌ها */
+
+.attendance-button-container button {
+    font-size: 23px;
+}
+
+.attendance-button-container button span {
+    font-size: 14px;
+}
+
+/* افکت هاور */
+
+.attendance-button-container button:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.08);
+}
+
+#attendanceButton:hover {
+    box-shadow:
+        0 9px 0 #063d98,
+        0 17px 30px rgba(7, 81, 201, 0.3);
+}
+
+#registrationButton:hover {
+    box-shadow:
+        0 9px 0 #056638,
+        0 17px 30px rgba(7, 135, 71, 0.3);
+}
+
+/* افکت کلیک */
+
+.attendance-button-container button:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* نمایش در موبایل */
+
+@media (max-width: 600px) {
+    .attendance-button-container {
+        gap: 10px;
+        padding: 0 10px;
+        margin-top: 25px;
+    }
+
+    .attendance-button-container button {
+        min-height: 62px;
+        padding: 12px 8px;
+        gap: 6px;
+        border-radius: 14px;
+        flex-direction: column;
+    }
+
+    .attendance-button-container button span {
+        font-size: 11px;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    .attendance-button-container button {
+        font-size: 21px;
+    }
+}
