@@ -102,7 +102,8 @@ const students=[
 {name:"محمدحسین کریمی",className:"چهارم-1"},
 {name:"رهام لطفی",className:"چهارم-1"},
 {name:"امیرعلی ناعمی",className:"چهارم-1"},
-{name:"رایان مقدسی",className:"چهارم-1"}
+{name:"رایان مقدسی",className:"چهارم-1"},
+{name:"یاشام درگاهی ",className:"چهارم-1"},
 ];
 
 const studentsContainer=document.getElementById("studentsContainer");
