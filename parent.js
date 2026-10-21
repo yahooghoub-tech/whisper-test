@@ -727,17 +727,17 @@ function getCallSchedule(className) {
     ) {
 
         return {
-            start: 1 * 60 + 40,
+            start: 24 * 60 ,
             end: 8 * 60,
-            text: "1:00 تا 8:00"
+            text: "24:00 تا 8:00"
         };
 
     }
 
     return {
-        start: 1 * 60,
+        start: 24 * 60,
         end: 8 * 60,
-        text: "1:00 تا 8:00"
+        text: "24:00 تا 8:00"
     };
 
 }
