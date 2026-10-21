@@ -718,23 +718,21 @@ function getCallSchedule(className) {
 
     }
 
-  
-if (
-    normalizedClass.startsWith("دوم") ||
-    normalizedClass.startsWith("سوم") ||
-    normalizedClass.startsWith("چهارم") ||
-    normalizedClass.startsWith("پنجم") ||
-    normalizedClass.startsWith("ششم")
-) {
+    if (
+        normalizedClass.startsWith("دوم") ||
+        normalizedClass.startsWith("سوم") ||
+        normalizedClass.startsWith("چهارم") ||
+        normalizedClass.startsWith("پنجم") ||
+        normalizedClass.startsWith("ششم")
+    ) {
 
-    return {
-        start: 0,
-        end: 8 * 60,
-        text: "00:00 تا 08:00"
-    };
+        return {
+            start: 14 * 60 + 40,
+            end: 24 * 60,
+            text: "14:40 تا 24:00"
+        };
 
-}
-
+    }
 
     return {
         start: 14 * 60,
