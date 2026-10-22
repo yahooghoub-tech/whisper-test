@@ -1,304 +1,985 @@
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+/* =========================================================
+   ALAVI SCHOOL — LUXURY GOLD 3D UI
+   Purple + Royal Blue + Metallic Gold
+========================================================= */
+
+:root {
+    --gold-light: #fff0ad;
+    --gold: #f6c453;
+    --gold-dark: #b77916;
+    --gold-deep: #82500c;
+
+    --purple: #211047;
+    --purple-light: #6039a8;
+    --blue: #102d68;
+    --blue-light: #2867c7;
+
+    --text: #ffffff;
+    --muted: #d3d6ed;
+    --glass: rgba(255,255,255,.085);
+    --glass-border: rgba(255,255,255,.15);
+
+    --shadow:
+        0 18px 40px rgba(4, 7, 35, .30),
+        inset 0 1px 0 rgba(255,255,255,.12);
 }
 
-body{
-    font-family:Tahoma,Vazirmatn,sans-serif;
-    background:#eef2f7;
-    color:#172033;
-    min-height:100vh;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Estedad", Tahoma, sans-serif !important;
 }
 
-.container{
-    width:96%;
-    max-width:1400px;
-    margin:auto;
-    padding:15px;
+html {
+    min-height: 100%;
+    background: #171039;
 }
 
-.header{
-    background:#fff;
-    border-radius:18px;
-    padding:18px;
-    display:flex;
-    align-items:center;
-    gap:15px;
-    box-shadow:0 4px 18px rgba(0,0,0,.08);
-    margin-bottom:15px;
+body {
+    min-height: 100vh;
+    color: var(--text);
+    background:
+        radial-gradient(
+            ellipse at 12% 8%,
+            rgba(110, 66, 210, .65),
+            transparent 38%
+        ),
+        radial-gradient(
+            ellipse at 88% 22%,
+            rgba(24, 105, 218, .48),
+            transparent 35%
+        ),
+        radial-gradient(
+            ellipse at 55% 100%,
+            rgba(98, 45, 173, .40),
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #160d35 0%,
+            #17275c 48%,
+            #28104b 100%
+        );
+
+    background-attachment: fixed;
+    overflow-x: hidden;
 }
 
-.header-icon{
-    width:60px;
-    height:60px;
-    border-radius:16px;
-    background:#26364d;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:30px;
+/* نورهای تزئینی پس زمینه */
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .25;
+    pointer-events: none;
+    z-index: 0;
+    animation: alaviGlow 10s ease-in-out infinite alternate;
 }
 
-.header-content{
-    flex:1;
+body::before {
+    top: 12%;
+    right: -100px;
+    background: #a46aff;
 }
 
-.header h1{
-    font-size:23px;
-    font-weight:900;
-    margin-bottom:7px;
+body::after {
+    bottom: 5%;
+    left: -100px;
+    background: #2588ff;
+    animation-delay: -5s;
 }
 
-.date{
-    color:#687386;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.summary{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-    margin-bottom:15px;
-}
-
-.summary-box{
-    background:#fff;
-    border-radius:15px;
-    padding:15px;
-    text-align:center;
-    box-shadow:0 3px 12px rgba(0,0,0,.07);
-    border-top:5px solid #26364d;
-}
-
-.summary-box.present{
-    border-top-color:#22a447;
-}
-
-.summary-box.absent{
-    border-top-color:#d32f2f;
-}
-
-.summary-title{
-    display:block;
-    font-size:13px;
-    font-weight:900;
-    color:#687386;
-    margin-bottom:6px;
-}
-
-.summary-box strong{
-    font-size:26px;
-    font-weight:900;
-}
-
-.summary-box.present strong{
-    color:#22a447;
-}
-
-.summary-box.absent strong{
-    color:#d32f2f;
-}
-
-.instruction{
-    background:#fff8dc;
-    border:1px solid #f0d76a;
-    border-radius:12px;
-    padding:12px;
-    text-align:center;
-    font-size:13px;
-    font-weight:900;
-    margin-bottom:15px;
-}
-
-.students-container{
-    background:#dfe6ef;
-    border-radius:16px;
-    padding:12px;
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:10px;
-}
-
-.student-button{
-    min-height:65px;
-    border:0;
-    border-radius:12px;
-    padding:8px;
-    background:#fff;
-    color:#172033;
-    box-shadow:0 3px 9px rgba(0,0,0,.08);
-    cursor:pointer;
-    font-family:inherit;
-    font-size:13px;
-    font-weight:900;
-    transition:.18s;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:5px;
-}
-
-.student-button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 5px 14px rgba(0,0,0,.13);
-}
-
-.student-button:active{
-    transform:scale(.97);
-}
-
-.student-name{
-    line-height:1.7;
-    text-align:center;
-}
-
-.student-status{
-    font-size:10px;
-    font-weight:900;
-    opacity:.8;
-}
-
-.student-button.absent{
-    background:#111;
-    color:#fff;
-}
-
-.student-button.absent .student-status{
-    color:#fff;
-}
-
-.student-button.present{
-    background:#fff;
-    color:#172033;
-}
-
-.message{
-    position:fixed;
-    left:50%;
-    bottom:25px;
-    transform:translateX(-50%) translateY(100px);
-    background:#26364d;
-    color:#fff;
-    padding:12px 22px;
-    border-radius:12px;
-    font-size:13px;
-    font-weight:900;
-    opacity:0;
-    pointer-events:none;
-    transition:.3s;
-    z-index:9999;
-}
-
-.message.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-}
-
-@media(max-width:1000px){
-
-    .students-container{
-        grid-template-columns:repeat(3,minmax(0,1fr));
+@keyframes alaviGlow {
+    from {
+        transform: translate3d(0, 0, 0) scale(.9);
     }
-
+    to {
+        transform: translate3d(0, -24px, 0) scale(1.15);
+    }
 }
 
-@media(max-width:700px){
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
 
-    .container{
-        width:100%;
-        padding:8px;
-    }
-
-    .header{
-        padding:13px;
-    }
-
-    .header-icon{
-        width:50px;
-        height:50px;
-        font-size:25px;
-    }
-
-    .header h1{
-        font-size:18px;
-    }
-
-    .summary{
-        gap:7px;
-    }
-
-    .summary-box{
-        padding:10px 5px;
-    }
-
-    .summary-title{
-        font-size:10px;
-    }
-
-    .summary-box strong{
-        font-size:22px;
-    }
-
-    .students-container{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        padding:7px;
-        gap:6px;
-    }
-
-    .student-button{
-        min-height:65px;
-        font-size:11px;
-        padding:6px;
-    }
-
+.container {
+    position: relative;
+    z-index: 1;
+    width: 96%;
+    max-width: 1400px;
+    margin: auto;
+    padding: 22px 15px;
 }
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding: 23px;
+    margin-bottom: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.13),
+            rgba(255,255,255,.035)
+        );
+
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--gold-light),
+        var(--gold),
+        transparent
+    );
+    z-index: -1;
+}
+
+.header::after {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: -120px;
+    left: 10%;
+    border-radius: 50%;
+    background: rgba(246,196,83,.10);
+    filter: blur(35px);
+    pointer-events: none;
+}
+
+.header-icon {
+    flex-shrink: 0;
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #563409;
+    font-size: 31px;
+
+    background: linear-gradient(
+        145deg,
+        #fff2b5 0%,
+        #f5cf68 23%,
+        #d99a28 55%,
+        #ffdf83 78%,
+        #b77a19 100%
+    );
+
+    border: 1px solid rgba(255,246,194,.9);
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 0 #795018,
+        0 13px 22px rgba(0,0,0,.28),
+        inset 0 2px 4px rgba(255,255,255,.8),
+        inset 0 -4px 7px rgba(113,66,0,.22);
+
+    text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
+
+.header-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.header h1 {
+    margin-bottom: 8px;
+    color: #fff1b5;
+    font-size: 25px;
+    font-weight: 900;
+    line-height: 1.8;
+    text-shadow: 0 3px 15px rgba(246,196,83,.18);
+}
+
+.date {
+    color: #d6d8f0;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.8;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.summary-box {
+    position: relative;
+    min-width: 0;
+    padding: 22px 14px;
+    text-align: center;
+
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.13),
+        rgba(255,255,255,.045)
+    );
+
+    border: 1px solid rgba(255,255,255,.14);
+    border-top: 3px solid var(--gold);
+    border-radius: 20px;
+
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+
+    overflow: hidden;
+}
+
+.summary-box::after {
+    content: "";
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    right: -45px;
+    bottom: -60px;
+    border-radius: 50%;
+    background: rgba(246,196,83,.10);
+    filter: blur(15px);
+    pointer-events: none;
+}
+
+.summary-box:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 22px 38px rgba(0,0,0,.25),
+        0 0 20px rgba(246,196,83,.08);
+}
+
+.summary-box.present {
+    border-top-color: #4ee6a0;
+}
+
+.summary-box.absent {
+    border-top-color: #ff728b;
+}
+
+.summary-title {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-bottom: 10px;
+    color: #d9dcf3;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.summary-box strong {
+    position: relative;
+    z-index: 1;
+    font-size: 31px;
+    font-weight: 900;
+    color: var(--gold-light);
+    text-shadow: 0 3px 14px rgba(246,196,83,.18);
+}
+
+.summary-box.present strong {
+    color: #69f0ad;
+    text-shadow: 0 0 18px rgba(78,230,160,.15);
+}
+
+.summary-box.absent strong {
+    color: #ff8b9f;
+    text-shadow: 0 0 18px rgba(255,114,139,.15);
+}
+
+/* =========================================================
+   INSTRUCTION PANEL
+========================================================= */
+
+.instruction {
+    position: relative;
+    margin-bottom: 22px;
+    padding: 16px 20px;
+
+    color: #fff0b2;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 2;
+
+    background: linear-gradient(
+        120deg,
+        rgba(246,196,83,.15),
+        rgba(255,255,255,.045)
+    );
+
+    border: 1px solid rgba(246,196,83,.42);
+    border-radius: 17px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* =========================================================
+   STUDENT GRID
+========================================================= */
+
+.students-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+    padding: 17px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(8,14,47,.48),
+        rgba(63,43,113,.27)
+    );
+
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 23px;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.07);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* =========================================================
+   STUDENT BUTTONS — GOLD 3D
+========================================================= */
+
+.student-button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-width: 0;
+    min-height: 76px;
+    padding: 12px 9px;
+
+    color: #fff5cf;
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.15),
+        rgba(255,255,255,.055)
+    );
+
+    border: 1px solid rgba(255,255,255,.16);
+    border-bottom: 3px solid rgba(0,0,0,.20);
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 0 rgba(9,12,42,.65),
+        0 9px 15px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.16);
+
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.8;
+    text-align: center;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.student-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,.12) 45%,
+        transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform .5s ease;
+    pointer-events: none;
+}
+
+.student-button:hover::before {
+    transform: translateX(120%);
+}
+
+.student-button:hover {
+    transform: translateY(-3px);
+    border-color: rgba(246,196,83,.6);
+
+    box-shadow:
+        0 8px 0 rgba(9,12,42,.65),
+        0 15px 23px rgba(0,0,0,.22),
+        0 0 17px rgba(246,196,83,.10);
+}
+
+.student-button:active {
+    transform: translateY(3px) scale(.985);
+    box-shadow:
+        0 2px 0 rgba(9,12,42,.65),
+        0 4px 8px rgba(0,0,0,.18);
+}
+
+.student-name {
+    position: relative;
+    z-index: 1;
+    line-height: 1.8;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.student-status {
+    position: relative;
+    z-index: 1;
+    font-size: 10px;
+    font-weight: 900;
+    opacity: .95;
+}
+
+/* دانش آموز حاضر */
+
+.student-button.present {
+    color: #fff0b5;
+
+    background: linear-gradient(
+        145deg,
+        #66502a 0%,
+        #b7862f 24%,
+        #f3d47a 48%,
+        #c39136 72%,
+        #80571c 100%
+    );
+
+    border: 1px solid #f5db8b;
+    border-bottom: 3px solid #775019;
+
+    box-shadow:
+        0 5px 0 #654619,
+        0 9px 15px rgba(0,0,0,.20),
+        inset 0 2px 3px rgba(255,255,255,.48),
+        inset 0 -3px 5px rgba(90,53,5,.18);
+}
+
+.student-button.present .student-status {
+    color: #fff8dc;
+}
+
+.student-button.present:hover {
+    border-color: #fff0b5;
+    box-shadow:
+        0 8px 0 #654619,
+        0 14px 24px rgba(0,0,0,.22),
+        0 0 20px rgba(246,196,83,.22);
+}
+
+/* دانش آموز غایب */
+
+.student-button.absent {
+    color: #fff;
+    background: linear-gradient(
+        145deg,
+        #3c163f 0%,
+        #5c244e 45%,
+        #35142f 100%
+    );
+
+    border: 1px solid rgba(255,128,165,.55);
+    border-bottom: 3px solid #260d28;
+
+    box-shadow:
+        0 5px 0 #200d27,
+        0 9px 15px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.student-button.absent .student-status {
+    color: #ff9bb6;
+}
+
+.student-button.absent:hover {
+    border-color: #ff9bb6;
+    box-shadow:
+        0 8px 0 #200d27,
+        0 14px 22px rgba(0,0,0,.24),
+        0 0 16px rgba(255,114,139,.13);
+}
+
+/* =========================================================
+   CALL PANEL BUTTON — PREMIUM GOLD
+========================================================= */
+
 .call-panel-button-container {
-    width: 100%;
+    position: relative;
+    z-index: 1;
+
     display: flex;
     justify-content: center;
-    padding: 25px 15px 35px;
-    box-sizing: border-box;
+    align-items: center;
+
+    width: 100%;
+    padding: 30px 15px 40px;
 }
 
 #callPanelButton {
-    width: min(90%, 420px);
-    min-height: 58px;
-    border: none;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    color: white;
-    font-family: Tahoma, Arial, sans-serif;
-    font-size: 17px;
-    font-weight: bold;
+    position: relative;
+    isolation: isolate;
+
+    width: min(90%, 440px);
+    min-height: 64px;
+    padding: 14px 24px;
+
+    color: #50310b;
+    background: linear-gradient(
+        135deg,
+        #fff2b2 0%,
+        #f6d578 18%,
+        #dba53a 42%,
+        #ffdf7e 60%,
+        #c68c26 82%,
+        #ffe9a0 100%
+    );
+
+    border: 1px solid #fff0b2;
+    border-radius: 19px;
+
+    font-size: 16px;
+    font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
-    transition: all 0.2s ease;
+
+    box-shadow:
+        0 7px 0 #805519,
+        0 13px 25px rgba(0,0,0,.27),
+        0 0 25px rgba(246,196,83,.12),
+        inset 0 2px 4px rgba(255,255,255,.75),
+        inset 0 -4px 7px rgba(126,78,10,.16);
+
+    text-shadow: 0 1px 0 rgba(255,255,255,.35);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#callPanelButton::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+
+    background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(255,255,255,.65) 48%,
+        transparent 72%
+    );
+
+    transform: translateX(-120%);
+    transition: transform .65s ease;
+}
+
+#callPanelButton:hover::before {
+    transform: translateX(120%);
 }
 
 #callPanelButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(22, 163, 74, 0.4);
+    transform: translateY(-3px);
+    filter: brightness(1.06);
+
+    box-shadow:
+        0 10px 0 #805519,
+        0 18px 30px rgba(0,0,0,.28),
+        0 0 30px rgba(246,196,83,.23),
+        inset 0 2px 4px rgba(255,255,255,.8);
 }
 
 #callPanelButton:active {
-    transform: scale(0.97);
+    transform: translateY(5px) scale(.985);
+
+    box-shadow:
+        0 2px 0 #805519,
+        0 5px 12px rgba(0,0,0,.20),
+        inset 0 2px 4px rgba(255,255,255,.45);
 }
 
 #callPanelButton span {
     margin-right: 8px;
 }
 
-*,
-*::before,
-*::after{
-    font-family:"Estedad",Tahoma,sans-serif !important;
+/* =========================================================
+   TOAST MESSAGE
+========================================================= */
+
+.message {
+    position: fixed;
+    z-index: 9999;
+
+    left: 50%;
+    bottom: 25px;
+
+    width: max-content;
+    max-width: calc(100% - 30px);
+    padding: 14px 23px;
+
+    color: #fff0b5;
+    background: linear-gradient(
+        135deg,
+        #35215e,
+        #172d66
+    );
+
+    border: 1px solid rgba(246,196,83,.55);
+    border-radius: 15px;
+
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1.9;
+    text-align: center;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.12);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transform: translateX(-50%) translateY(100px);
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
 }
 
-html,
-body{
-    font-family:"Estedad",Tahoma,sans-serif !important;
+.message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================================
+   KEYBOARD ACCESSIBILITY
+========================================================= */
+
+.student-button:focus-visible,
+#callPanelButton:focus-visible {
+    outline: 3px solid #fff0ad;
+    outline-offset: 4px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+    .students-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .container {
+        width: 98%;
+    }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+    .container {
+        width: 100%;
+        padding: 10px 8px;
+    }
+
+    .header {
+        gap: 12px;
+        padding: 15px;
+        border-radius: 19px;
+    }
+
+    .header-icon {
+        width: 51px;
+        height: 51px;
+        font-size: 24px;
+        border-radius: 15px;
+
+        box-shadow:
+            0 5px 0 #795018,
+            0 8px 15px rgba(0,0,0,.22),
+            inset 0 2px 4px rgba(255,255,255,.7);
+    }
+
+    .header h1 {
+        font-size: 17px;
+        line-height: 1.9;
+    }
+
+    .date {
+        font-size: 11px;
+        line-height: 1.8;
+    }
+
+    .summary {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .summary-box {
+        padding: 15px 5px;
+        border-radius: 15px;
+    }
+
+    .summary-title {
+        font-size: 10px;
+        line-height: 1.8;
+    }
+
+    .summary-box strong {
+        font-size: 24px;
+    }
+
+    .instruction {
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 12px;
+        border-radius: 14px;
+    }
+
+    .students-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        padding: 10px;
+        border-radius: 18px;
+    }
+
+    .student-button {
+        min-height: 69px;
+        padding: 9px 6px;
+        font-size: 11px;
+        border-radius: 13px;
+    }
+
+    .student-status {
+        font-size: 10px;
+    }
+
+    .call-panel-button-container {
+        padding: 25px 10px 35px;
+    }
+
+    #callPanelButton {
+        width: 100%;
+        max-width: 440px;
+        min-height: 58px;
+        font-size: 14px;
+        border-radius: 16px;
+    }
+
+    .message {
+        bottom: 15px;
+        padding: 12px 16px;
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+    .header {
+        gap: 9px;
+        padding: 12px;
+    }
+
+    .header-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 21px;
+    }
+
+    .header h1 {
+        font-size: 15px;
+    }
+
+    .summary-title {
+        font-size: 9px;
+    }
+
+    .summary-box strong {
+        font-size: 21px;
+    }
+
+    .students-container {
+        gap: 7px;
+        padding: 8px;
+    }
+
+    .student-button {
+        font-size: 10px;
+        min-height: 65px;
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+
+/* سبز کردن رنگ فونت‌ها */
+
+.header h1,
+.date,
+.summary-title,
+.instruction,
+.student-name,
+.student-status {
+    color: #eb2a08 !important;
+}
+
+.summary-box strong {
+    color: #f70000 !important;
+    text-shadow: 0 0 12px rgba(101, 240, 165, 0.25);
+}
+
+.summary-box.present strong {
+    color: #ff0000 !important;
+}
+
+.summary-box.absent strong {
+    color: #ff0000 !important;
+}
+
+.student-button {
+    color: #ff0000 !important;
+}
+
+.student-button.present,
+.student-button.absent {
+    color: #ff0000 !important;
+}
+
+.student-button .student-status {
+    color: #ff0000 !important;
+}
+
+.message {
+    color: #ff0000 !important;
+}
+
+
+/* اعلان شناور در مرکز صفحه */
+
+.message {
+    position: fixed !important;
+
+    top: 50% !important;
+    left: 50% !important;
+    bottom: auto !important;
+
+    transform: translate(-50%, calc(-50% + 35px)) !important;
+
+    width: max-content;
+    max-width: 90%;
+    min-width: 220px;
+
+    padding: 20px 28px;
+
+    background: linear-gradient(
+        135deg,
+        #24104f,
+        #173d80
+    ) !important;
+
+    color: #65f0a5 !important;
+
+    border: 2px solid #f6c453;
+    border-radius: 20px;
+
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 2;
+    text-align: center;
+
+    box-shadow:
+        0 0 0 100vmax rgba(5, 7, 28, .30),
+        0 0 30px rgba(246, 196, 83, .25),
+        0 15px 40px rgba(0, 0, 0, .35);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 999999;
+
+    transition:
+        opacity .3s ease,
+        transform .3s ease,
+        visibility .3s ease;
+}
+
+/* نمایش اعلان در مرکز صفحه */
+
+.message.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    transform: translate(-50%, -50%) !important;
 }
