@@ -1690,7 +1690,7 @@ h1 {
 /* سفید شدن نوشته‌های پنل */
 body,
 body * {
-    color: #ffffff;
+    color: #100000;
 }
 
 /* متن دکمه‌های دانش‌آموزان */
@@ -1709,16 +1709,16 @@ h3,
 .class-header,
 .student-total,
 .called-total {
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 
 /* نوار جستجو */
 #searchInput {
-    color: #ffffff !important;
+    color: #030000 !important;
 }
 
 #searchInput::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(0, 0, 0, 0.7) !important;
 }
 
 /* دکمه‌ها و اعلان‌ها */
