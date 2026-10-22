@@ -6322,3 +6322,59 @@ button,
         transition-duration: 0.01ms !important;
     }
 }
+
+/* =========================================
+   فونت فارسی سراسری پنل والدین دبستان علوی
+   فونت: Estedad
+========================================= */
+
+html,
+body,
+body * {
+    font-family: "Estedad", sans-serif !important;
+}
+
+/* وراثت فونت در فیلدهای ورودی و دکمه‌ها */
+input,
+textarea,
+select,
+button,
+option {
+    font-family: "Estedad", sans-serif !important;
+}
+
+/* تیترهای اصلی */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title,
+.subtitle,
+.card-title,
+.location-card-title,
+.change-password-title {
+    font-family: "Estedad", sans-serif !important;
+    font-weight: 700;
+}
+
+/* متن‌های توضیحی */
+p,
+small,
+label,
+span,
+strong,
+div {
+    font-family: "Estedad", sans-serif !important;
+}
+
+/* دکمه‌ها */
+button,
+.login-button,
+.call-button,
+.location-refresh-button,
+.parent-arrival-button {
+    font-family: "Estedad", sans-serif !important;
+    font-weight: 600;
+}
