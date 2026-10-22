@@ -1728,3 +1728,14 @@ button,
 #parentCallPopup * {
     color: #ff0000 !important;
 }
+
+
+
+
+/* سفید ماندن نام دانش‌آموز هنگام فراخوانی */
+.student-button.called,
+.student-button.called .student-name,
+.student-button.sent,
+.student-button.sent .student-name {
+    color: #ffffff !important;
+}
