@@ -6093,3 +6093,232 @@ button:disabled,
 .no-location * {
     color: #ff5252 !important;
 }
+
+/* =========================================
+   ALAVI PARENT PANEL
+   RESPONSIVE ALL DEVICES
+========================================= */
+
+/* جلوگیری از بیرون‌زدگی عناصر */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
+}
+
+body {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    overflow-x: clip;
+}
+
+/* تصاویر و نقشه‌ها */
+
+img,
+video,
+iframe,
+canvas {
+    max-width: 100%;
+}
+
+#map,
+.leaflet-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 16px;
+}
+
+/* کارت‌ها و کادرها */
+
+.container,
+.header,
+.login-box,
+.date-card,
+.info-card,
+.location-section,
+.call-section,
+.change-code-card,
+.class-arrival-section,
+.card,
+.location-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+/* ورودی‌ها و دکمه‌ها */
+
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+    font: inherit;
+}
+
+input,
+select,
+textarea {
+    min-width: 0;
+}
+
+button,
+.login-button,
+.call-button,
+.refresh-button,
+.parent-arrival-button,
+.change-code-button {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* تیتر کارت‌ها: سبز در تمام دستگاه‌ها */
+
+.info-card h2,
+.info-card h3,
+.date-card h2,
+.date-card h3,
+.location-section h2,
+.call-section h2,
+.change-code-card h2,
+.class-arrival-section h2,
+.card h2,
+.card h3 {
+    color: #4ade80 !important;
+    overflow-wrap: anywhere;
+}
+
+/* پیام عدم دسترسی GPS: قرمز */
+
+.location-error,
+.gps-error,
+.no-location,
+.location-status.error,
+.gps-status.error,
+#locationStatus.error,
+#gpsStatus.error {
+    color: #ff3030 !important;
+    font-weight: 800 !important;
+}
+
+/* موبایل */
+
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .header,
+    .login-box,
+    .date-card,
+    .info-card,
+    .location-section,
+    .call-section,
+    .change-code-card,
+    .class-arrival-section,
+    .card,
+    .location-card {
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    button,
+    .login-button,
+    .call-button,
+    .refresh-button,
+    .parent-arrival-button,
+    .change-code-button {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    h1 {
+        font-size: clamp(1.25rem, 5vw, 1.7rem);
+    }
+
+    h2 {
+        font-size: clamp(1.05rem, 4vw, 1.35rem);
+    }
+
+    #map,
+    .leaflet-container {
+        min-height: 240px;
+    }
+}
+
+/* موبایل خیلی کوچک */
+
+@media (max-width: 360px) {
+    .container {
+        padding: 7px;
+    }
+
+    .header,
+    .login-box,
+    .date-card,
+    .info-card,
+    .location-section,
+    .call-section,
+    .change-code-card,
+    .class-arrival-section {
+        padding: 11px;
+        border-radius: 13px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font-size: 14px;
+    }
+}
+
+/* تبلت */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .container {
+        width: 96%;
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .info-card,
+    .date-card,
+    .location-section,
+    .call-section {
+        padding: 18px;
+    }
+}
+
+/* لپ‌تاپ و مانیتور */
+
+@media (min-width: 1025px) {
+    .container {
+        width: 96%;
+        max-width: 1400px;
+        margin-inline: auto;
+    }
+}
+
+/* کاهش انیمیشن در صورت ترجیح کاربر */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
