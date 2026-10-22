@@ -1684,3 +1684,47 @@ h1 {
         scroll-behavior: auto !important;
     }
 }
+
+
+
+/* سفید شدن نوشته‌های پنل */
+body,
+body * {
+    color: #ffffff;
+}
+
+/* متن دکمه‌های دانش‌آموزان */
+.student-button,
+.student-button .student-name,
+.student-button .student-status,
+.student-button .status-time {
+    color: #ffffff !important;
+}
+
+/* عنوان‌ها و بخش کلاس‌ها */
+h1,
+h2,
+h3,
+.grade-header,
+.class-header,
+.student-total,
+.called-total {
+    color: #ffffff !important;
+}
+
+/* نوار جستجو */
+#searchInput {
+    color: #ffffff !important;
+}
+
+#searchInput::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* دکمه‌ها و اعلان‌ها */
+button,
+.teacher-send-popup,
+#parentCallPopup,
+#parentCallPopup * {
+    color: #ffffff !important;
+}
