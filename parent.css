@@ -1,562 +1,5382 @@
-
 /* =====================================================
-   ALAVI PARENT PANEL
-   ROYAL PURPLE + BLUE + 3D GOLD
-   Add this code at the END of your existing CSS
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 1 / 5
 ===================================================== */
 
-:root {
-    --app-primary: #7960d9;
-    --app-primary-dark: #49349b;
-    --app-primary-light: #f0ecff;
-    --app-blue: #4263d9;
-    --app-blue-light: #edf1ff;
-    --app-navy: #211744;
-    --app-text: #211b37;
-    --app-muted: #817995;
-    --app-soft: #f6f4ff;
-    --app-white: #ffffff;
-    --app-border: rgba(255,255,255,.88);
-
-    --app-shadow:
-        0 14px 35px rgba(47,30,103,.09);
-
-    --app-shadow-heavy:
-        0 24px 55px rgba(38,23,91,.17);
-
-    --app-radius: 26px;
-    --app-radius-small: 17px;
-
-    --gold-light: #fff1b8;
-    --gold: #e5bc59;
-    --gold-dark: #9b6b19;
+* {
+    box-sizing: border-box;
 }
 
-/* ---------- PAGE BACKGROUND ---------- */
+html {
+    scroll-behavior: smooth;
+}
 
 body {
-    color: #211b37;
+    margin: 0;
+    min-height: 100vh;
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    color: #172033;
+
     background:
         radial-gradient(
-            circle at 8% 5%,
-            rgba(128,91,229,.18),
+            circle at 0% 0%,
+            rgba(8, 167, 181, 0.18),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 100% 10%,
+            rgba(37, 99, 235, 0.12),
             transparent 30%
         ),
         radial-gradient(
-            circle at 95% 20%,
-            rgba(64,105,228,.14),
-            transparent 32%
+            circle at 50% 100%,
+            rgba(14, 165, 233, 0.10),
+            transparent 35%
         ),
         linear-gradient(
             145deg,
-            #f9f7ff,
-            #f0efff 50%,
-            #f7f8ff
+            #f8fcfd 0%,
+            #eef7f9 48%,
+            #f6f8fc 100%
         );
+
     background-attachment: fixed;
 }
 
-/* ---------- LOGIN GLASS CARD ---------- */
+@font-face {
+    font-family: "IRANSans";
+
+    src:
+        url("IRANSans.woff2")
+        format("woff2");
+
+    font-weight: 100 900;
+
+    font-style: normal;
+
+    font-display: swap;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+input {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
+:root {
+
+    --app-primary:
+        #08a7b5;
+
+    --app-primary-dark:
+        #087c88;
+
+    --app-primary-light:
+        #e8f8fa;
+
+    --app-blue:
+        #2563eb;
+
+    --app-blue-light:
+        #eff6ff;
+
+    --app-navy:
+        #102a43;
+
+    --app-text:
+        #172033;
+
+    --app-muted:
+        #718096;
+
+    --app-soft:
+        #f5f9fa;
+
+    --app-white:
+        #ffffff;
+
+    --app-border:
+        rgba(255, 255, 255, 0.90);
+
+    --app-shadow:
+        0 18px 50px
+        rgba(15, 45, 60, 0.08);
+
+    --app-shadow-heavy:
+        0 25px 65px
+        rgba(15, 45, 60, 0.13);
+
+    --app-radius:
+        26px;
+
+    --app-radius-small:
+        17px;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page {
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 18px;
+}
+
+.container {
+    width: 100%;
+
+    max-width: 980px;
+
+    margin:
+        0 auto;
+}
+
+
+/* =====================================================
+   LOGIN SCREEN
+===================================================== */
+
+.login-screen {
+
+    position: relative;
+
+    min-height:
+        calc(100vh - 36px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   LOGIN BACKGROUND DECORATION
+===================================================== */
+
+.login-screen::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 430px;
+
+    height: 430px;
+
+    top: -200px;
+
+    right: -160px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(8, 167, 181, 0.20),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+.login-screen::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+
+    height: 350px;
+
+    bottom: -200px;
+
+    left: -160px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.13),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   LOGIN BOX
+===================================================== */
 
 .login-box {
-    border: 1px solid rgba(255,255,255,.95);
-    border-radius: 30px;
+
+    position: relative;
+
+    z-index: 5;
+
+    width: 100%;
+
+    max-width: 430px;
+
+    padding:
+        38px
+        32px
+        32px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.95);
+
+    border-radius: 32px;
+
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.98),
-            rgba(245,242,255,.91)
+            rgba(255,255,255,0.95),
+            rgba(255,255,255,0.78)
         );
+
     box-shadow:
-        0 30px 75px rgba(54,34,120,.17),
-        inset 0 1px 0 #fff;
+
+        0 30px 80px
+        rgba(20, 60, 75, 0.12),
+
+        inset 0 1px 0
+        rgba(255,255,255,0.95);
+
+    backdrop-filter:
+        blur(25px);
+
+    -webkit-backdrop-filter:
+        blur(25px);
+
+    animation:
+        appLoginEnter
+        .8s
+        cubic-bezier(.16,1,.3,1);
 }
+
+
+@keyframes appLoginEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(25px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =====================================================
+   LOGIN ICON
+===================================================== */
 
 .login-icon {
-    color: #fff7d7;
+
+    width: 84px;
+
+    height: 84px;
+
+    margin:
+        0 auto 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 27px;
+
+    color: #ffffff;
+
+    font-size: 34px;
+
     background:
         linear-gradient(
             145deg,
-            #7861d7,
-            #30206e
+            #08b8c4,
+            #087d8d
         );
+
     box-shadow:
-        0 12px 0 #251751,
-        0 20px 35px rgba(58,38,127,.3),
-        inset 0 2px 0 rgba(255,255,255,.4);
+
+        0 18px 38px
+        rgba(8, 167, 181, 0.25),
+
+        inset 0 1px 0
+        rgba(255,255,255,.35);
+
+    animation:
+        loginIconFloat
+        4s
+        ease-in-out
+        infinite;
 }
 
-/* ---------- TITLES ---------- */
 
-.title,
-.change-password-title {
-    color: #2b1d60;
+@keyframes loginIconFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-5px);
+    }
 }
 
-.subtitle,
-.change-password-description {
-    color: #817799;
+
+/* =====================================================
+   LOGIN TITLE
+===================================================== */
+
+.title {
+
+    margin-bottom: 7px;
+
+    text-align: center;
+
+    color:
+        var(--app-navy);
+
+    font-size: 28px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -0.7px;
 }
+
+
+.subtitle {
+
+    margin-bottom: 30px;
+
+    text-align: center;
+
+    color:
+        var(--app-muted);
+
+    font-size: 13px;
+
+    line-height: 2;
+}
+
+
+/* =====================================================
+   LABEL
+===================================================== */
 
 label {
-    color: #40345f;
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color:
+        #34495e;
+
+    font-size: 13px;
+
+    font-weight: 800;
 }
 
-/* ---------- INPUTS ---------- */
 
-input,
-.change-password-form input {
-    border: 1px solid #e2dcf5;
-    border-radius: 16px;
-    color: #251b47;
-    background: rgba(250,249,255,.96);
-    box-shadow: inset 0 2px 4px rgba(42,28,91,.025);
-}
+/* =====================================================
+   INPUT
+===================================================== */
 
-input:hover,
-.change-password-form input:hover {
-    border-color: #b7a6ed;
-}
+input {
 
-input:focus,
-.change-password-form input:focus {
-    border-color: #8065dc;
-    background: #fff;
-    box-shadow:
-        0 0 0 4px rgba(128,101,220,.13),
-        0 8px 22px rgba(75,51,151,.08);
-}
+    width: 100%;
 
-/* ---------- 3D GOLD BUTTONS ---------- */
+    height: 56px;
 
-.login-button,
-#changeParentCodeButton,
-.location-refresh-button,
-.parent-arrival-button {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    font-family: inherit;
-    font-weight: 900;
+    padding:
+        0 17px;
+
+    border:
+        1px solid
+        rgba(148, 163, 184, 0.28);
+
+    border-radius: 17px;
+
+    outline: none;
+
+    color:
+        var(--app-text);
+
+    background:
+        rgba(248,250,252,.90);
+
+    font-size: 15px;
+
     transition:
-        transform .22s ease,
-        box-shadow .22s ease,
-        filter .22s ease;
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        transform .25s ease;
 }
 
-/* Gold login and change-code buttons */
 
-.login-button,
-#changeParentCodeButton {
-    color: #49300c;
-    border: 1px solid #f8e7a0;
+input:hover {
+
+    border-color:
+        rgba(8,167,181,.30);
+}
+
+
+input:focus {
+
+    border-color:
+        var(--app-primary);
+
     background:
-        linear-gradient(
-            180deg,
-            #fff3bd 0%,
-            #f1d477 22%,
-            #d9ac43 58%,
-            #f7df8a 100%
-        );
+        #ffffff;
+
     box-shadow:
-        0 6px 0 #95681e,
-        0 12px 24px rgba(133,91,22,.22),
-        inset 0 2px 0 rgba(255,255,255,.95),
-        inset 0 -3px 0 rgba(142,91,16,.12);
+
+        0 0 0 4px
+        rgba(8,167,181,.10),
+
+        0 8px 22px
+        rgba(8,167,181,.06);
 }
 
-.login-button:hover,
-#changeParentCodeButton:hover {
-    filter: brightness(1.04);
-    transform: translateY(-3px);
-    box-shadow:
-        0 9px 0 #95681e,
-        0 18px 30px rgba(133,91,22,.25),
-        inset 0 2px 0 #fff;
+
+/* =====================================================
+   INPUT GROUP
+===================================================== */
+
+.input-group {
+
+    margin-bottom: 17px;
 }
 
-.login-button:active,
-#changeParentCodeButton:active {
-    transform: translateY(3px);
-    box-shadow:
-        0 2px 0 #95681e,
-        0 6px 12px rgba(133,91,22,.18);
-}
 
-.login-button:disabled,
-#changeParentCodeButton:disabled {
-    opacity: .6;
-    filter: grayscale(.2);
-    cursor: wait;
-}
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
 
-/* ---------- PURPLE DASHBOARD HEADER ---------- */
+.login-button {
 
-.header {
-    border: 1px solid rgba(255,255,255,.22);
+    position: relative;
+
+    overflow: hidden;
+
+    width: 100%;
+
+    height: 58px;
+
+    margin-top: 5px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    color: #ffffff;
+
     background:
-        radial-gradient(
-            circle at 95% 5%,
-            rgba(183,160,255,.30),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 5% 100%,
-            rgba(83,131,255,.22),
-            transparent 36%
-        ),
         linear-gradient(
             135deg,
-            #5c42ad,
-            #30216d 53%,
-            #182b68
+            #08b7c3,
+            #087d8c
         );
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
     box-shadow:
-        0 18px 0 rgba(43,29,98,.07),
-        0 26px 50px rgba(43,29,98,.22),
-        inset 0 1px 0 rgba(255,255,255,.23);
+
+        0 15px 32px
+        rgba(8,167,181,.22);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
 }
 
+
+.login-button::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: -120%;
+
+    width: 80%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.30),
+            transparent
+        );
+
+    transform:
+        skewX(-20deg);
+
+    transition:
+        left .7s ease;
+}
+
+
+.login-button:hover::before {
+
+    left: 140%;
+}
+
+
+.login-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+
+        0 20px 40px
+        rgba(8,167,181,.28);
+}
+
+
+.login-button:active {
+
+    transform:
+        scale(.985);
+}
+
+
+.login-button:disabled {
+
+    opacity: .65;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+/* =====================================================
+   LOGIN MESSAGE
+===================================================== */
+
+.message {
+
+    min-height: 22px;
+
+    margin-top: 17px;
+
+    text-align: center;
+
+    color:
+        #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   PARENT PANEL
+===================================================== */
+
+.parent-panel {
+
+    display: none;
+
+    width: 100%;
+
+    max-width: 980px;
+
+    margin:
+        0 auto;
+
+    padding:
+        10px
+        18px
+        35px;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 24px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius: 30px;
+
+    background:
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.22),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(0,220,220,.13),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #523dae,
+            #171263 48%,
+            #1b2069 100%
+        );
+
+    box-shadow:
+
+        0 25px 55px
+        rgba(4,72,82,.20);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+}
+
+
+.header::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 230px;
+
+    height: 230px;
+
+    top: -130px;
+
+    left: -90px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 0 25px
+        rgba(255,255,255,.025),
+
+        0 0 0 50px
+        rgba(255,255,255,.018);
+
+    pointer-events: none;
+}
+
+
+.header::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+
+    height: 150px;
+
+    right: -65px;
+
+    bottom: -85px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.055);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   HEADER TOP
+===================================================== */
+
+.header-top {
+
+    position: relative;
+
+    z-index: 3;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.welcome {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
 .avatar {
-    border-color: rgba(255,255,255,.35);
+
+    width: 62px;
+
+    height: 62px;
+
+    flex:
+        0 0 62px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius: 21px;
+
+    color: #ffffff;
+
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.29),
+            rgba(255,255,255,.24),
             rgba(255,255,255,.08)
         );
+
     box-shadow:
-        0 7px 0 rgba(15,10,52,.2),
-        inset 0 2px 0 rgba(255,255,255,.3);
+
+        inset 0 1px 0
+        rgba(255,255,255,.25),
+
+        0 10px 25px
+        rgba(0,0,0,.12);
+
+    font-size: 28px;
 }
+
+
+.welcome small {
+
+    display: block;
+
+    color:
+        rgba(255,255,255,.67);
+
+    font-size: 11px;
+}
+
+
+.welcome h1 {
+
+    margin:
+        4px 0 0;
+
+    color: #ffffff;
+
+    font-size: 23px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -.5px;
+}
+
+
+/* =====================================================
+   CLASS BADGE
+===================================================== */
 
 .class-badge {
-    color: #fff0b0;
-    border: 1px solid rgba(255,222,133,.48);
-    background: rgba(255,255,255,.10);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+
+    padding:
+        10px 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 15px;
+
+    color: #ffffff;
+
+    background:
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.12);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
 }
 
-/* ---------- GLASS CARDS ---------- */
 
-.date-card,
-.info-card,
-.location-section,
-.change-password-card,
-.class-arrival-section {
-    border: 1px solid rgba(255,255,255,.95);
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+.dashboard {
+
+    margin-top: 16px;
+}
+
+
+/* =====================================================
+   DATE CARD
+===================================================== */
+
+.date-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 84px;
+
+    padding:
+        17px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 23px;
+
+    background:
+        rgba(255,255,255,.84);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+.date-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+
+    height: 130px;
+
+    left: -65px;
+
+    bottom: -75px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.06);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   DATE INFO
+===================================================== */
+
+.date-info {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.info-icon {
+
+    width: 47px;
+
+    height: 47px;
+
+    flex:
+        0 0 47px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e2f8fa,
+            #d7eff5
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 20px;
+}
+
+
+.date-info strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color:
+        var(--app-navy);
+
+    font-size: 13px;
+}
+
+
+.date-info span {
+
+    color:
+        #7a8b98;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   CLOCK
+===================================================== */
+
+.clock {
+
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--app-primary-dark);
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        1px;
+
+    direction: ltr;
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 2 / 5
+===================================================== */
+
+
+/* =====================================================
+   INFO CARDS
+===================================================== */
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-top: 14px;
+}
+
+
+.info-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 145px;
+
+    padding: 19px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 23px;
+
+    background:
+        rgba(255,255,255,.84);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+
+.info-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 95px;
+
+    height: 95px;
+
+    left: -48px;
+
+    bottom: -52px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.06);
+
+    pointer-events: none;
+}
+
+
+.info-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+
+        0 22px 50px
+        rgba(15,45,60,.11);
+}
+
+
+/* =====================================================
+   CARD TITLE
+===================================================== */
+
+.card-title {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+
+    color:
+        #637383;
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   CARD ICON
+===================================================== */
+
+.card-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex:
+        0 0 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e5f8fa,
+            #e0effa
+        );
+
+    box-shadow:
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 19px;
+}
+
+
+/* =====================================================
+   CARD VALUE
+===================================================== */
+
+.card-value {
+
+    position: relative;
+
+    z-index: 2;
+
+    color:
+        var(--app-navy);
+
+    font-size: 18px;
+
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   CARD MUTED
+===================================================== */
+
+.card-muted {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: 7px;
+
+    color:
+        #9aa8b3;
+
+    font-size: 10px;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        7px 11px;
+
+    border-radius: 12px;
+
+    color:
+        #60727c;
+
+    background:
+        #f1f7f8;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.status-dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    flex:
+        0 0 8px;
+
+    border-radius: 50%;
+
+    background:
+        #0ca7b5;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(12,167,181,.10);
+
+    animation:
+        statusPulse
+        2s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        opacity: .55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   LOCATION SECTION
+===================================================== */
+
+.location-section {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 14px;
+
+    padding: 22px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 27px;
+
+    background:
+        rgba(255,255,255,.84);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+.location-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 180px;
+
+    top: -100px;
+
+    left: -90px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(8,167,181,.045);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   LOCATION SECTION HEADER
+===================================================== */
+
+.location-section-header {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-bottom: 17px;
+}
+
+
+.location-section-header h2 {
+
+    margin:
+        0 0 6px;
+
+    color:
+        var(--app-navy);
+
+    font-size: 19px;
+
+    font-weight: 900;
+}
+
+
+.location-section-header p {
+
+    margin: 0;
+
+    color:
+        #82919c;
+
+    font-size: 11px;
+
+    line-height: 1.9;
+}
+
+
+/* =====================================================
+   RADIUS BADGE
+===================================================== */
+
+.radius-badge {
+
+    flex-shrink: 0;
+
+    padding:
+        9px 13px;
+
+    border:
+        1px solid
+        #d4f0f3;
+
+    border-radius: 13px;
+
+    color:
+        var(--app-primary-dark);
+
+    background:
+        #e8f8fa;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   LOCATION CARDS
+===================================================== */
+
+.location-cards {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin:
+        16px 0;
+}
+
+
+/* =====================================================
+   LOCATION CARD
+===================================================== */
+
+.location-card {
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 17px;
+
+    border:
+        1px solid
+        rgba(226,232,240,.72);
+
+    border-radius: 21px;
+
     background:
         linear-gradient(
             145deg,
             rgba(255,255,255,.96),
-            rgba(247,245,255,.88)
+            rgba(247,251,252,.88)
         );
+
     box-shadow:
-        0 12px 30px rgba(44,31,94,.07),
-        inset 0 1px 0 #fff;
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+        0 10px 28px
+        rgba(15,45,60,.055);
+
+    direction: rtl;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
 
-.info-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 38px rgba(53,35,117,.13);
+
+.location-card:hover {
+
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(8,167,181,.15);
+
+    box-shadow:
+        0 17px 35px
+        rgba(15,45,60,.09);
 }
 
-.date-info strong,
-.card-value,
-.location-section-header h2,
-.location-card-value {
-    color: #2d205f;
-}
 
-.date-info span,
-.card-title,
-.location-card-title {
-    color: #817699;
-}
+/* =====================================================
+   LOCATION ICON
+===================================================== */
 
-/* ---------- PURPLE ICON TILES ---------- */
+.location-card-icon {
 
-.info-icon,
-.card-icon,
-.location-card-icon,
-.map-info-icon {
-    border: 1px solid rgba(255,255,255,.95);
+    width: 50px;
+
+    height: 50px;
+
+    flex:
+        0 0 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 16px;
+
     background:
         linear-gradient(
             145deg,
-            #f0eaff,
-            #ded6ff
+            #e4f8fa,
+            #dff1f7
         );
+
     box-shadow:
-        0 4px 0 #c7b9ef,
-        0 7px 14px rgba(79,56,147,.10),
-        inset 0 2px 0 #fff;
+        inset 0 1px 0
+        #ffffff;
+
+    font-size: 22px;
 }
+
 
 .parent-location-card .location-card-icon {
+
     background:
-        linear-gradient(145deg,#e5e0ff,#c9d8ff);
-    box-shadow:
-        0 4px 0 #b0bdf1,
-        inset 0 2px 0 #fff;
+        linear-gradient(
+            145deg,
+            #e9f9f1,
+            #d8f3e5
+        );
 }
 
-/* ---------- STATUS ---------- */
 
-.status {
-    color: #49349b;
-    background: #f0ecff;
+/* =====================================================
+   LOCATION CONTENT
+===================================================== */
+
+.location-card-content {
+
+    min-width: 0;
+
+    flex: 1;
 }
 
-.status-dot {
-    background: #8b70ed;
-    box-shadow: 0 0 0 4px rgba(139,112,237,.13);
+
+.location-card-title {
+
+    margin-bottom: 4px;
+
+    color:
+        #657581;
+
+    font-size: 11px;
+
+    font-weight: 800;
 }
 
-/* ---------- LOCATION ---------- */
 
-.radius-badge {
-    color: #50389d;
-    border-color: #dcd2ff;
-    background: linear-gradient(135deg,#f0eaff,#e3dcff);
+.location-card-value {
+
+    color:
+        var(--app-navy);
+
+    font-size: 25px;
+
+    font-weight: 950;
+
+    line-height: 1.2;
 }
 
-.location-card {
-    border-color: #e8e2f8;
-    background: linear-gradient(145deg,#fff,#f8f6ff);
-    box-shadow: 0 8px 20px rgba(51,36,107,.05);
+
+.location-card-unit {
+
+    color:
+        #83919b;
+
+    font-size: 10px;
+
+    font-weight: 600;
 }
 
-.location-card:hover {
-    border-color: #c9baf8;
-    box-shadow: 0 15px 28px rgba(51,36,107,.10);
+
+.location-card-description {
+
+    margin-top: 3px;
+
+    color:
+        #a0adb5;
+
+    font-size: 9px;
+
+    line-height: 1.6;
 }
 
-.location-status {
-    color: #5c4d83;
-    border-color: #e5def8;
-    background: #f7f4ff;
+
+/* =====================================================
+   DISTANCE VALUES
+===================================================== */
+
+#allowedRadiusValue,
+#liveParentDistance {
+
+    color:
+        var(--app-navy);
+
+    font-size: 27px;
+
+    font-weight: 950;
 }
 
-/* Keep location success/error states meaningful */
+
+/* =====================================================
+   LOCATION RESULT STATES
+===================================================== */
 
 .location-inside {
-    color: #15803d !important;
-    background: #f0fdf4 !important;
-    border-color: #bbf7d0 !important;
+
+    color:
+        #15803d !important;
+
+    background:
+        #f0fdf4 !important;
+
+    border-color:
+        #bbf7d0 !important;
 }
+
 
 .location-outside {
-    color: #dc2626 !important;
-    background: #fef2f2 !important;
-    border-color: #fecaca !important;
+
+    color:
+        #dc2626 !important;
+
+    background:
+        #fef2f2 !important;
+
+    border-color:
+        #fecaca !important;
 }
+
 
 .location-loading {
-    color: #4338ca !important;
-    background: #eef2ff !important;
-    border-color: #c7d2fe !important;
+
+    color:
+        #2563eb !important;
+
+    background:
+        #eff6ff !important;
+
+    border-color:
+        #dbeafe !important;
 }
 
-/* ---------- GOLD REFRESH BUTTON ---------- */
+
+.location-inside .location-card-value,
+.location-inside #liveParentDistance {
+
+    color:
+        #15803d !important;
+}
+
+
+.location-outside .location-card-value,
+.location-outside #liveParentDistance {
+
+    color:
+        #dc2626 !important;
+}
+
+
+.location-loading .location-card-value,
+.location-loading #liveParentDistance {
+
+    color:
+        #2563eb !important;
+}
+
+
+/* =====================================================
+   LOCATION STATUS
+===================================================== */
+
+.location-status {
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        9px 13px;
+
+    border:
+        1px solid
+        #e5edf0;
+
+    border-radius: 14px;
+
+    color:
+        #72828d;
+
+    background:
+        #f5f9fa;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   LOCATION REFRESH BUTTON
+===================================================== */
 
 .location-refresh-button {
-    color: #49300c;
-    border: 1px solid #f4dda0;
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    min-height: 52px;
+
+    margin-top: 12px;
+
+    padding:
+        12px 18px;
+
+    border:
+        1px solid
+        rgba(8,167,181,.10);
+
+    border-radius: 16px;
+
+    color:
+        var(--app-primary-dark);
+
     background:
-        linear-gradient(
-            180deg,
-            #fff3c5,
-            #ebcb70 52%,
-            #d9ad4d
-        );
-    box-shadow:
-        0 5px 0 #a47a2b,
-        0 10px 20px rgba(147,103,31,.13),
-        inset 0 2px 0 #fff;
-}
-
-.location-refresh-button:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(180deg,#fff7d8,#f0d47f,#dfb651);
-    box-shadow:
-        0 7px 0 #a47a2b,
-        0 15px 25px rgba(147,103,31,.18);
-}
-
-.location-refresh-button:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #a47a2b;
-}
-
-/* ---------- MAP ---------- */
-
-.parent-map {
-    border: 1px solid #dcd5f0;
-    box-shadow:
-        0 12px 25px rgba(42,30,91,.09),
-        inset 0 0 0 1px rgba(255,255,255,.7);
-}
-
-.parent-map .leaflet-control-zoom a {
-    color: #37246e;
-}
-
-/* ---------- CALL SECTION ---------- */
-
-.call-section {
-    border: 1px solid rgba(255,255,255,.2);
-    background:
-        radial-gradient(
-            circle at 100% 0%,
-            rgba(194,176,255,.25),
-            transparent 34%
-        ),
-        radial-gradient(
-            circle at 0% 100%,
-            rgba(67,111,255,.23),
-            transparent 38%
-        ),
         linear-gradient(
             135deg,
-            #5140a0,
-            #282064 55%,
-            #15366f
+            #e9f9fa,
+            #e0f3f6
         );
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
     box-shadow:
-        0 18px 0 rgba(44,31,102,.07),
-        0 25px 48px rgba(39,28,94,.21),
-        inset 0 1px 0 rgba(255,255,255,.16);
+        0 8px 20px
+        rgba(8,167,181,.06);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        opacity .25s ease;
 }
 
-/* Gold 3D call button */
 
-.call-button {
-    color: #4b310d;
-    border: 1px solid #fff0b0;
+.location-refresh-button:hover {
+
+    transform:
+        translateY(-2px);
+
     background:
         linear-gradient(
-            180deg,
-            #fff4c5 0%,
-            #f3d87d 25%,
-            #d8aa40 63%,
-            #f5dc8d 100%
+            135deg,
+            #def6f8,
+            #d7eff3
         );
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+
     box-shadow:
-        0 7px 0 #96691e,
-        0 15px 30px rgba(0,0,0,.20),
-        inset 0 2px 0 #fff,
-        inset 0 -3px 0 rgba(130,81,10,.12);
+        0 13px 27px
+        rgba(8,167,181,.10);
 }
 
-.call-button:hover {
-    color: #402806;
-    transform: translateY(-3px);
-    background: linear-gradient(180deg,#fff8d9,#f6df91,#e2b84f);
-    box-shadow:
-        0 10px 0 #96691e,
-        0 21px 35px rgba(0,0,0,.24),
-        inset 0 2px 0 #fff;
+
+.location-refresh-button:active {
+
+    transform:
+        scale(.985);
 }
 
-.call-button:active {
-    transform: translateY(3px);
-    box-shadow:
-        0 2px 0 #96691e,
-        0 6px 12px rgba(0,0,0,.15);
+
+.location-refresh-button:disabled {
+
+    opacity: .6;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
 }
 
-/* ---------- ARRIVAL BUTTON ---------- */
 
-.parent-arrival-button {
-    color: #49300c;
-    border: 1px solid #f8e7a0;
-    background: linear-gradient(180deg,#fff3bd,#eac85f 60%,#d3a43c);
-    box-shadow:
-        0 6px 0 #95681e,
-        0 11px 22px rgba(133,91,22,.15),
-        inset 0 2px 0 #fff;
+/* =====================================================
+   LOCATION RESULT CARD
+===================================================== */
+
+.location-result-card {
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
 }
 
-.parent-arrival-button.arrived {
-    color: #fff;
-    border-color: #86efac;
-    background: linear-gradient(145deg,#22c55e,#15803d);
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.parent-map {
+
+    position: relative;
+
+    z-index: 1;
+
+    width: 100%;
+
+    height: 400px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        #dce8ed;
+
+    border-radius: 21px;
+
+    background:
+        #e2e8f0;
+
     box-shadow:
-        0 5px 0 #166534,
-        0 10px 20px rgba(21,128,61,.18),
-        inset 0 2px 0 rgba(255,255,255,.3);
+        inset 0 0 0 1px
+        rgba(255,255,255,.55);
 }
 
-/* ---------- NOTIFICATIONS ---------- */
+
+.parent-map .leaflet-control {
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+}
+
+
+.parent-map .leaflet-control-zoom {
+
+    border: none;
+
+    overflow: hidden;
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 7px 20px
+        rgba(15,23,42,.16);
+}
+
+
+.parent-map .leaflet-control-zoom a {
+
+    color:
+        var(--app-navy);
+}
+
+
+/* =====================================================
+   LEAFLET POPUP
+===================================================== */
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+
+    direction: rtl;
+}
+
+
+.leaflet-popup-content {
+
+    margin:
+        12px 14px;
+
+    font-family:
+        "IRANSans",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    font-size: 12px;
+
+    line-height: 1.8;
+}
+
+
+.map-popup-title {
+
+    margin-bottom: 4px;
+
+    color:
+        #172554;
+
+    font-weight:
+        900;
+}
+
+
+.map-popup-text {
+
+    color:
+        #64748b;
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 3 / 5
+===================================================== */
+
+
+/* =====================================================
+   MAP INFORMATION GRID
+===================================================== */
+
+.map-info-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 13px;
+}
+
+
+.map-info-card {
+
+    min-height: 72px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border:
+        1px solid
+        #e5edf1;
+
+    border-radius: 17px;
+
+    background:
+        #f8fafc;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.map-info-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(15,45,60,.06);
+}
+
+
+.map-info-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    flex:
+        0 0 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        #eff6ff;
+
+    font-size: 19px;
+}
+
+
+.map-info-card span {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color:
+        #94a3b8;
+
+    font-size: 10px;
+}
+
+
+.map-info-card strong {
+
+    display: block;
+
+    color:
+        #334155;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   MAP MARKERS
+===================================================== */
+
+.school-marker,
+.parent-marker {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    border:
+        3px solid
+        #ffffff;
+
+    border-radius: 50%;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 6px 18px
+        rgba(15,23,42,.25);
+}
+
+
+.school-marker {
+
+    background:
+        #2563eb;
+}
+
+
+.parent-marker {
+
+    background:
+        #16a34a;
+}
+
+
+/* =====================================================
+   CALL SECTION
+===================================================== */
+
+.call-section {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 14px;
+
+    padding:
+        28px 22px
+        25px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    border-radius: 28px;
+
+    background:
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.22),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(17, 51, 244, 0.362),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #061ba7,
+            #073abd
+        );
+
+    box-shadow:
+        0 25px 50px
+        rgba(4,80,90,.18);
+}
+
+
+.call-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+
+    height: 190px;
+
+    left: -90px;
+
+    bottom: -120px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 22px
+        rgba(255,255,255,.025);
+
+    pointer-events: none;
+}
+
+
+.call-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 120px;
+
+    height: 120px;
+
+    right: -55px;
+
+    top: -70px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.045);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   CALL TITLE
+===================================================== */
+
+.call-section h2 {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin:
+        0 0 7px;
+
+    color:
+        #ffffff;
+
+    font-size: 21px;
+
+    font-weight: 900;
+}
+
+
+.call-section p {
+
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 600px;
+
+    margin:
+        0 auto 22px;
+
+    color:
+        rgba(255,255,255,.70);
+
+    font-size: 11px;
+
+    line-height: 1.9;
+}
+
+
+/* =====================================================
+   MAIN CALL BUTTON
+===================================================== */
+
+.call-button { position: relative; z-index: 3; overflow: hidden; width: min(100%, 460px); min-height: 68px; padding: 16px 24px; border: 1px solid rgba(255, 255, 255, 0.65); border-radius: 22px; color: #ffffff; background: linear-gradient( 135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08) ); backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); font-family: inherit; font-size: 17px; font-weight: 900; cursor: pointer; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(255, 255, 255, 0.10); transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; } .call-button:hover { transform: translateY(-3px); background: linear-gradient( 135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.13) ); box-shadow: 0 18px 38px rgba(0, 0, 0, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.60); } .call-button:active { transform: scale(0.98); } .call-button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    padding:
+        22px 0 6px;
+
+    text-align: center;
+
+    color:
+        #9aa8b1;
+
+    font-size: 10px;
+
+    opacity: .85;
+}
+
+
+/* =====================================================
+   PARENT NOTIFICATION
+===================================================== */
 
 .parent-notification {
-    border-color: rgba(255,255,255,.24);
-    background: linear-gradient(145deg,#302064,#5140a0,#24498a);
-    box-shadow: 0 20px 45px rgba(35,24,87,.28);
+
+    position: fixed;
+
+    z-index: 999999;
+
+    top: 18px;
+
+    right: 18px;
+
+    width:
+        min(430px, calc(100% - 36px));
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius: 20px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(7,61,71,.96),
+            rgba(8,126,140,.96)
+        );
+
+    box-shadow:
+
+        0 20px 50px
+        rgba(0,40,50,.25),
+
+        inset 0 1px 0
+        rgba(255,255,255,.15);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(-15px)
+        scale(.97);
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease,
+        transform .3s ease;
 }
+
+
+.parent-notification.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+.parent-notification::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+
+    height: 100px;
+
+    right: -45px;
+
+    top: -55px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.05);
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   NOTIFICATION ICON
+===================================================== */
+
+.parent-notification-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    min-width: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 15px;
+
+    background:
+        rgba(255,255,255,.12);
+
+    font-size: 26px;
+
+    box-shadow:
+        inset 0 1px 0
+        rgba(255,255,255,.15);
+}
+
+
+/* =====================================================
+   NOTIFICATION CONTENT
+===================================================== */
+
+.parent-notification-content {
+
+    flex: 1;
+
+    min-width: 0;
+
+    text-align: right;
+}
+
+
+.parent-notification-content strong {
+
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 900;
+}
+
+
+.parent-notification-content span {
+
+    display: block;
+
+    color:
+        rgba(255,255,255,.80);
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.parent-notification-content small {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 10px;
+}
+
+
+/* =====================================================
+   NOTIFICATION CLOSE
+===================================================== */
+
+.close-notification-button {
+
+    width: 32px;
+
+    height: 32px;
+
+    min-width: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+
+.close-notification-button:hover {
+
+    background:
+        rgba(255,255,255,.16);
+
+    transform:
+        scale(1.05);
+}
+
+
+.notification-show {
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    transform:
+        translateY(0)
+        scale(1) !important;
+}
+
+
+/* =====================================================
+   PARENT CALL NOTIFICATION
+===================================================== */
 
 #parentCallNotification {
-    border-color: rgba(255,255,255,.22);
+
+    position: fixed;
+
+    z-index: 999999;
+
+    top: 18px;
+
+    right: 50%;
+
+    width:
+        min(460px, calc(100% - 28px));
+
+    padding: 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 21px;
+
+    color: #ffffff;
+
     background:
-        radial-gradient(circle at 100% 0%,rgba(255,255,255,.15),transparent 32%),
-        linear-gradient(145deg,#312066,#5140a0,#19447d);
-    box-shadow: 0 22px 50px rgba(35,24,87,.30);
+
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,255,255,.15),
+            transparent 32%
+        ),
+
+        linear-gradient(
+            145deg,
+            #102a43,
+            #087987
+        );
+
+    box-shadow:
+        0 22px 55px
+        rgba(5,40,50,.27);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translate(50%, -20px)
+        scale(.97);
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease,
+        transform .3s ease;
 }
 
-.class-arrival-notification {
-    border-color: #b7a4f4;
-    color: #33216c;
-    background: linear-gradient(145deg,#fff,#f1ecff);
-    box-shadow: 0 16px 40px rgba(44,30,103,.20);
+
+#parentCallNotification.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translate(50%, 0)
+        scale(1);
 }
 
-/* ---------- FOCUS ---------- */
+
+/* =====================================================
+   CALL NOTIFICATION ICON
+===================================================== */
+
+.parent-call-notification-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    min-width: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.20);
+
+    border-radius: 16px;
+
+    background:
+        rgba(255,255,255,.11);
+
+    font-size: 23px;
+}
+
+
+.parent-call-notification-content {
+
+    flex: 1;
+
+    min-width: 0;
+
+    text-align: right;
+}
+
+
+.parent-call-notification-title {
+
+    margin-bottom: 4px;
+
+    color:
+        #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 900;
+}
+
+
+.parent-call-notification-text {
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 12px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   CALL NOTIFICATION CLOSE
+===================================================== */
+
+.parent-call-notification-close {
+
+    width: 32px;
+
+    height: 32px;
+
+    min-width: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-size: 21px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.parent-call-notification-close:hover {
+
+    background:
+        rgba(255,255,255,.16);
+}
+
+
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
 
 button:focus-visible,
 input:focus-visible {
-    outline: 3px solid rgba(128,101,220,.35);
-    outline-offset: 3px;
+
+    outline:
+        3px solid
+        rgba(8,167,181,.25);
+
+    outline-offset:
+        2px;
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 4 / 5
+===================================================== */
+
+
+/* =====================================================
+   CHANGE PASSWORD CARD
+===================================================== */
+
+.change-password-card {
+
+    width: 100%;
+
+    max-width: 560px;
+
+    margin:
+        18px auto 0;
+
+    padding: 22px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius: 25px;
+
+    background:
+        rgba(255,255,255,.82);
+
+    box-shadow:
+        var(--app-shadow);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
 }
 
-/* ---------- MOBILE ---------- */
+
+/* =====================================================
+   CHANGE PASSWORD TITLE
+===================================================== */
+
+.change-password-title {
+
+    margin-bottom: 7px;
+
+    text-align: center;
+
+    color:
+        var(--app-navy);
+
+    font-size: 18px;
+
+    font-weight: 900;
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD DESCRIPTION
+===================================================== */
+
+.change-password-description {
+
+    margin-bottom: 19px;
+
+    text-align: center;
+
+    color:
+        #82909a;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD FORM
+===================================================== */
+
+.change-password-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 11px;
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD INPUTS
+===================================================== */
+
+.change-password-form input {
+
+    width: 100%;
+
+    height: 52px;
+
+    padding:
+        0 16px;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+    border-radius: 16px;
+
+    outline: none;
+
+    color:
+        var(--app-text);
+
+    background:
+        #f7fafb;
+
+    font-size: 15px;
+
+    text-align: center;
+
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+
+.change-password-form input:focus {
+
+    border-color:
+        var(--app-primary);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(8,167,181,.09);
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD BUTTON
+===================================================== */
+
+#changeParentCodeButton {
+
+    width: 100%;
+
+    height: 54px;
+
+    border: none;
+
+    border-radius: 17px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #08a7b5,
+            #087c88
+        );
+
+    font-size: 15px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 25px
+        rgba(8,167,181,.18);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        opacity .25s ease;
+}
+
+
+#changeParentCodeButton:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 16px 30px
+        rgba(8,167,181,.23);
+}
+
+
+#changeParentCodeButton:active {
+
+    transform:
+        scale(.985);
+}
+
+
+#changeParentCodeButton:disabled {
+
+    opacity:
+        .6;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+}
+
+
+/* =====================================================
+   CHANGE PASSWORD MESSAGE
+===================================================== */
+
+.change-password-message {
+
+    min-height: 24px;
+
+    text-align: center;
+
+    color:
+        #64748b;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    line-height: 1.7;
+}
+
+
+/* =====================================================
+   CINEMATIC INTRO
+   NEW VERSION
+===================================================== */
+
+#cinematicIntro {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2147483647;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(8,190,202,.20),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            #073b43 0%,
+            #03252d 42%,
+            #011217 75%,
+            #000507 100%
+        );
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity 1.2s
+        cubic-bezier(.4,0,.2,1),
+
+        visibility 1.2s;
+}
+
+
+#cinematicIntro.intro-hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   INTRO BACKGROUND
+===================================================== */
+
+.intro-background {
+
+    position: absolute;
+
+    inset: -20%;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(20,205,216,.22),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 15% 80%,
+            rgba(0,180,195,.10),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(255,190,70,.08),
+            transparent 28%
+        );
+
+    animation:
+        introBackgroundMove
+        8s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+@keyframes introBackgroundMove {
+
+    from {
+        transform:
+            scale(1);
+    }
+
+    to {
+        transform:
+            scale(1.12);
+    }
+}
+
+
+/* =====================================================
+   INTRO GLOW
+===================================================== */
+
+.intro-glow {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter:
+        blur(80px);
+
+    opacity: 0;
+
+    animation:
+        introGlowAppear
+        2s
+        ease
+        forwards;
+}
+
+
+.intro-glow-1 {
+
+    width: 430px;
+
+    height: 430px;
+
+    background:
+        rgba(0,210,220,.20);
+
+    animation-delay:
+        .3s;
+}
+
+
+.intro-glow-2 {
+
+    width: 250px;
+
+    height: 250px;
+
+    background:
+        rgba(255,190,65,.12);
+
+    animation-delay:
+        .8s;
+}
+
+
+@keyframes introGlowAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(.5);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+    }
+}
+
+
+/* =====================================================
+   INTRO PARTICLES
+===================================================== */
+
+.intro-particles {
+
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+}
+
+
+.intro-particles span {
+
+    position: absolute;
+
+    width: 2px;
+
+    height: 2px;
+
+    border-radius: 50%;
+
+    background:
+        #e9c467;
+
+    box-shadow:
+        0 0 8px
+        rgba(233,196,103,.7);
+
+    opacity: 0;
+
+    animation:
+        introParticleFloat
+        5s
+        linear
+        infinite;
+}
+
+
+.intro-particles span:nth-child(1) {
+    left: 12%;
+    top: 80%;
+    animation-delay: .2s;
+}
+
+.intro-particles span:nth-child(2) {
+    left: 20%;
+    top: 25%;
+    animation-delay: 1s;
+}
+
+.intro-particles span:nth-child(3) {
+    left: 30%;
+    top: 70%;
+    animation-delay: 1.8s;
+}
+
+.intro-particles span:nth-child(4) {
+    left: 42%;
+    top: 18%;
+    animation-delay: .7s;
+}
+
+.intro-particles span:nth-child(5) {
+    left: 52%;
+    top: 82%;
+    animation-delay: 1.4s;
+}
+
+.intro-particles span:nth-child(6) {
+    left: 63%;
+    top: 28%;
+    animation-delay: 2.1s;
+}
+
+.intro-particles span:nth-child(7) {
+    left: 72%;
+    top: 73%;
+    animation-delay: .5s;
+}
+
+.intro-particles span:nth-child(8) {
+    left: 82%;
+    top: 40%;
+    animation-delay: 1.7s;
+}
+
+.intro-particles span:nth-child(9) {
+    left: 90%;
+    top: 78%;
+    animation-delay: 2.4s;
+}
+
+.intro-particles span:nth-child(10) {
+    left: 8%;
+    top: 45%;
+    animation-delay: 1.1s;
+}
+
+.intro-particles span:nth-child(11) {
+    left: 37%;
+    top: 90%;
+    animation-delay: 2.7s;
+}
+
+.intro-particles span:nth-child(12) {
+    left: 76%;
+    top: 15%;
+    animation-delay: .9s;
+}
+
+
+@keyframes introParticleFloat {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translateY(30px)
+            scale(.5);
+    }
+
+    20% {
+        opacity: .7;
+    }
+
+    80% {
+        opacity: .4;
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translateY(-120px)
+            scale(1.4);
+    }
+}
+
+
+/* =====================================================
+   INTRO CONTENT
+===================================================== */
+
+.intro-content {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   INTRO LOGO WRAPPER
+===================================================== */
+
+.intro-logo-wrapper {
+
+    position: relative;
+
+    width: 300px;
+
+    height: 300px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    opacity: 0;
+
+    transform:
+        scale(.35)
+        rotate(-8deg);
+
+    animation:
+        introLogoReveal
+        2s
+        cubic-bezier(.16,1,.3,1)
+        .25s
+        forwards;
+}
+
+
+@keyframes introLogoReveal {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            scale(.35)
+            rotate(-8deg);
+
+        filter:
+            blur(14px);
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform:
+            scale(1.08)
+            rotate(2deg);
+
+        filter:
+            blur(0);
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            rotate(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOGO
+===================================================== */
+
+.intro-logo {
+
+    position: relative;
+
+    z-index: 5;
+
+    width: 235px;
+
+    height: 235px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+
+    filter:
+
+        drop-shadow(
+            0 0 18px
+            rgba(255,196,80,.45)
+        )
+
+        drop-shadow(
+            0 0 45px
+            rgba(0,211,221,.28)
+        );
+
+    animation:
+        introLogoFloat
+        4s
+        ease-in-out
+        2s
+        infinite;
+}
+
+
+@keyframes introLogoFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-7px);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOGO GLOW
+===================================================== */
+
+.intro-logo-glow {
+
+    position: absolute;
+
+    width: 230px;
+
+    height: 230px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,196,75,.24),
+            rgba(0,213,222,.12) 45%,
+            transparent 72%
+        );
+
+    filter:
+        blur(18px);
+
+    animation:
+        logoGlowPulse
+        2.5s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes logoGlowPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(.90);
+
+        opacity:
+            .55;
+    }
+
+    50% {
+        transform:
+            scale(1.12);
+
+        opacity:
+            .95;
+    }
+}
+
+
+/* =====================================================
+   INTRO RINGS
+===================================================== */
+
+.intro-ring {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    border:
+        1px solid
+        rgba(255,195,72,.65);
+
+    box-shadow:
+
+        0 0 10px
+        rgba(255,190,60,.25),
+
+        inset 0 0 10px
+        rgba(255,190,60,.10);
+}
+
+
+.intro-ring-1 {
+
+    width: 275px;
+
+    height: 275px;
+
+    border-top-color:
+        transparent;
+
+    border-left-color:
+        rgba(255,211,107,.9);
+
+    animation:
+        introRingRotate
+        7s
+        linear
+        infinite;
+}
+
+
+.intro-ring-2 {
+
+    width: 315px;
+
+    height: 315px;
+
+    border-right-color:
+        transparent;
+
+    border-bottom-color:
+        rgba(0,211,221,.55);
+
+    animation:
+        introRingRotateReverse
+        10s
+        linear
+        infinite;
+}
+
+
+.intro-ring-3 {
+
+    width: 350px;
+
+    height: 350px;
+
+    border-left-color:
+        transparent;
+
+    border-top-color:
+        rgba(255,213,116,.30);
+
+    animation:
+        introRingRotate
+        14s
+        linear
+        infinite;
+}
+
+
+@keyframes introRingRotate {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+@keyframes introRingRotateReverse {
+
+    from {
+        transform:
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            rotate(0deg);
+    }
+}
+
+
+/* =====================================================
+   INTRO LIGHT SWEEP
+===================================================== */
+
+.intro-light-sweep {
+
+    position: absolute;
+
+    z-index: 8;
+
+    width: 70px;
+
+    height: 360px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.60),
+            rgba(255,215,120,.85),
+            transparent
+        );
+
+    filter:
+        blur(12px);
+
+    transform:
+        rotate(28deg)
+        translateX(-300px);
+
+    opacity: 0;
+
+    animation:
+        introLightSweep
+        1.6s
+        ease-out
+        1.7s
+        forwards;
+}
+
+
+@keyframes introLightSweep {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            rotate(28deg)
+            translateX(-300px);
+    }
+
+    20% {
+        opacity: .8;
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            rotate(28deg)
+            translateX(300px);
+    }
+}
+/* =====================================================
+   ALAVI PARENT APP
+   MODERN PREMIUM MOBILE UI
+   PART 5 / 5
+===================================================== */
+
+
+/* =====================================================
+   INTRO TITLE
+===================================================== */
+
+.intro-title {
+
+    margin-top: 28px;
+
+    color:
+        #ffffff;
+
+    font-size: 30px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        -1px;
+
+    text-shadow:
+
+        0 0 18px
+        rgba(255,255,255,.18),
+
+        0 0 35px
+        rgba(0,210,220,.18);
+
+    opacity: 0;
+
+    transform:
+        translateY(20px);
+
+    animation:
+        introTitleReveal
+        1s
+        ease
+        2s
+        forwards;
+}
+
+
+@keyframes introTitleReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO DIVIDER
+===================================================== */
+
+.intro-divider {
+
+    width: 0;
+
+    height: 1px;
+
+    margin-top: 14px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d9a83e,
+            #ffffff,
+            #d9a83e,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px
+        rgba(255,200,80,.55);
+
+    animation:
+        introDividerReveal
+        1s
+        ease
+        2.3s
+        forwards;
+}
+
+
+@keyframes introDividerReveal {
+
+    from {
+
+        width: 0;
+
+        opacity: 0;
+    }
+
+    to {
+
+        width: 180px;
+
+        opacity: 1;
+    }
+}
+
+
+/* =====================================================
+   INTRO SCHOOL
+===================================================== */
+
+.intro-school {
+
+    margin-top: 12px;
+
+    color:
+        #e8c36a;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    letter-spacing:
+        1px;
+
+    text-shadow:
+        0 0 12px
+        rgba(225,180,65,.30);
+
+    opacity: 0;
+
+    transform:
+        translateY(12px);
+
+    animation:
+        introSchoolReveal
+        1s
+        ease
+        2.5s
+        forwards;
+}
+
+
+@keyframes introSchoolReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =====================================================
+   INTRO LOADING
+===================================================== */
+
+.intro-loading {
+
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 30px;
+
+    opacity: 0;
+
+    animation:
+        introLoadingAppear
+        .8s
+        ease
+        2.8s
+        forwards;
+}
+
+
+.intro-loading span {
+
+    width: 5px;
+
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        #e9c467;
+
+    box-shadow:
+        0 0 8px
+        rgba(233,196,103,.8);
+
+    animation:
+        introDotPulse
+        1.2s
+        ease-in-out
+        infinite;
+}
+
+
+.intro-loading span:nth-child(2) {
+    animation-delay:
+        .15s;
+}
+
+
+.intro-loading span:nth-child(3) {
+    animation-delay:
+        .3s;
+}
+
+
+@keyframes introLoadingAppear {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes introDotPulse {
+
+    0%,
+    100% {
+
+        transform:
+            scale(.7);
+
+        opacity:
+            .35;
+    }
+
+    50% {
+
+        transform:
+            scale(1.4);
+
+        opacity:
+            1;
+    }
+}
+
+
+/* =====================================================
+   OLD / EXISTING PARENT INTRO
+   KEPT FOR COMPATIBILITY
+===================================================== */
+
+#parentIntro {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 2147483647;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(37,99,235,.20),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            #111d35 0%,
+            #081225 42%,
+            #030812 75%,
+            #000 100%
+        );
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity .9s
+        cubic-bezier(.4,0,.2,1),
+
+        visibility .9s;
+}
+
+
+#parentIntro.hide {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+#parentIntroLogo {
+
+    max-width: 240px;
+
+    max-height: 240px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+
+    filter:
+        drop-shadow(
+            0 0 30px
+            rgba(59,130,246,.35)
+        );
+}
+
+
+/* =====================================================
+   RESPONSIVE - DESKTOP
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .cards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .map-info-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .header-top {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .class-badge {
+
+        align-self:
+            flex-start;
+    }
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .page {
+
+        padding:
+            12px;
+    }
+
+
+    .parent-panel {
+
+        padding:
+            8px
+            12px
+            25px;
+    }
+
+
+    .cards {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+
+    .location-section {
+
+        padding:
+            18px;
+    }
+
+
+    .location-section-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .radius-badge {
+
+        width: 100%;
+
+        text-align:
+            center;
+    }
+
+
+    .parent-map {
+
+        height:
+            360px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media (max-width: 600px) {
+
     body {
+
         background:
-            radial-gradient(circle at 0% 0%,rgba(128,91,229,.15),transparent 32%),
-            linear-gradient(160deg,#f7f5ff,#f2f4ff);
-        background-attachment: fixed;
+
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(8,167,181,.13),
+                transparent 32%
+            ),
+
+            linear-gradient(
+                160deg,
+                #f4fafb,
+                #f7f9fc
+            );
+
+        background-attachment:
+            fixed;
     }
+
+
+    .page {
+
+        padding:
+            7px;
+    }
+
+
+    .login-screen {
+
+        min-height:
+            calc(100vh - 14px);
+
+        padding:
+            12px;
+    }
+
+
+    .login-box {
+
+        padding:
+            28px
+            19px
+            23px;
+
+        border-radius:
+            27px;
+    }
+
+
+    .login-icon {
+
+        width:
+            74px;
+
+        height:
+            74px;
+
+        margin-bottom:
+            18px;
+
+        border-radius:
+            23px;
+
+        font-size:
+            30px;
+    }
+
+
+    .title {
+
+        font-size:
+            25px;
+    }
+
+
+    .subtitle {
+
+        margin-bottom:
+            24px;
+
+        font-size:
+            12px;
+    }
+
+
+    input {
+
+        height:
+            54px;
+
+        border-radius:
+            16px;
+
+        font-size:
+            14px;
+    }
+
+
+    .login-button {
+
+        height:
+            56px;
+
+        border-radius:
+            17px;
+
+        font-size:
+            15px;
+    }
+
+
+    .parent-panel {
+
+        padding:
+            7px
+            7px
+            24px;
+    }
+
 
     .header {
-        box-shadow:
-            0 12px 0 rgba(43,29,98,.06),
-            0 18px 35px rgba(43,29,98,.18);
+
+        padding:
+            18px;
+
+        border-radius:
+            25px;
     }
 
-    .login-button,
-    #changeParentCodeButton,
-    .location-refresh-button,
-    .call-button,
-    .parent-arrival-button {
-        -webkit-tap-highlight-color: transparent;
+
+    .header-top {
+
+        flex-direction:
+            row;
+
+        align-items:
+            center;
+    }
+
+
+    .welcome {
+
+        gap:
+            11px;
+
+        min-width:
+            0;
+    }
+
+
+    .avatar {
+
+        width:
+            53px;
+
+        height:
+            53px;
+
+        flex:
+            0 0 53px;
+
+        border-radius:
+            18px;
+
+        font-size:
+            24px;
+    }
+
+
+    .welcome h1 {
+
+        max-width:
+            145px;
+
+        overflow:
+            hidden;
+
+        text-overflow:
+            ellipsis;
+
+        white-space:
+            nowrap;
+
+        font-size:
+            18px;
+    }
+
+
+    .welcome small {
+
+        font-size:
+            10px;
+    }
+
+
+    .class-badge {
+
+        padding:
+            8px
+            10px;
+
+        border-radius:
+            13px;
+
+        font-size:
+            10px;
+    }
+
+
+    .dashboard {
+
+        margin-top:
+            11px;
+    }
+
+
+    .date-card {
+
+        min-height:
+            auto;
+
+        padding:
+            14px;
+
+        border-radius:
+            20px;
+    }
+
+
+    .info-icon {
+
+        width:
+            43px;
+
+        height:
+            43px;
+
+        flex:
+            0 0 43px;
+
+        border-radius:
+            14px;
+
+        font-size:
+            18px;
+    }
+
+
+    .date-info strong {
+
+        font-size:
+            12px;
+    }
+
+
+    .date-info span {
+
+        font-size:
+            10px;
+    }
+
+
+    .clock {
+
+        font-size:
+            22px;
+    }
+
+
+    .cards {
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap:
+            7px;
+
+        margin-top:
+            10px;
+    }
+
+
+    .info-card {
+
+        min-height:
+            132px;
+
+        padding:
+            12px 7px;
+
+        border-radius:
+            18px;
+
+        text-align:
+            center;
+    }
+
+
+    .card-title {
+
+        flex-direction:
+            column;
+
+        justify-content:
+            center;
+
+        gap:
+            5px;
+
+        margin-bottom:
+            9px;
+
+        font-size:
+            9px;
+    }
+
+
+    .card-icon {
+
+        width:
+            34px;
+
+        height:
+            34px;
+
+        flex:
+            0 0 34px;
+
+        border-radius:
+            11px;
+
+        font-size:
+            15px;
+    }
+
+
+    .card-value {
+
+        font-size:
+            12px;
+    }
+
+
+    .card-muted {
+
+        margin-top:
+            5px;
+
+        font-size:
+            8px;
+
+        line-height:
+            1.6;
+    }
+
+
+    .status {
+
+        padding:
+            5px
+            7px;
+
+        gap:
+            5px;
+
+        border-radius:
+            10px;
+
+        font-size:
+            9px;
+    }
+
+
+    .status-dot {
+
+        width:
+            6px;
+
+        height:
+            6px;
+
+        flex-basis:
+            6px;
+    }
+
+
+    .location-section {
+
+        padding:
+            15px;
+
+        margin-top:
+            10px;
+
+        border-radius:
+            23px;
+    }
+
+
+    .location-section-header {
+
+        margin-bottom:
+            12px;
+    }
+
+
+    .location-section-header h2 {
+
+        font-size:
+            17px;
+    }
+
+
+    .location-section-header p {
+
+        font-size:
+            10px;
+    }
+
+
+    .radius-badge {
+
+        padding:
+            8px;
+
+        border-radius:
+            12px;
+
+        font-size:
+            10px;
+    }
+
+
+    .location-cards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap:
+            8px;
+
+        margin:
+            12px 0;
+    }
+
+
+    .location-card {
+
+        min-height:
+            116px;
+
+        flex-direction:
+            column;
+
+        justify-content:
+            center;
+
+        gap:
+            7px;
+
+        padding:
+            11px 7px;
+
+        border-radius:
+            17px;
+
+        text-align:
+            center;
+    }
+
+
+    .location-card-icon {
+
+        width:
+            41px;
+
+        height:
+            41px;
+
+        flex:
+            0 0 41px;
+
+        border-radius:
+            13px;
+
+        font-size:
+            19px;
+    }
+
+
+    .location-card-title {
+
+        margin-bottom:
+            3px;
+
+        font-size:
+            9px;
+    }
+
+
+    .location-card-value {
+
+        font-size:
+            21px;
+    }
+
+
+    #allowedRadiusValue,
+    #liveParentDistance {
+
+        font-size:
+            22px;
+    }
+
+
+    .location-card-unit {
+
+        font-size:
+            8px;
+    }
+
+
+    .location-card-description {
+
+        font-size:
+            7px;
+    }
+
+
+    .location-status {
+
+        min-height:
+            40px;
+
+        padding:
+            8px;
+
+        border-radius:
+            12px;
+
+        font-size:
+            9px;
+    }
+
+
+    .location-refresh-button {
+
+        min-height:
+            51px;
+
+        margin-top:
+            9px;
+
+        border-radius:
+            15px;
+
+        font-size:
+            12px;
+    }
+
+
+    .parent-map {
+
+        height:
+            310px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .map-info-grid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            8px;
+    }
+
+
+    .map-info-card {
+
+        min-height:
+            62px;
+
+        padding:
+            10px;
+    }
+
+
+    .map-info-icon {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        flex:
+            0 0 38px;
+
+        border-radius:
+            11px;
+    }
+
+
+    .map-info-card span {
+
+        font-size:
+            9px;
+    }
+
+
+    .map-info-card strong {
+
+        font-size:
+            11px;
+    }
+
+
+    .call-section {
+
+        margin-top:
+            10px;
+
+        padding:
+            23px
+            14px;
+
+        border-radius:
+            24px;
+    }
+
+
+    .call-section h2 {
+
+        font-size:
+            18px;
+    }
+
+
+    .call-section p {
+
+        margin-bottom:
+            18px;
+
+        font-size:
+            10px;
+    }
+
+
+    .call-button {
+
+        min-height:
+            64px;
+
+        border-radius:
+            18px;
+
+        font-size:
+            15px;
+    }
+
+
+    .change-password-card {
+
+        margin-top:
+            12px;
+
+        padding:
+            17px;
+
+        border-radius:
+            21px;
+    }
+
+
+    .change-password-title {
+
+        font-size:
+            16px;
+    }
+
+
+    .change-password-description {
+
+        font-size:
+            10px;
+    }
+
+
+    .change-password-form input,
+    #changeParentCodeButton {
+
+        height:
+            50px;
+
+        border-radius:
+            15px;
+    }
+
+
+    .parent-notification {
+
+        top:
+            10px;
+
+        right:
+            10px;
+
+        width:
+            calc(100% - 20px);
+
+        padding:
+            13px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .parent-notification-icon {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        min-width:
+            42px;
+
+        font-size:
+            22px;
+    }
+
+
+    .parent-notification-content strong {
+
+        font-size:
+            14px;
+    }
+
+
+    .parent-notification-content span {
+
+        font-size:
+            11px;
+    }
+
+
+    #parentCallNotification {
+
+        top:
+            10px;
+
+        width:
+            calc(100% - 20px);
+
+        padding:
+            13px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .parent-call-notification-icon {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        min-width:
+            42px;
+
+        font-size:
+            20px;
+    }
+
+
+    .parent-call-notification-title {
+
+        font-size:
+            14px;
+    }
+
+
+    .parent-call-notification-text {
+
+        font-size:
+            11px;
+    }
+
+
+    .intro-logo-wrapper {
+
+        width:
+            250px;
+
+        height:
+            250px;
+    }
+
+
+    .intro-logo {
+
+        width:
+            190px;
+
+        height:
+            190px;
+    }
+
+
+    .intro-logo-glow {
+
+        width:
+            190px;
+
+        height:
+            190px;
+    }
+
+
+    .intro-ring-1 {
+
+        width:
+            225px;
+
+        height:
+            225px;
+    }
+
+
+    .intro-ring-2 {
+
+        width:
+            255px;
+
+        height:
+            255px;
+    }
+
+
+    .intro-ring-3 {
+
+        width:
+            285px;
+
+        height:
+            285px;
+    }
+
+
+    .intro-title {
+
+        margin-top:
+            20px;
+
+        font-size:
+            23px;
+    }
+
+
+    .intro-school {
+
+        font-size:
+            16px;
+    }
+
+
+    .intro-divider {
+
+        margin-top:
+            11px;
+    }
+
+
+    .intro-loading {
+
+        margin-top:
+            23px;
     }
 }
 
-/* ---------- REDUCE MOTION ACCESSIBILITY ---------- */
 
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: .01ms !important;
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .parent-panel {
+
+        padding:
+            5px
+            5px
+            20px;
     }
+
+
+    .header {
+
+        padding:
+            16px
+            13px;
+
+        border-radius:
+            22px;
+    }
+
+
+    .avatar {
+
+        width:
+            48px;
+
+        height:
+            48px;
+
+        flex:
+            0 0 48px;
+
+        border-radius:
+            16px;
+    }
+
+
+    .welcome h1 {
+
+        max-width:
+            125px;
+
+        font-size:
+            16px;
+    }
+
+
+    .class-badge {
+
+        padding:
+            7px
+            8px;
+
+        font-size:
+            9px;
+    }
+
+
+    .date-card {
+
+        padding:
+            12px;
+    }
+
+
+    .clock {
+
+        font-size:
+            20px;
+    }
+
+
+    .cards {
+
+        gap:
+            5px;
+    }
+
+
+    .info-card {
+
+        min-height:
+            122px;
+
+        padding:
+            10px
+            4px;
+    }
+
+
+    .card-title {
+
+        font-size:
+            8px;
+    }
+
+
+    .card-icon {
+
+        width:
+            31px;
+
+        height:
+            31px;
+
+        flex-basis:
+            31px;
+
+        font-size:
+            13px;
+    }
+
+
+    .card-value {
+
+        font-size:
+            11px;
+    }
+
+
+    .location-section {
+
+        padding:
+            12px;
+    }
+
+
+    .location-card {
+
+        min-height:
+            108px;
+    }
+
+
+    .location-card-icon {
+
+        width:
+            37px;
+
+        height:
+            37px;
+
+        flex-basis:
+            37px;
+
+        font-size:
+            17px;
+    }
+
+
+    .location-card-value,
+    #allowedRadiusValue,
+    #liveParentDistance {
+
+        font-size:
+            19px;
+    }
+
+
+    .location-card-description {
+
+        font-size:
+            6.5px;
+    }
+
+
+    .parent-map {
+
+        height:
+            285px;
+    }
+
+
+    .call-section {
+
+        padding:
+            21px
+            12px;
+    }
+
+
+    .call-section h2 {
+
+        font-size:
+            17px;
+    }
+
+
+    .call-button {
+
+        min-height:
+            60px;
+
+        font-size:
+            14px;
+    }
+
+
+    .change-password-card {
+
+        padding:
+            14px;
+    }
+
+
+    .intro-title {
+
+        font-size:
+            21px;
+    }
+
+
+    .intro-school {
+
+        font-size:
+            15px;
+    }
+}
+
+
+
+
+/* حضور دانش‌آموز در کلاس */
+
+.class-arrival-section {
+    margin: 22px 0;
+    padding: 22px;
+    border-radius: 18px;
+    background: #ffffff;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+}
+
+.class-arrival-section h2 {
+    margin: 0 0 18px;
+    font-size: 20px;
+}
+
+.parent-arrival-button {
+    width: 100%;
+    max-width: 420px;
+    min-height: 62px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 14px;
+    background: #facc15;
+    color: #422006;
+    font-family: inherit;
+    font-size: 19px;
+    font-weight: 800;
+    cursor: default;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.parent-arrival-button.arrived {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.parent-arrival-time {
+    margin-top: 12px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.class-arrival-notification {
+    position: fixed;
+    z-index: 99999;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    max-width: 440px;
+    margin: auto;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    color: #14532d;
+    border: 1px solid #86efac;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: 0.3s ease;
+}
+
+.class-arrival-notification.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.class-arrival-notification-icon {
+    font-size: 30px;
+}
+
+.class-arrival-notification p {
+    margin: 6px 0 0;
+    font-size: 14px;
+}
+
+#closeClassArrivalNotification {
+    margin-right: auto;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 26px;
+    cursor: pointer;
 }
