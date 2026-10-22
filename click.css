@@ -1,1382 +1,160 @@
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html,
-body{
-    width:100%;
-    max-width:100%;
-    overflow-x:hidden;
-}
-
-body{
-    font-family:Tahoma,Vazirmatn,sans-serif;
-    background:#eef2f7;
-    color:#172033;
-}
-
-.container{
-    width:98%;
-    max-width:1800px;
-    margin:auto;
-    padding:12px;
-}
-
-.top-bar{
-    background:#fff;
-    border-radius:14px;
-    padding:14px;
-    margin-bottom:14px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
-    position:sticky;
-    top:5px;
-    z-index:100;
-}
-
-h1{
-    font-size:22px;
-    font-weight:900;
-    text-align:center;
-    margin-bottom:12px;
-}
-
-.search-box{
-    width:100%;
-    margin-bottom:10px;
-}
-
-#searchInput{
-    width:100%;
-    height:44px;
-    border:2px solid #d8dee8;
-    border-radius:10px;
-    padding:0 14px;
-    font-size:15px;
-    font-weight:bold;
-    outline:none;
-}
-
-#searchInput:focus{
-    border-color:#2979ff;
-}
-
-.reset-button{
-    width:100%;
-    height:42px;
-    border:0;
-    border-radius:10px;
-    background:#d32f2f;
-    color:#fff;
-    font-size:15px;
-    font-weight:900;
-    cursor:pointer;
-}
-
-.reset-button:hover{
-    background:#b71c1c;
-}
-
-.grade-section{
-    background:#dfe6ef;
-    border-radius:14px;
-    margin-bottom:12px;
-    overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-.grade-header{
-    height:48px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 12px;
-    background:#26364d;
-    color:#fff;
-    cursor:pointer;
-    font-size:17px;
-    font-weight:900;
-    user-select:none;
-}
-
-.grade-arrow{
-    font-size:18px;
-    transition:.2s;
-}
-
-.grade-section.closed .grade-arrow{
-    transform:rotate(-90deg);
-}
-
-.grade-content{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:10px;
-    padding:10px;
-}
-
-.grade-section.closed .grade-content{
-    display:none;
-}
-
-.class-box{
-    background:#fff;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-    border:1px solid #dce2ea;
-    min-width:0;
-    max-width:100%;
-}
-
-.class-header{
-    height:44px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 8px;
-    background:#f7f9fc;
-    border-bottom:1px solid #e2e6ed;
-    font-weight:900;
-    min-width:0;
-}
-
-.class-title{
-    font-size:15px;
-    font-weight:900;
-    white-space:nowrap;
-}
-
-.student-total{
-    width:27px;
-    height:27px;
-    min-width:27px;
-    border-radius:50%;
-    background:#26364d;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    font-weight:900;
-}
-
-.called-total{
-    min-width:27px;
-    height:27px;
-    padding:0 5px;
-    border-radius:5px;
-    background:#e0e0e0;
-    color:#222;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    font-weight:900;
-}
-
-.students-list{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:5px;
-    padding:7px;
-    width:100%;
-    min-width:0;
-}
-
-.student-button{
-    width:100%;
-    min-width:0;
-    max-width:100%;
-    min-height:38px;
-    font-family:"Estedad",Tahoma,sans-serif;
-    font-weight:800;
-    border:0;
-    border-radius:7px;
-
-    padding:4px 5px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    gap:4px;
-
-    cursor:pointer;
-    font-family:inherit;
-    font-size:11px;
-    font-weight:900;
-    line-height:1.25;
-
-    transition:.15s;
-
-    overflow:hidden;
-}
-
-.student-name{
-    display:block;
-    font-family:"Estedad",Tahoma,sans-serif;
-    font-weight:800;
-    width:100%;
-    min-width:0;
-    max-width:100%;
-
-    font-weight:900;
-
-    white-space:normal;
-
-    overflow:hidden;
-
-    text-overflow:clip;
-
-    word-break:break-word;
-    overflow-wrap:anywhere;
-
-    line-height:1.5;
-
-    text-align:center;
-}
-
-.student-status{
-    min-width:0;
-    max-width:35%;
-
-    font-size:9px;
-    font-weight:900;
-
-    white-space:nowrap;
-
-    direction:rtl;
-
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.status-time{
-    min-width:0;
-    max-width:30%;
-
-    font-size:9px;
-    font-weight:900;
-
-    white-space:nowrap;
-
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.student-button.pending{
-    background:#ffd740;
-    color:#111;
-}
-
-.student-button.called{
-    background:#2196f3;
-    color:#fff;
-}
-
-.student-button.sent{
-    background:#22a447;
-    color:#fff;
-}
-
-.student-button:active{
-    transform:scale(.97);
-}
-
-.student-button:hover{
-    filter:brightness(.96);
-}
-
-.student-button.search-hidden{
-    display:none;
-}
-
-.no-result{
-    grid-column:1/-1;
-    text-align:center;
-    padding:12px;
-    font-size:13px;
-    font-weight:900;
-    color:#777;
-}
-@media(max-width:1200px){
-
-    .grade-content{
-        grid-template-columns:repeat(4,minmax(0,1fr));
-        gap:8px;
-    }
-
-    .student-button{
-        min-height:42px;
-        padding:5px 4px;
-    }
-
-    .student-name{
-        font-size:10px;
-        line-height:1.5;
-    }
-
-    .class-title{
-        font-size:14px;
-    }
-}
-
-
-@media(max-width:900px){
-
-    .container{
-        width:99%;
-        padding:7px;
-    }
-
-    .grade-content{
-        grid-template-columns:repeat(4,minmax(0,1fr));
-        gap:6px;
-        padding:6px;
-    }
-
-    .students-list{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:4px;
-        padding:5px;
-    }
-
-    .student-button{
-        min-height:46px;
-        padding:5px 3px;
-        font-size:10px;
-    }
-
-    .student-name{
-        font-size:10px;
-        line-height:1.55;
-    }
-
-    .class-title{
-        font-size:13px;
-    }
-}
-
-
-/*
-==================================================
-موبایل
-سه ستون حفظ می‌شود
-==================================================
-*/
-
-@media(max-width:600px){
-
-    html,
-    body{
-        width:100%;
-        max-width:100%;
-        overflow-x:hidden;
-    }
-
-    .container{
-        width:100%;
-        max-width:none;
-        padding:3px;
-        margin:0;
-    }
-
-    .top-bar{
-        width:100%;
-        padding:8px;
-        margin-bottom:8px;
-        border-radius:11px;
-    }
-
-    h1{
-        font-size:18px;
-        margin-bottom:9px;
-    }
-
-    .search-box{
-        margin-bottom:8px;
-    }
-
-    #searchInput{
-        height:40px;
-        padding:0 10px;
-        font-size:14px;
-    }
-
-    .reset-button{
-        height:40px;
-        font-size:14px;
-    }
-
-    .grade-section{
-        width:100%;
-        max-width:100%;
-        margin-bottom:8px;
-        border-radius:10px;
-    }
-
-    .grade-header{
-        height:42px;
-        padding:0 8px;
-        font-size:15px;
-    }
-
-    /*
-    سه ستون در موبایل
-    */
-
-    .grade-content{
-        width:100%;
-        max-width:100%;
-
-        grid-template-columns:
-        repeat(3,minmax(0,1fr));
-
-        gap:4px;
-        padding:4px;
-    }
-
-    .class-box{
-        width:100%;
-        min-width:0;
-        max-width:100%;
-        border-radius:9px;
-    }
-
-    .class-header{
-        width:100%;
-        height:38px;
-        padding:0 4px;
-        gap:3px;
-    }
-
-    .class-title{
-        min-width:0;
-        max-width:100%;
-        font-size:11px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-    }
-
-    .student-total,
-    .called-total{
-        width:22px;
-        height:22px;
-        min-width:22px;
-        font-size:9px;
-    }
-
-    .called-total{
-        padding:0 3px;
-    }
-
-    /*
-    دانش‌آموزان
-    */
-
-    .students-list{
-        width:100%;
-        max-width:100%;
-        min-width:0;
-
-        grid-template-columns:
-        repeat(2,minmax(0,1fr));
-
-        gap:3px;
-        padding:3px;
-    }
-
-    /*
-    باتن دانش‌آموز
-    */
-
-    .student-button{
-        width:100%;
-        min-width:0;
-        max-width:100%;
-
-        min-height:48px;
-        height:auto;
-
-        padding:4px 2px;
-
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-
-        gap:2px;
-
-        font-size:9px;
-        font-weight:900;
-
-        line-height:1.2;
-
-        overflow:hidden;
-    }
-
-    /*
-    اسم کاملاً محدود به داخل باتن
-    */
-
-    .student-name{
-        display:block;
-
-        width:100%;
-        min-width:0;
-        max-width:100%;
-
-        font-size:10px;
-        font-weight:900;
-
-        line-height:1.5;
-
-        white-space:normal;
-
-        overflow:hidden;
-
-        text-overflow:clip;
-
-        word-break:break-word;
-        overflow-wrap:anywhere;
-
-        text-align:center;
-
-        flex:1 1 auto;
-    }
-
-    .student-status{
-        min-width:0;
-        max-width:35%;
-
-        font-size:7px;
-
-        white-space:nowrap;
-
-        overflow:hidden;
-        text-overflow:ellipsis;
-
-        flex:0 1 auto;
-    }
-
-    .status-time{
-        min-width:0;
-        max-width:30%;
-
-        font-size:7px;
-
-        white-space:nowrap;
-
-        overflow:hidden;
-        text-overflow:ellipsis;
-
-        flex:0 1 auto;
-    }
-
-    .no-result{
-        padding:10px;
-        font-size:12px;
-    }
-}
-/*
-==================================================
-اعلان ارسال دانش‌آموز
-==================================================
-*/
-
-.teacher-send-popup{
-    position:fixed;
-
-    z-index:99999;
-
-    left:50%;
-
-    bottom:
-    calc(
-        10px +
-        env(safe-area-inset-bottom)
-    );
-
-    width:max-content;
-
-    max-width:
-    calc(
-        100vw - 24px
-    );
-
-    box-sizing:border-box;
-
-    padding:7px 10px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:7px;
-
-    direction:rtl;
-
-    background:
-    rgba(25,30,40,.68);
-
-    border:
-    1px solid
-    rgba(255,255,255,.20);
-
-    border-radius:12px;
-
-    box-shadow:
-    0 7px 22px
-    rgba(0,0,0,.28),
-
-    inset 0 1px 1px
-    rgba(255,255,255,.15);
-
-    backdrop-filter:
-    blur(18px);
-
-    -webkit-backdrop-filter:
-    blur(18px);
-
-    opacity:0;
-
-    visibility:hidden;
-
-    pointer-events:none;
-
-    transform:
-    translate(-50%,100px);
-
-    transition:
-    opacity .3s ease,
-
-    transform
-    .35s
-    cubic-bezier(.22,1,.36,1);
-
-    font-family:
-    Tahoma,Vazirmatn,sans-serif;
-
-    overflow:hidden;
-}
-
-.teacher-send-popup.show{
-    opacity:1;
-    visibility:visible;
-    transform:translate(-50%,0);
-}
-
-.walking-person{
-    position:relative;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    overflow:hidden;
-}
-
-.person{
-    position:relative;
-
-    width:32px;
-    height:42px;
-
-    animation:
-    personWalk
-    .5s
-    infinite
-    alternate
-    ease-in-out;
-}
-
-.head{
-    position:absolute;
-
-    width:10px;
-    height:10px;
-
-    border-radius:50%;
-
-    background:#fff;
-
-    top:0;
-    left:11px;
-}
-
-.body{
-    position:absolute;
-
-    width:7px;
-    height:18px;
-
-    border-radius:5px;
-
-    background:#fff;
-
-    top:10px;
-    left:13px;
-}
-
-.arm{
-    position:absolute;
-
-    width:5px;
-    height:17px;
-
-    border-radius:5px;
-
-    background:#fff;
-
-    top:11px;
-
-    transform-origin:
-    top center;
-}
-
-.arm-left{
-    left:9px;
-
-    transform:
-    rotate(30deg);
-
-    animation:
-    armLeft
-    .5s
-    infinite
-    alternate
-    ease-in-out;
-}
-
-.arm-right{
-    right:8px;
-
-    transform:
-    rotate(-30deg);
-
-    animation:
-    armRight
-    .5s
-    infinite
-    alternate
-    ease-in-out;
-}
-
-.leg{
-    position:absolute;
-
-    width:5px;
-    height:18px;
-
-    border-radius:5px;
-
-    background:#fff;
-
-    top:26px;
-
-    transform-origin:
-    top center;
-}
-
-.leg-left{
-    left:12px;
-
-    animation:
-    legLeft
-    .5s
-    infinite
-    alternate
-    ease-in-out;
-}
-
-.leg-right{
-    right:11px;
-
-    animation:
-    legRight
-    .5s
-    infinite
-    alternate
-    ease-in-out;
-}
-
-
-@keyframes personWalk{
-
-    0%{
-        transform:
-        translateY(1px);
-    }
-
-    100%{
-        transform:
-        translateY(-2px);
-    }
-
-}
-
-
-@keyframes legLeft{
-
-    0%{
-        transform:
-        rotate(28deg);
-    }
-
-    100%{
-        transform:
-        rotate(-28deg);
-    }
-
-}
-
-
-@keyframes legRight{
-
-    0%{
-        transform:
-        rotate(-28deg);
-    }
-
-    100%{
-        transform:
-        rotate(28deg);
-    }
-
-}
-
-
-@keyframes armLeft{
-
-    0%{
-        transform:
-        rotate(-25deg);
-    }
-
-    100%{
-        transform:
-        rotate(35deg);
-    }
-
-}
-
-
-@keyframes armRight{
-
-    0%{
-        transform:
-        rotate(25deg);
-    }
-
-    100%{
-        transform:
-        rotate(-35deg);
-    }
-
-}
-
-
-/*
-==================================================
-دانش‌آموز غایب
-==================================================
-*/
-
-.student-button.absent{
-    background:#000 !important;
-
-    color:#fff !important;
-
-    cursor:not-allowed !important;
-
-    opacity:1 !important;
-
-    filter:none !important;
-
-    box-shadow:none !important;
-}
-
-.student-button.absent .student-name{
-    color:#fff !important;
-}
-
-.student-button.absent .student-status{
-    color:#fff !important;
-}
-
-.student-button.absent .status-time{
-    color:#fff !important;
-}
-
-.student-button.absent:hover{
-    background:#000 !important;
-
-    color:#fff !important;
-
-    filter:none !important;
-
-    transform:none !important;
-}
-
-.student-button.absent:active{
-    transform:none !important;
-}
-
-.student-button.absent:disabled{
-    background:#000 !important;
-
-    color:#fff !important;
-
-    opacity:1 !important;
-
-    cursor:not-allowed !important;
-}
-
-
-/*
-==================================================
-نمایش بهتر اعلان در موبایل
-==================================================
-*/
-
-@media(max-width:600px){
-
-    .teacher-send-popup{
-        width:auto;
-
-        max-width:
-        calc(100vw - 16px);
-
-        padding:6px 8px;
-
-        gap:5px;
-
-        border-radius:10px;
-
-        font-size:11px;
-    }
-
-    .person{
-        transform:
-        scale(.85);
-    }
-}
-
-
-/*
-==================================================
-ممانعت از بیرون‌زدگی تمام عناصر
-==================================================
-*/
-
-.grade-section *,
-.class-box *,
-.students-list *,
-.student-button *{
-    max-width:100%;
-}
-
-
-/*
-اسم دانش‌آموز هیچ‌وقت از باتن خارج نمی‌شود
-*/
-
-.student-button .student-name{
-    min-width:0;
-    max-width:100%;
-    overflow:hidden;
-}
-
-
-/*
-در موبایل باتن از کارت بیرون نمی‌زند
-*/
-
-@media(max-width:600px){
-
-    .grade-content,
-    .class-box,
-    .students-list,
-    .student-button{
-        overflow:hidden;
-    }
-
-    .student-button{
-        box-sizing:border-box;
-    }
-
-    .student-name{
-        box-sizing:border-box;
-    }
-}
-@media(max-width:600px){
-
-    .student-button{
-        position:relative;
-
-        display:flex;
-        flex-direction:column;
-
-        align-items:center;
-        justify-content:center;
-
-        width:100%;
-        min-width:0;
-        max-width:100%;
-
-        min-height:52px;
-        height:52px;
-
-        padding:3px 2px;
-
-        gap:1px;
-
-        overflow:hidden;
-    }
-
-    .student-button .student-name{
-        display:block;
-
-        width:100%;
-        max-width:100%;
-        min-width:0;
-
-        flex:0 1 auto;
-
-        font-size:10px;
-        font-weight:900;
-
-        line-height:1.25;
-
-        text-align:center;
-
-        white-space:normal;
-
-        overflow:hidden;
-
-        overflow-wrap:anywhere;
-        word-break:break-word;
-
-        text-overflow:clip;
-    }
-
-    .student-button .student-status{
-        display:block;
-
-        width:100%;
-        max-width:100%;
-        min-width:0;
-
-        flex:0 0 auto;
-
-        font-size:7px;
-        line-height:1;
-
-        text-align:center;
-
-        white-space:nowrap;
-
-        overflow:hidden;
-
-        text-overflow:ellipsis;
-
-        direction:rtl;
-    }
-
-    .student-button .status-time{
-        display:block;
-
-        width:100%;
-        max-width:100%;
-        min-width:0;
-
-        flex:0 0 auto;
-
-        font-size:7px;
-        line-height:1;
-
-        text-align:center;
-
-        white-space:nowrap;
-
-        overflow:hidden;
-
-        text-overflow:ellipsis;
-    }
-}
-
-@media(max-width:600px){
-
-    .grade-content{
-        grid-template-columns:repeat(3,minmax(0,1fr));
-    }
-
-    /*
-    پایه‌هایی که فقط ۲ کلاس دارند
-    هر کلاس نصف عرض را می‌گیرد
-    */
-
-    .grade-content:has(.class-box:nth-child(2):last-child){
-        grid-template-columns:
-        repeat(2,minmax(0,1fr));
-    }
-
-    .grade-content:has(.class-box:nth-child(2):last-child)
-    .class-box{
-        width:100%;
-        max-width:100%;
-    }
-}
-
-
-/* =========================================
-   فونت یکسان کل پنل ناظم
-========================================= */
-
-*,
-*::before,
-*::after{
-    font-family:"Estedad",Tahoma,sans-serif !important;
-}
-#parentCallPopup {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    z-index: 99999;
-
-    width: min(430px, calc(100vw - 30px));
-
-    display: flex;
-    align-items: center;
-    gap: 14px;
-
-    padding: 18px 20px;
-
-    direction: rtl;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #3b82f6
-        );
-
-    color: #ffffff;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 20px 45px
-        rgba(37, 99, 235, 0.35);
-
-    opacity: 0;
-
-    transform:
-        translateY(-25px)
-        scale(0.96);
-
-    transition:
-        opacity 0.3s ease,
-        transform 0.3s ease;
-}
-
-#parentCallPopup.show {
-
-    opacity: 1;
-
-    transform:
-        translateY(0)
-        scale(1);
-
-}
-
-.parent-call-popup-icon {
-
-    width: 48px;
-    height: 48px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        rgba(255,255,255,0.18);
-
-    border-radius: 14px;
-
-    font-size: 25px;
-}
-
-.parent-call-popup-content {
-
-    flex: 1;
-
-}
-
-.parent-call-popup-title {
-
-    font-size: 17px;
-
-    font-weight: 800;
-
-    margin-bottom: 5px;
-}
-
-.parent-call-popup-text {
-
-    font-size: 14px;
-
-    line-height: 1.8;
-
-    opacity: 0.95;
-}
-
-.parent-call-popup-text strong {
-
-    font-weight: 800;
-
-}
-
-.parent-call-popup-close {
-
-    width: 32px;
-    height: 32px;
-
-    flex-shrink: 0;
-
-    border: none;
-
-    border-radius: 10px;
-
-    background:
-        rgba(255,255,255,0.15);
-
-    color: #ffffff;
-
-    font-size: 24px;
-
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-}
-
-
-.student-button.sent {
-    background: #16a34a !important;
-    color: #fff !important;
-    border-color: #16a34a !important;
-}
-
-.student-button.sent .student-name,
-.student-button.sent .student-status,
-.student-button.sent .status-time {
-    color: #fff !important;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* =========================================================
+   ALAVI SCHOOL — SUPERVISOR PANEL
+   PREMIUM 3D GOLD DESIGN
+   Purple + Royal Blue + Emerald Green
+   Responsive Desktop / Tablet / Mobile
+========================================================= */
 
 
 /* =========================================================
-   ALAVI SCHOOL — SUPERVISOR PANEL
-   LUXURY PURPLE / BLUE / GOLD 3D THEME
-   حفظ شناسه‌ها و عملکردهای قبلی
+   01. VARIABLES
 ========================================================= */
 
 :root {
-    --lux-purple: #211044;
-    --lux-blue: #15346d;
-    --lux-blue-light: #2867bc;
+    --bg-dark: #130c2d;
+    --bg-purple: #28134d;
+    --bg-blue: #172e66;
 
-    --lux-gold: #f4c65e;
-    --lux-gold-light: #fff0b2;
-    --lux-gold-dark: #9b691a;
+    --purple-light: #6540a2;
+    --blue-light: #3479d5;
 
-    --lux-green: #65f0a5;
-    --lux-text: #65f0a5;
-    --lux-muted: #d6d9f2;
+    --gold: #f4c65e;
+    --gold-light: #fff1b8;
+    --gold-mid: #dba23a;
+    --gold-dark: #81551a;
 
-    --lux-glass: rgba(255,255,255,.085);
-    --lux-border: rgba(255,255,255,.15);
+    --green: #65f0a5;
+    --green-dark: #087647;
+
+    --red-light: #ff8fa8;
+
+    --text: #65f0a5;
+    --text-muted: #d5d9f1;
+
+    --glass: rgba(255,255,255,.075);
+    --glass-strong: rgba(255,255,255,.12);
+    --glass-border: rgba(255,255,255,.14);
+
+    --shadow-card:
+        0 12px 30px rgba(0,0,0,.23),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    --radius-lg: 20px;
+    --radius-md: 13px;
+    --radius-sm: 8px;
 }
 
-/* ==============================
-   پس‌زمینه اصلی
-============================== */
 
-html,
-body {
-    width: 100%;
-    max-width: 100%;
-    min-height: 100%;
-    overflow-x: clip;
+/* =========================================================
+   02. RESET
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Estedad", Tahoma, sans-serif !important;
 }
 
 html {
-    background: #171039;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: clip;
+    background: var(--bg-dark);
 }
 
 body {
     position: relative;
-    color: var(--lux-text);
+
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+
+    overflow-x: clip;
+
+    color: var(--text);
 
     background:
         radial-gradient(
-            ellipse at 12% 8%,
-            rgba(115,68,214,.60),
-            transparent 38%
+            ellipse at 8% 5%,
+            rgba(112,65,208,.55),
+            transparent 34%
         ),
         radial-gradient(
-            ellipse at 90% 20%,
-            rgba(32,111,231,.48),
-            transparent 36%
+            ellipse at 92% 18%,
+            rgba(35,115,229,.42),
+            transparent 35%
         ),
         radial-gradient(
-            ellipse at 50% 100%,
-            rgba(103,43,173,.35),
-            transparent 45%
+            ellipse at 50% 95%,
+            rgba(111,42,179,.28),
+            transparent 42%
         ),
         linear-gradient(
             135deg,
-            #160d35,
-            #17275c 50%,
-            #28104b
+            #160d35 0%,
+            #17265a 48%,
+            #271044 100%
         );
 
     background-attachment: fixed;
 }
 
-/* ==============================
-   کانتینر
-============================== */
+
+/* =========================================================
+   03. BACKGROUND LIGHT EFFECTS
+========================================================= */
+
+body::before,
+body::after {
+    content: "";
+
+    position: fixed;
+
+    width: 240px;
+    height: 240px;
+
+    border-radius: 50%;
+
+    filter: blur(90px);
+    opacity: .20;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation: alaviAmbientLight 12s ease-in-out infinite alternate;
+}
+
+body::before {
+    top: 12%;
+    right: -120px;
+    background: #a76cff;
+}
+
+body::after {
+    bottom: 5%;
+    left: -120px;
+    background: #3189ff;
+    animation-delay: -6s;
+}
+
+@keyframes alaviAmbientLight {
+    from {
+        transform: translateY(0) scale(.9);
+    }
+
+    to {
+        transform: translateY(-25px) scale(1.15);
+    }
+}
+
+
+/* =========================================================
+   04. MAIN CONTAINER
+========================================================= */
 
 .container {
     position: relative;
@@ -1385,41 +163,53 @@ body {
     width: 98%;
     max-width: 1800px;
 
-    margin: auto;
+    margin: 0 auto;
     padding: 14px;
 }
 
-/* ==============================
-   عنوان اصلی
-============================== */
+
+/* =========================================================
+   05. MAIN TITLE
+========================================================= */
 
 h1 {
-    color: var(--lux-gold-light);
+    margin-bottom: 14px;
 
+    color: var(--gold-light);
+
+    font-size: 23px;
     font-weight: 900;
+    line-height: 1.8;
+    text-align: center;
 
     text-shadow:
         0 2px 0 rgba(0,0,0,.25),
         0 0 20px rgba(244,198,94,.15);
 }
 
-/* ==============================
-   نوار بالایی چسبان
-============================== */
+
+/* =========================================================
+   06. STICKY TOP BAR
+========================================================= */
 
 .top-bar {
+    position: sticky;
+    top: 5px;
+    z-index: 100;
+
+    padding: 16px;
+    margin-bottom: 15px;
+
     background: linear-gradient(
         135deg,
-        rgba(39,29,83,.94),
-        rgba(21,47,100,.94)
+        rgba(43,29,86,.96),
+        rgba(20,48,101,.96)
     );
 
-    border: 1px solid var(--lux-border);
-    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
 
-    box-shadow:
-        0 15px 35px rgba(0,0,0,.25),
-        inset 0 1px 0 rgba(255,255,255,.13);
+    box-shadow: var(--shadow-card);
 
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -1432,32 +222,49 @@ h1 {
 
     height: 3px;
 
-    margin: -14px -14px 15px;
+    margin: -16px -16px 15px;
 
     background: linear-gradient(
         90deg,
         transparent,
-        var(--lux-gold-light),
-        var(--lux-gold),
+        var(--gold-light),
+        var(--gold),
         transparent
     );
 }
 
-/* ==============================
-   کادر جست‌وجو
-============================== */
+
+/* =========================================================
+   07. SEARCH INPUT
+========================================================= */
+
+.search-box {
+    width: 100%;
+    margin-bottom: 10px;
+}
 
 #searchInput {
-    color: var(--lux-text);
+    display: block;
 
-    background: rgba(9,16,48,.75);
+    width: 100%;
+    height: 46px;
 
-    border: 1px solid rgba(255,255,255,.20);
-    border-radius: 13px;
+    padding: 0 14px;
+
+    color: var(--green);
+    background: rgba(9,15,43,.78);
+
+    border: 1px solid rgba(255,255,255,.19);
+    border-radius: 12px;
+
+    outline: none;
+
+    font-size: 14px;
+    font-weight: 800;
 
     box-shadow:
         inset 0 3px 8px rgba(0,0,0,.20),
-        0 3px 0 rgba(0,0,0,.12);
+        0 2px 0 rgba(0,0,0,.10);
 
     transition:
         border-color .2s ease,
@@ -1465,39 +272,52 @@ h1 {
 }
 
 #searchInput::placeholder {
-    color: #c1c8e8;
+    color: #c5cce8;
     opacity: 1;
 }
 
 #searchInput:focus {
-    border-color: var(--lux-gold);
+    border-color: var(--gold);
 
     box-shadow:
-        0 0 0 3px rgba(244,198,94,.15),
+        0 0 0 3px rgba(244,198,94,.13),
         inset 0 2px 5px rgba(0,0,0,.15);
 }
 
-/* ==============================
-   دکمه بازنشانی طلایی
-============================== */
+
+/* =========================================================
+   08. RESET BUTTON
+========================================================= */
 
 .reset-button {
-    color: #57370c;
+    display: block;
+
+    width: 100%;
+    min-height: 44px;
+
+    padding: 10px 15px;
+
+    color: #563509;
 
     background: linear-gradient(
         135deg,
-        #fff1b3,
-        #f4cb66 35%,
-        #d99d32 65%,
-        #ffdf87
+        #fff2b7 0%,
+        #f4cb66 28%,
+        #d79a2e 65%,
+        #ffe18b 100%
     );
 
-    border: 1px solid #ffe9a0;
-    border-radius: 13px;
+    border: 1px solid #ffedac;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 900;
+
+    cursor: pointer;
 
     box-shadow:
-        0 5px 0 #82591c,
-        0 9px 18px rgba(0,0,0,.22),
+        0 5px 0 var(--gold-dark),
+        0 9px 16px rgba(0,0,0,.20),
         inset 0 2px 3px rgba(255,255,255,.65);
 
     transition:
@@ -1507,131 +327,178 @@ h1 {
 }
 
 .reset-button:hover {
-    background: linear-gradient(
-        135deg,
-        #fff7ce,
-        #ffda79,
-        #e9b348
-    );
-
-    filter: brightness(1.05);
-
+    filter: brightness(1.06);
     transform: translateY(-2px);
 
     box-shadow:
-        0 7px 0 #82591c,
-        0 13px 22px rgba(0,0,0,.25);
+        0 7px 0 var(--gold-dark),
+        0 12px 20px rgba(0,0,0,.24);
 }
 
 .reset-button:active {
     transform: translateY(3px);
 
     box-shadow:
-        0 2px 0 #82591c,
-        0 4px 8px rgba(0,0,0,.20);
+        0 2px 0 var(--gold-dark),
+        0 4px 8px rgba(0,0,0,.18);
 }
 
-/* ==============================
-   کارت پایه‌ها
-============================== */
+
+/* =========================================================
+   09. GRADE SECTION
+========================================================= */
 
 .grade-section {
+    position: relative;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin-bottom: 14px;
+
+    overflow: hidden;
+
     background: linear-gradient(
         145deg,
         rgba(255,255,255,.085),
         rgba(255,255,255,.025)
     );
 
-    border: 1px solid var(--lux-border);
-    border-radius: 19px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
 
-    box-shadow:
-        0 12px 30px rgba(0,0,0,.22),
-        inset 0 1px 0 rgba(255,255,255,.07);
+    box-shadow: var(--shadow-card);
 
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
 }
 
-/* ==============================
-   سربرگ پایه‌ها
-============================== */
+
+/* =========================================================
+   10. GRADE HEADER
+========================================================= */
 
 .grade-header {
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    color: var(--lux-gold-light);
+    min-height: 49px;
+    padding: 8px 14px;
+
+    color: var(--gold-light);
 
     background: linear-gradient(
         110deg,
-        #34205f,
-        #1b3977,
-        #2b1a55
+        #36215f,
+        #1b3977 55%,
+        #2a1954
     );
 
     border-bottom: 1px solid rgba(244,198,94,.30);
 
-    transition:
-        filter .2s ease,
-        background .2s ease;
+    font-size: 16px;
+    font-weight: 900;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: filter .2s ease;
 }
 
 .grade-header:hover {
-    filter: brightness(1.15);
+    filter: brightness(1.13);
 }
 
 .grade-arrow {
-    color: var(--lux-gold);
+    flex-shrink: 0;
+
+    color: var(--gold);
+
+    font-size: 19px;
+
+    transition: transform .25s ease;
 }
 
-/* ==============================
-   محتوای پایه‌ها
-============================== */
+.grade-section.closed .grade-arrow {
+    transform: rotate(-90deg);
+}
+
+
+/* =========================================================
+   11. GRADE CONTENT
+========================================================= */
 
 .grade-content {
-    background: transparent;
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 11px;
+    padding: 11px;
+
+    width: 100%;
+    max-width: 100%;
 }
 
-/* ==============================
-   کارت کلاس
-============================== */
+.grade-section.closed .grade-content {
+    display: none;
+}
+
+
+/* =========================================================
+   12. CLASS CARD
+========================================================= */
 
 .class-box {
     min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
 
     background: linear-gradient(
         145deg,
-        rgba(40,53,103,.92),
-        rgba(28,24,72,.96)
+        rgba(43,55,107,.94),
+        rgba(27,24,70,.97)
     );
 
-    border: 1px solid rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.14);
     border-radius: 14px;
 
     box-shadow:
-        0 7px 18px rgba(0,0,0,.18),
-        inset 0 1px 0 rgba(255,255,255,.07);
+        0 7px 18px rgba(0,0,0,.19),
+        inset 0 1px 0 rgba(255,255,255,.06);
 
     transition:
-        transform .2s ease,
         border-color .2s ease,
         box-shadow .2s ease;
 }
 
 .class-box:hover {
-    border-color: rgba(244,198,94,.40);
+    border-color: rgba(244,198,94,.38);
 
     box-shadow:
-        0 10px 23px rgba(0,0,0,.24),
-        0 0 14px rgba(244,198,94,.07);
+        0 10px 22px rgba(0,0,0,.23),
+        0 0 12px rgba(244,198,94,.06);
 }
 
-/* ==============================
-   سربرگ کلاس
-============================== */
+
+/* =========================================================
+   13. CLASS HEADER
+========================================================= */
 
 .class-header {
-    color: var(--lux-green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-width: 0;
+    min-height: 45px;
+
+    padding: 5px 8px;
+    gap: 5px;
+
+    color: var(--green);
 
     background: linear-gradient(
         135deg,
@@ -1643,183 +510,339 @@ h1 {
 }
 
 .class-title {
-    color: var(--lux-gold-light);
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+    color: var(--gold-light);
+
+    font-size: 14px;
     font-weight: 900;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ==============================
-   نشان تعداد دانش‌آموزان
-============================== */
+
+/* =========================================================
+   14. STUDENT COUNTERS
+========================================================= */
 
 .student-total {
-    color: #54340b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 27px;
+
+    width: 27px;
+    height: 27px;
+
+    color: #56370a;
 
     background: linear-gradient(
         145deg,
-        #fff1b5,
-        #f1c85f,
-        #c58c28
+        #fff2b8,
+        #f1c65d,
+        #c58a27
     );
 
-    border: 1px solid rgba(255,239,174,.75);
+    border: 1px solid #ffedac;
+    border-radius: 50%;
+
+    font-size: 11px;
+    font-weight: 900;
 
     box-shadow:
-        0 3px 0 #83581c,
-        0 5px 8px rgba(0,0,0,.20),
-        inset 0 1px 2px rgba(255,255,255,.7);
+        0 3px 0 #80571c,
+        0 5px 8px rgba(0,0,0,.19),
+        inset 0 1px 2px rgba(255,255,255,.65);
 }
 
 .called-total {
-    color: var(--lux-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    background: rgba(18,139,102,.20);
+    flex: 0 0 auto;
 
-    border: 1px solid rgba(101,240,165,.30);
+    min-width: 27px;
+    height: 27px;
 
-    box-shadow:
-        inset 0 1px 2px rgba(255,255,255,.06);
+    padding: 0 5px;
+
+    color: var(--green);
+
+    background: rgba(20,151,104,.18);
+
+    border: 1px solid rgba(101,240,165,.32);
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 900;
 }
 
-/* ==============================
-   فضای فهرست دانش‌آموزان
-============================== */
+
+/* =========================================================
+   15. STUDENT LIST
+========================================================= */
 
 .students-list {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+    padding: 7px;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
     background: transparent;
 }
 
-/* ==============================
-   دکمه‌های دانش‌آموزان
-============================== */
+
+/* =========================================================
+   16. BASE STUDENT BUTTON
+========================================================= */
 
 .student-button {
     position: relative;
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
     min-width: 0;
     max-width: 100%;
 
-    color: var(--lux-green);
+    min-height: 48px;
+    padding: 5px 4px;
+
+    gap: 3px;
+
+    color: var(--green);
 
     background: linear-gradient(
         145deg,
-        rgba(255,255,255,.12),
-        rgba(255,255,255,.035)
+        rgba(255,255,255,.13),
+        rgba(255,255,255,.045)
     );
 
-    border: 1px solid rgba(255,255,255,.13);
-    border-bottom: 2px solid rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.14);
+    border-bottom: 2px solid rgba(0,0,0,.30);
 
     border-radius: 9px;
 
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1.4;
+
+    text-align: center;
+
+    cursor: pointer;
+
     box-shadow:
-        0 3px 0 rgba(0,0,0,.20),
+        0 3px 0 rgba(0,0,0,.23),
         0 5px 9px rgba(0,0,0,.13),
-        inset 0 1px 0 rgba(255,255,255,.10);
+        inset 0 1px 0 rgba(255,255,255,.11);
 
     transition:
-        transform .16s ease,
-        box-shadow .16s ease,
-        filter .16s ease;
+        transform .17s ease,
+        box-shadow .17s ease,
+        filter .17s ease;
+
+    overflow: hidden;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 .student-button:hover {
-    filter: brightness(1.12);
+    filter: brightness(1.10);
 
     transform: translateY(-2px);
 
     box-shadow:
-        0 5px 0 rgba(0,0,0,.20),
-        0 9px 14px rgba(0,0,0,.20);
+        0 5px 0 rgba(0,0,0,.23),
+        0 9px 13px rgba(0,0,0,.20);
 }
 
 .student-button:active {
-    transform: translateY(2px) scale(.98);
+    transform: translateY(2px) scale(.985);
 
     box-shadow:
-        0 1px 0 rgba(0,0,0,.20),
+        0 1px 0 rgba(0,0,0,.23),
         0 3px 5px rgba(0,0,0,.15);
 }
 
+
+/* =========================================================
+   17. STUDENT NAME
+========================================================= */
+
 .student-name {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    flex: 0 1 auto;
+
     color: inherit;
 
+    font-size: 11px;
     font-weight: 900;
+    line-height: 1.5;
+
+    text-align: center;
+
+    white-space: normal;
+
+    overflow: hidden;
+    text-overflow: clip;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-.student-status,
+
+/* =========================================================
+   18. STUDENT STATUS AND TIME
+========================================================= */
+
+.student-status {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    flex: 0 1 auto;
+
+    color: inherit;
+
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1.3;
+
+    text-align: center;
+    direction: rtl;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .status-time {
+    display: block;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    flex: 0 1 auto;
+
     color: inherit;
+
+    font-size: 9px;
     font-weight: 900;
+    line-height: 1.3;
+
+    text-align: center;
+    direction: rtl;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ==============================
-   وضعیت در انتظار — طلایی
-============================== */
+
+/* =========================================================
+   19. PENDING — METALLIC GOLD
+========================================================= */
 
 .student-button.pending {
-    color: #59390b;
+    color: #58380a;
 
     background: linear-gradient(
         135deg,
-        #fff0ac,
-        #f5cb61 35%,
-        #d69a2b 72%,
-        #ffe18a
+        #fff2b5 0%,
+        #f4ce6c 27%,
+        #d89c32 62%,
+        #ffe28b 100%
     );
 
-    border: 1px solid #ffe7a0;
+    border: 1px solid #ffedac;
     border-bottom: 2px solid #80551a;
 
     box-shadow:
         0 3px 0 #80551a,
         0 5px 9px rgba(0,0,0,.18),
-        inset 0 1px 2px rgba(255,255,255,.65);
+        inset 0 2px 3px rgba(255,255,255,.60);
 }
 
-/* ==============================
-   وضعیت تماس گرفته شده — آبی
-============================== */
+.student-button.pending:hover {
+    filter: brightness(1.07);
+
+    box-shadow:
+        0 5px 0 #80551a,
+        0 9px 15px rgba(0,0,0,.23),
+        0 0 12px rgba(244,198,94,.13);
+}
+
+
+/* =========================================================
+   20. CALLED — ROYAL BLUE
+========================================================= */
 
 .student-button.called {
-    color: #65f0a5;
+    color: var(--green);
 
     background: linear-gradient(
         135deg,
-        #1c65a9,
-        #21438d 60%,
-        #192d68
+        #246bb4,
+        #23488f 58%,
+        #192c64
     );
 
-    border: 1px solid rgba(113,188,255,.50);
+    border: 1px solid rgba(113,188,255,.48);
     border-bottom: 2px solid #102653;
 
     box-shadow:
         0 3px 0 #102653,
-        0 5px 9px rgba(0,0,0,.18),
-        inset 0 1px 0 rgba(255,255,255,.14);
+        0 5px 9px rgba(0,0,0,.19),
+        inset 0 1px 0 rgba(255,255,255,.15);
 }
 
-/* ==============================
-   وضعیت ارسال شده — سبز
-============================== */
+
+/* =========================================================
+   21. SENT — EMERALD GREEN
+========================================================= */
 
 .student-button.sent {
     color: #ffffff !important;
 
     background: linear-gradient(
         135deg,
-        #15965b,
-        #087443 60%,
-        #075b39
+        #20a566,
+        #087647 60%,
+        #075632
     ) !important;
 
-    border: 1px solid rgba(105,255,176,.45) !important;
-    border-bottom: 2px solid #06472c !important;
+    border: 1px solid rgba(105,255,176,.48) !important;
+    border-bottom: 2px solid #06452b !important;
 
     box-shadow:
-        0 3px 0 #06472c,
+        0 3px 0 #06452b,
         0 5px 9px rgba(0,0,0,.18),
-        inset 0 1px 0 rgba(255,255,255,.16);
+        inset 0 1px 0 rgba(255,255,255,.17);
 }
 
 .student-button.sent .student-name,
@@ -1828,10 +851,11 @@ h1 {
     color: #ffffff !important;
 }
 
-/* ==============================
-   وضعیت غایب — مشکی
-   حفظ رفتار قبلی
-============================== */
+
+/* =========================================================
+   22. ABSENT — BLACK
+   Preserve existing absent-state behavior
+========================================================= */
 
 .student-button.absent,
 .student-button.absent:disabled {
@@ -1839,18 +863,20 @@ h1 {
 
     background: linear-gradient(
         145deg,
-        #171717,
+        #202020,
         #050505
     ) !important;
 
-    border: 1px solid #414141 !important;
+    border: 1px solid #444444 !important;
 
     box-shadow:
-        0 3px 0 #000,
-        inset 0 1px 0 rgba(255,255,255,.07) !important;
+        0 3px 0 #000000,
+        inset 0 1px 0 rgba(255,255,255,.06) !important;
 
     opacity: 1 !important;
+
     filter: none !important;
+
     cursor: not-allowed !important;
 }
 
@@ -1866,106 +892,413 @@ h1 {
     filter: none !important;
 }
 
-/* ==============================
-   اعلان ارسال دانش‌آموز
-============================== */
+
+/* =========================================================
+   23. HIDE SEARCH RESULTS
+========================================================= */
+
+.student-button.search-hidden {
+    display: none !important;
+}
+
+.no-result {
+    grid-column: 1 / -1;
+
+    width: 100%;
+    padding: 14px;
+
+    color: var(--green);
+
+    font-size: 13px;
+    font-weight: 900;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   24. TEACHER SEND NOTIFICATION
+   Keep existing HTML animation elements
+========================================================= */
 
 .teacher-send-popup {
-    color: var(--lux-green);
+    position: fixed;
+
+    z-index: 99999;
+
+    left: 50%;
+
+    bottom: calc(
+        10px + env(safe-area-inset-bottom)
+    );
+
+    display: flex;
+    align-items: center;
+
+    width: max-content;
+    max-width: calc(100vw - 24px);
+
+    padding: 10px 14px;
+    gap: 9px;
+
+    direction: rtl;
+
+    color: var(--green);
 
     background: linear-gradient(
         135deg,
-        rgba(35,22,76,.96),
-        rgba(18,47,102,.96)
+        rgba(40,24,81,.97),
+        rgba(19,49,105,.97)
     );
 
     border: 1px solid rgba(244,198,94,.65);
-    border-radius: 16px;
+    border-radius: 15px;
 
     box-shadow:
-        0 12px 35px rgba(0,0,0,.32),
-        0 0 22px rgba(244,198,94,.12),
+        0 12px 35px rgba(0,0,0,.34),
+        0 0 20px rgba(244,198,94,.12),
         inset 0 1px 0 rgba(255,255,255,.12);
 
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+
+    font-size: 12px;
+    font-weight: 900;
+
+    overflow: hidden;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate(-50%, 100px);
+
+    transition:
+        opacity .3s ease,
+        transform .35s cubic-bezier(.22,1,.36,1),
+        visibility .3s ease;
 }
 
 .teacher-send-popup.show {
     opacity: 1;
     visibility: visible;
+
     transform: translate(-50%, 0);
 }
 
-/* ==============================
-   اعلان تماس با والدین
-============================== */
+
+/* =========================================================
+   25. WALKING CHARACTER
+========================================================= */
+
+.walking-person {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+.person {
+    position: relative;
+
+    width: 32px;
+    height: 42px;
+
+    animation:
+        personWalk .5s infinite alternate ease-in-out;
+}
+
+.head {
+    position: absolute;
+
+    top: 0;
+    left: 11px;
+
+    width: 10px;
+    height: 10px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+}
+
+.body {
+    position: absolute;
+
+    top: 10px;
+    left: 13px;
+
+    width: 7px;
+    height: 18px;
+
+    background: #ffffff;
+
+    border-radius: 5px;
+}
+
+.arm {
+    position: absolute;
+
+    top: 11px;
+
+    width: 5px;
+    height: 17px;
+
+    background: #ffffff;
+
+    border-radius: 5px;
+
+    transform-origin: top center;
+}
+
+.arm-left {
+    left: 9px;
+
+    transform: rotate(30deg);
+
+    animation:
+        armLeft .5s infinite alternate ease-in-out;
+}
+
+.arm-right {
+    right: 8px;
+
+    transform: rotate(-30deg);
+
+    animation:
+        armRight .5s infinite alternate ease-in-out;
+}
+
+.leg {
+    position: absolute;
+
+    top: 26px;
+
+    width: 5px;
+    height: 18px;
+
+    background: #ffffff;
+
+    border-radius: 5px;
+
+    transform-origin: top center;
+}
+
+.leg-left {
+    left: 12px;
+
+    animation:
+        legLeft .5s infinite alternate ease-in-out;
+}
+
+.leg-right {
+    right: 11px;
+
+    animation:
+        legRight .5s infinite alternate ease-in-out;
+}
+
+@keyframes personWalk {
+    from {
+        transform: translateY(1px);
+    }
+
+    to {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes legLeft {
+    from {
+        transform: rotate(28deg);
+    }
+
+    to {
+        transform: rotate(-28deg);
+    }
+}
+
+@keyframes legRight {
+    from {
+        transform: rotate(-28deg);
+    }
+
+    to {
+        transform: rotate(28deg);
+    }
+}
+
+@keyframes armLeft {
+    from {
+        transform: rotate(-25deg);
+    }
+
+    to {
+        transform: rotate(35deg);
+    }
+}
+
+@keyframes armRight {
+    from {
+        transform: rotate(25deg);
+    }
+
+    to {
+        transform: rotate(-35deg);
+    }
+}
+
+
+/* =========================================================
+   26. PARENT CALL POPUP
+========================================================= */
 
 #parentCallPopup {
-    color: var(--lux-green);
+    position: fixed;
+
+    top: 20px;
+    right: 20px;
+
+    z-index: 100000;
+
+    display: flex;
+    align-items: center;
+
+    width: min(430px, calc(100vw - 32px));
+
+    padding: 17px;
+    gap: 12px;
+
+    direction: rtl;
+
+    color: var(--green);
 
     background: linear-gradient(
         135deg,
-        #30205c,
-        #1a3979 58%,
-        #242054
+        #32205e,
+        #1a3978 58%,
+        #242052
     );
 
-    border: 1px solid rgba(244,198,94,.72);
+    border: 1px solid rgba(244,198,94,.70);
     border-radius: 20px;
 
     box-shadow:
-        0 18px 42px rgba(0,0,0,.30),
+        0 18px 42px rgba(0,0,0,.32),
         0 0 24px rgba(244,198,94,.12),
-        inset 0 1px 0 rgba(255,255,255,.14);
+        inset 0 1px 0 rgba(255,255,255,.13);
 
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+
+    opacity: 0;
+
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translateY(-25px) scale(.96);
+
+    transition:
+        opacity .3s ease,
+        transform .3s ease,
+        visibility .3s ease;
 }
 
 #parentCallPopup.show {
     opacity: 1;
+
+    visibility: visible;
+    pointer-events: auto;
+
     transform: translateY(0) scale(1);
 }
 
 .parent-call-popup-icon {
-    color: #56360a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+
+    color: #58380a;
 
     background: linear-gradient(
         145deg,
-        #fff0ad,
+        #fff1b3,
         #f2c75d,
-        #c48b28
+        #c58b29
     );
 
-    border: 1px solid #ffecaa;
+    border: 1px solid #ffedac;
+    border-radius: 14px;
+
+    font-size: 24px;
 
     box-shadow:
-        0 4px 0 #8a5b19,
+        0 4px 0 #865a1b,
         0 7px 12px rgba(0,0,0,.20),
         inset 0 1px 2px rgba(255,255,255,.65);
 }
 
+.parent-call-popup-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 .parent-call-popup-title {
-    color: var(--lux-gold-light);
+    margin-bottom: 5px;
+
+    color: var(--gold-light);
+
+    font-size: 16px;
     font-weight: 900;
+    line-height: 1.8;
 }
 
 .parent-call-popup-text {
-    color: var(--lux-green);
+    color: var(--green);
+
+    font-size: 13px;
+    font-weight: 700;
     line-height: 1.9;
+
+    overflow-wrap: anywhere;
 }
 
 .parent-call-popup-text strong {
-    color: var(--lux-gold-light);
+    color: var(--gold-light);
+    font-weight: 900;
 }
 
 .parent-call-popup-close {
-    color: var(--lux-gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 32px;
+
+    width: 32px;
+    height: 32px;
+
+    color: var(--gold-light);
 
     background: rgba(255,255,255,.10);
 
-    border: 1px solid rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 10px;
+
+    font-size: 23px;
+    line-height: 1;
+
+    cursor: pointer;
 
     transition:
         background .2s ease,
@@ -1973,37 +1306,91 @@ h1 {
 }
 
 .parent-call-popup-close:hover {
-    background: rgba(244,198,94,.20);
+    background: rgba(244,198,94,.22);
+
     transform: scale(1.06);
 }
 
-/* ==============================
-   پیام بدون نتیجه جست‌وجو
-============================== */
 
-.no-result {
-    color: var(--lux-green);
-}
-
-/* ==============================
-   فوکوس صفحه‌کلید
-============================== */
+/* =========================================================
+   27. ACCESSIBILITY
+========================================================= */
 
 #searchInput:focus-visible,
 .reset-button:focus-visible,
-.grade-header:focus-visible,
 .student-button:focus-visible,
 .parent-call-popup-close:focus-visible {
-    outline: 2px solid var(--lux-gold-light);
+    outline: 2px solid var(--gold-light);
     outline-offset: 3px;
 }
 
-/* ==============================
-   نمایش موبایل
-   حفظ سه ستون و قوانین دوکلاسه
-============================== */
+
+/* =========================================================
+   28. TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+    .grade-content {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .student-button {
+        min-height: 46px;
+        padding: 5px 3px;
+    }
+
+    .student-name {
+        font-size: 10px;
+    }
+
+    .class-title {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        width: 99%;
+        padding: 7px;
+    }
+
+    .grade-content {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .students-list {
+        gap: 4px;
+        padding: 5px;
+    }
+
+    .student-button {
+        min-height: 45px;
+        padding: 5px 3px;
+    }
+
+    .student-name {
+        font-size: 10px;
+        line-height: 1.45;
+    }
+}
+
+
+/* =========================================================
+   29. MOBILE
+   Three columns for classes
+   Two columns for students
+========================================================= */
 
 @media (max-width: 600px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
+    }
 
     .container {
         width: 100%;
@@ -2012,8 +1399,12 @@ h1 {
     }
 
     .top-bar {
-        border-radius: 14px;
+        top: 3px;
+
         padding: 9px;
+        margin-bottom: 9px;
+
+        border-radius: 14px;
     }
 
     .top-bar::before {
@@ -2021,7 +1412,34 @@ h1 {
     }
 
     h1 {
+        margin-bottom: 9px;
         font-size: 17px;
+    }
+
+    .search-box {
+        margin-bottom: 8px;
+    }
+
+    #searchInput {
+        height: 41px;
+        padding: 0 10px;
+        font-size: 13px;
+    }
+
+    .reset-button {
+        min-height: 40px;
+        font-size: 13px;
+    }
+
+    .grade-section {
+        margin-bottom: 9px;
+        border-radius: 12px;
+    }
+
+    .grade-header {
+        min-height: 42px;
+        padding: 6px 9px;
+        font-size: 14px;
     }
 
     .grade-content {
@@ -2030,12 +1448,14 @@ h1 {
         padding: 4px;
     }
 
-    .grade-content:has(.class-box:nth-child(2):last-child) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .class-box {
+        min-width: 0;
+        border-radius: 9px;
     }
 
     .class-header {
-        padding: 0 4px;
+        min-height: 37px;
+        padding: 4px;
         gap: 3px;
     }
 
@@ -2043,77 +1463,224 @@ h1 {
         font-size: 10px;
     }
 
+    .student-total {
+        flex-basis: 21px;
+
+        width: 21px;
+        height: 21px;
+
+        font-size: 9px;
+    }
+
+    .called-total {
+        min-width: 21px;
+        height: 21px;
+        padding: 0 3px;
+        font-size: 9px;
+    }
+
     .students-list {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+
         gap: 3px;
         padding: 3px;
     }
 
     .student-button {
         min-width: 0;
-        min-height: 48px;
-        padding: 4px 2px;
+        max-width: 100%;
+
+        min-height: 52px;
+        height: 52px;
+
+        padding: 3px 2px;
         gap: 2px;
+
         border-radius: 7px;
     }
 
-    .student-button .student-name {
+    .student-name {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+
         font-size: 10px;
-        line-height: 1.4;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+        line-height: 1.3;
     }
 
-    .student-button .student-status,
-    .student-button .status-time {
+    .student-status,
+    .status-time {
+        width: 100%;
+        max-width: 100%;
+
         font-size: 7px;
+        line-height: 1.2;
     }
+
+    .no-result {
+        padding: 9px;
+        font-size: 11px;
+    }
+
+    /* اعلان ارسال دانش‌آموز */
+
+    .teacher-send-popup {
+        bottom: calc(
+            10px + env(safe-area-inset-bottom)
+        );
+
+        max-width: calc(100vw - 16px);
+
+        padding: 7px 9px;
+        gap: 5px;
+
+        border-radius: 11px;
+
+        font-size: 11px;
+    }
+
+    .person {
+        transform: scale(.85);
+    }
+
+    /* اعلان تماس والدین */
 
     #parentCallPopup {
-        top: 12px;
+        top: 10px;
         right: 8px;
+
         width: calc(100vw - 16px);
-        padding: 12px;
-        gap: 9px;
+
+        padding: 11px;
+        gap: 8px;
+
         border-radius: 15px;
     }
 
     .parent-call-popup-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 21px;
+        flex-basis: 39px;
+
+        width: 39px;
+        height: 39px;
+
+        font-size: 20px;
+        border-radius: 11px;
     }
 
     .parent-call-popup-title {
-        font-size: 14px;
+        margin-bottom: 3px;
+        font-size: 13px;
     }
 
     .parent-call-popup-text {
-        font-size: 12px;
+        font-size: 11px;
+        line-height: 1.8;
     }
 
-    .teacher-send-popup {
-        max-width: calc(100vw - 16px);
-        padding: 7px 9px;
+    .parent-call-popup-close {
+        flex-basis: 29px;
+
+        width: 29px;
+        height: 29px;
+
+        font-size: 21px;
     }
 }
 
-/* ==============================
-   حرکت کمتر برای کاربران حساس
-============================== */
 
-@media (prefers-reduced-motion: reduce) {
-    .student-button,
-    .reset-button,
-    .grade-header,
-    #parentCallPopup,
-    .teacher-send-popup {
-        transition: none !important;
+/* =========================================================
+   30. TWO-CLASS GRADES
+========================================================= */
+
+@media (max-width: 600px) {
+    .grade-content:has(.class-box:nth-child(2):last-child) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .person,
-    .arm,
-    .leg {
+    .grade-content:has(.class-box:nth-child(2):last-child)
+    .class-box {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+
+
+/* =========================================================
+   31. EXTRA SMALL PHONES
+========================================================= */
+
+@media (max-width: 360px) {
+    .container {
+        padding: 3px;
+    }
+
+    .grade-content {
+        gap: 3px;
+        padding: 3px;
+    }
+
+    .students-list {
+        gap: 2px;
+        padding: 2px;
+    }
+
+    .student-button {
+        min-height: 49px;
+        height: 49px;
+        padding: 2px 1px;
+    }
+
+    .student-name {
+        font-size: 9px;
+    }
+
+    .student-status,
+    .status-time {
+        font-size: 6px;
+    }
+
+    .class-title {
+        font-size: 9px;
+    }
+
+    .student-total {
+        flex-basis: 19px;
+        width: 19px;
+        height: 19px;
+    }
+
+    .called-total {
+        min-width: 19px;
+        height: 19px;
+        padding: 0 2px;
+    }
+
+    #parentCallPopup {
+        padding: 9px;
+        gap: 6px;
+    }
+
+    .parent-call-popup-title {
+        font-size: 12px;
+    }
+
+    .parent-call-popup-text {
+        font-size: 10px;
+    }
+}
+
+
+/* =========================================================
+   32. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
         animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
     }
 }
