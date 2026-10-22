@@ -1698,7 +1698,7 @@ body * {
 .student-button .student-name,
 .student-button .student-status,
 .student-button .status-time {
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 
 /* عنوان‌ها و بخش کلاس‌ها */
@@ -1718,7 +1718,7 @@ h3,
 }
 
 #searchInput::placeholder {
-    color: rgba(0, 0, 0, 0.7) !important;
+    color: rgba(252, 252, 252, 0.7) !important;
 }
 
 /* دکمه‌ها و اعلان‌ها */
