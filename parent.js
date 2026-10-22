@@ -2065,8 +2065,6 @@ function startLiveParentLocation() {
 
             liveParentStatus.textContent =
                 "این مرورگر از موقعیت مکانی پشتیبانی نمی‌کند.";
-                liveParentStatus.style.color = "#ff0000";
-                 liveParentStatus.style.whiteSpace = "pre-line";
 
         }
 
@@ -2166,8 +2164,6 @@ function startLiveParentLocation() {
 
                             liveParentStatus.textContent =
                                 "دسترسی GPS توسط مرورگر مسدود است.";
-                                liveParentStatus.style.color = "#ff0000";
-    liveParentStatus.style.whiteSpace = "pre-line";
 
                         }
 
@@ -2377,8 +2373,6 @@ async function refreshParentLocation(
 
                 liveParentStatus.textContent =
                     "موقعیت دریافت شد، اما دقت GPS پایین است.";
-                    liveParentStatus.style.color = "#ff0000";
-    liveParentStatus.style.whiteSpace = "pre-line";
 
             }
 
@@ -2428,7 +2422,6 @@ async function refreshParentLocation(
 
             locationStatus.style.color =
                 "#dc2626";
-                locationStatus.style.whiteSpace = "pre-line";
 
         }
 
