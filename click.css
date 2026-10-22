@@ -1709,12 +1709,12 @@ h3,
 .class-header,
 .student-total,
 .called-total {
-    color: #000000 !important;
+    color: #fffcfc !important;
 }
 
 /* نوار جستجو */
 #searchInput {
-    color: #030000 !important;
+    color: #fffdfd !important;
 }
 
 #searchInput::placeholder {
@@ -1726,5 +1726,5 @@ button,
 .teacher-send-popup,
 #parentCallPopup,
 #parentCallPopup * {
-    color: #ffffff !important;
+    color: #050000 !important;
 }
