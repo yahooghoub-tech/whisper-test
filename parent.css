@@ -1620,21 +1620,21 @@ input:focus {
 
 .location-card-value {
 
-    color:
-        var(--app-navy);
+    
 
     font-size: 25px;
 
     font-weight: 950;
 
     line-height: 1.2;
+    color: rgb(140, 217, 24);
 }
 
 
 .location-card-unit {
 
     color:
-        #83919b;
+        #c04436;
 
     font-size: 10px;
 
@@ -4436,6 +4436,7 @@ input:focus-visible {
 
 
     .clock {
+        color: #ec870d;
 
         font-size:
             22px;
@@ -6377,4 +6378,237 @@ button,
 .parent-arrival-button {
     font-family: "Estedad", sans-serif !important;
     font-weight: 600;
+}
+
+/* =====================================================
+   ALAVI HEADER - PREMIUM RESPONSIVE DESIGN
+===================================================== */
+
+.header {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+.header-top {
+    position: relative;
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 145px;
+    direction: rtl;
+    box-sizing: border-box;
+}
+
+/* لوگو در سمت راست */
+
+.school-logo-box {
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+.school-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 12px;
+}
+
+/* متن خوش‌آمدگویی در مرکز */
+
+.welcome {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+}
+
+.welcome-text {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.welcome-label {
+    display: block;
+    color: #33d233;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.8;
+}
+
+.welcome h1 {
+    margin: 0;
+    max-width: 100%;
+    color: #ffffff;
+    font-size: clamp(17px, 2.2vw, 25px);
+    font-weight: 800;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.welcome-school-name {
+    color: #d7e8ff;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* نشان کلاس در سمت چپ */
+
+.class-badge {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 125px;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (min-width: 601px) and (max-width: 900px) {
+
+    .header-top {
+        min-height: 110px;
+        padding: 18px 115px;
+    }
+
+    .school-logo-box {
+        right: 15px;
+        width: 82px;
+        height: 65px;
+    }
+
+    .class-badge {
+        left: 12px;
+        max-width: 95px;
+        font-size: 12px;
+    }
+
+    .welcome h1 {
+        font-size: 19px;
+    }
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .header {
+        border-radius: 18px;
+    }
+
+    .header-top {
+        min-height: 0;
+        padding: 16px 12px 60px;
+        align-items: center;
+    }
+
+    .school-logo-box {
+        top: 14px;
+        right: 12px;
+        transform: none;
+        width: 62px;
+        height: 52px;
+        border-radius: 10px;
+    }
+
+    .school-logo {
+        border-radius: 8px;
+    }
+
+    .welcome {
+        width: 100%;
+        padding: 0 52px;
+        box-sizing: border-box;
+    }
+
+    .welcome-text {
+        gap: 3px;
+    }
+
+    .welcome-label {
+        font-size: 12px;
+    }
+
+    .welcome h1 {
+        font-size: 16px;
+        line-height: 1.9;
+    }
+
+    .welcome-school-name {
+        font-size: 11px;
+    }
+
+    .class-badge {
+        top: auto;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 90%;
+        padding: 5px 13px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .header-top {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .school-logo-box {
+        right: 8px;
+        width: 48px;
+        height: 43px;
+    }
+
+    .welcome {
+        padding-right: 43px;
+        padding-left: 43px;
+    }
+
+    .welcome h1 {
+        font-size: 14px;
+    }
+
+    .welcome-label {
+        font-size: 11px;
+    }
+
 }
