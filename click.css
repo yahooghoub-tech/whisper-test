@@ -1690,7 +1690,7 @@ h1 {
 /* سفید شدن نوشته‌های پنل */
 body,
 body * {
-    color: #100000;
+    color: #ff0000;
 }
 
 /* متن دکمه‌های دانش‌آموزان */
@@ -1698,7 +1698,7 @@ body * {
 .student-button .student-name,
 .student-button .student-status,
 .student-button .status-time {
-    color: #000000 !important;
+    color: #ff0000 !important;
 }
 
 /* عنوان‌ها و بخش کلاس‌ها */
@@ -1709,16 +1709,16 @@ h3,
 .class-header,
 .student-total,
 .called-total {
-    color: #fffcfc !important;
+    color: #ff0000 !important;
 }
 
 /* نوار جستجو */
 #searchInput {
-    color: #fffdfd !important;
+    color: #ff0000 !important;
 }
 
 #searchInput::placeholder {
-    color: rgba(252, 252, 252, 0.7) !important;
+    color: rgba(255, 0, 0, 0.7) !important;
 }
 
 /* دکمه‌ها و اعلان‌ها */
@@ -1726,5 +1726,5 @@ button,
 .teacher-send-popup,
 #parentCallPopup,
 #parentCallPopup * {
-    color: #050000 !important;
+    color: #ff0000 !important;
 }
