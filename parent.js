@@ -654,7 +654,7 @@ const SCHOOL_LNG =
     51.32257158390593;
 
 const ALLOWED_RADIUS =
-    5000;
+    150;
 
 const EARTH_RADIUS =
     6371000;
@@ -727,8 +727,8 @@ function getCallSchedule(className) {
     ) {
 
         return {
-            start: 0 * 60 ,
-            end: 14 * 60,
+            start: 14 * 60 + 40,
+            end: 24 * 60,
             text: "14:40 تا 24:00"
         };
 
