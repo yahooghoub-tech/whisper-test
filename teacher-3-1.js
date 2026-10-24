@@ -287,87 +287,449 @@ function resetStudentButton(call){
     });
     console.log("👤 غایبین امروز بارگذاری شدند:",data.length);
     }
+    
+    /* =====================================================
+       راه‌اندازی اولیه صفحه
+       بدون رفرش صفحه
+    ===================================================== */
+    
     createStudents();
     loadCalls();
-    loadAbsentStudents();
-    window.addEventListener("load",setupSound);
-    let currentTeacherCallDay=getToday();
-    function checkTeacherCallDayChange(){
-    const newDay=getToday();
-    if(newDay===currentTeacherCallDay){
-    return;
+    window.addEventListener("load", setupSound);
+    
+    let currentTeacherCallDay = getToday();
+    
+    /* =====================================================
+       همگام‌سازی اطلاعات هر ۳۰ ثانیه
+    ===================================================== */
+    
+    let isSyncingTeacherData = false;
+    
+    async function syncTeacherData() {
+        if (isSyncingTeacherData) {
+            console.log("⏳ همگام‌سازی قبلی هنوز در حال اجراست");
+            return;
+        }
+    
+        if (!navigator.onLine) {
+            console.warn("📴 اینترنت قطع است؛ همگام‌سازی پس از اتصال ادامه می‌یابد");
+            return;
+        }
+    
+        isSyncingTeacherData = true;
+    
+        try {
+            console.log("🔄 شروع همگام‌سازی اطلاعات با Supabase");
+    
+            // دریافت مجدد فراخوان‌ها و غایبین
+            // بدون رفرش صفحه و بدون پخش اعلان تکراری
+            await loadCalls();
+    
+            console.log("✅ همگام‌سازی اطلاعات انجام شد");
+        } catch (error) {
+            console.error("❌ خطا در همگام‌سازی:", error);
+        } finally {
+            isSyncingTeacherData = false;
+        }
     }
-    console.log("📅 روز فراخوان تغییر کرد:",currentTeacherCallDay,"→",newDay);
-    currentTeacherCallDay=newDay;
-    resetTeacherPanel();
-    loadCalls();
-    loadAbsentStudents();
+    
+    /* =====================================================
+       بررسی تغییر روز
+    ===================================================== */
+    
+    function checkTeacherCallDayChange() {
+        const newDay = getToday();
+    
+        if (newDay === currentTeacherCallDay) {
+            return;
+        }
+    
+        console.log(
+            "📅 روز فراخوان تغییر کرد:",
+            currentTeacherCallDay,
+            "→",
+            newDay
+        );
+    
+        currentTeacherCallDay = newDay;
+    
+        resetTeacherPanel();
+        syncTeacherData();
     }
-    setInterval(checkTeacherCallDayChange,30000);
-    supabaseClient.channel("teacher-1-3-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"calls",filter:"class_name=eq.سوم-1"},payload=>{
-        const call=payload.new;
-        console.log("📢 فراخوان جدید:",call);
-        if(call.status!=="فراخوان شد")return;
-        if(call.called_date!==getToday()){
-        console.log("⏭️ فراخوان مربوط به روز قبل است:",call.called_date);
-        return;
+    
+    /* =====================================================
+       متغیرهای اتصال Realtime
+    ===================================================== */
+    
+    let callsChannel = null;
+    let attendanceChannel = null;
+    
+    let reconnectTimer = null;
+    let reconnectAttempts = 0;
+    let isReconnecting = false;
+    
+    /* =====================================================
+       تلاش مجدد برای اتصال
+    ===================================================== */
+    
+    function scheduleRealtimeReconnect() {
+        if (!navigator.onLine) {
+            console.warn("📴 اینترنت در دسترس نیست؛ منتظر اتصال مجدد می‌مانیم");
+            return;
         }
-        const absentButton=findButton(call.student_name);
-        if(absentButton&&absentButton.classList.contains("absent")){
-        console.log("⛔ فراخوان برای دانش‌آموز غایب نادیده گرفته شد:",call.student_name);
-        return;
+    
+        if (reconnectTimer !== null || isReconnecting) {
+            return;
         }
-        showCallPopup(call.student_name);
-        playNotificationSound();
-        const button=findButton(call.student_name);
-        if(button){
-        setTimeout(()=>{
-        if(button.classList.contains("absent"))return;
-        updateButton({...call,status:"دریافت فراخوان"});
-        button.classList.remove("called","sent");
-        button.classList.add("called");
-        },300);
+    
+        // افزایش تدریجی فاصله تلاش‌ها، حداکثر ۳۰ ثانیه
+        const delay = Math.min(
+            2000 * Math.pow(2, reconnectAttempts),
+            30000
+        );
+    
+        reconnectAttempts++;
+    
+        console.warn(
+            "🔌 اتصال Realtime قطع شده؛ تلاش مجدد تا",
+            Math.round(delay / 1000),
+            "ثانیه دیگر"
+        );
+    
+        reconnectTimer = setTimeout(async () => {
+            reconnectTimer = null;
+            await reconnectRealtime();
+        }, delay);
+    }
+    
+    /* =====================================================
+       اتصال مجدد به هر دو کانال
+    ===================================================== */
+    
+    async function reconnectRealtime() {
+        if (isReconnecting) {
+            return;
         }
-        loadCalls();
-        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"calls",filter:"class_name=eq.سوم-1"},payload=>{
-        const call=payload.new;
-        const oldCall=payload.old;
-        if(!call)return;
-        if(call.class_name!=="سوم-1")return;
-        if(call.called_date!==getToday()){
-        console.log("⏭️ UPDATE مربوط به روز قبل است:",call.called_date);
-        return;
+    
+        if (!navigator.onLine) {
+            console.warn("📴 اتصال اینترنت برقرار نیست");
+            return;
         }
-        console.log("📡 تغییر فراخوان:",call);
-        if(oldCall.status!=="ارسال شد"&&call.status==="ارسال شد"){
-        showSendNotification(call.student_name);
+    
+        isReconnecting = true;
+    
+        console.log("🔄 تلاش برای اتصال مجدد به Supabase Realtime");
+    
+        // ابتدا مراجع قبلی را پاک می‌کنیم تا اتصال‌های قدیمی
+        // باعث اجرای مجدد فرایند اتصال نشوند.
+        const oldCallsChannel = callsChannel;
+        const oldAttendanceChannel = attendanceChannel;
+    
+        callsChannel = null;
+        attendanceChannel = null;
+    
+        try {
+            if (oldCallsChannel) {
+                await supabaseClient.removeChannel(oldCallsChannel);
+            }
+    
+            if (oldAttendanceChannel) {
+                await supabaseClient.removeChannel(oldAttendanceChannel);
+            }
+    
+            createRealtimeChannels();
+    
+            console.log("🔄 درخواست اتصال مجدد ارسال شد");
+        } catch (error) {
+            console.error("❌ خطا در اتصال مجدد:", error);
+            scheduleRealtimeReconnect();
+        } finally {
+            isReconnecting = false;
         }
-        updateButton(call);
-        loadCalls();
-        }).on("postgres_changes",{event:"DELETE",schema:"public",table:"calls"},payload=>{
-        const deletedCall=payload.old;
-        console.log("🗑️ DELETE دریافت شد:",deletedCall);
-        if(!deletedCall)return;
-        if(deletedCall.class_name!=="سوم-1")return;
-        resetStudentButton(deletedCall);
-        loadCalls();
-        }).subscribe(status=>{
-        console.log("Realtime teacher status:",status);
-        });
-        supabaseClient.channel("teacher-1-3-attendance-realtime").on("postgres_changes",{event:"INSERT",schema:"public",table:"attendance",filter:"class_name=eq.سوم-1"},payload=>{
-        console.log("🟢 وضعیت حضور و غیاب جدید:",payload.new);
-        if(!payload.new)return;
-        if(payload.new.attendance_date!==getDatabaseToday())return;
-        loadAbsentStudents();
-        }).on("postgres_changes",{event:"UPDATE",schema:"public",table:"attendance",filter:"class_name=eq.سوم-1"},payload=>{
-        console.log("🟡 وضعیت حضور و غیاب تغییر کرد:",payload.new);
-        if(!payload.new)return;
-        if(payload.new.attendance_date!==getToday())return;
-        loadAbsentStudents();
-        }).on("postgres_changes",{event:"DELETE",schema:"public",table:"attendance",filter:"class_name=eq.سوم-1"},payload=>{
-        console.log("🔵 وضعیت حضور و غیاب حذف شد:",payload.old);
-        loadAbsentStudents();
-        }).subscribe(status=>{
-        console.log("Realtime attendance status:",status);
-        });
-        
+    }
+    
+    /* =====================================================
+       ساخت کانال Realtime فراخوان‌ها
+    ===================================================== */
+    
+    function createCallsChannel() {
+        const channel = supabaseClient.channel("teacher-1-3-realtime");
+    
+        callsChannel = channel;
+    
+        channel
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "calls",
+                    filter: "class_name=eq.سوم-1"
+                },
+                payload => {
+                    const call = payload.new;
+    
+                    if (!call) return;
+    
+                    console.log("📢 فراخوان جدید:", call);
+    
+                    if (call.status !== "فراخوان شد") return;
+    
+                    if (call.called_date !== getToday()) {
+                        console.log("⏭️ فراخوان مربوط به روز دیگری است");
+                        return;
+                    }
+    
+                    const button = findButton(call.student_name);
+    
+                    if (button && button.classList.contains("absent")) {
+                        console.log(
+                            "⛔ فراخوان دانش‌آموز غایب نادیده گرفته شد:",
+                            call.student_name
+                        );
+                        return;
+                    }
+    
+                    showCallPopup(call.student_name);
+    
+                    // صدای اعلان را فقط در صورت فعال بودن پخش می‌کند
+                    playNotificationSound();
+    
+                    if (button) {
+                        setTimeout(() => {
+                            if (button.classList.contains("absent")) return;
+    
+                            updateButton({
+                                ...call,
+                                status: "دریافت فراخوان"
+                            });
+    
+                            button.classList.remove("sent");
+                            button.classList.add("called");
+                        }, 300);
+                    }
+    
+                    syncTeacherData();
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: "calls",
+                    filter: "class_name=eq.سوم-1"
+                },
+                payload => {
+                    const call = payload.new;
+                    const oldCall = payload.old;
+    
+                    if (!call) return;
+                    if (call.class_name !== "سوم-1") return;
+    
+                    if (call.called_date !== getToday()) {
+                        console.log("⏭️ تغییر مربوط به روز دیگری است");
+                        return;
+                    }
+    
+                    console.log("📡 تغییر فراخوان:", call);
+    
+                    if (
+                        oldCall &&
+                        oldCall.status !== "ارسال شد" &&
+                        call.status === "ارسال شد"
+                    ) {
+                        showSendNotification(call.student_name);
+                    }
+    
+                    updateButton(call);
+                    syncTeacherData();
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "DELETE",
+                    schema: "public",
+                    table: "calls"
+                },
+                payload => {
+                    const deletedCall = payload.old;
+    
+                    console.log("🗑️ فراخوان حذف شد:", deletedCall);
+    
+                    if (!deletedCall) return;
+                    if (deletedCall.class_name !== "سوم-1") return;
+    
+                    resetStudentButton(deletedCall);
+                    syncTeacherData();
+                }
+            )
+            .subscribe(status => {
+                console.log("Realtime calls status:", status);
+    
+                if (callsChannel !== channel) return;
+    
+                if (status === "SUBSCRIBED") {
+                    console.log("✅ کانال فراخوان متصل شد");
+                    reconnectAttempts = 0;
+                }
+    
+                if (
+                    status === "CHANNEL_ERROR" ||
+                    status === "TIMED_OUT" ||
+                    status === "CLOSED"
+                ) {
+                    console.error("❌ اتصال کانال فراخوان مشکل دارد:", status);
+                    scheduleRealtimeReconnect();
+                }
+            });
+    }
+    
+    /* =====================================================
+       ساخت کانال Realtime حضور و غیاب
+    ===================================================== */
+    
+    function createAttendanceChannel() {
+        const channel = supabaseClient.channel(
+            "teacher-1-3-attendance-realtime"
+        );
+    
+        attendanceChannel = channel;
+    
+        channel
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "attendance",
+                    filter: "class_name=eq.سوم-1"
+                },
+                payload => {
+                    const attendance = payload.new;
+    
+                    console.log("🟢 حضور و غیاب جدید:", attendance);
+    
+                    if (!attendance) return;
+    
+                    if (attendance.attendance_date !== getDatabaseToday()) {
+                        return;
+                    }
+    
+                    syncTeacherData();
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "UPDATE",
+                    schema: "public",
+                    table: "attendance",
+                    filter: "class_name=eq.سوم-1"
+                },
+                payload => {
+                    const attendance = payload.new;
+    
+                    console.log("🟡 حضور و غیاب تغییر کرد:", attendance);
+    
+                    if (!attendance) return;
+    
+                    // attendance_date در دیتابیس میلادی است
+                    if (attendance.attendance_date !== getDatabaseToday()) {
+                        return;
+                    }
+    
+                    syncTeacherData();
+                }
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event: "DELETE",
+                    schema: "public",
+                    table: "attendance"
+                },
+                payload => {
+                    const attendance = payload.old;
+    
+                    console.log("🔵 رکورد حضور و غیاب حذف شد:", attendance);
+    
+                    if (!attendance) return;
+                    if (attendance.class_name !== "سوم-1") return;
+    
+                    syncTeacherData();
+                }
+            )
+            .subscribe(status => {
+                console.log("Realtime attendance status:", status);
+    
+                if (attendanceChannel !== channel) return;
+    
+                if (status === "SUBSCRIBED") {
+                    console.log("✅ کانال حضور و غیاب متصل شد");
+                    reconnectAttempts = 0;
+                }
+    
+                if (
+                    status === "CHANNEL_ERROR" ||
+                    status === "TIMED_OUT" ||
+                    status === "CLOSED"
+                ) {
+                    console.error(
+                        "❌ اتصال کانال حضور و غیاب مشکل دارد:",
+                        status
+                    );
+    
+                    scheduleRealtimeReconnect();
+                }
+            });
+    }
+    
+    /* =====================================================
+       ایجاد هر دو اتصال Realtime
+    ===================================================== */
+    
+    function createRealtimeChannels() {
+        createCallsChannel();
+        createAttendanceChannel();
+    }
+    
+    /* =====================================================
+       شروع اتصال‌ها
+    ===================================================== */
+    
+    createRealtimeChannels();
+    
+    /* =====================================================
+       اجرای همگام‌سازی هر ۳۰ ثانیه
+    ===================================================== */
+    
+    setInterval(() => {
+        checkTeacherCallDayChange();
+        syncTeacherData();
+    }, 30000);
+    
+    /* =====================================================
+       تشخیص قطع و وصل اینترنت دستگاه
+    ===================================================== */
+    
+    window.addEventListener("offline", () => {
+        console.warn("📴 اینترنت دستگاه قطع شد");
+    });
+    
+    window.addEventListener("online", () => {
+        console.log("🌐 اینترنت دوباره وصل شد");
+    
+        // تلاش برای برقراری مجدد Realtime
+        if (reconnectTimer !== null) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+    
+        reconnectRealtime();
+    
+        // دریافت آخرین اطلاعات از دیتابیس
+        syncTeacherData();
+    });
+    
