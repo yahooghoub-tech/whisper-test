@@ -829,6 +829,21 @@ function getIranDate() {
 }
 
 
+function getIranGregorianDate() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tehran",
+        calendar: "gregory",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+
+    const part = type =>
+        parts.find(item => item.type === type)?.value || "";
+
+    return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
 function getIranTime() {
 
     const iran =
@@ -3373,53 +3388,55 @@ if (callButton) {
                 callButton.textContent =
                     "📢 در حال ارسال فراخوان...";
 
-                const calledDate =
-                    getIranDate();
+                    const calledDate =
+                    getIranGregorianDate();
 
                 const calledTime =
                     getIranTime();
 
-                const {
-                    data: newCall,
-                    error: insertError
-                } =
-                    await supabaseClient
-                        .from("calls")
-                        .insert([
-                            {
-                                student_name:
-                                    currentStudentName,
+       
+const response = await fetch(
+    "https://berandil.ir/farakhan-api/calls.php",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            student_name: currentStudentName,
+            class_name: currentClassName,
+            called_date: calledDate,
+            called_time: calledTime
+        })
+    }
+);
 
-                                class_name:
-                                    currentClassName,
+const result = await response.json();
 
-                                status:
-                                    "فراخوان شد",
+if (!response.ok || !result.success) {
 
-                                called_date:
-                                    calledDate,
+    console.error("CALL INSERT ERROR:", result);
 
-                                called_time:
-                                    calledTime
-                            }
-                        ])
-                        .select()
-                        .single();
+    if (response.status === 409 && result.data?.active_call) {
 
-                if (insertError) {
+        updateParentCallStatus(result.data.active_call);
+        updateParentCallButton(result.data.active_call);
 
-                    console.error(
-                        "CALL INSERT ERROR:",
-                        insertError
-                    );
+        alert("برای این دانش‌آموز یک فراخوان فعال وجود دارد.");
 
-                    alert(
-                        "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
-                    );
+        return;
+    }
 
-                    return;
+    alert(
+        result.message ||
+        "ارسال فراخوان انجام نشد.\nلطفاً دوباره تلاش کنید."
+    );
 
-                }
+    return;
+}
+
+const newCall = result.data;
+
 
 
                 /* =================================================

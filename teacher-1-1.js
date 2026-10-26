@@ -114,11 +114,20 @@ function getToday(){
 return new Intl.DateTimeFormat("fa-IR-u-nu-latn",{year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 }
 
-function getDatabaseToday(){
-    const d=new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-    }
+function getDatabaseToday() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tehran",
+        calendar: "gregory",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
 
+    const part = type =>
+        parts.find(item => item.type === type)?.value || "";
+
+    return `${part("year")}-${part("month")}-${part("day")}`;
+}
 
 function createStudents(){
 studentsContainer.innerHTML="";
@@ -173,19 +182,36 @@ function resetStudentButton(call){
     button.querySelector(".student-status").innerText="";
     button.querySelector(".student-time").innerText="";
     }
-    async function loadCalls(){
+    async function loadCalls() {
         lastTeacherCallsLoad = Date.now();
-
-    const today=getToday();
-    const {data,error}=await supabaseClient.from("calls").select("*").eq("class_name","اول-1").eq("called_date",today).order("id",{ascending:true});
-    if(error){
-    console.error("خطا در دریافت فراخوان‌های امروز:",error);
-    return;
-    }
-    resetTeacherPanel();
-    data.forEach(updateButton);
-    updateCount(data);
-    await loadAbsentStudents();
+    
+        try {
+            const response = await fetch(
+                "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
+                encodeURIComponent("اول-1") +
+                "&date=" + encodeURIComponent(getDatabaseToday()),
+                { cache: "no-store" }
+            );
+    
+            const result = await response.json();
+    
+            if (!response.ok || !result.success) {
+                console.error("خطا در دریافت فراخوان‌ها:", result);
+                return;
+            }
+    
+            resetTeacherPanel();
+    
+            const calls = Array.isArray(result.data) ? result.data : [];
+    
+            calls.forEach(updateButton);
+            updateCount(calls);
+    
+            await loadAbsentStudents();
+    
+        } catch (error) {
+            console.error("خطا در ارتباط با سرور فراخوان:", error);
+        }
     }
     function updateCount(data){
     if(!Array.isArray(data)){
@@ -210,32 +236,76 @@ function resetStudentButton(call){
     callCount.innerText="0 فراخوان";
     console.log("🔄 صفحه معلم بدون Refresh ریست شد");
     }
-    async function sendStudent(student){
-    const button=findButton(student.name);
-    if(button&&button.classList.contains("absent")){
-    console.log("⛔ این دانش‌آموز غایب است و امکان ارسال ندارد:",student.name);
-    return;
+    
+async function sendStudent(student) {
+    const button = findButton(student.name);
+
+    if (button && button.classList.contains("absent")) {
+        alert("این دانش‌آموز غایب است و امکان ارسال ندارد.");
+        return;
     }
-    const {data,error}=await supabaseClient.from("calls").select("*").eq("student_name",student.name).eq("class_name","اول-1").neq("status","ارسال شد").order("id",{ascending:false}).limit(1);
-    if(error){
-    console.error(error);
-    return;
+
+    try {
+        const response = await fetch(
+            "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
+            encodeURIComponent("اول-1") +
+            "&date=" + encodeURIComponent(getDatabaseToday()),
+            { cache: "no-store" }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            alert("دریافت اطلاعات فراخوان ناموفق بود.");
+            console.error(result);
+            return;
+        }
+
+        const calls = Array.isArray(result.data) ? result.data : [];
+
+        const call = calls
+            .filter(item =>
+                item.student_name === student.name &&
+                item.status !== "ارسال شد" &&
+                item.status !== "لغو شد"
+            )
+            .sort((a, b) => Number(b.id) - Number(a.id))[0];
+
+        if (!call) {
+            alert("برای این دانش‌آموز فراخوان فعالی پیدا نشد.");
+            return;
+        }
+
+        const updateResponse = await fetch(
+            "https://berandil.ir/farakhan-api/update-call-status.php",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: call.id,
+                    status: "ارسال شد"
+                })
+            }
+        );
+
+        const updateResult = await updateResponse.json();
+
+        if (!updateResponse.ok || !updateResult.success) {
+            alert("تغییر وضعیت فراخوان انجام نشد.");
+            console.error(updateResult);
+            return;
+        }
+
+        await loadCalls();
+
+    } catch (error) {
+        console.error("خطا در ارسال فراخوان:", error);
+        alert("ارتباط با سرور برقرار نشد. لطفاً دوباره تلاش کنید.");
     }
-    if(!data||data.length===0){
-    alert("برای این دانش‌آموز هنوز فراخوانی ثبت نشده است.");
-    return;
-    }
-    const call=data[0];
-    const now=new Date();
-    const time=now.toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-    const {data:updated,error:updateError}=await supabaseClient.from("calls").update({status:"ارسال شد",sent_time:time}).eq("id",call.id).select().single();
-    if(updateError){
-    console.error("خطا در ارسال دانش‌آموز:",updateError);
-    return;
-    }
-    updateButton(updated);
-    loadCalls();
-    }
+}
+
     async function loadAbsentStudents(){
     const today=getDatabaseToday()
     const {data,error}=await supabaseClient.from("attendance").select("*").eq("class_name","اول-1").eq("attendance_date",today).eq("status","غایب");
