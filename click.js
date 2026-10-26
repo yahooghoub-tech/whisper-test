@@ -911,59 +911,71 @@ function findButton(name,className){
 }
 
 
-async function loadCalls(){
+async function loadCalls() {
+    const today = todayDatabaseDate();
 
-    const today = todayPersianDate();
+    const allowedClasses = [
+        "پیش-1", "پیش-2",
+        "اول-1", "اول-2", "اول-3",
+        "دوم-1", "دوم-2",
+        "سوم-1", "سوم-2", "سوم-3",
+        "چهارم-1", "چهارم-2", "چهارم-3",
+        "پنجم-1", "پنجم-2", "پنجم-3",
+        "ششم-1", "ششم-2"
+    ];
 
-    const { data, error } = await supabaseClient
-        .from("calls")
-        .select("*")
-        .eq("called_date", today)
-        .order("id", { ascending: false });
+    try {
+        const results = await Promise.all(
+            allowedClasses.map(async className => {
+                const url =
+                    "https://berandil.ir/farakhan-api/teacher-calls.php" +
+                    "?class_name=" + encodeURIComponent(className) +
+                    "&date=" + encodeURIComponent(today);
 
-    if(error){
-        console.error("❌ خطا در دریافت فراخوان‌ها:", error);
-        return;
-    }
+                const response = await fetch(url);
+                const result = await response.json();
 
-    const latestCalls = new Map();
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        "خطا در دریافت کلاس " + className +
+                        ": " + (result.message || response.status)
+                    );
+                }
 
-    (data || []).forEach(call => {
+                return result.data || [];
+            })
+        );
 
-        const key =
-            call.student_name +
-            "|" +
-            call.class_name;
+        const latestCalls = new Map();
 
-        if(!latestCalls.has(key)){
-            latestCalls.set(key, call);
-        }
+        results.flat().forEach(call => {
+            const key = call.student_name + "|" + call.class_name;
+            const previous = latestCalls.get(key);
 
-    });
+            if (!previous || Number(call.id) > Number(previous.id)) {
+                latestCalls.set(key, call);
+            }
+        });
 
-    latestCalls.forEach(call => {
-
-        const button =
-            findButton(
+        latestCalls.forEach(call => {
+            const button = findButton(
                 call.student_name,
                 call.class_name
             );
 
-        if(!button) return;
+            if (!button) return;
 
-        updateButton(
-            button,
-            call
-        );
+            updateButton(button, call);
+        });
 
-        updateCount(
-            call.class_name
-        );
+        allowedClasses.forEach(className => {
+            updateCount(className);
+        });
 
-    });
-
+    } catch (error) {
+        console.error("خطا در دریافت فراخوان‌ها از هاست:", error);
+    }
 }
-
 
 
 
