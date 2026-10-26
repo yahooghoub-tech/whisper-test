@@ -2946,92 +2946,83 @@ function updateParentCallButton(call) {
    LOAD EXISTING CALL
 ===================================================== */
 
+
 async function loadExistingCall() {
 
     if (
         !currentStudentName ||
         !currentClassName
     ) {
-
         return;
-
     }
 
-    const today =
-        getIranDate();
+    try {
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from("calls")
-            .select("*")
-            .eq(
-                "student_name",
-                currentStudentName
-            )
-            .eq(
-                "class_name",
-                currentClassName
-            )
-            .eq(
-                "called_date",
-                today
-            )
-            .in(
-                "status",
+        const today = getIranGregorianDate();
+
+        const response = await fetch(
+            API_URL +
+            "teacher-calls.php?class_name=" +
+            encodeURIComponent(currentClassName) +
+            "&date=" +
+            encodeURIComponent(today),
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            console.error(
+                "خطا در دریافت فراخوان از MySQL:",
+                result
+            );
+            return;
+        }
+
+        const calls = Array.isArray(result.data)
+            ? result.data
+            : [];
+
+        const currentCall = calls
+            .filter(call =>
+                normalizePersianName(call.student_name) ===
+                    normalizePersianName(currentStudentName) &&
+                call.class_name === currentClassName &&
                 [
                     "فراخوان شد",
                     "دریافت فراخوان",
                     "ارسال شد"
-                ]
+                ].includes(call.status)
             )
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-            .limit(1)
-            .maybeSingle();
+            .sort((a, b) =>
+                Number(b.id) - Number(a.id)
+            )[0];
 
-    if (error) {
+        if (!currentCall) {
+
+            if (callButton) {
+                callButton.dataset.locked = "false";
+            }
+
+            updateCallScheduleUI();
+            return;
+        }
+
+        updateParentCallStatus(currentCall);
+        updateParentCallButton(currentCall);
+
+    } catch (error) {
 
         console.error(
-            "خطا در دریافت فراخوان:",
+            "خطا در خواندن فراخوان از MySQL:",
             error
         );
 
-        return;
-
     }
-
-    if (!data) {
-
-        if (callButton) {
-
-            callButton.dataset.locked =
-                "false";
-
-        }
-
-        updateCallScheduleUI();
-
-        return;
-
-    }
-
-    updateParentCallStatus(
-        data
-    );
-
-    updateParentCallButton(
-        data
-    );
-
 }
-
 
 /* =====================================================
    AUTO REFRESH
