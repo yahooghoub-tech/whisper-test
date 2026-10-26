@@ -183,47 +183,49 @@ function resetStudentButton(call){
     button.querySelector(".student-time").innerText="";
     }
    
-let teacherCallsLoading = false;
 
-async function loadCalls() {
-    if (teacherCallsLoading) return;
+    let teacherCallsLoading = false;
 
-    teacherCallsLoading = true;
-
-    try {
-        const response = await fetch(
-            "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
-            encodeURIComponent("اول-1") +
-            "&date=" + encodeURIComponent(getDatabaseToday()) +
-            "&_=" + Date.now(),
-            { cache: "no-store" }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            console.error("خطا در دریافت فراخوان‌ها:", result);
-            return;
+    async function loadCalls() {
+        if (teacherCallsLoading) return;
+    
+        teacherCallsLoading = true;
+    
+        try {
+            const response = await fetch(
+                "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
+                encodeURIComponent("اول-1") +
+                "&date=" + encodeURIComponent(getDatabaseToday()) +
+                "&_=" + Date.now(),
+                { cache: "no-store" }
+            );
+    
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+    
+            const result = await response.json();
+    
+            if (!result.success) {
+                throw new Error(result.message || "خطا در دریافت فراخوان‌ها");
+            }
+    
+            lastTeacherCallsLoad = Date.now();
+    
+            const calls = Array.isArray(result.data) ? result.data : [];
+    
+            resetTeacherPanel();
+    
+            calls.forEach(updateButton);
+            updateCount(calls);
+    
+        } catch (error) {
+            console.error("خطا در دریافت فراخوان از هاست:", error);
+        } finally {
+            teacherCallsLoading = false;
         }
-
-        lastTeacherCallsLoad = Date.now();
-
-        resetTeacherPanel();
-
-        const calls = Array.isArray(result.data) ? result.data : [];
-
-        calls.forEach(updateButton);
-        updateCount(calls);
-
-        // حضور و غیاب فعلاً طبق روش فعلی بارگذاری می‌شود
-        await loadAbsentStudents();
-
-    } catch (error) {
-        console.error("خطا در دریافت فراخوان از هاست:", error);
-    } finally {
-        teacherCallsLoading = false;
     }
-}
+    
 
     function updateCount(data){
     if(!Array.isArray(data)){
