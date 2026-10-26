@@ -143,34 +143,51 @@ studentsContainer.appendChild(button);
 function findButton(name){
 return [...document.querySelectorAll(".student-button")].find(button=>button.dataset.name===name);
 }
-function updateButton(call){
-const button=findButton(call.student_name);
-if(!button)return;
-if(button.classList.contains("absent")){
-return;
+
+function updateButton(call) {
+    const button = findButton(call.student_name);
+    if (!button) return;
+
+    if (button.classList.contains("absent")) return;
+
+    if (call.status === "لغو شد") {
+        resetStudentButton(call);
+        return;
+    }
+
+    button.classList.remove("called", "sent", "received", "pending");
+
+    const statusElement = button.querySelector(".student-status");
+    const timeElement = button.querySelector(".student-time");
+
+    if (call.status === "فراخوان شد") {
+        button.classList.add("called");
+        statusElement.innerText = "🔴 فراخوان";
+    } else if (call.status === "دریافت فراخوان") {
+        button.classList.add("received");
+        statusElement.innerText = "🟠 دریافت شد";
+    } else if (call.status === "ارسال شد") {
+        button.classList.add("sent");
+        statusElement.innerText = "🟢 ارسال شد";
+    } else {
+        button.classList.add("pending");
+        statusElement.innerText = "";
+    }
+
+    let timeText = "";
+
+    if (call.called_time) {
+        timeText = "🕐 فراخوان: " + call.called_time;
+    }
+
+    if (call.sent_time && call.status === "ارسال شد") {
+        timeText += (timeText ? "<br>" : "") +
+            "📤 ارسال: " + call.sent_time;
+    }
+
+    timeElement.innerHTML = timeText;
 }
-button.classList.remove("called","sent","received");
-if(call.status==="فراخوان شد"){
-button.classList.add("called");
-button.querySelector(".student-status").innerText="🔴 فراخوان";
-}
-if(call.status==="دریافت فراخوان"){
-button.classList.add("received");
-button.querySelector(".student-status").innerText="🟠 دریافت شد";
-}
-if(call.status==="ارسال شد"){
-button.classList.add("sent");
-button.querySelector(".student-status").innerText="🟢 ارسال شد";
-}
-let timeText="";
-if(call.called_time){
-timeText="🕐 فراخوان: "+call.called_time;
-}
-if(call.sent_time){
-timeText+="<br>📤 ارسال: "+call.sent_time;
-}
-button.querySelector(".student-time").innerHTML=timeText;
-}
+
 function resetStudentButton(call){
     const button=findButton(call.student_name);
     if(!button)return;
