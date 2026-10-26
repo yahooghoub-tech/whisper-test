@@ -778,25 +778,23 @@ function updateButton(button, call, force = false) {
         button.disabled = false;
     } else {
         button.classList.add("called");
-
-        // فراخوان فعال والدین: دکمه غیرفعال شود.
+    
         button.disabled = call.source === "parent";
     }
-
+    
     const statusElement = button.querySelector(".student-status");
     const timeElement = button.querySelector(".status-time");
-
+    
     if (statusElement) {
         statusElement.textContent =
             call.source === "parent"
                 ? "(فراخوان والد)"
                 : `(${call.status})`;
     }
-
+    
     if (timeElement) {
         timeElement.textContent = call.called_time || "";
     }
-
     updateCount(button.dataset.class);
 }
 
