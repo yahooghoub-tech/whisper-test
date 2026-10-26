@@ -1,7 +1,10 @@
-const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
-const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const API_BASE = "https://berandil.ir/farakhan-api/";
 
+const ATTENDANCE_API = API_BASE + "attendance.php";
+const TEACHER_CALLS_API = API_BASE + "teacher-calls.php";
+const CREATE_CALL_API = API_BASE + "calls.php";
+const UPDATE_CALL_API = API_BASE + "update-call-status.php";
+const DELETE_ALL_CALLS_API = API_BASE + "delete-all-calls.php";
 
  
 const students=[
