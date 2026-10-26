@@ -182,37 +182,49 @@ function resetStudentButton(call){
     button.querySelector(".student-status").innerText="";
     button.querySelector(".student-time").innerText="";
     }
-    async function loadCalls() {
-        lastTeacherCallsLoad = Date.now();
-    
-        try {
-            const response = await fetch(
-                "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
-                encodeURIComponent("اول-1") +
-                "&date=" + encodeURIComponent(getDatabaseToday()),
-                { cache: "no-store" }
-            );
-    
-            const result = await response.json();
-    
-            if (!response.ok || !result.success) {
-                console.error("خطا در دریافت فراخوان‌ها:", result);
-                return;
-            }
-    
-            resetTeacherPanel();
-    
-            const calls = Array.isArray(result.data) ? result.data : [];
-    
-            calls.forEach(updateButton);
-            updateCount(calls);
-    
-            await loadAbsentStudents();
-    
-        } catch (error) {
-            console.error("خطا در ارتباط با سرور فراخوان:", error);
+   
+let teacherCallsLoading = false;
+
+async function loadCalls() {
+    if (teacherCallsLoading) return;
+
+    teacherCallsLoading = true;
+
+    try {
+        const response = await fetch(
+            "https://berandil.ir/farakhan-api/teacher-calls.php?class_name=" +
+            encodeURIComponent("اول-1") +
+            "&date=" + encodeURIComponent(getDatabaseToday()) +
+            "&_=" + Date.now(),
+            { cache: "no-store" }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            console.error("خطا در دریافت فراخوان‌ها:", result);
+            return;
         }
+
+        lastTeacherCallsLoad = Date.now();
+
+        resetTeacherPanel();
+
+        const calls = Array.isArray(result.data) ? result.data : [];
+
+        calls.forEach(updateButton);
+        updateCount(calls);
+
+        // حضور و غیاب فعلاً طبق روش فعلی بارگذاری می‌شود
+        await loadAbsentStudents();
+
+    } catch (error) {
+        console.error("خطا در دریافت فراخوان از هاست:", error);
+    } finally {
+        teacherCallsLoading = false;
     }
+}
+
     function updateCount(data){
     if(!Array.isArray(data)){
     console.error("updateCount: داده آرایه نیست:",data);
@@ -810,3 +822,23 @@ setInterval(async () => {
     }
 
 }, 30000);
+
+
+
+/* REAL-TIME فراخوان معلم از هاست */
+
+let hostRealtimeTimer = null;
+
+function startHostRealtime() {
+    if (hostRealtimeTimer !== null) {
+        clearInterval(hostRealtimeTimer);
+    }
+
+    hostRealtimeTimer = setInterval(() => {
+        if (document.visibilityState === "visible") {
+            loadCalls();
+        }
+    }, 3000);
+}
+
+startHostRealtime();
