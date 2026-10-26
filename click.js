@@ -706,6 +706,7 @@ async function callStudent(student, button) {
 
 
 
+
 function updateButton(button, call, force = false) {
     if (!button || !call) return;
 
@@ -734,11 +735,9 @@ function updateButton(button, call, force = false) {
     button.dataset.callId = String(incomingId);
     button.dataset.callStatus = call.status || "";
 
-    // فراخوان لغوشده نباید دکمه را در حالت فراخوان‌شده نگه دارد.
     if (call.status === "لغو شد") {
         button.classList.remove("called", "sent", "absent");
         button.classList.add("pending");
-
         button.disabled = false;
 
         const statusElement = button.querySelector(".student-status");
@@ -762,9 +761,13 @@ function updateButton(button, call, force = false) {
         button.classList.add("absent");
         button.disabled = true;
 
-        button.querySelector(".student-status").textContent = "(غایب)";
-        button.querySelector(".status-time").textContent = "";
+        const statusElement = button.querySelector(".student-status");
+        const timeElement = button.querySelector(".status-time");
 
+        if (statusElement) statusElement.textContent = "(غایب)";
+        if (timeElement) timeElement.textContent = "";
+
+        updateCount(button.dataset.class);
         return;
     }
 
@@ -772,21 +775,30 @@ function updateButton(button, call, force = false) {
 
     if (call.status === "ارسال شد") {
         button.classList.add("sent");
+        button.disabled = false;
     } else {
         button.classList.add("called");
+
+        // فراخوان فعال والدین: دکمه غیرفعال شود.
+        button.disabled = call.source === "parent";
     }
 
-    button.disabled = false;
+    const statusElement = button.querySelector(".student-status");
+    const timeElement = button.querySelector(".status-time");
 
-    button.querySelector(".student-status").textContent =
-        `(${call.status})`;
+    if (statusElement) {
+        statusElement.textContent =
+            call.source === "parent"
+                ? "(فراخوان والد)"
+                : `(${call.status})`;
+    }
 
-    button.querySelector(".status-time").textContent =
-        call.called_time || "";
+    if (timeElement) {
+        timeElement.textContent = call.called_time || "";
+    }
 
     updateCount(button.dataset.class);
 }
-
 
 function updateCount(className){
 
@@ -1476,63 +1488,48 @@ async function loadTodayAttendance(){
             }, 7000);
     
     }
-    function updateParentCallButton(
-        button,
-        call
-    ) {
-    
-        if (!button) {
-            return;
-        }
-    
-        button.classList.remove(
-            "pending",
-            "called",
-            "sent",
-            "absent"
-        );
-    
-        button.classList.add(
-            "called"
-        );
-    
-        button.disabled =
-            false;
-    
-        button.style.background =
-            "linear-gradient(135deg, #2563eb, #3b82f6)";
-    
-        button.style.color =
-            "#ffffff";
-    
-        button.style.boxShadow =
-            "0 8px 20px rgba(37, 99, 235, 0.25)";
-    
-        const statusElement =
-            button.querySelector(
-                ".student-status"
-            );
-    
-        const timeElement =
-            button.querySelector(
-                ".status-time"
-            );
-    
-        if (statusElement) {
-    
-            statusElement.textContent =
-                "(فراخوان والد)";
-    
-        }
-    
-        if (timeElement) {
-    
-            timeElement.textContent =
-                call.called_time || "";
-    
-        }
-    
+   
+function updateParentCallButton(button, call) {
+    if (!button || !call) return;
+
+    button.classList.remove(
+        "pending",
+        "called",
+        "sent",
+        "absent"
+    );
+
+    button.classList.add("called");
+    button.disabled = true;
+
+    button.dataset.callId = String(call.id || "");
+    button.dataset.callStatus = call.status || "فراخوان والد";
+
+    button.style.background =
+        "linear-gradient(135deg, #2563eb, #3b82f6)";
+
+    button.style.color = "#ffffff";
+
+    button.style.boxShadow =
+        "0 8px 20px rgba(37, 99, 235, 0.25)";
+
+    const statusElement =
+        button.querySelector(".student-status");
+
+    const timeElement =
+        button.querySelector(".status-time");
+
+    if (statusElement) {
+        statusElement.textContent = "(فراخوان والد)";
     }
+
+    if (timeElement) {
+        timeElement.textContent = call.called_time || "";
+    }
+
+    updateCount(button.dataset.class);
+}
+
 
     
     function handleCallRealtime(payload){
