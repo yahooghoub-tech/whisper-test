@@ -1336,90 +1336,77 @@ async function loadTodayAttendance(){
     });
     
     
-    resetButton.addEventListener(
-    "click",
-    async()=>{
+   
+    resetButton.addEventListener("click", async () => {
     
-    if(
-    !confirm(
-    "آیا تمام فراخوان‌ها حذف شوند؟"
-    )
-    )return;
+        if (!confirm("آیا تمام فراخوان‌ها حذف شوند؟")) {
+            return;
+        }
     
+        resetButton.disabled = true;
     
-    const {error}=
-    await supabaseClient
-    .from("calls")
-    .delete()
-    .gte("id",0);
+        try {
+            const response = await fetch(
+                "https://berandil.ir/farakhan-api/delete-all-calls.php",
+                {
+                    method: "POST"
+                }
+            );
     
+            const result = await response.json();
     
-    if(error){
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "خطا در حذف فراخوان‌ها"
+                );
+            }
     
-    console.error(error);
+            document
+                .querySelectorAll(".student-button")
+                .forEach(button => {
     
-    alert(
-    "خطا در حذف فراخوان‌ها"
-    );
+                    button.classList.remove(
+                        "called",
+                        "sent",
+                        "absent"
+                    );
     
-    return;
+                    button.classList.add("pending");
     
-    }
+                    const status =
+                        button.querySelector(".student-status");
     
+                    if (status) {
+                        status.textContent = "";
+                    }
     
-    document
-    .querySelectorAll(
-    ".student-button"
-    )
-    .forEach(button=>{
+                    const statusTime =
+                        button.querySelector(".status-time");
     
-    /*
-    غایبین نباید با حذف فراخوان‌ها تغییر کنند
-    */
+                    if (statusTime) {
+                        statusTime.textContent = "";
+                    }
+                });
     
-    if(
-    button.classList.contains(
-    "absent"
-    )
-    )return;
+            document
+                .querySelectorAll(".called-total")
+                .forEach(counter => {
+                    counter.textContent = "0";
+                });
     
+            alert("تمام فراخوان‌ها حذف شدند و دکمه‌ها به حالت اولیه برگشتند.");
     
-    button.classList.remove(
-    "called",
-    "sent"
-    );
+            console.log("فراخوان‌ها حذف شدند؛ اطلاعات جدول attendance حفظ شد.");
     
-    button.classList.add(
-    "pending"
-    );
-    
-    button.querySelector(
-    ".student-status"
-    ).textContent="";
-    
-    button.querySelector(
-    ".status-time"
-    ).textContent="";
-    
-    });
-    
-    
-    document
-    .querySelectorAll(
-    ".called-total"
-    )
-    .forEach(counter=>{
-    
-    counter.textContent="0";
+        } catch (error) {
+            console.error("خطا در حذف فراخوان‌ها:", error);
+            alert("حذف فراخوان‌ها انجام نشد. اتصال API و تنظیمات سرور را بررسی کنید.");
+        } finally {
+            resetButton.disabled = false;
+        }
     
     });
     
-    
-    console.log(
-    "✅ تمام فراخوان‌ها در ناظم ریست شدند؛ غایبین دست‌نخورده ماندند"
-    );
-    
-    });
     
 
     function showParentCallPopup(call) {
