@@ -825,3 +825,10 @@ setInterval(async () => {
 
 
 
+/* ریل‌تایم فراخوان از هاست MySQL */
+
+setInterval(() => {
+    if (document.visibilityState === "visible") {
+        loadCalls();
+    }
+}, 3000);
