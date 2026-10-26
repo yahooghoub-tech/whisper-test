@@ -3308,78 +3308,47 @@ if (callButton) {
 
                 callButton.textContent =
                     "📢 در حال بررسی فراخوان قبلی...";
+/* =================================================
+   CHECK PREVIOUS CALL - PHP / MYSQL
+================================================= */
 
-                const today =
-                    getIranDate();
+callButton.textContent = "📢 در حال بررسی فراخوان قبلی...";
 
-                const {
-                    data: activeCall,
-                    error: activeError
-                } =
-                    await supabaseClient
-                        .from("calls")
-                        .select("*")
-                        .eq(
-                            "student_name",
-                            currentStudentName
-                        )
-                        .eq(
-                            "class_name",
-                            currentClassName
-                        )
-                        .eq(
-                            "called_date",
-                            today
-                        )
-                        .in(
-                            "status",
-                            [
-                                "فراخوان شد",
-                                "دریافت فراخوان"
-                            ]
-                        )
-                        .order(
-                            "id",
-                            {
-                                ascending: false
-                            }
-                        )
-                        .limit(1)
-                        .maybeSingle();
+const today = getIranGregorianDate();
 
-                if (activeError) {
+const checkResponse = await fetch(
+    API_URL +
+    "teacher-calls.php?class_name=" +
+    encodeURIComponent(currentClassName) +
+    "&date=" +
+    encodeURIComponent(today),
+    {
+        method: "GET",
+        cache: "no-store"
+    }
+);
 
-                    console.error(
-                        "ACTIVE CALL ERROR:",
-                        activeError
-                    );
+const checkResult = await checkResponse.json();
 
-                    alert(
-                        "خطا در بررسی فراخوان قبلی."
-                    );
+if (!checkResponse.ok || !checkResult.success) {
+    console.error("CHECK ACTIVE CALL ERROR:", checkResult);
+    alert("خطا در بررسی فراخوان قبلی. لطفاً دوباره تلاش کنید.");
+    return;
+}
 
-                    return;
+const activeCall = (checkResult.data || []).find(call =>
+    normalizePersianName(call.student_name) ===
+        normalizePersianName(currentStudentName) &&
+    ["فراخوان شد", "دریافت فراخوان"].includes(call.status)
+);
 
-                }
+if (activeCall) {
+    updateParentCallStatus(activeCall);
+    updateParentCallButton(activeCall);
 
-                if (activeCall) {
-
-                    updateParentCallStatus(
-                        activeCall
-                    );
-
-                    updateParentCallButton(
-                        activeCall
-                    );
-
-                    alert(
-                        "برای این دانش‌آموز یک فراخوان فعال وجود دارد."
-                    );
-
-                    return;
-
-                }
-
+    alert("برای این دانش‌آموز یک فراخوان فعال وجود دارد.");
+    return;
+}
 
                 /* =================================================
                    INSERT CALL
