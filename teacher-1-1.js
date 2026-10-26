@@ -838,7 +838,14 @@ function startHostRealtime() {
         if (document.visibilityState === "visible") {
             loadCalls();
         }
-    }, 3000);
+    }, 500);
 }
 
 startHostRealtime();
+/* به‌روزرسانی خودکار پنل فراخوان هر ۳ ثانیه */
+
+setInterval(() => {
+    if (document.visibilityState === "visible") {
+        loadCalls();
+    }
+}, 1000);
