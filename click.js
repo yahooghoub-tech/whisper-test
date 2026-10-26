@@ -566,278 +566,225 @@ container.appendChild(section);
 }
 
 
-async function callStudent(student,button){
-
-    // اگر غایب یا توسط معلم ارسال شده، کاری نکن
-    if(
+async function callStudent(student, button) {
+    if (
+        button.disabled ||
         button.classList.contains("absent") ||
         button.classList.contains("sent")
-    ){
+    ) {
         return;
     }
 
+    const API_URL = "https://berandil.ir/farakhan-api/";
 
-    // =========================================
-    // اگر قبلاً فراخوان شده، کلیک دوم = لغو فراخوان
-    // =========================================
+    // جلوگیری از کلیک هم‌زمان روی یک دکمه
+    if (button.dataset.processing === "true") return;
 
-    if(button.classList.contains("called")){
+    button.dataset.processing = "true";
+    button.disabled = true;
 
-        const {data,error} =
-        await supabaseClient
-        .from("calls")
-        .delete()
-        .eq("student_name",student.name)
-        .eq("class_name",student.className)
-        .eq("called_date",todayPersianDate())
-        .eq("status","فراخوان شد")
-        .select();
+    try {
+        // کلیک دوم: لغو فراخوان ثبت‌شده
+        if (button.classList.contains("called")) {
+            const callId = Number(button.dataset.callId || 0);
 
+            if (!callId) {
+                await loadCalls();
 
-        if(error){
+                if (!button.dataset.callId) {
+                    throw new Error(
+                        "شناسه فراخوان پیدا نشد؛ وضعیت فراخوان‌ها دوباره دریافت شد."
+                    );
+                }
 
-            console.error(
-                "❌ خطا در لغو فراخوان:",
-                error
+                // در صورت بازیابی شناسه، برای جلوگیری از لغو اشتباه
+                // کاربر یک بار دیگر کلیک می‌کند.
+                return;
+            }
+
+            const response = await fetch(
+                API_URL + "update-call-status.php",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: callId,
+                        status: "لغو شد"
+                    })
+                }
             );
 
-            alert(
-                "لغو فراخوان انجام نشد. دوباره تلاش کنید."
-            );
+            const result = await response.json();
 
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "لغو فراخوان انجام نشد."
+                );
+            }
+
+            // وضعیت نهایی از MySQL دوباره دریافت می‌شود.
+            await loadCalls();
+
+            console.log("فراخوان لغو شد:", student.name);
             return;
         }
 
+        // کلیک اول: ثبت فراخوان در MySQL
+        const now = new Date();
 
-        // اگر رکورد با موفقیت حذف شد
-        if(data && data.length){
+        const calledTime = now.toLocaleTimeString("en-GB", {
+            timeZone: "Asia/Tehran",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
 
-            button.classList.remove(
-                "called",
-                "sent",
-                "absent"
-            );
+        const calledDate = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Tehran",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).format(now);
 
-            button.classList.add(
-                "pending"
-            );
+        const response = await fetch(API_URL + "calls.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                student_name: student.name,
+                class_name: student.className,
+                called_date: calledDate,
+                called_time: calledTime
+            })
+        });
 
-            button.disabled=false;
+        const result = await response.json();
 
-
-            const statusElement =
-            button.querySelector(
-                ".student-status"
-            );
-
-            const timeElement =
-            button.querySelector(
-                ".status-time"
-            );
-
-
-            if(statusElement){
-                statusElement.textContent="";
-            }
-
-
-            if(timeElement){
-                timeElement.textContent="";
-            }
-
-
-            updateCount(
-                student.className
-            );
-
-
-            console.log(
-                "↩️ فراخوان لغو شد:",
+        // ممکن است برای دانش‌آموز از قبل فراخوان فعال وجود داشته باشد.
+        if (response.status === 409) {
+            await loadCalls();
+            console.warn(
+                "برای این دانش‌آموز فراخوان فعال وجود دارد:",
                 student.name
             );
-
+            return;
         }
 
-        return;
-    }
-
-
-    // =========================================
-    // فراخوان معمولی دانش‌آموز
-    // =========================================
-
-    const {data,error} =
-    await supabaseClient
-    .from("calls")
-    .select("*")
-    .eq("student_name",student.name)
-    .eq("class_name",student.className)
-    .eq("called_date",todayPersianDate())
-    .neq("status","ارسال شد");
-
-
-    if(error){
-
-        console.error(
-            "❌ خطا در بررسی فراخوان:",
-            error
-        );
-
-        return;
-    }
-
-
-    if(data && data.length){
-
-        updateButton(
-            button,
-            data[0]
-        );
-
-        updateCount(
-            student.className
-        );
-
-        return;
-    }
-
-
-    const time=timeNow();
-    const date=todayPersianDate();
-
-
-    const {
-        data:inserted,
-        error:insertError
-    } =
-    await supabaseClient
-    .from("calls")
-    .insert([
-        {
-            student_name:student.name,
-            class_name:student.className,
-            status:"فراخوان شد",
-            called_date:date,
-            called_time:time
+        if (!response.ok || !result.success || !result.data) {
+            throw new Error(
+                result.message || "ثبت فراخوان انجام نشد."
+            );
         }
-    ])
-    .select()
-    .single();
 
+        updateButton(button, result.data, true);
+        updateCount(student.className);
 
-    if(insertError){
+        console.log("فراخوان در MySQL ثبت شد:", student.name);
 
-        console.error(
-            "❌ خطا در ثبت فراخوان:",
-            insertError
+    } catch (error) {
+        console.error("خطا در ثبت یا لغو فراخوان:", error);
+
+        alert(
+            error.message ||
+            "عملیات انجام نشد. اتصال به سرور را بررسی کنید."
         );
 
-        return;
+        await loadCalls();
+
+    } finally {
+        delete button.dataset.processing;
+
+        if (!button.classList.contains("absent")) {
+            button.disabled = false;
+        }
     }
-
-
-    updateButton(
-        button,
-        inserted
-    );
-
-    updateCount(
-        student.className
-    );
-
 }
 
 
-function updateButton(button,call,force=false){
 
-    if(!button || !call) return;
+function updateButton(button, call, force = false) {
+    if (!button || !call) return;
 
     const incomingId = Number(call.id || 0);
     const currentId = Number(button.dataset.callId || 0);
     const currentStatus = button.dataset.callStatus || "";
 
-    if(
+    if (
         incomingId &&
         currentId &&
         incomingId < currentId
-    ){
+    ) {
         return;
     }
 
-    if(
+    if (
         incomingId &&
         currentId &&
         incomingId === currentId &&
         currentStatus === "ارسال شد" &&
         call.status === "فراخوان شد"
-    ){
+    ) {
         return;
     }
 
-    if(
+    button.dataset.callId = String(incomingId);
+    button.dataset.callStatus = call.status || "";
+
+    // فراخوان لغوشده نباید دکمه را در حالت فراخوان‌شده نگه دارد.
+    if (call.status === "لغو شد") {
+        button.classList.remove("called", "sent", "absent");
+        button.classList.add("pending");
+
+        button.disabled = false;
+
+        const statusElement = button.querySelector(".student-status");
+        const timeElement = button.querySelector(".status-time");
+
+        if (statusElement) statusElement.textContent = "";
+        if (timeElement) timeElement.textContent = "";
+
+        updateCount(button.dataset.class);
+        return;
+    }
+
+    if (
         !force &&
         hasAbsentAttendance(
             button.dataset.name,
             button.dataset.class
         )
-    ){
-
-        button.classList.remove(
-            "pending",
-            "called",
-            "sent"
-        );
-
+    ) {
+        button.classList.remove("pending", "called", "sent");
         button.classList.add("absent");
-
         button.disabled = true;
 
-        button.querySelector(
-            ".student-status"
-        ).textContent = "(غایب)";
-
-        button.querySelector(
-            ".status-time"
-        ).textContent = "";
+        button.querySelector(".student-status").textContent = "(غایب)";
+        button.querySelector(".status-time").textContent = "";
 
         return;
     }
 
-    button.dataset.callId =
-        String(incomingId);
+    button.classList.remove("pending", "called", "sent", "absent");
 
-    button.dataset.callStatus =
-        call.status || "";
-
-    button.classList.remove(
-        "pending",
-        "called",
-        "sent",
-        "absent"
-    );
-
-    if(call.status === "ارسال شد"){
-
+    if (call.status === "ارسال شد") {
         button.classList.add("sent");
-
-    }else{
-
+    } else {
         button.classList.add("called");
-
     }
 
     button.disabled = false;
 
-    button.querySelector(
-        ".student-status"
-    ).textContent =
+    button.querySelector(".student-status").textContent =
         `(${call.status})`;
 
-    button.querySelector(
-        ".status-time"
-    ).textContent =
+    button.querySelector(".status-time").textContent =
         call.called_time || "";
 
+    updateCount(button.dataset.class);
 }
 
 
