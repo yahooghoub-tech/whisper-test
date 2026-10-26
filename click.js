@@ -574,7 +574,14 @@ async function callStudent(student, button) {
     ) {
         return;
     }
-
+// جلوگیری از لغو فراخوان ثبت‌شده توسط والدین
+if (
+    button &&
+    button.dataset.callSource === "parent"
+) {
+    alert("فراخوان ثبت‌شده توسط والدین از پنل ناظم قابل لغو نیست.");
+    return;
+}
     const API_URL = "https://berandil.ir/farakhan-api/";
 
     // جلوگیری از کلیک هم‌زمان روی یک دکمه
@@ -734,7 +741,7 @@ function updateButton(button, call, force = false) {
 
     button.dataset.callId = String(incomingId);
     button.dataset.callStatus = call.status || "";
-
+    button.dataset.callSource = call.source || "nazem";
     if (call.status === "لغو شد") {
         button.classList.remove("called", "sent", "absent");
         button.classList.add("pending");
@@ -1496,7 +1503,7 @@ function updateParentCallButton(button, call) {
         "sent",
         "absent"
     );
-
+    button.dataset.callSource = "parent";
     button.classList.add("called");
     button.disabled = true;
 
