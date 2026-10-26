@@ -2920,10 +2920,10 @@ function updateParentCallButton(call) {
                 ? call.called_time.slice(0, 5)
                 : "---";
 
-        const sentTime =
-            call.sent_time
-                ? call.sent_time.slice(0, 5)
-                : "---";
+                const sentTime =
+                call.sent_time
+                    ? call.sent_time.slice(0, 8)
+                    : "---";
 
         callButton.innerHTML =
             "🕐 فراخوان: " +
