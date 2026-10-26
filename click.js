@@ -1003,7 +1003,7 @@ setInterval(() => {
     if (document.visibilityState === "visible") {
         refreshNazemPanel();
     }
-}, 5000);
+}, 2000);
 
 window.addEventListener("online", () => {
     refreshNazemPanel();
