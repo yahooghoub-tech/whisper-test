@@ -1045,4 +1045,4 @@ setInterval(() => {
     });
 
     refreshNazemPanel();
-}, 30000);
+}, 1000);
