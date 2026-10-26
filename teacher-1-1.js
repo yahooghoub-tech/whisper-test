@@ -821,31 +821,7 @@ setInterval(async () => {
 
     }
 
-}, 30000);
-
-
-
-/* REAL-TIME فراخوان معلم از هاست */
-
-let hostRealtimeTimer = null;
-
-function startHostRealtime() {
-    if (hostRealtimeTimer !== null) {
-        clearInterval(hostRealtimeTimer);
-    }
-
-    hostRealtimeTimer = setInterval(() => {
-        if (document.visibilityState === "visible") {
-            loadCalls();
-        }
-    }, 500);
-}
-
-startHostRealtime();
-/* به‌روزرسانی خودکار پنل فراخوان هر ۳ ثانیه */
-
-setInterval(() => {
-    if (document.visibilityState === "visible") {
-        loadCalls();
-    }
 }, 1000);
+
+
+
