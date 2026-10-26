@@ -1,588 +1,431 @@
-const SUPABASE_URL="https://ghnpiijihybuhfetnxjp.supabase.co";
 
-const SUPABASE_KEY="sb_publishable_SEGca8-w1pAO3_TQgMd-qA_vOvkj6jq";
+const API_URL = "https://berandil.ir/farakhan-api/attendance.php";
 
-const supabaseClient=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-const students=[
-"آرتین اکبری",
-"اهورا حاجی عیسی زاده",
-"بنیامین حسین زاده",
-"آرشاویر رحمتی",
-"کارن رستم آبادی",
-"امیرعلی شاکری",
-"آرمان غفاری شیرازی",
-"سام فراهانی",
-"زانا قهرمانی",
-
-"آیهان محمدی",
-
-"محمدرامان هلالی",
-"بنیامین رنجبر"
+const students = [
+    "آرتین اکبری",
+    "اهورا حاجی عیسی زاده",
+    "بنیامین حسین زاده",
+    "آرشاویر رحمتی",
+    "کارن رستم آبادی",
+    "امیرعلی شاکری",
+    "آرمان غفاری شیرازی",
+    "سام فراهانی",
+    "زانا قهرمانی",
+    "آیهان محمدی",
+    "محمدرامان هلالی",
+    "بنیامین رنجبر"
 ];
 
-const className="پیش-2";
+const className = "پیش-2";
 
-function normalizeStudentName(name){
-return String(name||"")
-.replace(/[\u200B-\u200D\uFEFF]/g,"")
-.replace(/\u200C/g,"")
-.replace(/\s+/g," ")
-.replace(/ي/g,"ی")
-.replace(/ك/g,"ک")
-.trim();
+const studentsContainer = document.getElementById("studentsContainer");
+const totalCount = document.getElementById("totalCount");
+const presentCount = document.getElementById("presentCount");
+const absentCount = document.getElementById("absentCount");
+const todayDate = document.getElementById("todayDate");
+const message = document.getElementById("message");
+
+let currentAttendanceDay = getToday();
+let isLoadingAttendance = false;
+
+const studentButtons = new Map();
+
+// تاریخ جاری ایران
+function getToday() {
+    const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Tehran",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+
+    const values = {};
+
+    parts.forEach(part => {
+        if (part.type !== "literal") {
+            values[part.type] = part.value;
+        }
+    });
+
+    return `${values.year}-${values.month}-${values.day}`;
 }
 
-function getToday(){
+// نمایش تاریخ فارسی
+function showDate() {
+    if (!todayDate) return;
 
-const now=new Date();
-
-const iranTime=new Date(
-now.toLocaleString("en-US",{
-timeZone:"Asia/Tehran"
-})
-);
-
-const year=iranTime.getFullYear();
-const month=String(iranTime.getMonth()+1).padStart(2,"0");
-const day=String(iranTime.getDate()).padStart(2,"0");
-
-return `${year}-${month}-${day}`;
-
+    todayDate.textContent = new Date().toLocaleDateString("fa-IR", {
+        timeZone: "Asia/Tehran",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }
 
-function showDate(){
+// نمایش پیام
+function showMessage(text) {
+    if (!message) return;
 
-const now=new Date();
+    message.textContent = text;
+    message.classList.add("show");
 
-const iranTime=new Date(
-now.toLocaleString("en-US",{
-timeZone:"Asia/Tehran"
-})
-);
+    clearTimeout(window.messageTimer);
 
-const options={
-year:"numeric",
-month:"long",
-day:"numeric",
-weekday:"long"
-};
-
-const dateText=iranTime.toLocaleDateString(
-"fa-IR",
-options
-);
-
-const dateElement=document.getElementById("todayDate");
-
-if(dateElement){
-dateElement.textContent=dateText;
+    window.messageTimer = setTimeout(() => {
+        message.classList.remove("show");
+    }, 2500);
 }
 
+// یکسان‌سازی نام فارسی
+function normalizeStudentName(name) {
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/\u200C/g, "")
+        .replace(/ي/g, "ی")
+        .replace(/ى/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim();
 }
 
-function showMessage(text,type="success"){
+// درخواست به هاست
+async function apiRequest(method = "GET", params = {}, body = null) {
+    let url = API_URL;
 
-let message=document.getElementById("attendanceMessage");
+    if (method === "GET") {
+        const query = new URLSearchParams(params).toString();
+        url += `?${query}`;
+    }
 
-if(!message){
+    const options = {
+        method,
+        headers: {
+            "Accept": "application/json"
+        }
+    };
 
-message=document.createElement("div");
+    if (method !== "GET") {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(body || {});
+    }
 
-message.id="attendanceMessage";
+    const response = await fetch(url, options);
 
-message.style.position="fixed";
-message.style.bottom="25px";
-message.style.left="50%";
-message.style.transform="translateX(-50%)";
-message.style.zIndex="99999";
-message.style.padding="12px 22px";
-message.style.borderRadius="12px";
-message.style.fontFamily="inherit";
-message.style.fontSize="15px";
-message.style.fontWeight="700";
-message.style.boxShadow="0 8px 30px rgba(0,0,0,.25)";
-message.style.transition="all .25s ease";
+    if (!response.ok) {
+        throw new Error(`خطای سرور: ${response.status}`);
+    }
 
-document.body.appendChild(message);
+    const result = await response.json();
 
+    if (result.success === false) {
+        throw new Error(result.message || "درخواست ناموفق بود.");
+    }
+
+    return result;
 }
 
-message.textContent=text;
+// ساخت دکمه‌ها
+function createStudents() {
+    if (!studentsContainer) return;
 
-if(type==="error"){
+    studentsContainer.innerHTML = "";
+    studentButtons.clear();
 
-message.style.background="#dc2626";
-message.style.color="#fff";
+    students.forEach(student => {
+        const button = document.createElement("button");
 
-}else{
+        button.type = "button";
+        button.className = "student-button present";
+        button.dataset.name = student;
 
-message.style.background="#16a34a";
-message.style.color="#fff";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "student-name";
+        nameSpan.textContent = student;
 
+        const statusSpan = document.createElement("span");
+        statusSpan.className = "student-status";
+        statusSpan.textContent = "حاضر";
+
+        button.append(nameSpan, statusSpan);
+
+        button.addEventListener("click", () => {
+            toggleAttendance(student, button);
+        });
+
+        studentsContainer.appendChild(button);
+
+        studentButtons.set(normalizeStudentName(student), button);
+    });
+
+    updateCounts();
 }
 
-message.style.opacity="1";
-
-clearTimeout(message._timer);
-
-message._timer=setTimeout(()=>{
-
-message.style.opacity="0";
-
-},2500);
-
+// یافتن دکمه دانش‌آموز
+function findButton(name) {
+    return studentButtons.get(normalizeStudentName(name)) || null;
 }
 
-function createStudents(){
+// وضعیت غایب
+function setButtonAbsent(button) {
+    if (!button) return;
 
-const container=document.getElementById("studentsContainer");
+    button.classList.remove("present");
+    button.classList.add("absent");
 
-if(!container)return;
+    const status = button.querySelector(".student-status");
 
-container.innerHTML="";
-
-students.forEach(student=>{
-
-const button=document.createElement("button");
-
-button.type="button";
-
-button.className="student-button present";
-
-button.dataset.name=student;
-
-button.textContent=student;
-
-button.addEventListener("click",()=>{
-
-toggleAttendance(student,button);
-
-});
-
-container.appendChild(button);
-
-});
-
+    if (status) {
+        status.textContent = "غایب";
+    }
 }
 
-function findButton(student){
+// وضعیت حاضر
+function setButtonPresent(button) {
+    if (!button) return;
 
-const normalizedTarget=normalizeStudentName(student);
+    button.classList.remove("absent");
+    button.classList.add("present");
 
-const buttons=document.querySelectorAll(".student-button");
+    const status = button.querySelector(".student-status");
 
-for(const button of buttons){
-
-const buttonName=normalizeStudentName(
-button.dataset.name
-);
-
-if(buttonName===normalizedTarget){
-
-return button;
-
+    if (status) {
+        status.textContent = "حاضر";
+    }
 }
 
+// انتخاب آخرین رکورد هر دانش‌آموز
+function getLatestRecords(records) {
+    const latestRecords = new Map();
+
+    records.forEach(record => {
+        const key = normalizeStudentName(record.student_name);
+        const existing = latestRecords.get(key);
+
+        if (!existing) {
+            latestRecords.set(key, record);
+            return;
+        }
+
+        const currentTime = Date.parse(record.updated_at || "") || 0;
+        const existingTime = Date.parse(existing.updated_at || "") || 0;
+
+        if (
+            currentTime > existingTime ||
+            (
+                currentTime === existingTime &&
+                Number(record.id || 0) > Number(existing.id || 0)
+            )
+        ) {
+            latestRecords.set(key, record);
+        }
+    });
+
+    return latestRecords;
 }
 
-return null;
+// دریافت و همگام‌سازی وضعیت روز جاری
+async function loadTodayAttendance(options = {}) {
+    if (isLoadingAttendance) return;
 
+    isLoadingAttendance = true;
+
+    try {
+        const today = getToday();
+
+        const result = await apiRequest("GET", {
+            class_name: className,
+            date: today
+        });
+
+        // جلوگیری از اعمال پاسخ روز قبل
+        if (today !== getToday()) return;
+
+        const records = Array.isArray(result.data) ? result.data : [];
+        const latestRecords = getLatestRecords(records);
+
+        students.forEach(student => {
+            const button = findButton(student);
+
+            if (!button || button.dataset.processing === "true") {
+                return;
+            }
+
+            // وضعیت پیش‌فرض در صورت نبود رکورد
+            setButtonPresent(button);
+
+            const record = latestRecords.get(
+                normalizeStudentName(student)
+            );
+
+            if (!record) return;
+
+            if (record.status === "غایب") {
+                setButtonAbsent(button);
+            } else if (record.status === "حاضر") {
+                setButtonPresent(button);
+            }
+        });
+
+        updateCounts();
+
+        if (options.showSuccess) {
+            showMessage("اطلاعات حضور و غیاب به‌روز شد.");
+        }
+    } catch (error) {
+        console.error("خطا در دریافت حضور و غیاب پیش‌۲:", error);
+
+        if (options.showError) {
+            showMessage("❌ دریافت اطلاعات از سرور ناموفق بود.");
+        }
+    } finally {
+        isLoadingAttendance = false;
+    }
 }
 
-function setButtonAbsent(button){
+// ثبت وضعیت دانش‌آموز روی هاست
+async function toggleAttendance(student, button) {
+    if (
+        !button ||
+        button.disabled ||
+        button.dataset.processing === "true"
+    ) {
+        return;
+    }
 
-if(!button)return;
+    const previousStatus = button.classList.contains("absent")
+        ? "غایب"
+        : "حاضر";
 
-button.classList.remove("present");
+    const newStatus = previousStatus === "غایب"
+        ? "حاضر"
+        : "غایب";
 
-button.classList.add("absent");
+    const today = getToday();
 
-button.textContent=button.dataset.name+" (غایب)";
+    button.dataset.processing = "true";
+    button.disabled = true;
 
+    try {
+        await apiRequest("POST", {}, {
+            student_name: student,
+            class_name: className,
+            status: newStatus,
+            attendance_date: today
+        });
+
+        if (today !== getToday()) {
+            showMessage("تاریخ تغییر کرده است؛ وضعیت روز جدید بررسی می‌شود.");
+            return;
+        }
+
+        if (newStatus === "غایب") {
+            setButtonAbsent(button);
+            showMessage(`⚫ ${student} غایب شد`);
+        } else {
+            setButtonPresent(button);
+            showMessage(`🟢 ${student} حاضر شد`);
+        }
+    } catch (error) {
+        console.error("خطا در ثبت حضور و غیاب:", error);
+
+        // حفظ وضعیت قبلی در صورت شکست ثبت
+        if (previousStatus === "غایب") {
+            setButtonAbsent(button);
+        } else {
+            setButtonPresent(button);
+        }
+
+        showMessage("❌ ثبت وضعیت انجام نشد؛ اتصال سرور را بررسی کنید.");
+    } finally {
+        delete button.dataset.processing;
+        button.disabled = false;
+
+        updateCounts();
+
+        if (today !== getToday()) {
+            checkAttendanceDayChange();
+        } else {
+            // دریافت وضعیت نهایی ثبت‌شده از سرور
+            loadTodayAttendance();
+        }
+    }
 }
 
-function setButtonPresent(button){
+// محاسبه آمار
+function updateCounts() {
+    let absent = 0;
 
-if(!button)return;
+    students.forEach(student => {
+        const button = findButton(student);
 
-button.classList.remove("absent");
+        if (button && button.classList.contains("absent")) {
+            absent++;
+        }
+    });
 
-button.classList.add("present");
+    const present = students.length - absent;
 
-button.textContent=button.dataset.name;
-
+    if (totalCount) totalCount.textContent = students.length;
+    if (presentCount) presentCount.textContent = present;
+    if (absentCount) absentCount.textContent = absent;
 }
 
-async function loadTodayAttendance(){
+// بررسی تغییر روز بر اساس ساعت ایران
+function checkAttendanceDayChange() {
+    const newDay = getToday();
 
-const today=getToday();
+    if (newDay === currentAttendanceDay) return;
 
-const {data,error}=await supabaseClient
-.from("attendance")
-.select("student_name,status,attendance_date,class_name,updated_at")
-.eq("class_name",className)
-.eq("attendance_date",today);
+    console.log(
+        "روز جدید حضور و غیاب پیش‌۲:",
+        currentAttendanceDay,
+        "→",
+        newDay
+    );
 
-if(error){
+    currentAttendanceDay = newDay;
 
-console.error(
-"خطا در دریافت حضور و غیاب پیش‌۲:",
-error
-);
+    showDate();
+    createStudents();
 
-showMessage(
-"خطا در دریافت وضعیت حضور و غیاب",
-"error"
-);
-
-return;
-
+    loadTodayAttendance({
+        showError: true
+    });
 }
 
-students.forEach(student=>{
-
-const button=findButton(student);
-
-if(!button)return;
-
-const normalizedStudent=normalizeStudentName(student);
-
-const records=(data||[]).filter(record=>{
-
-return normalizeStudentName(
-record.student_name
-)===normalizedStudent;
-
-});
-
-let record=null;
-
-if(records.length){
-
-records.sort((a,b)=>{
-
-const dateA=new Date(a.updated_at||0).getTime();
-const dateB=new Date(b.updated_at||0).getTime();
-
-return dateB-dateA;
-
-});
-
-record=records[0];
-
-}
-
-if(record && record.status==="غایب"){
-
-setButtonAbsent(button);
-
-}else{
-
-setButtonPresent(button);
-
-}
-
-});
-
-updateCounts();
-
-}
-
-async function toggleAttendance(student,button){
-
-if(!button)return;
-
-const today=getToday();
-
-const isAbsent=button.classList.contains("absent");
-
-const newStatus=isAbsent
-?"حاضر"
-:"غایب";
-
-button.disabled=true;
-
-try{
-
-const {data,error}=await supabaseClient
-.from("attendance")
-.upsert(
-{
-student_name:student,
-class_name:className,
-status:newStatus,
-attendance_date:today,
-updated_at:new Date().toISOString()
-},
-{
-onConflict:"student_name,class_name,attendance_date"
-}
-)
-.select();
-
-if(error){
-
-console.error(
-"خطا در ثبت حضور و غیاب:",
-error
-);
-
-showMessage(
-"ثبت وضعیت انجام نشد",
-"error"
-);
-
-button.disabled=false;
-
-return;
-
-}
-
-if(newStatus==="غایب"){
-
-setButtonAbsent(button);
-
-showMessage(
-"غیبت دانش‌آموز ثبت شد"
-);
-
-}else{
-
-setButtonPresent(button);
-
-showMessage(
-"دانش‌آموز حاضر شد"
-);
-
-}
-
-updateCounts();
-
-console.log(
-"✅ وضعیت پیش‌۲ ثبت شد:",
-student,
-newStatus,
-data
-);
-
-}catch(error){
-
-console.error(
-"خطای غیرمنتظره:",
-error
-);
-
-showMessage(
-"خطا در ارتباط با سرور",
-"error"
-);
-
-}
-
-button.disabled=false;
-
-}
-
-function updateCounts(){
-
-const buttons=document.querySelectorAll(
-".student-button"
-);
-
-let absentCount=0;
-let presentCount=0;
-
-buttons.forEach(button=>{
-
-if(button.classList.contains("absent")){
-
-absentCount++;
-
-}else{
-
-presentCount++;
-
-}
-
-});
-
-const absentElement=
-document.getElementById("absentCount");
-
-const presentElement=
-document.getElementById("presentCount");
-
-const totalElement=
-document.getElementById("totalCount");
-
-if(absentElement){
-
-absentElement.textContent=absentCount;
-
-}
-
-if(presentElement){
-
-presentElement.textContent=presentCount;
-
-}
-
-if(totalElement){
-
-totalElement.textContent=buttons.length;
-
-}
-
-}
-
-let lastDate=getToday();
-
-setInterval(()=>{
-
-const today=getToday();
-
-if(today!==lastDate){
-
-lastDate=today;
-
+// راه‌اندازی اولیه
 showDate();
-
-loadTodayAttendance();
-
-}
-
-},30000);
-
-document.addEventListener(
-"visibilitychange",
-()=>{
-
-if(!document.hidden){
-
-showDate();
-
-loadTodayAttendance();
-
-}
-
-}
-);
-
-window.addEventListener(
-"focus",
-()=>{
-
-showDate();
-
-loadTodayAttendance();
-
-}
-);
-
 createStudents();
 
-showDate();
+loadTodayAttendance({
+    showError: true
+});
 
-loadTodayAttendance();
+// همگام‌سازی هر ۵ ثانیه
+setInterval(() => {
+    checkAttendanceDayChange();
+    loadTodayAttendance();
+}, 5000);
 
+// همگام‌سازی پس از بازگشت به صفحه
+window.addEventListener("focus", () => {
+    checkAttendanceDayChange();
+    showDate();
 
-const attendanceChannel=
-supabaseClient
-.channel("attendance-pre-2")
+    loadTodayAttendance({
+        showError: true
+    });
+});
 
-.on(
-"postgres_changes",
-{
-event:"*",
-schema:"public",
-table:"attendance",
-filter:"class_name=eq.پیش-2"
-},
-payload=>{
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        checkAttendanceDayChange();
+        showDate();
 
-console.log(
-"📡 Realtime پیش‌۲:",
-payload
-);
-
-const record=payload.new;
-
-if(!record){
-
-console.log(
-"⚠️ اطلاعات جدیدی در payload وجود ندارد:",
-payload
-);
-
-return;
-
-}
-
-if(
-record.class_name!==className
-){
-
-return;
-
-}
-
-if(
-record.attendance_date!==getToday()
-){
-
-return;
-
-}
-
-const button=findButton(
-record.student_name
-);
-
-if(!button){
-
-console.log(
-"⚠️ دکمه دانش‌آموز پیدا نشد:",
-record.student_name
-);
-
-return;
-
-}
-
-if(record.status==="غایب"){
-
-setButtonAbsent(button);
-
-console.log(
-"🔴 Realtime: دانش‌آموز غایب شد:",
-record.student_name
-);
-
-}else{
-
-setButtonPresent(button);
-
-console.log(
-"🟢 Realtime: دانش‌آموز حاضر شد:",
-record.student_name
-);
-
-}
-
-updateCounts();
-
-}
-)
-
-.subscribe(status=>{
-
-console.log(
-"🚀 وضعیت Realtime پیش‌۲:",
-status
-);
-
+        loadTodayAttendance({
+            showError: true
+        });
+    }
 });
