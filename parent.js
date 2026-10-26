@@ -1,3 +1,4 @@
+const API_URL = "https://berandil.ir/farakhan-api/";
 const SUPABASE_URL =
     "https://ghnpiijihybuhfetnxjp.supabase.co";
 
@@ -3591,277 +3592,118 @@ function loadSavedLoginCredentials() {
 
 
 loadSavedLoginCredentials();
+
 /* =====================================================
-   LOGIN
+   LOGIN - PHP / MYSQL
 ===================================================== */
 
 if (loginButton) {
+    loginButton.addEventListener("click", async () => {
+        requestClassArrivalNotificationPermission();
 
-    loginButton.addEventListener(
-        "click",
-        async () => {
+        const name = studentNameInput.value.trim();
+        const code = parentCodeInput.value.trim();
 
+        message.textContent = "";
 
-            requestClassArrivalNotificationPermission();
-            const name =
-                studentNameInput.value.trim();
-
-            const code =
-                parentCodeInput.value.trim();
-
+        if (!name || !/^\d{4}$/.test(code)) {
             message.textContent =
-                "";
-
-            if (!name || !code) {
-
-                message.textContent =
-                    "لطفاً نام دانش‌آموز و کد ورود را وارد کنید.";
-
-                message.style.color =
-                    "#dc2626";
-
-                return;
-
-            }
-
-            if (!/^\d{4}$/.test(code)) {
-
-                message.textContent =
-                    "کد ورود باید دقیقاً ۴ رقم باشد.";
-
-                message.style.color =
-                    "#dc2626";
-
-                return;
-
-            }
-
-            loginButton.disabled =
-                true;
-
-            loginButton.textContent =
-                "در حال بررسی...";
-
-            try {
-
-                const {
-                    data: accounts,
-                    error
-                } =
-                    await supabaseClient
-                        .from("parent_accounts")
-                        .select(
-                            "id, student_name, class_name, parent_code"
-                        )
-                        .eq(
-                            "parent_code",
-                            code
-                        );
-
-                if (error) {
-
-                    console.error(
-                        "LOGIN ERROR:",
-                        error
-                    );
-
-                    message.textContent =
-                        "خطا در ارتباط با سامانه.";
-
-                    message.style.color =
-                        "#dc2626";
-
-                    return;
-
-                }
-
-                let matchedAccount =
-                    null;
-
-                let bestSimilarity =
-                    0;
-
-                for (
-                    const account of
-                    accounts || []
-                ) {
-
-                    const similarity =
-                        nameSimilarity(
-                            name,
-                            account.student_name
-                        );
-
-                    if (
-                        similarity >
-                        bestSimilarity
-                    ) {
-
-                        bestSimilarity =
-                            similarity;
-
-                        matchedAccount =
-                            account;
-
-                    }
-
-                }
-
-                if (
-                    !matchedAccount ||
-                    bestSimilarity < 0.85
-                ) {
-
-                    message.textContent =
-                        "نام دانش‌آموز یا کد ورود صحیح نیست.";
-
-                    message.style.color =
-                        "#dc2626";
-
-                    return;
-
-                }
-
-
-                /* =================================================
-                   LOGIN SUCCESS
-                ================================================= */
-
-                currentStudentName =
-                    matchedAccount.student_name;
-
-                currentParentAccountId =
-                    matchedAccount.id;
-
-                currentClassName =
-                    matchedAccount.class_name;
-
-
-                saveLoginCredentials(
-                    matchedAccount.student_name,
-                    code
-                );
-
-
-                if (panelStudentName) {
-
-                    panelStudentName.textContent =
-                        matchedAccount.student_name;
-
-                }
-
-                if (panelClassName) {
-
-                    panelClassName.textContent =
-                        "کلاس " +
-                        matchedAccount.class_name;
-
-                }
-
-                message.textContent =
-                    "ورود موفق بود ✅";
-
-                message.style.color =
-                    "#16a34a";
-
-                updateAllowedRadiusUI();
-
-                updateCallScheduleUI();
-
-
-                setTimeout(
-                    async () => {
-
-                        if (loginScreen) {
-
-                            loginScreen.style.display =
-                                "none";
-
-                        }
-
-                        if (parentPanel) {
-
-                            parentPanel.style.display =
-                                "block";
-
-                        }
-
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
-
-
-                        await loadExistingCall();
-
-startParentRealtime();
-
-startParentAutoRefresh();
-
-await loadTodayClassArrival();
-startClassArrivalRealtime();
-
-
-/* =====================================================
-   START GPS IMMEDIATELY AFTER LOGIN
-===================================================== */
-
-setLiveParentLoading();
-
-try {
-
-    await refreshParentLocation(false);
-
-    console.log(
-        "GPS بعد از ورود با موفقیت فعال شد."
-    );
-
-}
-catch (gpsError) {
-
-    console.warn(
-        "GPS بعد از ورود فعال نشد:",
-        gpsError
-    );
-
-}
-
-                       
-
-                    },
-                    400
-                );
-
-            }
-
-            catch (error) {
-
-                console.error(
-                    "LOGIN EXCEPTION:",
-                    error
-                );
-
-                message.textContent =
-                    "خطایی هنگام ورود رخ داد.";
-
-                message.style.color =
-                    "#dc2626";
-
-            }
-
-            finally {
-
-                loginButton.disabled =
-                    false;
-
-                loginButton.textContent =
-                    "ورود به پنل";
-
-            }
-
+                "نام دانش‌آموز و کد ورود ۴ رقمی را صحیح وارد کنید.";
+            message.style.color = "#dc2626";
+            return;
         }
-    );
 
+        loginButton.disabled = true;
+        loginButton.textContent = "در حال بررسی...";
+
+        try {
+            const response = await fetch(
+                API_URL + "parent-auth.php",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: "login",
+                        student_name: name,
+                        code: code
+                    })
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                message.textContent =
+                    result.message || "نام دانش‌آموز یا کد ورود صحیح نیست.";
+                message.style.color = "#dc2626";
+                return;
+            }
+
+            const account = result.student;
+
+            currentStudentName = account.student_name;
+            currentParentAccountId = account.id;
+            currentClassName = account.class_name;
+
+            saveLoginCredentials(account.student_name, code);
+
+            if (panelStudentName) {
+                panelStudentName.textContent = account.student_name;
+            }
+
+            if (panelClassName) {
+                panelClassName.textContent =
+                    "کلاس " + account.class_name;
+            }
+
+            message.textContent = "ورود موفق بود ✅";
+            message.style.color = "#16a34a";
+
+            updateAllowedRadiusUI();
+            updateCallScheduleUI();
+
+            setTimeout(async () => {
+                if (loginScreen) {
+                    loginScreen.style.display = "none";
+                }
+
+                if (parentPanel) {
+                    parentPanel.style.display = "block";
+                }
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+                await loadExistingCall();
+                startParentRealtime();
+                startParentAutoRefresh();
+
+                await loadTodayClassArrival();
+                startClassArrivalRealtime();
+
+                setLiveParentLoading();
+
+                try {
+                    await refreshParentLocation(false);
+                } catch (gpsError) {
+                    console.warn("خطای GPS:", gpsError);
+                }
+            }, 400);
+
+        } catch (error) {
+            console.error("PHP LOGIN ERROR:", error);
+            message.textContent = "ارتباط با سرور برقرار نشد.";
+            message.style.color = "#dc2626";
+
+        } finally {
+            loginButton.disabled = false;
+            loginButton.textContent = "ورود به پنل";
+        }
+    });
 }
 
 
