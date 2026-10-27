@@ -701,8 +701,8 @@ function getCallSchedule(className) {
 
         return {
             start: 14 * 60,
-            end: 24 * 60,
-            text: "14:00 تا 24:00"
+            end: 8 * 60,
+            text: "8:00 تا 24:00"
         };
 
     }
@@ -713,8 +713,8 @@ function getCallSchedule(className) {
 
         return {
             start: 14 * 60 + 30,
-            end: 24 * 60,
-            text: "14:30 تا 24:00"
+            end: 8 * 60,
+            text: "8:30 تا 24:00"
         };
 
     }
@@ -729,8 +729,8 @@ function getCallSchedule(className) {
 
         return {
             start: 14 * 60 + 40,
-            end: 24 * 60,
-            text: "14:40 تا 24:00"
+            end: 8 * 60,
+            text: "8:40 تا 24:00"
         };
 
     }
