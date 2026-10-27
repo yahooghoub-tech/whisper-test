@@ -1,4 +1,3 @@
-
 /* =====================================================
    پنل فراخوان معلم - کلاس سوم-3
    الگوی مرجع: کلاس سوم-1
@@ -25,8 +24,8 @@ let teacherPanelRefreshRunning = false;
 let callsInitialized = false;
 let currentTeacherCallDay = getDatabaseToday();
 
-let popupTimer = null;
-let messageTimer = null;
+let lastTeacherCallsLoad = 0;
+let lastAbsentStudentsLoad = 0;
 
 const previousCallStates = new Map();
 const studentButtons = new Map();
@@ -56,11 +55,8 @@ const students = [
     { name: "بردیا میرشفیعی", className: "سوم-3" }
 ];
 
-const studentsContainer =
-    document.getElementById("studentsContainer");
-
-const callCount =
-    document.getElementById("callCount");
+const studentsContainer = document.getElementById("studentsContainer");
+const callCount = document.getElementById("callCount");
 
 /* =====================================================
    تاریخ امروز بر اساس منطقه زمانی تهران
@@ -81,12 +77,13 @@ function getDatabaseToday() {
     return `${part("year")}-${part("month")}-${part("day")}`;
 }
 
+/* سازگاری با الگوی تاریخ مرجع */
 function getToday() {
     return getDatabaseToday();
 }
 
 /* =====================================================
-   درخواست استاندارد به API
+   درخواست به API
 ===================================================== */
 
 async function apiRequest(url, options = {}) {
@@ -111,8 +108,7 @@ async function apiRequest(url, options = {}) {
 
     if (!response.ok || !result || result.success !== true) {
         throw new Error(
-            result?.message ||
-            `خطای API (HTTP ${response.status})`
+            result?.message || `خطای API (HTTP ${response.status})`
         );
     }
 
@@ -134,9 +130,9 @@ function showMessage(text) {
     message.textContent = text;
     message.classList.add("show");
 
-    clearTimeout(messageTimer);
+    clearTimeout(window.teacherMessageTimer);
 
-    messageTimer = setTimeout(() => {
+    window.teacherMessageTimer = setTimeout(() => {
         message.classList.remove("show");
     }, 3000);
 }
@@ -146,13 +142,10 @@ function showMessage(text) {
 ===================================================== */
 
 function setupSound() {
-    const button =
-        document.getElementById("enableSoundButton");
+    const button = document.getElementById("enableSoundButton");
 
     if (!button) {
-        console.error(
-            "دکمه enableSoundButton در HTML پیدا نشد."
-        );
+        console.error("دکمه enableSoundButton در HTML پیدا نشد.");
         return;
     }
 
@@ -160,9 +153,7 @@ function setupSound() {
         try {
             if (!soundEnabled) {
                 if (!notificationAudio) {
-                    notificationAudio =
-                        new Audio("notification.mp3");
-
+                    notificationAudio = new Audio("notification.mp3");
                     notificationAudio.preload = "auto";
                     notificationAudio.volume = 1;
                 }
@@ -173,10 +164,7 @@ function setupSound() {
                 notificationAudio.currentTime = 0;
 
                 soundEnabled = true;
-
-                button.innerText =
-                    "🔊 صدای فراخوان فعال است";
-
+                button.innerText = "🔊 صدای فراخوان فعال است";
                 button.style.background = "#22c55e";
 
                 showMessage("صدای فراخوان فعال شد.");
@@ -188,22 +176,14 @@ function setupSound() {
                     notificationAudio.currentTime = 0;
                 }
 
-                button.innerText =
-                    "🔇 صدای فراخوان غیرفعال است";
-
+                button.innerText = "🔇 صدای فراخوان غیرفعال است";
                 button.style.background = "#ef4444";
 
                 showMessage("صدای فراخوان غیرفعال شد.");
             }
         } catch (error) {
-            console.error(
-                "خطا در تغییر وضعیت صدا:",
-                error
-            );
-
-            showMessage(
-                "فعال‌سازی صدا ناموفق بود. فایل notification.mp3 را بررسی کنید."
-            );
+            console.error("خطا در تغییر وضعیت صدا:", error);
+            alert("خطا در تغییر وضعیت صدا: " + error.message);
         }
     });
 }
@@ -218,10 +198,7 @@ function playNotificationSound() {
     notificationAudio.currentTime = 0;
 
     notificationAudio.play().catch(error => {
-        console.error(
-            "خطا در پخش صدای فراخوان:",
-            error
-        );
+        console.error("خطا در پخش صدای فراخوان:", error);
     });
 }
 
@@ -231,60 +208,44 @@ function playNotificationSound() {
 
 function showSendNotification(studentName) {
     const popup = document.getElementById("callPopup");
-    const student =
-        document.getElementById("callPopupStudent");
+    const student = document.getElementById("callPopupStudent");
 
     if (!popup || !student) {
         playNotificationSound();
         return;
     }
 
-    student.innerText = `📤 ${studentName} ارسال شد`;
+    student.innerText = "📤 " + studentName + " ارسال شد";
     popup.classList.add("show");
 
     playNotificationSound();
 
-    clearTimeout(popupTimer);
+    clearTimeout(window.teacherCallPopupTimer);
 
-    popupTimer = setTimeout(() => {
+    window.teacherCallPopupTimer = setTimeout(() => {
         popup.classList.remove("show");
     }, 5000);
 }
 
 function showCallPopup(studentName) {
     const popup = document.getElementById("callPopup");
-    const student =
-        document.getElementById("callPopupStudent");
+    const student = document.getElementById("callPopupStudent");
 
     if (!popup || !student) {
         playNotificationSound();
         return;
     }
 
-    student.innerText = `${studentName} فراخوان شد`;
+    student.innerText = studentName + " فراخوان شد";
     popup.classList.add("show");
 
     playNotificationSound();
 
-    clearTimeout(popupTimer);
+    clearTimeout(window.teacherCallPopupTimer);
 
-    popupTimer = setTimeout(() => {
+    window.teacherCallPopupTimer = setTimeout(() => {
         popup.classList.remove("show");
     }, 7000);
-}
-
-/* =====================================================
-   یکسان‌سازی نام دانش‌آموزان
-===================================================== */
-
-function normalizeStudentName(name) {
-    return String(name ?? "")
-        .normalize("NFC")
-        .replace(/[\u200B-\u200D\uFEFF\u200C]/g, "")
-        .replace(/\s+/g, "")
-        .replace(/ي/g, "ی")
-        .replace(/ى/g, "ی")
-        .replace(/ك/g, "ک");
 }
 
 /* =====================================================
@@ -293,9 +254,7 @@ function normalizeStudentName(name) {
 
 function createStudents() {
     if (!studentsContainer) {
-        console.error(
-            "عنصر studentsContainer در HTML پیدا نشد."
-        );
+        console.error("عنصر studentsContainer در HTML پیدا نشد.");
         return;
     }
 
@@ -319,11 +278,7 @@ function createStudents() {
         const timeElement = document.createElement("div");
         timeElement.className = "student-time";
 
-        button.append(
-            nameElement,
-            statusElement,
-            timeElement
-        );
+        button.append(nameElement, statusElement, timeElement);
 
         button.addEventListener("click", () => {
             sendStudent(student);
@@ -337,6 +292,20 @@ function createStudents() {
 }
 
 /* =====================================================
+   یکسان‌سازی نام دانش‌آموزان
+===================================================== */
+
+function normalizeStudentName(name) {
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF\u200C]/g, "")
+        .replace(/\s+/g, "")
+        .replace(/ي/g, "ی")
+        .replace(/ى/g, "ی")
+        .replace(/ك/g, "ک");
+}
+
+/* =====================================================
    پیدا کردن دکمه دانش‌آموز
 ===================================================== */
 
@@ -347,27 +316,13 @@ function findButton(name) {
 
     const normalizedName = normalizeStudentName(name);
 
-    for (const [studentName, button] of studentButtons) {
-        if (
-            normalizeStudentName(studentName) ===
-            normalizedName
-        ) {
+    for (const [studentName, button] of studentButtons.entries()) {
+        if (normalizeStudentName(studentName) === normalizedName) {
             return button;
         }
     }
 
     return null;
-}
-
-/* =====================================================
-   کلید یکتای فراخوان
-===================================================== */
-
-function getCallKey(call) {
-    return String(
-        call.id ??
-        `${call.student_name}_${call.called_time ?? ""}`
-    );
 }
 
 /* =====================================================
@@ -379,27 +334,17 @@ function updateButton(call) {
 
     const button = findButton(call.student_name);
 
-    if (!button || button.classList.contains("absent")) {
-        return;
-    }
+    if (!button || button.classList.contains("absent")) return;
 
     if (call.status === "لغو شد") {
         resetStudentButton(call);
         return;
     }
 
-    button.classList.remove(
-        "called",
-        "sent",
-        "received",
-        "pending"
-    );
+    button.classList.remove("called", "sent", "received", "pending");
 
-    const statusElement =
-        button.querySelector(".student-status");
-
-    const timeElement =
-        button.querySelector(".student-time");
+    const statusElement = button.querySelector(".student-status");
+    const timeElement = button.querySelector(".student-time");
 
     if (!statusElement || !timeElement) return;
 
@@ -422,26 +367,19 @@ function updateButton(call) {
     const lines = [];
 
     if (call.called_time) {
-        lines.push(`🕐 فراخوان: ${call.called_time}`);
+        lines.push("🕐 فراخوان: " + call.called_time);
     }
 
-    if (
-        call.sent_time &&
-        call.status === "ارسال شد"
-    ) {
-        lines.push(`📤 ارسال: ${call.sent_time}`);
+    if (call.sent_time && call.status === "ارسال شد") {
+        lines.push("📤 ارسال: " + call.sent_time);
     }
 
     lines.forEach((line, index) => {
         if (index > 0) {
-            timeElement.appendChild(
-                document.createElement("br")
-            );
+            timeElement.appendChild(document.createElement("br"));
         }
 
-        timeElement.appendChild(
-            document.createTextNode(line)
-        );
+        timeElement.appendChild(document.createTextNode(line));
     });
 }
 
@@ -454,23 +392,13 @@ function resetStudentButton(call) {
 
     const button = findButton(call.student_name);
 
-    if (!button || button.classList.contains("absent")) {
-        return;
-    }
+    if (!button || button.classList.contains("absent")) return;
 
-    button.classList.remove(
-        "called",
-        "sent",
-        "received"
-    );
-
+    button.classList.remove("called", "sent", "received");
     button.classList.add("pending");
 
-    const status =
-        button.querySelector(".student-status");
-
-    const time =
-        button.querySelector(".student-time");
+    const status = button.querySelector(".student-status");
+    const time = button.querySelector(".student-time");
 
     if (status) status.textContent = "";
     if (time) time.textContent = "";
@@ -484,19 +412,11 @@ function resetTeacherPanel() {
     studentButtons.forEach(button => {
         if (button.classList.contains("absent")) return;
 
-        button.classList.remove(
-            "called",
-            "sent",
-            "received"
-        );
-
+        button.classList.remove("called", "sent", "received");
         button.classList.add("pending");
 
-        const status =
-            button.querySelector(".student-status");
-
-        const time =
-            button.querySelector(".student-time");
+        const status = button.querySelector(".student-status");
+        const time = button.querySelector(".student-time");
 
         if (status) status.textContent = "";
         if (time) time.textContent = "";
@@ -513,10 +433,7 @@ function resetTeacherPanel() {
 
 function updateCount(data) {
     if (!Array.isArray(data)) {
-        console.error(
-            "updateCount: داده آرایه نیست:",
-            data
-        );
+        console.error("updateCount: داده آرایه نیست:", data);
         return;
     }
 
@@ -526,8 +443,7 @@ function updateCount(data) {
     );
 
     if (callCount) {
-        callCount.textContent =
-            activeCalls.length + " فراخوان";
+        callCount.textContent = activeCalls.length + " فراخوان";
     }
 }
 
@@ -567,13 +483,13 @@ async function loadCalls() {
         resetTeacherPanel();
 
         data.forEach(call => {
-            const key = getCallKey(call);
+            const key = String(
+                call.id ??
+                `${call.student_name}_${call.called_time ?? ""}`
+            );
 
-            const state =
-                `${call.status}_${call.sent_time ?? ""}`;
-
-            const previousState =
-                previousCallStates.get(key);
+            const state = `${call.status}_${call.sent_time ?? ""}`;
+            const previousState = previousCallStates.get(key);
 
             nextStates.set(key, state);
 
@@ -584,10 +500,7 @@ async function loadCalls() {
             ) {
                 const button = findButton(call.student_name);
 
-                if (
-                    button &&
-                    !button.classList.contains("absent")
-                ) {
+                if (button && !button.classList.contains("absent")) {
                     showCallPopup(call.student_name);
                 }
             }
@@ -612,12 +525,10 @@ async function loadCalls() {
         callsInitialized = true;
 
         updateCount(data);
+        lastTeacherCallsLoad = Date.now();
 
     } catch (error) {
-        console.error(
-            "خطا در دریافت فراخوان‌های امروز:",
-            error
-        );
+        console.error("خطا در دریافت فراخوان‌های امروز:", error);
     } finally {
         teacherCallsLoading = false;
     }
@@ -658,14 +569,9 @@ async function loadAbsentStudents() {
         studentButtons.forEach(button => {
             button.classList.remove("absent");
 
-            const nameElement =
-                button.querySelector(".student-name");
-
-            const statusElement =
-                button.querySelector(".student-status");
-
-            const timeElement =
-                button.querySelector(".student-time");
+            const nameElement = button.querySelector(".student-name");
+            const statusElement = button.querySelector(".student-status");
+            const timeElement = button.querySelector(".student-time");
 
             if (nameElement) {
                 nameElement.textContent = button.dataset.name;
@@ -680,23 +586,17 @@ async function loadAbsentStudents() {
                 button.classList.add("absent");
                 button.disabled = true;
 
-                if (statusElement) {
-                    statusElement.textContent = "⚫ غایب";
-                }
-
-                if (timeElement) {
-                    timeElement.textContent = "";
-                }
+                if (statusElement) statusElement.textContent = "⚫ غایب";
+                if (timeElement) timeElement.textContent = "";
             } else if (button.dataset.sending !== "true") {
                 button.disabled = false;
             }
         });
 
+        lastAbsentStudentsLoad = Date.now();
+
     } catch (error) {
-        console.error(
-            "خطا در دریافت حضور و غیاب:",
-            error
-        );
+        console.error("خطا در دریافت حضور و غیاب:", error);
     } finally {
         absentStudentsLoading = false;
     }
@@ -734,9 +634,7 @@ async function sendStudent(student) {
         await loadAbsentStudents();
 
         if (button.classList.contains("absent")) {
-            showMessage(
-                "دانش‌آموز غایب است و امکان ارسال ندارد."
-            );
+            showMessage("دانش‌آموز غایب است و امکان ارسال ندارد.");
             return;
         }
 
@@ -773,10 +671,7 @@ async function sendStudent(student) {
         const activeCall = activeCalls[0];
 
         if (!activeCall) {
-            showMessage(
-                "فراخوان فعالی برای این دانش‌آموز پیدا نشد."
-            );
-
+            showMessage("فراخوان فعالی برای این دانش‌آموز پیدا نشد.");
             await loadCalls();
             return;
         }
@@ -792,17 +687,12 @@ async function sendStudent(student) {
             })
         });
 
-        showMessage(
-            `فراخوان ${student.name} ارسال شد.`
-        );
+        showMessage("فراخوان " + student.name + " ارسال شد.");
 
         await loadCalls();
 
     } catch (error) {
-        console.error(
-            "خطا در ارسال فراخوان:",
-            error
-        );
+        console.error("خطا در ارسال فراخوان:", error);
 
         showMessage(
             error.message || "ارسال فراخوان ناموفق بود."
@@ -843,6 +733,9 @@ function checkTeacherCallDayChange() {
 
     resetTeacherPanel();
 
+    lastTeacherCallsLoad = 0;
+    lastAbsentStudentsLoad = 0;
+
     return true;
 }
 
@@ -865,17 +758,14 @@ async function refreshTeacherPanel() {
             loadAbsentStudents()
         ]);
     } catch (error) {
-        console.error(
-            "خطا در تازه‌سازی پنل:",
-            error
-        );
+        console.error("خطا در تازه‌سازی پنل:", error);
     } finally {
         teacherPanelRefreshRunning = false;
     }
 }
 
 /* =====================================================
-   مدیریت قطع و وصل اینترنت
+   تشخیص قطع و وصل اینترنت
 ===================================================== */
 
 window.addEventListener("offline", () => {
