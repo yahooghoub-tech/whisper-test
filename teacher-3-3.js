@@ -927,5 +927,5 @@ document.addEventListener("DOMContentLoaded", () => {
         if (checkTeacherCallDayChange()) {
             refreshTeacherPanel();
         }
-    }, 30000);
+    }, 3000);
 });
