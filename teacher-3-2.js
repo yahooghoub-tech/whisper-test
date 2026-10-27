@@ -1,5 +1,23 @@
 
+/* =====================================================
+   پنل فراخوان معلم - کلاس سوم-2
+   الگوی مرجع: کلاس سوم-1
+   API: berandil.ir/farakhan-api
+===================================================== */
+
+"use strict";
+
+/* =====================================================
+   تنظیمات اصلی
+===================================================== */
+
 const API_BASE = "https://berandil.ir/farakhan-api";
+
+const CALLS_API = `${API_BASE}/teacher-calls.php`;
+const UPDATE_CALL_API = `${API_BASE}/update-call-status.php`;
+const ATTENDANCE_API = `${API_BASE}/attendance.php`;
+
+const className = "سوم-2";
 
 let notificationAudio = null;
 let soundEnabled = false;
@@ -7,129 +25,19 @@ let soundEnabled = false;
 let teacherCallsLoading = false;
 let absentStudentsLoading = false;
 let teacherPanelRefreshRunning = false;
+
+let callsInitialized = false;
 let currentTeacherCallDay = getDatabaseToday();
-let previousCallStates = new Map();
-let callsLoadedOnce = false;
 
-let callsPollingTimer = null;
-let attendancePollingTimer = null;
+let popupTimer = null;
+let messageTimer = null;
 
-function getDatabaseToday() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
+const previousCallStates = new Map();
+const studentButtons = new Map();
 
-function getToday() {
-    return getDatabaseToday();
-}
-
-async function apiRequest(endpoint, options = {}) {
-    const response = await fetch(`${API_BASE}/${endpoint}`, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...(options.headers || {})
-        },
-        cache: "no-store"
-    });
-
-    if (!response.ok) {
-        throw new Error(`خطای API: ${response.status}`);
-    }
-
-    const result = await response.json();
-
-    if (result.success === false) {
-        throw new Error(result.message || "درخواست به API ناموفق بود");
-    }
-
-    return result.data ?? result;
-}
-
-function setupSound() {
-    const button = document.getElementById("enableSoundButton");
-
-    if (!button) {
-        console.error("دکمه enableSoundButton در HTML پیدا نشد");
-        return;
-    }
-
-    button.addEventListener("click", async () => {
-        try {
-            if (!soundEnabled) {
-                notificationAudio = new Audio("notification.mp3");
-                notificationAudio.preload = "auto";
-                notificationAudio.volume = 1;
-
-                await notificationAudio.play();
-                notificationAudio.pause();
-                notificationAudio.currentTime = 0;
-
-                soundEnabled = true;
-                button.innerText = "🔊 صدای فراخوان فعال است";
-                button.style.background = "#22c55e";
-            } else {
-                soundEnabled = false;
-
-                if (notificationAudio) {
-                    notificationAudio.pause();
-                    notificationAudio.currentTime = 0;
-                }
-
-                button.innerText = "🔇 صدای فراخوان غیرفعال است";
-                button.style.background = "#ef4444";
-            }
-        } catch (error) {
-            console.error("خطا در فعال‌سازی صدا:", error);
-            alert("فعال‌سازی صدا ناموفق بود. وجود فایل notification.mp3 را بررسی کنید.");
-        }
-    });
-}
-
-function playNotificationSound() {
-    if (!soundEnabled || !notificationAudio) return;
-
-    try {
-        notificationAudio.currentTime = 0;
-
-        notificationAudio.play().catch(error => {
-            console.error("خطا در پخش صدای اعلان:", error);
-        });
-    } catch (error) {
-        console.error("خطا در پخش صدا:", error);
-    }
-}
-
-function showSendNotification(studentName) {
-    const popup = document.getElementById("callPopup");
-    const student = document.getElementById("callPopupStudent");
-
-    if (!popup || !student) return;
-
-    student.innerText = "📤 " + studentName + " ارسال شد";
-    popup.classList.add("show");
-
-    playNotificationSound();
-
-    setTimeout(() => popup.classList.remove("show"), 5000);
-}
-
-function showCallPopup(studentName) {
-    const popup = document.getElementById("callPopup");
-    const student = document.getElementById("callPopupStudent");
-
-    if (!popup || !student) {
-        console.error("عناصر callPopup یا callPopupStudent پیدا نشدند");
-        return;
-    }
-
-    student.innerText = studentName + " فراخوان شد";
-    popup.classList.add("show");
-
-    playNotificationSound();
-
-    setTimeout(() => popup.classList.remove("show"), 7000);
-}
+/* =====================================================
+   فهرست دانش‌آموزان کلاس سوم-2
+===================================================== */
 
 const students = [
     { name: "مهرسام اسدرخت", className: "سوم-2" },
@@ -156,118 +64,486 @@ const students = [
     { name: "میثم نظری", className: "سوم-2" }
 ];
 
-const studentsContainer = document.getElementById("studentsContainer");
-const callCount = document.getElementById("callCount");
+const studentsContainer =
+    document.getElementById("studentsContainer");
+
+const callCount =
+    document.getElementById("callCount");
+
+/* =====================================================
+   تاریخ امروز بر اساس منطقه زمانی تهران
+===================================================== */
+
+function getDatabaseToday() {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tehran",
+        calendar: "gregory",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+
+    const part = type =>
+        parts.find(item => item.type === type)?.value || "";
+
+    return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+/* سازگاری با توابع الگوی مرجع */
+
+function getToday() {
+    return getDatabaseToday();
+}
+
+/* =====================================================
+   درخواست استاندارد به API
+===================================================== */
+
+async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+        cache: "no-store",
+        ...options,
+        headers: {
+            "Accept": "application/json",
+            ...(options.headers || {})
+        }
+    });
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error(
+            `پاسخ API معتبر نیست (HTTP ${response.status})`
+        );
+    }
+
+    if (!response.ok || !result || result.success !== true) {
+        throw new Error(
+            result?.message ||
+            `خطای API (HTTP ${response.status})`
+        );
+    }
+
+    return result;
+}
+
+/* =====================================================
+   نمایش پیام
+===================================================== */
+
+function showMessage(text) {
+    const message = document.getElementById("message");
+
+    if (!message) {
+        console.log(text);
+        return;
+    }
+
+    message.textContent = text;
+    message.classList.add("show");
+
+    clearTimeout(messageTimer);
+
+    messageTimer = setTimeout(() => {
+        message.classList.remove("show");
+    }, 3000);
+}
+
+/* =====================================================
+   فعال‌سازی صدای اعلان
+===================================================== */
+
+function setupSound() {
+    const button =
+        document.getElementById("enableSoundButton");
+
+    if (!button) {
+        console.error(
+            "دکمه enableSoundButton در HTML پیدا نشد."
+        );
+        return;
+    }
+
+    button.addEventListener("click", async () => {
+        try {
+            if (!soundEnabled) {
+                if (!notificationAudio) {
+                    notificationAudio =
+                        new Audio("notification.mp3");
+
+                    notificationAudio.preload = "auto";
+                    notificationAudio.volume = 1;
+                }
+
+                await notificationAudio.play();
+
+                notificationAudio.pause();
+                notificationAudio.currentTime = 0;
+
+                soundEnabled = true;
+
+                button.innerText =
+                    "🔊 صدای فراخوان فعال است";
+
+                button.style.background = "#22c55e";
+
+                showMessage("صدای فراخوان فعال شد.");
+            } else {
+                soundEnabled = false;
+
+                if (notificationAudio) {
+                    notificationAudio.pause();
+                    notificationAudio.currentTime = 0;
+                }
+
+                button.innerText =
+                    "🔇 صدای فراخوان غیرفعال است";
+
+                button.style.background = "#ef4444";
+
+                showMessage("صدای فراخوان غیرفعال شد.");
+            }
+        } catch (error) {
+            console.error(
+                "خطا در تغییر وضعیت صدا:",
+                error
+            );
+
+            showMessage(
+                "فعال‌سازی صدا ناموفق بود. فایل notification.mp3 را بررسی کنید."
+            );
+        }
+    });
+}
+
+/* =====================================================
+   پخش صدای اعلان
+===================================================== */
+
+function playNotificationSound() {
+    if (!soundEnabled || !notificationAudio) return;
+
+    notificationAudio.currentTime = 0;
+
+    notificationAudio.play().catch(error => {
+        console.error(
+            "خطا در پخش صدای فراخوان:",
+            error
+        );
+    });
+}
+
+/* =====================================================
+   پنجره اعلان فراخوان
+===================================================== */
+
+function showSendNotification(studentName) {
+    const popup = document.getElementById("callPopup");
+    const student =
+        document.getElementById("callPopupStudent");
+
+    if (!popup || !student) {
+        playNotificationSound();
+        return;
+    }
+
+    student.innerText = `📤 ${studentName} ارسال شد`;
+    popup.classList.add("show");
+
+    playNotificationSound();
+
+    clearTimeout(popupTimer);
+
+    popupTimer = setTimeout(() => {
+        popup.classList.remove("show");
+    }, 5000);
+}
+
+function showCallPopup(studentName) {
+    const popup = document.getElementById("callPopup");
+    const student =
+        document.getElementById("callPopupStudent");
+
+    if (!popup || !student) {
+        playNotificationSound();
+        return;
+    }
+
+    student.innerText = `${studentName} فراخوان شد`;
+    popup.classList.add("show");
+
+    playNotificationSound();
+
+    clearTimeout(popupTimer);
+
+    popupTimer = setTimeout(() => {
+        popup.classList.remove("show");
+    }, 7000);
+}
+
+/* =====================================================
+   یکسان‌سازی نام دانش‌آموزان
+===================================================== */
+
+function normalizeStudentName(name) {
+    return String(name ?? "")
+        .normalize("NFC")
+        .replace(/[\u200B-\u200D\uFEFF\u200C]/g, "")
+        .replace(/\s+/g, "")
+        .replace(/ي/g, "ی")
+        .replace(/ى/g, "ی")
+        .replace(/ك/g, "ک");
+}
+
+/* =====================================================
+   ساخت دکمه‌های دانش‌آموزان
+===================================================== */
 
 function createStudents() {
     if (!studentsContainer) {
-        console.error("عنصر studentsContainer پیدا نشد");
+        console.error(
+            "عنصر studentsContainer در HTML پیدا نشد."
+        );
         return;
     }
 
     studentsContainer.innerHTML = "";
+    studentButtons.clear();
 
     students.forEach(student => {
         const button = document.createElement("button");
 
+        button.type = "button";
         button.className = "student-button pending";
         button.dataset.name = student.name;
 
-        button.innerHTML = `
-            <div class="student-name"></div>
-            <div class="student-status"></div>
-            <div class="student-time"></div>
-        `;
+        const nameElement = document.createElement("div");
+        nameElement.className = "student-name";
+        nameElement.textContent = student.name;
 
-        button.querySelector(".student-name").innerText = student.name;
-        button.addEventListener("click", () => sendStudent(student));
+        const statusElement = document.createElement("div");
+        statusElement.className = "student-status";
+
+        const timeElement = document.createElement("div");
+        timeElement.className = "student-time";
+
+        button.append(
+            nameElement,
+            statusElement,
+            timeElement
+        );
+
+        button.addEventListener("click", () => {
+            sendStudent(student);
+        });
 
         studentsContainer.appendChild(button);
+        studentButtons.set(student.name, button);
     });
+
+    updateCount([]);
 }
+
+/* =====================================================
+   پیدا کردن دکمه دانش‌آموز
+===================================================== */
 
 function findButton(name) {
-    return [...document.querySelectorAll(".student-button")]
-        .find(button => button.dataset.name === name);
+    const exact = studentButtons.get(name);
+
+    if (exact) return exact;
+
+    const normalizedName = normalizeStudentName(name);
+
+    for (const [studentName, button] of studentButtons) {
+        if (
+            normalizeStudentName(studentName) ===
+            normalizedName
+        ) {
+            return button;
+        }
+    }
+
+    return null;
 }
+
+/* =====================================================
+   کلید یکتای فراخوان
+===================================================== */
 
 function getCallKey(call) {
-    return String(call.id);
+    return String(
+        call.id ??
+        `${call.student_name}_${call.called_time ?? ""}`
+    );
 }
 
+/* =====================================================
+   به‌روزرسانی وضعیت فراخوان
+===================================================== */
+
 function updateButton(call) {
+    if (!call || !call.student_name) return;
+
     const button = findButton(call.student_name);
-    if (!button || button.classList.contains("absent")) return;
 
-    button.classList.remove("called", "sent", "received", "pending");
+    if (!button || button.classList.contains("absent")) {
+        return;
+    }
 
-    const status = button.querySelector(".student-status");
-    const time = button.querySelector(".student-time");
+    if (call.status === "لغو شد") {
+        resetStudentButton(call);
+        return;
+    }
+
+    button.classList.remove(
+        "called",
+        "sent",
+        "received",
+        "pending"
+    );
+
+    const statusElement =
+        button.querySelector(".student-status");
+
+    const timeElement =
+        button.querySelector(".student-time");
+
+    if (!statusElement || !timeElement) return;
 
     if (call.status === "فراخوان شد") {
         button.classList.add("called");
-        status.innerText = "🔴 فراخوان";
+        statusElement.textContent = "🔴 فراخوان";
     } else if (call.status === "دریافت فراخوان") {
         button.classList.add("received");
-        status.innerText = "🟠 دریافت شد";
+        statusElement.textContent = "🟠 دریافت شد";
     } else if (call.status === "ارسال شد") {
         button.classList.add("sent");
-        status.innerText = "🟢 ارسال شد";
+        statusElement.textContent = "🟢 ارسال شد";
     } else {
         button.classList.add("pending");
-        status.innerText = call.status || "";
+        statusElement.textContent = "";
     }
 
-    let timeText = "";
+    timeElement.replaceChildren();
+
+    const lines = [];
 
     if (call.called_time) {
-        timeText = "🕐 فراخوان: " + call.called_time;
+        lines.push(`🕐 فراخوان: ${call.called_time}`);
     }
 
-    if (call.sent_time) {
-        timeText += (timeText ? "<br>" : "") + "📤 ارسال: " + call.sent_time;
+    if (
+        call.sent_time &&
+        call.status === "ارسال شد"
+    ) {
+        lines.push(`📤 ارسال: ${call.sent_time}`);
     }
 
-    time.innerHTML = timeText;
+    lines.forEach((line, index) => {
+        if (index > 0) {
+            timeElement.appendChild(
+                document.createElement("br")
+            );
+        }
+
+        timeElement.appendChild(
+            document.createTextNode(line)
+        );
+    });
 }
+
+/* =====================================================
+   بازگرداندن دکمه به حالت اولیه
+===================================================== */
 
 function resetStudentButton(call) {
-    const button = findButton(call.student_name);
-    if (!button || button.classList.contains("absent")) return;
+    if (!call || !call.student_name) return;
 
-    button.classList.remove("called", "sent", "received");
+    const button = findButton(call.student_name);
+
+    if (!button || button.classList.contains("absent")) {
+        return;
+    }
+
+    button.classList.remove(
+        "called",
+        "sent",
+        "received"
+    );
+
     button.classList.add("pending");
 
-    button.querySelector(".student-status").innerText = "";
-    button.querySelector(".student-time").innerText = "";
+    const status =
+        button.querySelector(".student-status");
+
+    const time =
+        button.querySelector(".student-time");
+
+    if (status) status.textContent = "";
+    if (time) time.textContent = "";
 }
+
+/* =====================================================
+   ریست ظاهری پنل؛ وضعیت غایبان حفظ می‌شود
+===================================================== */
 
 function resetTeacherPanel() {
-    document.querySelectorAll(".student-button").forEach(button => {
+    studentButtons.forEach(button => {
         if (button.classList.contains("absent")) return;
 
-        button.classList.remove("called", "sent", "received");
+        button.classList.remove(
+            "called",
+            "sent",
+            "received"
+        );
+
         button.classList.add("pending");
 
-        const status = button.querySelector(".student-status");
-        const time = button.querySelector(".student-time");
+        const status =
+            button.querySelector(".student-status");
 
-        if (status) status.innerText = "";
-        if (time) time.innerText = "";
+        const time =
+            button.querySelector(".student-time");
+
+        if (status) status.textContent = "";
+        if (time) time.textContent = "";
     });
 
-    if (callCount) callCount.innerText = "0 فراخوان";
-}
-
-function updateCount(data) {
-    if (!Array.isArray(data)) return;
-
-    const active = data.filter(call => call.status !== "ارسال شد");
-
     if (callCount) {
-        callCount.innerText = active.length + " فراخوان";
+        callCount.textContent = "0 فراخوان";
     }
 }
+
+/* =====================================================
+   شمارش فراخوان‌های فعال
+===================================================== */
+
+function updateCount(data) {
+    if (!Array.isArray(data)) {
+        console.error(
+            "updateCount: داده آرایه نیست:",
+            data
+        );
+        return;
+    }
+
+    const activeCalls = data.filter(call =>
+        call.status !== "ارسال شد" &&
+        call.status !== "لغو شد"
+    );
+
+    if (callCount) {
+        callCount.textContent =
+            activeCalls.length + " فراخوان";
+    }
+}
+
+/* =====================================================
+   دریافت فراخوان‌های امروز
+===================================================== */
 
 async function loadCalls() {
     if (teacherCallsLoading) return;
@@ -275,68 +551,96 @@ async function loadCalls() {
     teacherCallsLoading = true;
 
     try {
+        const today = getDatabaseToday();
+
         const params = new URLSearchParams({
-            class_name: "سوم-2",
-            date: getToday()
+            class_name: className,
+            date: today,
+            _: String(Date.now())
         });
 
         const result = await apiRequest(
-            `teacher-calls.php?${params.toString()}`
+            `${CALLS_API}?${params.toString()}`
         );
 
-        const data = Array.isArray(result) ? result : [];
+        const allCalls = Array.isArray(result.data)
+            ? result.data
+            : [];
 
-        const currentStates = new Map();
+        const data = allCalls.filter(call =>
+            call.class_name === className &&
+            call.called_date === today
+        );
+
+        const nextStates = new Map();
+
+        resetTeacherPanel();
 
         data.forEach(call => {
             const key = getCallKey(call);
-            currentStates.set(key, call.status);
 
-            const previousStatus = previousCallStates.get(key);
+            const state =
+                `${call.status}_${call.sent_time ?? ""}`;
 
-            // در بارگذاری اول، اعلان‌های قدیمی پخش نمی‌شوند.
-            if (callsLoadedOnce && previousStatus === undefined) {
-                if (call.status === "فراخوان شد") {
-                    const button = findButton(call.student_name);
+            const previousState =
+                previousCallStates.get(key);
 
-                    if (button && !button.classList.contains("absent")) {
-                        showCallPopup(call.student_name);
-                    }
-                }
-            } else if (callsLoadedOnce && previousStatus !== call.status) {
+            nextStates.set(key, state);
+
+            /*
+             * هنگام بارگذاری اولیه، اعلان قدیمی پخش نمی‌شود.
+             * اعلان فقط هنگام مشاهده تغییر وضعیت نمایش داده می‌شود.
+             */
+
+            if (
+                callsInitialized &&
+                call.status === "فراخوان شد" &&
+                previousState !== state
+            ) {
+                const button = findButton(call.student_name);
+
                 if (
-                    previousStatus !== "ارسال شد" &&
-                    call.status === "ارسال شد"
+                    button &&
+                    !button.classList.contains("absent")
                 ) {
-                    showSendNotification(call.student_name);
-                } else if (
-                    previousStatus !== "فراخوان شد" &&
-                    call.status === "فراخوان شد"
-                ) {
-                    const button = findButton(call.student_name);
-
-                    if (button && !button.classList.contains("absent")) {
-                        showCallPopup(call.student_name);
-                    }
+                    showCallPopup(call.student_name);
                 }
+            }
+
+            if (
+                callsInitialized &&
+                call.status === "ارسال شد" &&
+                previousState !== state
+            ) {
+                showSendNotification(call.student_name);
             }
 
             updateButton(call);
         });
 
-        previousCallStates = currentStates;
-        callsLoadedOnce = true;
+        previousCallStates.clear();
 
-        // وضعیت غایبان پس از به‌روزرسانی فراخوان‌ها اعمال می‌شود.
-        await loadAbsentStudents();
+        nextStates.forEach((value, key) => {
+            previousCallStates.set(key, value);
+        });
+
+        callsInitialized = true;
+
         updateCount(data);
 
     } catch (error) {
-        console.error("خطا در دریافت فراخوان‌ها:", error);
+        console.error(
+            "خطا در دریافت فراخوان‌های امروز:",
+            error
+        );
     } finally {
         teacherCallsLoading = false;
     }
 }
+
+/* =====================================================
+   دریافت وضعیت حضور و غیاب
+===================================================== */
 
 async function loadAbsentStudents() {
     if (absentStudentsLoading) return;
@@ -344,167 +648,308 @@ async function loadAbsentStudents() {
     absentStudentsLoading = true;
 
     try {
+        const today = getDatabaseToday();
+
         const params = new URLSearchParams({
-            class_name: "سوم-2",
-            date: getDatabaseToday()
+            class_name: className,
+            date: today,
+            _: String(Date.now())
         });
 
         const result = await apiRequest(
-            `attendance.php?${params.toString()}`
+            `${ATTENDANCE_API}?${params.toString()}`
         );
 
-        const data = Array.isArray(result) ? result : [];
+        const allAttendance = Array.isArray(result.data)
+            ? result.data
+            : [];
 
-        document.querySelectorAll(".student-button").forEach(button => {
+        const attendance = allAttendance.filter(record =>
+            record.class_name === className &&
+            record.attendance_date === today &&
+            record.status === "غایب"
+        );
+
+        studentButtons.forEach(button => {
             button.classList.remove("absent");
-            button.disabled = false;
 
-            const nameDiv = button.querySelector(".student-name");
+            const nameElement =
+                button.querySelector(".student-name");
 
-            if (nameDiv) {
-                nameDiv.innerText = button.dataset.name;
+            const statusElement =
+                button.querySelector(".student-status");
+
+            const timeElement =
+                button.querySelector(".student-time");
+
+            if (nameElement) {
+                nameElement.textContent = button.dataset.name;
             }
-        });
 
-        data.forEach(attendance => {
-            if (attendance.status !== "غایب") return;
-
-            const button = findButton(attendance.student_name);
-            if (!button) return;
-
-            button.classList.remove(
-                "called", "sent", "received", "pending"
+            const isAbsent = attendance.some(record =>
+                normalizeStudentName(record.student_name) ===
+                normalizeStudentName(button.dataset.name)
             );
 
-            button.classList.add("absent");
-            button.disabled = true;
+            if (isAbsent) {
+                button.classList.add("absent");
+                button.disabled = true;
 
-            const nameDiv = button.querySelector(".student-name");
-            const status = button.querySelector(".student-status");
-            const time = button.querySelector(".student-time");
+                if (statusElement) {
+                    statusElement.textContent = "⚫ غایب";
+                }
 
-            if (nameDiv) {
-                nameDiv.innerText = attendance.student_name + " (غایب)";
+                if (timeElement) {
+                    timeElement.textContent = "";
+                }
+            } else if (button.dataset.sending !== "true") {
+                button.disabled = false;
             }
-
-            if (status) status.innerText = "";
-            if (time) time.innerText = "";
         });
 
-        console.log("غایبان بارگذاری شدند:", data.length);
-
     } catch (error) {
-        console.error("خطا در دریافت غایبان:", error);
+        console.error(
+            "خطا در دریافت حضور و غیاب:",
+            error
+        );
     } finally {
         absentStudentsLoading = false;
     }
 }
 
+/* =====================================================
+   ارسال فراخوان دانش‌آموز
+===================================================== */
+
 async function sendStudent(student) {
     const button = findButton(student.name);
 
-    if (button && button.classList.contains("absent")) {
-        console.log("ارسال برای دانش‌آموز غایب مجاز نیست:", student.name);
+    if (!button) {
+        showMessage("دکمه دانش‌آموز پیدا نشد.");
         return;
     }
 
+    if (
+        button.disabled ||
+        button.dataset.sending === "true" ||
+        button.classList.contains("absent")
+    ) {
+        return;
+    }
+
+    if (!navigator.onLine) {
+        showMessage("اتصال اینترنت برقرار نیست.");
+        return;
+    }
+
+    button.dataset.sending = "true";
+    button.disabled = true;
+
     try {
-        const params = new URLSearchParams({
-            class_name: "سوم-2",
-            student_name: student.name
-        });
+        /*
+         * بررسی مجدد وضعیت غیبت پیش از ارسال
+         */
 
-        const result = await apiRequest(
-            `teacher-calls.php?${params.toString()}`
-        );
+        await loadAbsentStudents();
 
-        const records = Array.isArray(result) ? result : [];
-
-        const call = records
-            .filter(item => item.status !== "ارسال شد")
-            .sort((a, b) => Number(b.id) - Number(a.id))[0];
-
-        if (!call) {
-            alert("برای این دانش‌آموز فراخوان فعالی ثبت نشده است.");
+        if (button.classList.contains("absent")) {
+            showMessage(
+                "دانش‌آموز غایب است و امکان ارسال ندارد."
+            );
             return;
         }
 
-        const now = new Date();
-        const sentTime = now.toLocaleTimeString("fa-IR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false
+        const today = getDatabaseToday();
+
+        const params = new URLSearchParams({
+            class_name: className,
+            date: today,
+            student_name: student.name,
+            _: String(Date.now())
         });
 
-        await apiRequest("update-call-status.php", {
+        const result = await apiRequest(
+            `${CALLS_API}?${params.toString()}`
+        );
+
+        const allCalls = Array.isArray(result.data)
+            ? result.data
+            : [];
+
+        /*
+         * فقط فراخوان فعال همین دانش‌آموز،
+         * همین کلاس و همین روز قابل انتخاب است.
+         */
+
+        const activeCalls = allCalls.filter(call =>
+            call.class_name === className &&
+            call.called_date === today &&
+            normalizeStudentName(call.student_name) ===
+                normalizeStudentName(student.name) &&
+            call.status !== "ارسال شد" &&
+            call.status !== "لغو شد"
+        );
+
+        activeCalls.sort((a, b) =>
+            Number(b.id || 0) - Number(a.id || 0)
+        );
+
+        const activeCall = activeCalls[0];
+
+        if (!activeCall) {
+            showMessage(
+                "فراخوان فعالی برای این دانش‌آموز پیدا نشد."
+            );
+
+            await loadCalls();
+            return;
+        }
+
+        await apiRequest(UPDATE_CALL_API, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({
-                id: call.id,
-                status: "ارسال شد",
-                sent_time: sentTime
+                id: activeCall.id,
+                status: "ارسال شد"
             })
         });
+
+        showMessage(
+            `فراخوان ${student.name} ارسال شد.`
+        );
 
         await loadCalls();
 
     } catch (error) {
-        console.error("خطا در ارسال دانش‌آموز:", error);
-        alert("ارسال انجام نشد. ارتباط با سرور و تنظیمات API را بررسی کنید.");
+        console.error(
+            "خطا در ارسال فراخوان:",
+            error
+        );
+
+        showMessage(
+            error.message || "ارسال فراخوان ناموفق بود."
+        );
+    } finally {
+        delete button.dataset.sending;
+
+        await loadAbsentStudents();
+
+        if (!button.classList.contains("absent")) {
+            button.disabled = false;
+        }
     }
 }
 
+/* =====================================================
+   بررسی تغییر تاریخ تهران
+===================================================== */
+
+function checkTeacherCallDayChange() {
+    const today = getDatabaseToday();
+
+    if (today === currentTeacherCallDay) {
+        return false;
+    }
+
+    console.log(
+        "تاریخ فراخوان تغییر کرد:",
+        currentTeacherCallDay,
+        "به",
+        today
+    );
+
+    currentTeacherCallDay = today;
+
+    previousCallStates.clear();
+    callsInitialized = false;
+
+    resetTeacherPanel();
+
+    return true;
+}
+
+/* =====================================================
+   همگام‌سازی و تازه‌سازی پنل
+===================================================== */
+
 async function refreshTeacherPanel() {
     if (teacherPanelRefreshRunning) return;
+    if (document.hidden) return;
+    if (!navigator.onLine) return;
 
     teacherPanelRefreshRunning = true;
 
     try {
-        await loadCalls();
+        checkTeacherCallDayChange();
+
+        await Promise.all([
+            loadCalls(),
+            loadAbsentStudents()
+        ]);
+    } catch (error) {
+        console.error(
+            "خطا در تازه‌سازی پنل:",
+            error
+        );
     } finally {
         teacherPanelRefreshRunning = false;
     }
 }
 
-function checkTeacherCallDayChange() {
-    const newDay = getDatabaseToday();
+/* =====================================================
+   مدیریت قطع و وصل اینترنت
+===================================================== */
 
-    if (newDay === currentTeacherCallDay) return;
+window.addEventListener("offline", () => {
+    showMessage("اتصال اینترنت قطع شد.");
+});
 
-    console.log("روز جدید تشخیص داده شد:", currentTeacherCallDay, "→", newDay);
+window.addEventListener("online", () => {
+    showMessage("اتصال اینترنت برقرار شد.");
+    refreshTeacherPanel();
+});
 
-    currentTeacherCallDay = newDay;
-    previousCallStates.clear();
-    callsLoadedOnce = false;
+/* =====================================================
+   تازه‌سازی هنگام بازگشت به صفحه
+===================================================== */
 
-    resetTeacherPanel();
+window.addEventListener("focus", () => {
+    refreshTeacherPanel();
+});
 
-    loadAbsentStudents();
-    loadCalls();
-}
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        refreshTeacherPanel();
+    }
+});
 
-function startTeacherPanel() {
+/* =====================================================
+   راه‌اندازی پنل
+===================================================== */
+
+async function initializeTeacherPanel() {
     createStudents();
     setupSound();
 
-    loadAbsentStudents();
-    loadCalls();
+    await refreshTeacherPanel();
+}
 
-    if (callsPollingTimer) clearInterval(callsPollingTimer);
-    if (attendancePollingTimer) clearInterval(attendancePollingTimer);
+/* =====================================================
+   شروع پنل و بررسی‌های دوره‌ای
+===================================================== */
 
-    callsPollingTimer = setInterval(() => {
-        checkTeacherCallDayChange();
+document.addEventListener("DOMContentLoaded", () => {
+    initializeTeacherPanel();
+
+    window.teacherCallsInterval = setInterval(() => {
         refreshTeacherPanel();
     }, 5000);
 
-    attendancePollingTimer = setInterval(() => {
-        loadAbsentStudents();
-    }, 5000);
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", startTeacherPanel);
-} else {
-    startTeacherPanel();
-}
+    window.teacherDayCheckInterval = setInterval(() => {
+        if (checkTeacherCallDayChange()) {
+            refreshTeacherPanel();
+        }
+    }, 3000);
+});
