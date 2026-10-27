@@ -217,7 +217,7 @@ const students=[
     {name:"کیان مقدسی",className:"چهارم-2"},
     
     {name:"فرهام احمدی نژاد",className:"سوم-3"},
-    {name:"آرشا تابع",className:"سوم-3"},
+    { name: "آرشا تابع", className: "سوم-3" },
     {name:"نیکان تورجی",className:"سوم-3"},
     {name:"پارسا تهامی پور",className:"سوم-3"},
     {name:"حافظ جعفربیگی",className:"سوم-3"},
