@@ -36,7 +36,7 @@ const studentButtons = new Map();
 
 const students = [
     { name: "فرهام احمدی نژاد", className: "سوم-3" },
-    { name: "آرشا تابع", className: "سوم-3" },
+   
     { name: "نیکان تورجی", className: "سوم-3" },
     { name: "پارسا تهامی پور", className: "سوم-3" },
     { name: "حافظ جعفربیگی", className: "سوم-3" },
@@ -52,7 +52,8 @@ const students = [
     { name: "فرهام فرقانی", className: "سوم-3" },
     { name: "آریانمهر محمداکبری", className: "سوم-3" },
     { name: "کیاراد مرادی", className: "سوم-3" },
-    { name: "بردیا میرشفیعی", className: "سوم-3" }
+    { name: "بردیا میرشفیعی", className: "سوم-3" },
+    { name: "آرشا تابع", className: "سوم-3" },
 ];
 
 const studentsContainer = document.getElementById("studentsContainer");
