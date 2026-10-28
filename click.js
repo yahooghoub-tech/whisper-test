@@ -953,17 +953,55 @@ if (resetButton) {
         resetButton.disabled = true;
 
         try {
-            await apiRequest(DELETE_ALL_CALLS_API, { method: "POST" });
+            await apiRequest(DELETE_ALL_CALLS_API, {
+                method: "POST"
+            });
 
+            // پاک کردن اطلاعات فراخوان‌ها
             latestCallState.clear();
             lastSeenCallStatuses.clear();
 
+            // بازگرداندن دکمه‌ها به حالت اولیه،
+            // به‌جز دانش‌آموزانی که غایب هستند
+            document.querySelectorAll(".student-button").forEach(button => {
+
+                // اگر دانش‌آموز غایب است، وضعیتش را تغییر نده
+                if (button.classList.contains("absent")) {
+                    button.disabled = true;
+                    return;
+                }
+
+                button.classList.remove("called", "sent");
+                button.classList.add("pending");
+                button.disabled = false;
+
+                delete button.dataset.callId;
+                delete button.dataset.callStatus;
+                delete button.dataset.callSource;
+                delete button.dataset.processing;
+
+                const status = button.querySelector(".student-status");
+                const time = button.querySelector(".status-time");
+
+                if (status) status.textContent = "";
+                if (time) time.textContent = "";
+            });
+
+            // صفر کردن شمارنده‌های فراخوان
+            document.querySelectorAll(".called-total").forEach(counter => {
+                counter.textContent = "0";
+            });
+
+            // دریافت مجدد اطلاعات از سرور
             await refreshNazemPanel();
 
-            alert("فراخوان‌ها پاک شدند. اطلاعات حضور و غیاب حفظ شده‌اند.");
+            alert("تمام فراخوان‌ها حذف شدند.");
+
         } catch (error) {
-            console.error(error);
+            console.error("خطا در حذف فراخوان‌ها:", error);
             alert(error.message || "حذف فراخوان‌ها انجام نشد.");
+
+            await refreshNazemPanel();
         } finally {
             resetButton.disabled = false;
         }
