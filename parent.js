@@ -455,111 +455,35 @@ if (changeParentCodeButton) {
                 "#2563eb"
             );
 
+            
             try {
 
-                const {
-                    data: accountData,
-                    error: accountError
-                } =
-                    await supabaseClient
-                        .from("parent_accounts")
-                        .select(
-                            "id, student_name, class_name, parent_code"
-                        )
-                        .eq(
-                            "id",
-                            currentParentAccountId
-                        )
-                        .maybeSingle();
-
-                if (accountError) {
-
-                    console.error(
-                        "CHECK PARENT ACCOUNT ERROR:",
-                        accountError
-                    );
-
-                    showChangeParentCodeMessage(
-                        "خطا در بررسی حساب والد."
-                    );
-
-                    return;
-                }
-
-                if (!accountData) {
-
-                    showChangeParentCodeMessage(
-                        "حساب والد پیدا نشد."
-                    );
-
-                    return;
-                }
-
-                if (
-                    String(accountData.parent_code).trim() !==
-                    String(currentCode).trim()
-                ) {
-
-                    showChangeParentCodeMessage(
-                        "رمز فعلی صحیح نیست."
-                    );
-
-                    return;
-                }
-
                 showChangeParentCodeMessage(
-                    "رمز فعلی صحیح است. در حال تغییر رمز...",
+                    "در حال بررسی رمز فعلی...",
                     "#2563eb"
                 );
 
-                const {
-                    data: updatedAccount,
-                    error: updateError
-                } =
-                    await supabaseClient
-                        .from("parent_accounts")
-                        .update({
-                            parent_code: newCode
+                const response = await fetch(
+                    "https://berandil.ir/farakhan-api/change-parent-code.php",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            account_id: currentParentAccountId,
+                            current_code: currentCode,
+                            new_code: newCode
                         })
-                        .eq(
-                            "id",
-                            currentParentAccountId
-                        )
-                        .select(
-                            "id, parent_code"
-                        )
-                        .maybeSingle();
+                    }
+                );
 
-                if (updateError) {
+                const result = await response.json();
 
-                    console.error(
-                        "CHANGE PASSWORD ERROR:",
-                        updateError
-                    );
+                if (!response.ok || !result.success) {
 
                     showChangeParentCodeMessage(
-                        "خطا در تغییر رمز."
-                    );
-
-                    return;
-                }
-
-                if (!updatedAccount) {
-
-                    showChangeParentCodeMessage(
-                        "رمز در پایگاه داده تغییر نکرد."
-                    );
-
-                    return;
-                }
-
-                if (
-                    String(updatedAccount.parent_code).trim() !==
-                    String(newCode).trim()
-                ) {
-
-                    showChangeParentCodeMessage(
-                        "تأیید تغییر رمز ناموفق بود."
+                        result.message || "خطا در تغییر رمز."
                     );
 
                     return;
@@ -574,20 +498,19 @@ if (changeParentCodeButton) {
                 newParentCodeInput.value = "";
                 confirmParentCodeInput.value = "";
 
-            }
-
-            catch (error) {
+            } catch (error) {
 
                 console.error(
-                    "CHANGE PASSWORD EXCEPTION:",
+                    "CHANGE PASSWORD ERROR:",
                     error
                 );
 
                 showChangeParentCodeMessage(
-                    "خطایی هنگام تغییر رمز رخ داد."
+                    "ارتباط با سرور برقرار نشد. لطفاً دوباره تلاش کنید."
                 );
 
             }
+
 
         }
     );
