@@ -1153,7 +1153,13 @@ function updateLiveParentDistance(
 
             liveParentStatus.textContent =
                 "داخل محدوده مجاز";
-
+        
+            liveParentStatus.style.color =
+                "#16a34a";
+        
+            liveParentStatus.style.fontWeight =
+                "700";
+        
         }
 
         if (parentLocationIcon) {
@@ -1175,7 +1181,13 @@ function updateLiveParentDistance(
 
             liveParentStatus.textContent =
                 "خارج از محدوده مجاز";
-
+        
+            liveParentStatus.style.color =
+                "#dc2626";
+        
+            liveParentStatus.style.fontWeight =
+                "700";
+        
         }
 
         if (parentLocationIcon) {
