@@ -1231,8 +1231,7 @@ input:focus {
 
     z-index: 2;
 
-    color:
-        var(--app-navy);
+    color: red;
 
     font-size: 18px;
 
