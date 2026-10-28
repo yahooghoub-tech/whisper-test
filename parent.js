@@ -1941,36 +1941,15 @@ function applyParentLocation(
 
 
     if (locationStatus) {
-
-        if (
-            distance <=
-            ALLOWED_RADIUS
-        ) {
-
-            locationStatus.textContent =
-                "داخل محدوده مجاز — " +
-                formatDistance(
-                    distance
-                );
-
-            locationStatus.style.color =
-                "#16a34a";
-
+        if (distance <= ALLOWED_RADIUS) {
+            locationStatus.textContent = "داخل محدوده مجاز";
+            locationStatus.style.color = "#16a34a";
+        } else {
+            locationStatus.textContent = "خارج از محدوده مجاز";
+            locationStatus.style.color = "#dc2626";
         }
-
-        else {
-
-            locationStatus.textContent =
-                "خارج از محدوده مجاز — " +
-                formatDistance(
-                    distance
-                );
-
-            locationStatus.style.color =
-                "#dc2626";
-
-        }
-
+    
+        locationStatus.style.fontWeight = "bold";
     }
 
 
