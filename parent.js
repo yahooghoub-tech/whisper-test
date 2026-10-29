@@ -565,7 +565,8 @@ let locationRequestInProgress = false;
 let parentLocationWatchId = null;
 
 let callRequestInProgress = false;
-
+let lastObservedParentCallId = null;
+let lastObservedParentCallStatus = null;
 
 /* =====================================================
    SCHOOL LOCATION
@@ -2856,6 +2857,47 @@ function updateParentCallButton(call) {
 }
 
 
+/* تشخیص ارسال جدید دانش‌آموز */
+
+function checkParentCallNotification(call) {
+
+    if (!call || !call.id) {
+        return;
+    }
+
+    const sameCall =
+        String(lastObservedParentCallId) ===
+        String(call.id);
+
+    // اولین وضعیت مشاهده‌شده فقط ذخیره می‌شود
+    if (lastObservedParentCallId === null) {
+
+        lastObservedParentCallId = call.id;
+        lastObservedParentCallStatus = call.status;
+        return;
+    }
+
+    // اگر فراخوان جدیدی ایجاد شده باشد
+    if (!sameCall) {
+
+        lastObservedParentCallId = call.id;
+        lastObservedParentCallStatus = call.status;
+        return;
+    }
+
+    // اگر وضعیت به «ارسال شد» تغییر کرده باشد
+    if (
+        lastObservedParentCallStatus !== "ارسال شد" &&
+        call.status === "ارسال شد"
+    ) {
+
+        showParentCallNotification();
+        playClassArrivalNotification();
+    }
+
+    lastObservedParentCallStatus = call.status;
+}
+
 /* =====================================================
    LOAD EXISTING CALL
 ===================================================== */
@@ -2924,6 +2966,7 @@ async function loadExistingCall() {
             updateCallScheduleUI();
             return;
         }
+        checkParentCallNotification(currentCall);
 
         updateParentCallStatus(currentCall);
         updateParentCallButton(currentCall);
@@ -3060,15 +3103,7 @@ function startParentRealtime() {
                         call
                     );
 
-                    if (
-                        oldCall &&
-                        oldCall.status !== "ارسال شد" &&
-                        call.status === "ارسال شد"
-                    ) {
-
-                        showParentCallNotification();
-
-                    }
+                    checkParentCallNotification(call);
 
                 }
             )

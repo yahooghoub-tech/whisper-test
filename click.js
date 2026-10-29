@@ -236,7 +236,6 @@ const students=[
     {name:"بردیا میرشفیعی",className:"سوم-3"},
     
     {name:"مهربد بلند همت",className:"اول-3"},
-    
     {name:"علیسان جهانی",className:"اول-3"},
     {name:"سامیار سلیمی",className:"اول-3"},
     {name:"لیام شریفی",className:"اول-3"},
