@@ -429,23 +429,103 @@ color:#fff !important;
             background:#22c55e;
             cursor:default;
             }
-            .call-popup{
-                position:fixed;
-                top:20px;
-                right:50%;
-                transform:translateX(50%) translateY(-150px);
-                width:min(92%,420px);
-                background:linear-gradient(135deg,#2563eb,#7c3aed);
-                color:#fff;
-                border-radius:22px;
-                padding:22px;
-                text-align:center;
-                box-shadow:0 12px 35px rgba(0,0,0,.3);
-                z-index:99999;
-                opacity:0;
-                visibility:hidden;
-                transition:.4s ease;
-                }
+           
+/* =========================================
+   اعلان کوچک بالای پنل معلم
+========================================= */
+
+.call-popup {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    right: auto;
+
+    transform: translateX(-50%) translateY(-100px);
+
+    width: min(90%, 360px);
+    padding: 10px 16px;
+
+    background: linear-gradient(
+        135deg,
+        #b64d25,
+        #e98d36,
+        #713b24
+    ) !important;
+
+    color: #fff !important;
+    border: 1px solid rgba(255,255,255,.45);
+    border-radius: 14px;
+
+    text-align: center;
+
+    box-shadow: 0 6px 20px rgba(68,32,16,.25);
+
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .35s ease;
+}
+
+.call-popup.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.call-popup-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+}
+
+.call-popup-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.call-popup-student {
+    font-size: 16px;
+    font-weight: bold;
+    background: rgba(255,255,255,.18);
+    border-radius: 9px;
+    padding: 5px 8px;
+    margin: 5px 0;
+}
+
+.call-popup-text {
+    font-size: 11px;
+    opacity: .9;
+}
+
+/* موبایل */
+
+@media(max-width:600px) {
+    .call-popup {
+        top: 8px;
+        width: 92%;
+        padding: 8px 12px;
+        border-radius: 12px;
+    }
+
+    .call-popup-icon {
+        font-size: 19px;
+    }
+
+    .call-popup-title {
+        font-size: 12px;
+    }
+
+    .call-popup-student {
+        font-size: 14px;
+        padding: 4px;
+    }
+
+    .call-popup-text {
+        font-size: 10px;
+    }
+}
+
                 
                 .call-popup.show{
                 transform:translateX(50%) translateY(0);
