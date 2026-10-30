@@ -1,3 +1,4 @@
+
 /* =====================================================
    پنل فراخوان معلم - دبستان علوی
    کلاس: اول-2
@@ -43,6 +44,9 @@ let currentTeacherCallDay = getDatabaseToday();
 let lastTeacherCallsLoad = 0;
 let lastAbsentStudentsLoad = 0;
 
+let callsInitialized = false;
+
+const previousCallStates = new Map();
 const studentButtons = new Map();
 
 /* =====================================================
@@ -379,6 +383,7 @@ function resetTeacherPanel() {
         callCount.textContent = "0 فراخوان";
     }
 }
+
 /* =====================================================
    شمارش فراخوان‌های فعال
 ===================================================== */
@@ -432,10 +437,47 @@ async function loadCalls() {
             call.called_date === today
         );
 
+        // تشخیص تغییرات از طریق بررسی دوره‌ای API هاست
+        const currentCallStates = new Map();
+
+        todayCalls.forEach(call => {
+            const key = String(call.id);
+            currentCallStates.set(key, call);
+
+            if (callsInitialized) {
+                const previous = previousCallStates.get(key);
+
+                if (!previous && call.status === "فراخوان شد") {
+                    const absentButton = findButton(call.student_name);
+
+                    if (
+                        !absentButton ||
+                        !absentButton.classList.contains("absent")
+                    ) {
+                        showCallPopup(call.student_name);
+                    }
+                } else if (
+                    previous &&
+                    previous.status !== "ارسال شد" &&
+                    call.status === "ارسال شد"
+                ) {
+                    showSendNotification(call.student_name);
+                }
+            }
+        });
+
         todayCalls.forEach(updateButton);
         updateCount(todayCalls);
 
+        previousCallStates.clear();
+
+        currentCallStates.forEach((call, key) => {
+            previousCallStates.set(key, call);
+        });
+
+        callsInitialized = true;
         lastTeacherCallsLoad = Date.now();
+
     } catch (error) {
         console.error("خطا در دریافت فراخوان‌ها از هاست:", error);
     } finally {
@@ -444,7 +486,7 @@ async function loadCalls() {
 }
 
 /* =====================================================
-   دریافت غایبان امروز از MySQL روی هاست
+   دریافت غایبان امروز از هاست
 ===================================================== */
 
 async function loadAbsentStudents() {
@@ -472,7 +514,7 @@ async function loadAbsentStudents() {
         // ابتدا وضعیت غیبت قبلی را پاک می‌کنیم.
         document.querySelectorAll(".student-button").forEach(button => {
             button.classList.remove("absent");
-            button.disabled = false;
+            button.disabled = button.dataset.sending === "true";
 
             const nameDiv = button.querySelector(".student-name");
 
@@ -526,6 +568,7 @@ async function loadAbsentStudents() {
                 record.status === "غایب"
             ).length
         );
+
     } catch (error) {
         console.error("خطا در دریافت غایبان از هاست:", error);
     } finally {
@@ -569,7 +612,7 @@ async function sendStudent(student) {
             return;
         }
 
-        // وضعیت غیبت را قبل از تغییر فراخوان دوباره بررسی می‌کنیم.
+        // وضعیت غیبت را قبل از تغییر فراخوان بررسی می‌کنیم.
         await loadAbsentStudents();
 
         if (button.classList.contains("absent")) {
@@ -596,7 +639,7 @@ async function sendStudent(student) {
             return;
         }
 
-        // آخرین بررسی قبل از تغییر وضعیت.
+        // آخرین بررسی پیش از تغییر وضعیت
         if (button.classList.contains("absent")) {
             alert("این دانش‌آموز غایب است و امکان ارسال فراخوان ندارد.");
             return;
@@ -618,12 +661,14 @@ async function sendStudent(student) {
         showMessage("📤 فراخوان " + student.name + " ارسال شد.");
 
         await loadCalls();
+
     } catch (error) {
         console.error("خطا در ارسال فراخوان:", error);
 
         alert(
             "ارسال فراخوان ناموفق بود. اتصال هاست و پاسخ API را بررسی کنید."
         );
+
     } finally {
         delete button.dataset.sending;
 
@@ -637,7 +682,7 @@ async function sendStudent(student) {
 }
 
 /* =====================================================
-   تشخیص تغییر روز و تازه‌سازی پنل
+   تشخیص تغییر روز
 ===================================================== */
 
 function checkTeacherCallDayChange() {
@@ -653,6 +698,10 @@ function checkTeacherCallDayChange() {
     );
 
     currentTeacherCallDay = newDay;
+
+    // اطلاعات فراخوان روز قبل نباید در روز جدید باقی بماند.
+    previousCallStates.clear();
+    callsInitialized = false;
 
     resetTeacherPanel();
 
@@ -681,8 +730,10 @@ async function refreshTeacherPanel() {
             loadCalls(),
             loadAbsentStudents()
         ]);
+
     } catch (error) {
         console.error("خطا در به‌روزرسانی پنل معلم:", error);
+
     } finally {
         teacherPanelRefreshRunning = false;
     }
