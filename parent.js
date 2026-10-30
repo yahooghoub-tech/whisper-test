@@ -2674,6 +2674,82 @@ function showParentCallNotification() {
 
 }
 
+/* =====================================================
+   SUCCESSFUL PARENT CALL NOTIFICATION
+===================================================== */
+
+function showSuccessfulParentCallNotification(callTime, distance) {
+
+    // حذف اعلان قبلی
+    const oldNotification = document.getElementById(
+        "successfulParentCallNotification"
+    );
+
+    if (oldNotification) {
+        oldNotification.remove();
+    }
+
+    // ایجاد اعلان
+    const notification = document.createElement("div");
+
+    notification.id = "successfulParentCallNotification";
+
+    notification.innerHTML = `
+        <div class="success-call-icon">✓</div>
+
+        <div class="success-call-content">
+            <div class="success-call-title">
+                فراخوان با موفقیت انجام شد
+            </div>
+
+            <div class="success-call-text">
+                درخواست فراخوان دانش‌آموز برای مدرسه ارسال شد.
+            </div>
+
+            <div class="success-call-time">
+                🕒 ساعت فراخوان: ${callTime}
+            </div>
+        </div>
+
+        <button class="success-call-close" type="button">×</button>
+    `;
+
+    document.body.appendChild(notification);
+
+    // نمایش انیمیشنی
+    requestAnimationFrame(() => {
+        notification.classList.add("show");
+    });
+
+    // پخش صدای اعلان
+    playClassArrivalNotification();
+
+    // لرزش گوشی
+    if ("vibrate" in navigator) {
+        navigator.vibrate([250, 100, 250, 100, 400]);
+    }
+
+    // بستن اعلان
+    const closeButton = notification.querySelector(
+        ".success-call-close"
+    );
+
+    closeButton.addEventListener("click", () => {
+        notification.classList.remove("show");
+
+        setTimeout(() => notification.remove(), 400);
+    });
+
+    // حذف خودکار بعد از ۸ ثانیه
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.classList.remove("show");
+
+            setTimeout(() => notification.remove(), 400);
+        }
+    }, 8000);
+}
+
 
 /* =====================================================
    CALL STATUS
@@ -3346,7 +3422,11 @@ if (!response.ok || !result.success) {
 
 const newCall = result.data;
 
-
+// اعلان موفقیت ثبت فراخوان
+showSuccessfulParentCallNotification(
+    calledTime,
+    distance
+);
 
                 /* =================================================
                    SUCCESS
@@ -3997,7 +4077,7 @@ let arrivalNotificationTimer = null;
    NOTIFICATION SOUND + PHONE VIBRATION
 ===================================================== */
 
-const classArrivalSound = new Audio("./notification.mp3");
+const classArrivalSound = new Audio("./node.mp3");
 classArrivalSound.preload = "auto";
 classArrivalSound.volume = 1;
 

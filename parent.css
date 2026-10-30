@@ -6725,3 +6725,134 @@ button,
     animation: none !important;
     transform: none !important;
 }
+
+
+/* =====================================================
+   SUCCESSFUL CALL NOTIFICATION
+===================================================== */
+
+#successfulParentCallNotification {
+    position: fixed;
+    top: 25px;
+    right: 50%;
+    transform: translate(50%, -150px);
+    width: calc(100% - 30px);
+    max-width: 460px;
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 20px 18px;
+
+    direction: rtl;
+    text-align: right;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    border: 1px solid rgba(22, 163, 74, 0.25);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.16),
+        0 5px 20px rgba(22, 163, 74, 0.12);
+
+    opacity: 0;
+
+    transition:
+        transform 0.5s cubic-bezier(.2,.8,.2,1),
+        opacity 0.4s ease;
+}
+
+#successfulParentCallNotification.show {
+    transform: translate(50%, 0);
+    opacity: 1;
+}
+
+.success-call-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 27px;
+    font-weight: 900;
+
+    border-radius: 16px;
+
+    background: linear-gradient(
+        135deg,
+        #22c55e,
+        #15803d
+    );
+
+    box-shadow:
+        0 8px 20px rgba(22, 163, 74, 0.3);
+}
+
+.success-call-content {
+    flex: 1;
+}
+
+.success-call-title {
+    color: #15803d;
+    font-size: 15px;
+    font-weight: 900;
+    margin-bottom: 7px;
+}
+
+.success-call-text {
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.success-call-time {
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.success-call-close {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+
+    width: 27px;
+    height: 27px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #f1f5f9;
+    color: #64748b;
+
+    font-size: 21px;
+    cursor: pointer;
+}
+
+@media(max-width:480px) {
+    #successfulParentCallNotification {
+        top: 12px;
+        padding: 17px 14px;
+        border-radius: 17px;
+    }
+
+    .success-call-title {
+        font-size: 13px;
+    }
+
+    .success-call-text {
+        font-size: 11px;
+    }
+}
