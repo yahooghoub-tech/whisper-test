@@ -33,6 +33,9 @@
 <span>کلاس چهارم-1</span>
 <span id="callCount">0 فراخوان</span>
 <button id="enableSoundButton" type="button">🔔 فعال‌سازی صدای فراخوان</button>
+<button id="refreshPageButton" type="button">
+    🔄 تازه‌سازی صفحه
+</button>
 </div>
 
 </div>
@@ -73,6 +76,19 @@ function goToAttendance() {
 function goToRegistration() {
     window.location.href = "parent-arrival-4-1.html";
 }
+/* =====================================================
+   REFRESH PAGE BUTTON
+===================================================== */
+
+document.getElementById("refreshPageButton")
+    ?.addEventListener("click", function () {
+
+        this.disabled = true;
+        this.textContent = "در حال تازه‌سازی...";
+
+        window.location.reload();
+
+    });
 </script>
 
 </body>
