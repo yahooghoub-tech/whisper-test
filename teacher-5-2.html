@@ -47,6 +47,9 @@
     <span>کلاس پنجم-2</span>
     <span id="callCount">0 فراخوان</span>
     <button id="enableSoundButton" type="button">🔔 فعال‌سازی صدای فراخوان</button>
+    <button id="refreshPageButton" type="button">
+        🔄 تازه‌سازی صفحه
+    </button>
     </div>
 </div>
 <div id="studentsContainer" class="students-container"></div>
@@ -81,6 +84,19 @@ function goToAttendance() {
 function goToRegistration() {
     window.location.href = "parent-arrival-5-2.html";
 }
+/* =====================================================
+   REFRESH PAGE BUTTON
+===================================================== */
+
+document.getElementById("refreshPageButton")
+    ?.addEventListener("click", function () {
+
+        this.disabled = true;
+        this.textContent = "در حال تازه‌سازی...";
+
+        window.location.reload();
+
+    });
 </script>
 </body>
 </html>
