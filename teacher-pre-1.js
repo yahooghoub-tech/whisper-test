@@ -203,7 +203,7 @@ function showSendNotification(studentName) {
 
     window.teacherCallPopupTimer = setTimeout(() => {
         popup.classList.remove("show");
-    }, 5000);
+    }, 2000);
 }
 
 function showCallPopup(studentName) {
@@ -223,7 +223,7 @@ function showCallPopup(studentName) {
 
     window.teacherCallPopupTimer = setTimeout(() => {
         popup.classList.remove("show");
-    }, 7000);
+    }, 2000);
 
     playNotificationSound();
 }
